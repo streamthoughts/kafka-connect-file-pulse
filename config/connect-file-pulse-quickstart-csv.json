@@ -1,0 +1,24 @@
+{
+  "config": {
+    "connector.class": "io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector",
+    "filters": "ParseDelimitedRow, Drop",
+    "filters.Drop.if": "{{ equals(artist,U2) }}",
+    "filters.Drop.invert": "true",
+    "filters.Drop.type": "io.streamthoughts.kafka.connect.filepulse.filter.DropFilter",
+    "filters.ParseDelimitedRow.extractColumnName": "headers",
+    "filters.ParseDelimitedRow.trimColumn": "true",
+    "filters.ParseDelimitedRow.type": "io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter",
+    "fs.cleanup.policy.class": "io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy",
+    "fs.scanner.class": "io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker",
+    "input.directory.path": "/tmp/kafka-connect/examples/",
+    "input.directory.scan.interval.ms": "10000",
+    "internal.kafka.reporter.bootstrap.servers": "broker:29092",
+    "internal.kafka.reporter.id": "connect-file-pulse-quickstart-csv",
+    "internal.kafka.reporter.topic": "connect-file-pulse-status",
+    "offset.strategy": "name+hash",
+    "skip.headers": "1",
+    "task.reader.class": "io.streamthoughts.kafka.connect.filepulse.reader.RowFileInputReader",
+    "topic": "connect-file-pulse-quickstart-csv"
+  },
+  "name": "connect-file-pulse-quickstart-csv"
+}

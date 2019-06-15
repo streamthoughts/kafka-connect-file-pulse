@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/configuration_1_2.dtd">
+<module name="Checker">
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+    <property name="localeLanguage" value="en"/>
+
+    <module name="Header">
+        <property name="headerFile" value="./checkstyle/apache-header" />
+    </module>
+
+    <module name="TreeWalker">
+        <!-- Imports -->
+        <module name="UnusedImports">
+            <property name="processJavadoc" value="true" />
+        </module>
+        <module name="RedundantImport"/>
+        <module name="IllegalImport" />
+        <module name="AvoidStarImport"/>
+
+        <!-- Code General Quality / Style -->
+        <module name="OneStatementPerLine"/>
+        <module name="UnnecessaryParentheses" />
+        <module name="MethodLength"/>
+        <module name="LineLength">
+            <property name="max" value="120"/>
+        </module>
+        <module name="EqualsHashCode"/>
+        <module name="ParameterNumber"/>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+
+        <!-- Code Complexity -->
+        <module name="CyclomaticComplexity">
+            <!-- default is 10 -->
+            <property name="max" value="15"/>
+        </module>
+        <module name="JavaNCSS">
+            <!-- default is 50 -->
+            <property name="methodMaximum" value="50"/>
+        </module>
+        <module name="NPathComplexity">
+            <!-- default is 200 -->
+            <property name="max" value="200"/>
+        </module>
+        <module name="ClassFanOutComplexity">
+            <!-- default is 20 -->
+            <property name="max" value="30"/>
+        </module>
+        <module name="BooleanExpressionComplexity">
+            <!-- default is 3 -->
+            <property name="max" value="4"/>
+        </module>
+    </module>
+
+    <module name="SuppressionFilter">
+        <property name="file" value="./checkstyle/suppressions.xml"/>
+    </module>
+</module>

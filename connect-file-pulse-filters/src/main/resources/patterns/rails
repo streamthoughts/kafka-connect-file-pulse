@@ -1,0 +1,28 @@
+# This file is a copy from project : Logstash plugins
+# https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+RUUID \h{32}
+# rails controller with action
+RCONTROLLER (?<controller>[^#]+)#(?<action>\w+)
+
+# this will often be the only line:
+RAILS3HEAD (?m)Started %{WORD:verb} "%{URIPATHPARAM:request}" for %{IPORHOST:clientip} at (?<timestamp>%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND} %{ISO8601_TIMEZONE})
+# for some a strange reason, params are stripped of {} - not sure that's a good idea.
+RPROCESSING \W*Processing by %{RCONTROLLER} as (?<format>\S+)(?:\W*Parameters: {%{DATA:params}}\W*)?
+RAILS3FOOT Completed %{NUMBER:response}%{DATA} in %{NUMBER:totalms}ms %{RAILS3PROFILE}%{GREEDYDATA}
+RAILS3PROFILE (?:\(Views: %{NUMBER:viewms}ms \| ActiveRecord: %{NUMBER:activerecordms}ms|\(ActiveRecord: %{NUMBER:activerecordms}ms)?
+
+# putting it all together
+RAILS3 %{RAILS3HEAD}(?:%{RPROCESSING})?(?<context>(?:%{DATA}\n)*)(?:%{RAILS3FOOT})?

@@ -161,19 +161,7 @@ docker logs --tail="all" -f connect | grep "Orphan task detected"
 docker exec -it connect kafka-avro-console-consumer --topic connect-file-pulse-quickstart-csv --from-beginning --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081
 ```
 
-## Documentation
-
-1. [Common Configuration](common-configuration)
-2. [Scanning Files](scanning-files)
-3. [File Readers](file-readers)
-4. [Filters Chain definition](filters-chain-definitions)
-5. [Acceding Data and Metadata](acceding-data-and-metadata)
-6. [Conditional execution](conditional-execution)
-7. [Handling Failures in Pipelines](handling-failires-in-pipelines)
-8. [Filters](filters)
-9. [Tracking file progression](tracking-file-progression)
-10. [Cleaning completed files](cleaning-completed-files)
-11. [FAQ](faq)
+{% include_relative plan.md %}
 
 ## Contributions
 

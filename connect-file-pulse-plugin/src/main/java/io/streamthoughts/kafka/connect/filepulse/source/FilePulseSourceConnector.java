@@ -100,13 +100,13 @@ public class FilePulseSourceConnector extends SourceConnector {
         directoryScanner.setFilter(new CompositeFileListFilter(config.filters()));
 
         scanner = new LocalFileSystemScanner(
-                config.sourceDirectoryPath(),
+                config.scanDirectoryPath(),
                 directoryScanner,
                 config.cleanupPolicy(),
                 new SimpleOffsetManager(config.offsetStrategy()),
                 store);
 
-        fsMonitorThread = new FileSystemMonitorThread(context, scanner, config.scanIntervalMs());
+        fsMonitorThread = new FileSystemMonitorThread(context, scanner, config.scanInternalMs());
         fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {
             LOG.info("Uncaught exception from file system monitoring thread [{}]", t.getName(), e);
             throw new ConnectException(e);

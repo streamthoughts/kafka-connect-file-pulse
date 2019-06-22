@@ -14,8 +14,8 @@ The SourceConnector will run a background-thread to periodically trigger a file 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
 |`fs.scanner.class` | The class used to scan file system | class | *io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker* | medium |
-|`input.directory.path` | The input directory to scan | string | *-* | high |
-|`input.directory.scan.interval.ms` | Time interval in milliseconds at wish the input directory is scanned | long | *10000* | high |
+|`fs.scan.directory.path` | The input directory to scan | string | *-* | high |
+|`fs.scan.interval.ms` | Time interval in milliseconds at wish the input directory is scanned | long | *10000* | high |
 
 ## Filter files
 

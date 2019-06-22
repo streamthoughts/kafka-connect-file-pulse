@@ -9,10 +9,10 @@ Those configuration are described in detail in subsequent chapters.
 | --------------| --------------|-----------| --------- | ------------- |
 |`fs.scanner.class` | The class used to scan file system | class | *io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker* | medium |
 |`fs.cleanup.policy.class` | The class used by tasks to read input files | class | *-* | high |
-|`fs.scanner.filters` | Filters use to list eligible input files| list | *-* | medium |
+|`fs.scan.directory.path` | The input directory to scan | string | *-* | high |
+|`fs.scan.interval.ms` | Time interval in milliseconds at wish the input directory is scanned | long | *10000* | high |
+|`fs.scan.filters` | Filters use to list eligible input files| list | *-* | medium |
 |`filters` | List of filters aliases to apply on each data (order is important) | list | *-* | medium |
-|`input.directory.path` | The input directory to scan | string | *-* | high |
-|`input.directory.scan.interval.ms` | Time interval in milliseconds at wish the input directory is scanned | long | *10000* | high |
 |`internal.kafka.reporter.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | high |
 |`internal.kafka.reporter.id` | Group id the internal topic used by tasks and connector to report and monitor file progression | string | *-* | high |
 |`internal.kafka.reporter.cluster.bootstrap.servers` | Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector). | string | *-* | high |

@@ -29,21 +29,21 @@ import org.apache.kafka.common.config.ConfigDef;
 
 public class ConnectorConfig extends CommonConfig {
 
-    public static final String INPUT_DIRECTORY_SCAN_CLASS_CONFIG    = "fs.scanner.class";
-    private static final String INPUT_DIRECTORY_SCAN_CLASS_DOC      = "Class which is used to list eligible files from input directory.";
+    public static final String FS_SCAN_CLASS_CONFIG           = "fs.scanner.class";
+    private static final String FS_SCAN_CLASS_DOC             = "Class which is used to list eligible files from input directory.";
 
-    public static final String FILE_CLEANER_CLASS_CONFIG            = "fs.cleanup.policy.class";
-    public static final String FILE_CLEANER_CLASS_DOC               = "The class used to cleanup files that have been processed by tasks.";
+    public static final String FILE_CLEANER_CLASS_CONFIG      = "fs.cleanup.policy.class";
+    public static final String FILE_CLEANER_CLASS_DOC         = "The class used to cleanup files that have been processed by tasks.";
 
-    public static final String INPUT_DIRECTORY_PATH_CONFIG          = "input.directory.path";
-    private static final String INPUT_DIRECTORY_PATH_DOC            = "The input directory to scan";
+    public static final String FS_SCAN_DIRECTORY_PATH_CONFIG  = "fs.scan.directory.path";
+    private static final String FS_SCAN_DIRECTORY_PATH_DOC    = "The input directory to scan";
 
-    public static final String INPUT_SCAN_INTERVAL_MS_CONFIG       = "input.directory.scan.interval.ms";
-    private static final String INPUT_SCAN_INTERVAL_MS_DOC          = "Time interval in milliseconds at wish the input directory is scanned.";
-    private static final long INPUT_SCAN_INTERVAL_MS_DEFAULT        = 10000L;
+    public static final String FS_SCAN_INTERVAL_MS_CONFIG     = "fs.scan.interval.ms";
+    private static final String FS_SCAN_INTERVAL_MS_DOC       = "Time interval in milliseconds at wish the input directory is scanned.";
+    private static final long FS_SCAN_INTERVAL_MS_DEFAULT     = 10000L;
 
-    public static final String FILE_LIST_FILTERS_CLASS_CONFIG      = "fs.scanner.filters";
-    private static final String FILE_LIST_FILTERS_CLASS_DOC         = "Filters classes which are used to apply list input files.";
+    public static final String FS_SCAN_FILTERS_CONFIG         = "fs.scan.filters";
+    private static final String FS_SCAN_FILTERS_DOC           = "Filters classes which are used to apply list input files.";
 
     /**
      * Creates a new {@link ConnectorConfig} instance.
@@ -55,17 +55,17 @@ public class ConnectorConfig extends CommonConfig {
 
     public static ConfigDef getConf() {
         return CommonConfig.getConf()
-                .define(INPUT_DIRECTORY_SCAN_CLASS_CONFIG, ConfigDef.Type.CLASS,
-                        LocalFSDirectoryWalker.class, ConfigDef.Importance.HIGH, INPUT_DIRECTORY_SCAN_CLASS_DOC)
+                .define(FS_SCAN_CLASS_CONFIG, ConfigDef.Type.CLASS,
+                        LocalFSDirectoryWalker.class, ConfigDef.Importance.HIGH, FS_SCAN_CLASS_DOC)
 
-                .define(FILE_LIST_FILTERS_CLASS_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
-                        ConfigDef.Importance.MEDIUM, FILE_LIST_FILTERS_CLASS_DOC)
+                .define(FS_SCAN_FILTERS_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
+                        ConfigDef.Importance.MEDIUM, FS_SCAN_FILTERS_DOC)
 
-                .define(INPUT_DIRECTORY_PATH_CONFIG, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, INPUT_DIRECTORY_PATH_DOC)
+                .define(FS_SCAN_DIRECTORY_PATH_CONFIG, ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH, FS_SCAN_DIRECTORY_PATH_DOC)
 
-                .define(INPUT_SCAN_INTERVAL_MS_CONFIG, ConfigDef.Type.LONG, INPUT_SCAN_INTERVAL_MS_DEFAULT,
-                        ConfigDef.Importance.HIGH, INPUT_SCAN_INTERVAL_MS_DOC)
+                .define(FS_SCAN_INTERVAL_MS_CONFIG, ConfigDef.Type.LONG, FS_SCAN_INTERVAL_MS_DEFAULT,
+                        ConfigDef.Importance.HIGH, FS_SCAN_INTERVAL_MS_DOC)
 
                 .define(FILE_CLEANER_CLASS_CONFIG,
                         ConfigDef.Type.CLASS, ConfigDef.Importance.HIGH, FILE_CLEANER_CLASS_DOC);
@@ -76,18 +76,18 @@ public class ConnectorConfig extends CommonConfig {
     }
 
     public FSDirectoryWalker directoryScanner() {
-        return getConfiguredInstance(INPUT_DIRECTORY_SCAN_CLASS_CONFIG, FSDirectoryWalker.class);
+        return getConfiguredInstance(FS_SCAN_CLASS_CONFIG, FSDirectoryWalker.class);
     }
 
-    public long scanIntervalMs() {
-        return this.getLong(INPUT_SCAN_INTERVAL_MS_CONFIG);
+    public long scanInternalMs() {
+        return this.getLong(FS_SCAN_INTERVAL_MS_CONFIG);
     }
 
-    public String sourceDirectoryPath() {
-        return this.getString(INPUT_DIRECTORY_PATH_CONFIG);
+    public String scanDirectoryPath() {
+        return this.getString(FS_SCAN_DIRECTORY_PATH_CONFIG);
     }
 
     public List<FileListFilter> filters() {
-        return getConfiguredInstances(FILE_LIST_FILTERS_CLASS_CONFIG, FileListFilter.class);
+        return getConfiguredInstances(FS_SCAN_FILTERS_CONFIG, FileListFilter.class);
     }
 }

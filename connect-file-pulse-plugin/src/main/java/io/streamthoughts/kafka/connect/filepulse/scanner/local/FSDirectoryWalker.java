@@ -22,13 +22,12 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
-
 public interface FSDirectoryWalker extends Configurable {
 
     /**
      * Configure this class with the given key-value pairs
      */
-    void configure(Map<String, ?> configs);
+    void configure(final Map<String, ?> configs);
 
     /**
      * Lists all files existing into the specified input directory.

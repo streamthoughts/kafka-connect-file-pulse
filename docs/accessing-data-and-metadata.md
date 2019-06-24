@@ -1,4 +1,4 @@
-# Acceding Data and Metadata
+# Accessing Data and Metadata
 
 Some filter properties (like : [AppendFilter](#appendfilter)) can be configured using *Simple Connect Expression Language*.
 

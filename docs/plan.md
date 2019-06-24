@@ -4,7 +4,7 @@
 2. [Scanning Files](scanning-files)
 3. [File Readers](file-readers)
 4. [Filters Chain definition](filters-chain-definition)
-5. [Acceding Data and Metadata](acceding-data-and-metadata)
+5. [Accessing Data and Metadata](accessing-data-and-metadata)
 6. [Conditional execution](conditional-execution)
 7. [Handling Failures](handling-failures)
 8. [Filters](filters)

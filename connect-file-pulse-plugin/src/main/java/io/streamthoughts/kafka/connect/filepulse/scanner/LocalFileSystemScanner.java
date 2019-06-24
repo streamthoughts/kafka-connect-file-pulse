@@ -17,9 +17,13 @@
 package io.streamthoughts.kafka.connect.filepulse.scanner;
 
 
+import io.streamthoughts.kafka.connect.filepulse.clean.BatchFileCleanupPolicy;
+import io.streamthoughts.kafka.connect.filepulse.clean.DelegateBatchFileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
+import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResult;
+import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResultSet;
+import io.streamthoughts.kafka.connect.filepulse.clean.GenericFileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
-import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetManager;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
@@ -80,7 +84,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
 
     private final OffsetManager offsetManager;
 
-    private final FileCleanupPolicy cleaner;
+    private final BatchFileCleanupPolicy cleaner;
 
     private ScanStatus status;
 
@@ -95,16 +99,26 @@ public class LocalFileSystemScanner implements FileSystemScanner {
      */
     public LocalFileSystemScanner(final String sourceDirectoryPath,
                                   final FSDirectoryWalker fsWalker,
-                                  final FileCleanupPolicy cleaner,
+                                  final GenericFileCleanupPolicy cleaner,
                                   final OffsetManager offsetManager,
                                   final StateBackingStore<SourceFile> store) {
         Objects.requireNonNull(fsWalker, "fsWalker can't be null");
-        Objects.requireNonNull(sourceDirectoryPath, "sourceDirectoryPath can't be null");
+        Objects.requireNonNull(sourceDirectoryPath, "scanDirectoryPath can't be null");
         Objects.requireNonNull(cleaner, "cleaner can't be null");
 
         this.sourceDirectoryPath = sourceDirectoryPath;
         this.fsWalker = fsWalker;
-        this.cleaner = cleaner;
+
+        if (cleaner instanceof FileCleanupPolicy) {
+            this.cleaner = new DelegateBatchFileCleanupPolicy((FileCleanupPolicy)cleaner);
+        } else if (cleaner instanceof BatchFileCleanupPolicy) {
+            this.cleaner = (BatchFileCleanupPolicy) cleaner;
+        } else {
+                throw new IllegalArgumentException("Cleaner must be one of 'FileCleanupPolicy', "
+                        + "'BatchFileCleanupPolicy', or the variants that are consumer aware and/or "
+                        + "Acknowledging"
+                        + " not " + cleaner.getClass().getName());
+        }
         this.offsetManager = offsetManager;
         this.store = store;
         this.status = ScanStatus.CREATED;
@@ -178,25 +192,17 @@ public class LocalFileSystemScanner implements FileSystemScanner {
     private void cleanUpCompletedFiles() {
         if (!completed.isEmpty()) {
             LOG.info("Cleaning up completed files '{}'", completed.size());
-            final List<SourceFile> terminated = new ArrayList<>(completed.size());
-            completed.drainTo(terminated);
-            terminated.forEach(state -> {
-                final SourceMetadata metadata = state.metadata();
-                final File completedFile = new File(metadata.path(), metadata.name());
-                boolean cleaned = !completedFile.exists();
-                if (!cleaned) {
-                    final String relativePathFrom = IOUtils.getRelativePathFrom(sourceDirectoryPath, completedFile);
-                    LOG.info("Cleaning source file '{}'", state.metadata());
-                    cleaned = (state.status() == SourceStatus.COMPLETED) ?
-                            cleaner.cleanOnSuccess(relativePathFrom, state.metadata(), state.offset()) :
-                            cleaner.cleanOnFailure(relativePathFrom, state.metadata(), state.offset()) ;
-                }
-                final String partition = offsetManager.toPartitionJson(state.metadata());
-                if (cleaned) {
-                    store.put(partition, state.withStatus(SourceStatus.CLEANED));
+            final List<SourceFile> cleanable = new ArrayList<>(completed.size());
+            completed.drainTo(cleanable);
+
+            FileCleanupPolicyResultSet cleaned = cleaner.apply(cleanable);
+            cleaned.forEach( (source, result) -> {
+                if (result.equals(FileCleanupPolicyResult.SUCCEED)) {
+                    final String partition = offsetManager.toPartitionJson(source.metadata());
+                    store.put(partition, source.withStatus(SourceStatus.CLEANED));
                 } else {
-                    LOG.info("Postpone clean up for file '{}'", metadata.name());
-                    completed.add(state);
+                    LOG.info("Postpone clean up for file '{}'", source);
+                    completed.add(source);
                 }
             });
             LOG.info("Finished cleaning all completed source files");

@@ -16,7 +16,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import java.nio.file.Files;
 import java.util.Map;
 
 /**
- *
+ * Policy for deleting completed files.
  */
 public class DeleteCleanupPolicy implements FileCleanupPolicy {
 
@@ -45,9 +45,8 @@ public class DeleteCleanupPolicy implements FileCleanupPolicy {
      * {@inheritDoc}
      */
     @Override
-    public boolean cleanOnSuccess(final String relativePath,
-                                  final SourceMetadata metadata,
-                                  final SourceOffset offset) {
+    public boolean onSuccess(final SourceFile source) {
+        final SourceMetadata metadata = source.metadata();
         return doCleanup(new File(metadata.absolutePath()));
     }
 
@@ -55,9 +54,8 @@ public class DeleteCleanupPolicy implements FileCleanupPolicy {
      * {@inheritDoc}
      */
     @Override
-    public boolean cleanOnFailure(final String relativePath,
-                                  final SourceMetadata metadata,
-                                  final SourceOffset offset) {
+    public boolean onFailure(final SourceFile source) {
+        final SourceMetadata metadata = source.metadata();
         return doCleanup(new File(metadata.absolutePath()));
     }
 

@@ -17,8 +17,7 @@
 package io.streamthoughts.kafka.connect.filepulse.scanner;
 
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -53,23 +52,14 @@ public class MockFileCleaner implements FileCleanupPolicy {
     }
 
     @Override
-    public boolean cleanOnSuccess(final String relativePath,
-                                  final SourceMetadata metadata,
-                                  final SourceOffset offset) {
-        this.succeed.add(new File(metadata.absolutePath()));
+    public boolean onSuccess(SourceFile source) {
+        this.succeed.add(source.file());
         return cleanUpReturn;
     }
 
     @Override
-    public boolean cleanOnFailure(final String relativePath,
-                                  final SourceMetadata metadata,
-                                  final SourceOffset offset) {
-        this.failed.add(new File(metadata.absolutePath()));
+    public boolean onFailure(SourceFile source) {
+        this.failed.add(source.file());
         return cleanUpReturn;
-    }
-
-    @Override
-    public void close() throws Exception {
-
     }
 }

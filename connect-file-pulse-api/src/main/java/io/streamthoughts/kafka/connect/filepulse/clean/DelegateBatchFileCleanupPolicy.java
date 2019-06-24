@@ -17,40 +17,47 @@
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
 import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * Policy for printing into log files completed files.
- */
-public class LogCleanupPolicy implements FileCleanupPolicy {
+public class DelegateBatchFileCleanupPolicy implements BatchFileCleanupPolicy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LogCleanupPolicy.class);
+    private final FileCleanupPolicy delegate;
+
+    /**
+     * Creates a new {@link DelegateBatchFileCleanupPolicy} instance.
+     *
+     * @param delegate  the policy to be executed.
+     */
+    public DelegateBatchFileCleanupPolicy(final FileCleanupPolicy delegate) {
+        Objects.requireNonNull(delegate, "delegate cannot be null");
+        this.delegate = delegate;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-
+        delegate.configure(configs);
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean onSuccess(final SourceFile source) {
-        LOG.info("Success : {}", source);
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean onFailure(final SourceFile source) {
-        LOG.info("Failure : {}", source);
-        return true;
+    @Override
+    public FileCleanupPolicyResultSet apply(final List<SourceFile> sources) {
+        FileCleanupPolicyResultSet rs = new FileCleanupPolicyResultSet();
+        for (SourceFile source : sources) {
+            if (delegate.apply(source)) {
+                rs.add(source, FileCleanupPolicyResult.SUCCEED);
+            } else {
+                rs.add(source, FileCleanupPolicyResult.FAILED);
+            }
+        }
+        return rs;
     }
 
     /**
@@ -58,6 +65,6 @@ public class LogCleanupPolicy implements FileCleanupPolicy {
      */
     @Override
     public void close() throws Exception {
-
+        delegate.close();
     }
 }

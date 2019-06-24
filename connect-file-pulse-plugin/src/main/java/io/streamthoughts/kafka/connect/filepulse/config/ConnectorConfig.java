@@ -36,7 +36,7 @@ public class ConnectorConfig extends CommonConfig {
     public static final String FILE_CLEANER_CLASS_DOC         = "The class used to cleanup files that have been processed by tasks.";
 
     public static final String FS_SCAN_DIRECTORY_PATH_CONFIG  = "fs.scan.directory.path";
-    private static final String FS_SCAN_DIRECTORY_PATH_DOC    = "The input directory to scan";
+    public static final String FS_SCAN_DIRECTORY_PATH_DOC     = "The input directory to scan";
 
     public static final String FS_SCAN_INTERVAL_MS_CONFIG     = "fs.scan.interval.ms";
     private static final String FS_SCAN_INTERVAL_MS_DOC       = "Time interval in milliseconds at wish the input directory is scanned.";

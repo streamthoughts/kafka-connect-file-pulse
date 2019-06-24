@@ -17,47 +17,12 @@
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
 import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.util.List;
 
 /**
- * Policy for printing into log files completed files.
+ * Policy for cleaning a batch of completed source files.
  */
-public class LogCleanupPolicy implements FileCleanupPolicy {
+public interface BatchFileCleanupPolicy extends GenericFileCleanupPolicy<List<SourceFile>,FileCleanupPolicyResultSet> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LogCleanupPolicy.class);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void configure(final Map<String, ?> configs) {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean onSuccess(final SourceFile source) {
-        LOG.info("Success : {}", source);
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean onFailure(final SourceFile source) {
-        LOG.info("Failure : {}", source);
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws Exception {
-
-    }
 }

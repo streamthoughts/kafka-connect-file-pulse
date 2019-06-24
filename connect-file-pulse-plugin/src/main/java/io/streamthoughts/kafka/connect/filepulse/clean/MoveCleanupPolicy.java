@@ -26,51 +26,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
-
-import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
+import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Policy for moving atomically files to configurable target directories.
  */
 public class MoveCleanupPolicy implements FileCleanupPolicy {
 
     private static final Logger LOG = LoggerFactory.getLogger(MoveCleanupPolicy.class);
-
-    public static class MoveFileCleanerConfig extends AbstractConfig {
-
-        final static String CLEANER_OUTPUT_FAILED_PATH_CONFIG   = "cleaner.output.failed.path";
-        final static String CLEANER_OUTPUT_FAILED_PATH_DOC      =
-            "Target directory for file proceed with failure (default .failure)";
-
-        final static String CLEANER_OUTPUT_SUCCEED_PATH_CONFIG  = "cleaner.output.succeed.path";
-        final static String CLEANER_OUTPUT_SUCCEED_PATH_DOC     =
-            "Target directory for file proceed successfully (default .success)";
-
-        MoveFileCleanerConfig(final Map<?, ?> originals) {
-            super(getConf(), originals);
-        }
-
-        String outputFailedPath() {
-            return this.getString(CLEANER_OUTPUT_FAILED_PATH_CONFIG);
-        }
-
-        String outputSucceedPath() {
-            return this.getString(CLEANER_OUTPUT_SUCCEED_PATH_CONFIG);
-        }
-
-        static ConfigDef getConf() {
-            return new ConfigDef()
-                    .define(CLEANER_OUTPUT_FAILED_PATH_CONFIG, ConfigDef.Type.STRING, ".failure",
-                            ConfigDef.Importance.HIGH, CLEANER_OUTPUT_FAILED_PATH_DOC)
-                    .define(CLEANER_OUTPUT_SUCCEED_PATH_CONFIG, ConfigDef.Type.STRING, ".success",
-                            ConfigDef.Importance.HIGH, CLEANER_OUTPUT_SUCCEED_PATH_DOC);
-        }
-    }
 
     private MoveFileCleanerConfig configs;
 
@@ -86,49 +55,55 @@ public class MoveCleanupPolicy implements FileCleanupPolicy {
      * {@inheritDoc}
      */
     @Override
-    public boolean cleanOnSuccess(final String relativePath,
-                                  final SourceMetadata metadata,
-                                  final SourceOffset offset) {
-        final String path = configs.outputSucceedPath();
-        final File file = new File(metadata.absolutePath());
-        final Path dest = buildTargetPath(relativePath, file, path);
-        return doCleanup(dest, file);
+    public boolean onSuccess(final SourceFile source) {
+        final File file = source.file();
+        return doCleanup(file, buildTargetPath(configs.scanDirectoryPath(), file, configs.outputSucceedPath()));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean cleanOnFailure(final String relativePath,
-                                  final SourceMetadata metadata,
-                                  final SourceOffset offset) {
-        final String path = configs.outputFailedPath();
-        final File file = new File(metadata.absolutePath());
-        final Path dest = buildTargetPath(relativePath, file, path);
-        return doCleanup(dest, file);
+    public boolean onFailure(final SourceFile source) {
+        final File file = source.file();
+        return doCleanup(file, buildTargetPath(configs.scanDirectoryPath(), file, configs.outputFailedPath()));
     }
 
-    private Path buildTargetPath(final String relativePath, final File file, final String path) {
-        final String fileName = file.getName();
-        return isAbsolute(path)
-                ? Paths.get(path, relativePath, fileName) :
-                Paths.get(file.getParentFile().getAbsolutePath(), path, fileName);
+    private static Path buildTargetPath(final String scannedDirectory,
+                                        final File source,
+                                        final String target) {
+        final String name = source.getName();
+
+        if (isAbsolute(target)) {
+            final String relative = IOUtils.getRelativePathFrom(scannedDirectory, source);
+            return Paths.get(target, relative, name);
+        } else {
+            final String parent = source.getParentFile().getAbsolutePath();
+            return Paths.get(parent, target, name);
+        }
     }
 
-    private boolean doCleanup(final Path dest, final File source) {
+    /**
+     * Attempts to atomically the source file to the specified target directory.
+     *
+     * @param source    the file to be moved.
+     * @param target    the target directory.
+     * @return  {@code true} if the file has been moved successfully.
+     */
+    private boolean doCleanup(final File source, final Path target) {
         final Path sourcePath = source.toPath();
         try {
-            LOG.info("Moving file {} to {}", source, dest.toFile());
-            createParentIfNotExists(dest);
-            Files.move(sourcePath, dest, StandardCopyOption.ATOMIC_MOVE);
+            LOG.info("Moving file {} to {}", source, target.toFile());
+            createParentIfNotExists(target);
+            Files.move(sourcePath, target, StandardCopyOption.ATOMIC_MOVE);
             LOG.info("File {} moved successfully", source);
         } catch (IOException outer) {
             try {
-                Files.move(sourcePath, dest, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(sourcePath, target, StandardCopyOption.REPLACE_EXISTING);
                 LOG.debug(
                     "Non-atomic move of {} to {} succeeded after atomic move failed due to {}",
                     source,
-                    dest,
+                        target,
                     outer.getMessage());
             } catch (IOException inner) {
                 inner.addSuppressed(outer);
@@ -139,8 +114,48 @@ public class MoveCleanupPolicy implements FileCleanupPolicy {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
 
+    }
+
+    public static class MoveFileCleanerConfig extends AbstractConfig {
+
+        final static String CLEANER_OUTPUT_FAILED_PATH_CONFIG   = "cleaner.output.failed.path";
+        final static String CLEANER_OUTPUT_FAILED_PATH_DOC      =
+                "Target directory for file proceed with failure (default .failure)";
+
+        final static String CLEANER_OUTPUT_SUCCEED_PATH_CONFIG  = "cleaner.output.succeed.path";
+        final static String CLEANER_OUTPUT_SUCCEED_PATH_DOC     =
+                "Target directory for file proceed successfully (default .success)";
+
+        MoveFileCleanerConfig(final Map<?, ?> originals) {
+            super(getConf(), originals);
+        }
+
+        String outputFailedPath() {
+            return getString(CLEANER_OUTPUT_FAILED_PATH_CONFIG);
+        }
+
+        String outputSucceedPath() {
+            return getString(CLEANER_OUTPUT_SUCCEED_PATH_CONFIG);
+        }
+
+        String scanDirectoryPath() { return getString(ConnectorConfig.FS_SCAN_DIRECTORY_PATH_CONFIG); }
+
+        static ConfigDef getConf() {
+            return new ConfigDef()
+                    .define(CLEANER_OUTPUT_FAILED_PATH_CONFIG, ConfigDef.Type.STRING, ".failure",
+                            ConfigDef.Importance.HIGH, CLEANER_OUTPUT_FAILED_PATH_DOC)
+
+                    .define(CLEANER_OUTPUT_SUCCEED_PATH_CONFIG, ConfigDef.Type.STRING, ".success",
+                            ConfigDef.Importance.HIGH, CLEANER_OUTPUT_SUCCEED_PATH_DOC)
+
+                    .define(ConnectorConfig.FS_SCAN_DIRECTORY_PATH_CONFIG, ConfigDef.Type.STRING,
+                            ConfigDef.Importance.HIGH, ConnectorConfig.FS_SCAN_DIRECTORY_PATH_DOC);
+        }
     }
 }

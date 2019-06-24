@@ -54,7 +54,7 @@ public class FileSystemMonitorThread extends Thread {
         Objects.requireNonNull(context,"context can't be null");
         Objects.requireNonNull(scanner,"scanner can't be null");
         if (scanIntervalMs < 0) {
-            throw new IllegalArgumentException("Invalid Argument - scanIntervalMs cannot be inferior to 0");
+            throw new IllegalArgumentException("Invalid Argument - scanInternalMs cannot be inferior to 0");
         }
         this.context = context;
         this.scanner = scanner;

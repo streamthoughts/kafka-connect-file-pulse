@@ -16,23 +16,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceStatus;
-
-/**
- * Policy for cleaning individual completed source files.
- */
-public interface FileCleanupPolicy extends GenericFileCleanupPolicy<SourceFile, Boolean> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    default Boolean apply(final SourceFile source) {
-        return source.status().equals(SourceStatus.COMPLETED) ? onSuccess(source) : onFailure(source);
-    }
-
-    boolean onSuccess(final SourceFile source);
-
-    boolean onFailure(final SourceFile source);
+public enum FileCleanupPolicyResult {
+    SUCCEED, FAILED
 }

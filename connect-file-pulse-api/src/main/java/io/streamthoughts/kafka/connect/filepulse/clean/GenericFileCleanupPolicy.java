@@ -16,48 +16,37 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.kafka.common.Configurable;
 
 import java.util.Map;
 
 /**
- * Policy for printing into log files completed files.
+ * Top level interface for cleanup policies.
+ *
+ * @param <S>   type of the source to be cleaned.
+ * @param <R>   type of the operation result.
  */
-public class LogCleanupPolicy implements FileCleanupPolicy {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LogCleanupPolicy.class);
+public interface GenericFileCleanupPolicy<S, R> extends AutoCloseable, Configurable {
 
     /**
-     * {@inheritDoc}
+     * Configure this class with the given key-value pairs
      */
     @Override
-    public void configure(final Map<String, ?> configs) {
-
-    }
+    void configure(final Map<String, ?> configs);
 
     /**
-     * {@inheritDoc}
+     * Applies the cleanup policy on the specified input files in success.
+     *
+     * @param source    the {@link S} to be cleaned.
+     * @return the operation result.
      */
-    public boolean onSuccess(final SourceFile source) {
-        LOG.info("Success : {}", source);
-        return true;
-    }
+    R apply(final S source);
 
     /**
-     * {@inheritDoc}
-     */
-    public boolean onFailure(final SourceFile source) {
-        LOG.info("Failure : {}", source);
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
+     * Close any internal resources.
      */
     @Override
-    public void close() throws Exception {
+    default void close() throws Exception {
 
     }
 }

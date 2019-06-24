@@ -16,8 +16,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.apache.kafka.common.Configurable;
 
 import java.util.Map;

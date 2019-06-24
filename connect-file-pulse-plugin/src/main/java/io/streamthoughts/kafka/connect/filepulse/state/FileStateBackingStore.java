@@ -16,13 +16,14 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.state;
 
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 import io.streamthoughts.kafka.connect.filepulse.storage.KafkaStateBackingStore;
 
 import java.util.Map;
 
 /**
  */
-public class FileStateBackingStore extends KafkaStateBackingStore<FileInputState> {
+public class FileStateBackingStore extends KafkaStateBackingStore<SourceFile> {
 
     private static final String KEY_PREFIX = "connect-file-pulse";
 
@@ -36,6 +37,6 @@ public class FileStateBackingStore extends KafkaStateBackingStore<FileInputState
     public FileStateBackingStore(final String store,
                                  final String groupId,
                                  final Map<String, ?> configs) {
-        super(store, KEY_PREFIX, groupId, configs, new FileInputStateSerde());
+        super(store, KEY_PREFIX, groupId, configs, new SourceFileSerde());
     }
 }

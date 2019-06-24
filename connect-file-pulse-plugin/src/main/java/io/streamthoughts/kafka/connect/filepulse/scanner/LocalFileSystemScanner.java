@@ -16,17 +16,17 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.scanner;
 
-import static io.streamthoughts.kafka.connect.filepulse.state.FileInputState.Status;
 
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
 import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetManager;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceStatus;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.FSDirectoryWalker;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.state.FileInputState;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,15 +68,15 @@ public class LocalFileSystemScanner implements FileSystemScanner {
 
     private final FSDirectoryWalker fsWalker;
 
-    private final StateBackingStore<FileInputState> store;
+    private final StateBackingStore<SourceFile> store;
 
     // List of files to be scheduled or currently being processed by tasks.
     private final Map<String, SourceMetadata> scheduled = new ConcurrentHashMap<>();
 
     // List of files for which an event of completion has been received - those files are waiting for cleanup
-    private LinkedBlockingQueue<FileInputState> completed = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<SourceFile> completed = new LinkedBlockingQueue<>();
 
-    private StateSnapshot<FileInputState> fileState;
+    private StateSnapshot<SourceFile> fileState;
 
     private final OffsetManager offsetManager;
 
@@ -97,7 +97,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
                                   final FSDirectoryWalker fsWalker,
                                   final FileCleanupPolicy cleaner,
                                   final OffsetManager offsetManager,
-                                  final StateBackingStore<FileInputState> store) {
+                                  final StateBackingStore<SourceFile> store) {
         Objects.requireNonNull(fsWalker, "fsWalker can't be null");
         Objects.requireNonNull(sourceDirectoryPath, "sourceDirectoryPath can't be null");
         Objects.requireNonNull(cleaner, "cleaner can't be null");
@@ -110,18 +110,18 @@ public class LocalFileSystemScanner implements FileSystemScanner {
         this.status = ScanStatus.CREATED;
         LOG.info("Creating local filesystem scanner");
         // The listener is not call until the store is fully STARTED.
-        this.store.setUpdateListener(new StateBackingStore.UpdateListener<FileInputState>() {
+        this.store.setUpdateListener(new StateBackingStore.UpdateListener<SourceFile>() {
             @Override
             public void onStateRemove(final String key) {
                 /* ignore */
             }
 
             @Override
-            public void onStateUpdate(final String key, final FileInputState state) {
-                final Status status = state.status();
-                if (status.isOneOf(Status.completed())) {
+            public void onStateUpdate(final String key, final SourceFile state) {
+                final SourceStatus status = state.status();
+                if (status.isOneOf(SourceStatus.completed())) {
                     completed.add(state);
-                } else if (status.isOneOf(Status.CLEANED)) {
+                } else if (status.isOneOf(SourceStatus.CLEANED)) {
                     final String partition = offsetManager.toPartitionJson(state.metadata());
                     final SourceMetadata remove = scheduled.remove(partition);
                     if (remove == null) {
@@ -144,7 +144,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
         LOG.info("Recovering completed files from a previous execution");
         fileState.states().values()
                 .stream()
-                .filter(s -> s.status().isOneOf(Status.completed()))
+                .filter(s -> s.status().isOneOf(SourceStatus.completed()))
                 .forEach(s -> completed.add(s));
         LOG.info("Finished recovering previously completed files : " + completed);
     }
@@ -178,7 +178,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
     private void cleanUpCompletedFiles() {
         if (!completed.isEmpty()) {
             LOG.info("Cleaning up completed files '{}'", completed.size());
-            final List<FileInputState> terminated = new ArrayList<>(completed.size());
+            final List<SourceFile> terminated = new ArrayList<>(completed.size());
             completed.drainTo(terminated);
             terminated.forEach(state -> {
                 final SourceMetadata metadata = state.metadata();
@@ -187,13 +187,13 @@ public class LocalFileSystemScanner implements FileSystemScanner {
                 if (!cleaned) {
                     final String relativePathFrom = IOUtils.getRelativePathFrom(sourceDirectoryPath, completedFile);
                     LOG.info("Cleaning source file '{}'", state.metadata());
-                    cleaned = (state.status() == Status.COMPLETED) ?
+                    cleaned = (state.status() == SourceStatus.COMPLETED) ?
                             cleaner.cleanOnSuccess(relativePathFrom, state.metadata(), state.offset()) :
                             cleaner.cleanOnFailure(relativePathFrom, state.metadata(), state.offset()) ;
                 }
                 final String partition = offsetManager.toPartitionJson(state.metadata());
                 if (cleaned) {
-                    store.put(partition, state.withState(Status.CLEANED));
+                    store.put(partition, state.withStatus(SourceStatus.CLEANED));
                 } else {
                     LOG.info("Postpone clean up for file '{}'", metadata.name());
                     completed.add(state);
@@ -211,7 +211,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
             LOG.info("Completed scanned, number of files detected '{}' ", files.size());
 
             if (readStatesToEnd(TimeUnit.SECONDS.toMillis(5))) {
-                final StateSnapshot<FileInputState> snapshot = store.snapshot();
+                final StateSnapshot<SourceFile> snapshot = store.snapshot();
                 scheduled.putAll(toScheduled(files, snapshot));
                 LOG.info("Finished lookup for new files : '{}' files selected", scheduled.size());
 
@@ -230,7 +230,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
     }
 
     private Map<String, SourceMetadata> toScheduled(final Collection<File> scanned,
-                                                    final StateSnapshot<FileInputState> snapshot) {
+                                                    final StateSnapshot<SourceFile> snapshot) {
         return scanned.stream()
                 .map(SourceMetadata::fromFile)
                 .map(metadata -> KeyValuePair.of(offsetManager.toPartitionJson(metadata), metadata))
@@ -238,8 +238,8 @@ public class LocalFileSystemScanner implements FileSystemScanner {
                 .collect(Collectors.toMap(kv -> kv.key, kv -> kv.value));
     }
 
-    private boolean maybeScheduled(final StateSnapshot<FileInputState> snapshot, final String partition) {
-        return !snapshot.contains(partition) || snapshot.getForKey(partition).status().isOneOf(Status.started());
+    private boolean maybeScheduled(final StateSnapshot<SourceFile> snapshot, final String partition) {
+        return !snapshot.contains(partition) || snapshot.getForKey(partition).status().isOneOf(SourceStatus.started());
     }
 
     /**

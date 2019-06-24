@@ -16,6 +16,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.offset;
 
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateStoreProvider;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class StateBackingStoreRegistry {
     }
 
     private final Map<String, Integer> refs;
-    private final Map<String, StateBackingStore<FileInputState>> stores;
+    private final Map<String, StateBackingStore<SourceFile>> stores;
 
     /**
      * Creates a new {@link StateBackingStoreRegistry} instance.
@@ -50,7 +51,7 @@ public class StateBackingStoreRegistry {
     }
 
     public synchronized void register(final String name,
-                                      final StateStoreProvider<FileInputState> provider) {
+                                      final StateStoreProvider<SourceFile> provider) {
         Objects.requireNonNull(name, "name can't be null");
         Objects.requireNonNull(provider, "provider can't be null");
 
@@ -62,11 +63,11 @@ public class StateBackingStoreRegistry {
         }
     }
 
-    public synchronized StateBackingStore<FileInputState> get(final String name) {
+    public synchronized StateBackingStore<SourceFile> get(final String name) {
         Objects.requireNonNull(name, "name can't be null");
         checkIfExists(name);
         refs.compute(name, (k, v) ->  v == null ? 1 : v + 1 );
-        final StateBackingStore<FileInputState> store = stores.get(name);
+        final StateBackingStore<SourceFile> store = stores.get(name);
         LOG.info("Getting access on {} instance for group {}", store.getClass().getSimpleName(), name);
         return store;
     }

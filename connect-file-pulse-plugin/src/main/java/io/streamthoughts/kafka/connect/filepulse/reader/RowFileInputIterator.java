@@ -16,7 +16,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
 import io.streamthoughts.kafka.connect.filepulse.reader.internal.NonBlockingBufferReader;
 import io.streamthoughts.kafka.connect.filepulse.reader.internal.TextBlock;

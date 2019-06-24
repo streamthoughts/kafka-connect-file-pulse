@@ -17,6 +17,8 @@
 package io.streamthoughts.kafka.connect.filepulse.offset;
 
 import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
 import org.apache.kafka.connect.source.SourceTaskContext;
 
 import java.util.HashMap;
@@ -47,7 +49,7 @@ public class SimpleOffsetManager implements OffsetManager {
      */
     @Override
     public Optional<SourceOffset> getOffsetFor(final SourceTaskContext context,
-                                                  final SourceMetadata metadata) {
+                                               final SourceMetadata metadata) {
 
         final Map<String, Object> partition = toPartitionMap(metadata);
 

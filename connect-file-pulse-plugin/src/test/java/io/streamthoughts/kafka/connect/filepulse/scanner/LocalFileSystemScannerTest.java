@@ -18,14 +18,14 @@ package io.streamthoughts.kafka.connect.filepulse.scanner;
 
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetStrategy;
 import io.streamthoughts.kafka.connect.filepulse.offset.SimpleOffsetManager;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceStatus;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.FSDirectoryWalker;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.FileListFilter;
-import io.streamthoughts.kafka.connect.filepulse.state.FileInputState;
 import io.streamthoughts.kafka.connect.filepulse.state.FileStateBackingStore;
 import org.apache.kafka.connect.connector.ConnectorContext;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -58,7 +58,7 @@ public class LocalFileSystemScannerTest {
 
     @Test
     public void shouldReturnAllScannedFilesWhenNoStateExist() {
-        StateSnapshot<FileInputState> state = new StateSnapshot<>(0, Collections.emptyMap());
+        StateSnapshot<SourceFile> state = new StateSnapshot<>(0, Collections.emptyMap());
         FileStateBackingStore store = Mockito.mock(FileStateBackingStore.class);
         Mockito.when(store.snapshot()).thenReturn(state);
 
@@ -80,12 +80,12 @@ public class LocalFileSystemScannerTest {
 
     @Test
     public void shouldCleanRemainingCompletedFilesWhileStarting() {
-        Map<String, FileInputState> states = new HashMap<String, FileInputState>() {
+        Map<String, SourceFile> states = new HashMap<String, SourceFile>() {
             {
-                put("???", INPUT_FILES.stateFor(0, FileInputState.Status.COMPLETED));
+                put("???", INPUT_FILES.stateFor(0, SourceStatus.COMPLETED));
             }
         };
-        StateSnapshot<FileInputState> state = new StateSnapshot<>(0, states);
+        StateSnapshot<SourceFile> state = new StateSnapshot<>(0, states);
         FileStateBackingStore store = Mockito.mock(FileStateBackingStore.class);
         Mockito.when(store.snapshot()).thenReturn(state);
 
@@ -103,13 +103,13 @@ public class LocalFileSystemScannerTest {
     @Test
     public void shouldFilterScannedFilesWhenStateExist() {
 
-        final FileInputState completed = INPUT_FILES.stateFor(0, FileInputState.Status.COMPLETED);
-        Map<String, FileInputState> states = new HashMap<String, FileInputState>() {
+        final SourceFile completed = INPUT_FILES.stateFor(0, SourceStatus.COMPLETED);
+        Map<String, SourceFile> states = new HashMap<String, SourceFile>() {
             {
                 put(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
             }
         };
-        StateSnapshot<FileInputState> state = new StateSnapshot<>(0, states);
+        StateSnapshot<SourceFile> state = new StateSnapshot<>(0, states);
         FileStateBackingStore store = Mockito.mock(FileStateBackingStore.class);
         Mockito.when(store.snapshot()).thenReturn(state);
 
@@ -130,15 +130,15 @@ public class LocalFileSystemScannerTest {
 
     @Test
     public void shouldScheduledFileWithExistingReadingState() {
-        final FileInputState completed = INPUT_FILES.stateFor(0, FileInputState.Status.COMPLETED);
-        final FileInputState reading = INPUT_FILES.stateFor(1, FileInputState.Status.READING);
-        Map<String, FileInputState> states = new HashMap<String, FileInputState>() {
+        final SourceFile completed = INPUT_FILES.stateFor(0, SourceStatus.COMPLETED);
+        final SourceFile reading = INPUT_FILES.stateFor(1, SourceStatus.READING);
+        Map<String, SourceFile> states = new HashMap<String, SourceFile>() {
             {
                 put(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
                 put(OFFSET_MANAGER.toPartitionJson(reading.metadata()), reading);
             }
         };
-        StateSnapshot<FileInputState> state = new StateSnapshot<>(0, states);
+        StateSnapshot<SourceFile> state = new StateSnapshot<>(0, states);
         FileStateBackingStore store = Mockito.mock(FileStateBackingStore.class);
         Mockito.when(store.snapshot()).thenReturn(state);
 
@@ -159,7 +159,7 @@ public class LocalFileSystemScannerTest {
 
     @Test
     public void shouldNotScannedDirectoryWhileProcessingFiles() {
-        final StateSnapshot<FileInputState> state = new StateSnapshot<>(0, Collections.emptyMap());
+        final StateSnapshot<SourceFile> state = new StateSnapshot<>(0, Collections.emptyMap());
         FileStateBackingStore store = Mockito.mock(FileStateBackingStore.class);
         Mockito.when(store.snapshot()).thenReturn(state);
 
@@ -177,8 +177,8 @@ public class LocalFileSystemScannerTest {
     @Test
     public void shouldCleanUpFilesAfterReceivingCompletedState() {
 
-        final StateSnapshot<FileInputState> state = new StateSnapshot<>(0, Collections.emptyMap());
-        final InMemoryStateBackingStore store = new InMemoryStateBackingStore(state);
+        final StateSnapshot<SourceFile> state = new StateSnapshot<>(0, Collections.emptyMap());
+        final InMemoryStateBackingStore<SourceFile> store = new InMemoryStateBackingStore<>(state);
         final MockFileCleaner cleaner = new MockFileCleaner(true);
         final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner();
         final LocalFileSystemScanner scanner = newFsMonitorThread(cleaner, ds, store);
@@ -189,10 +189,10 @@ public class LocalFileSystemScannerTest {
         assertEquals(0, cleaner.getSucceed().size());
         assertEquals(0, cleaner.getFailed().size());
 
-        final FileInputState completed = INPUT_FILES.stateFor(0, FileInputState.Status.COMPLETED);
+        final SourceFile completed = INPUT_FILES.stateFor(0, SourceStatus.COMPLETED);
         store.listener.onStateUpdate(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
 
-        final FileInputState failed = INPUT_FILES.stateFor(1, FileInputState.Status.FAILED);
+        final SourceFile failed = INPUT_FILES.stateFor(1, SourceStatus.FAILED);
         store.listener.onStateUpdate(OFFSET_MANAGER.toPartitionJson(failed.metadata()), failed);
 
         ds.put(INPUT_FILES.getInputPathsFor(0, 1, 2, 3));
@@ -209,7 +209,7 @@ public class LocalFileSystemScannerTest {
 
     private LocalFileSystemScanner newFsMonitorThread(final MockFileCleaner cleaner,
                                                       final FSDirectoryWalker scanner,
-                                                      final StateBackingStore<FileInputState> store) {
+                                                      final StateBackingStore<SourceFile> store) {
         return new LocalFileSystemScanner(
                 INPUT_FILES.inputDirectory().getAbsolutePath(),
                 scanner,

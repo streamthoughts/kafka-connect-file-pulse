@@ -68,9 +68,9 @@ public class KeyValuePair<K, V> {
      */
     @Override
     public String toString() {
-        return "KeyValuePair{" +
+        return "[" +
                 "key=" + key +
                 ", value=" + value +
-                '}';
+                ']';
     }
 }

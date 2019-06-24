@@ -17,8 +17,8 @@
 package io.streamthoughts.kafka.connect.filepulse.scanner;
 
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 
 import java.io.File;
 import java.util.LinkedList;

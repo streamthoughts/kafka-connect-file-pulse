@@ -1,7 +1,7 @@
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputContext;
 import org.junit.Before;
 import org.junit.Rule;

@@ -24,10 +24,8 @@ import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreRegistry
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetManager;
 import io.streamthoughts.kafka.connect.filepulse.offset.SimpleOffsetManager;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
-import io.streamthoughts.kafka.connect.filepulse.state.FileInputState;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
@@ -52,7 +50,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private OffsetManager offsetManager;
 
-    private StateBackingStore<FileInputState> store;
+    private StateBackingStore<SourceFile> store;
 
     private KafkaFileStateReporter reporter;
 
@@ -93,7 +91,7 @@ public class FilePulseSourceTask extends SourceTask {
                 config.isReadCommittedFile());
     }
 
-    private StateBackingStore<FileInputState> getStateStatesBackingStore() {
+    private StateBackingStore<SourceFile> getStateStatesBackingStore() {
         final String groupId = config.getTasksReporterGroupId();
         StateBackingStoreRegistry.instance().register(groupId, () -> {
             final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
@@ -146,7 +144,7 @@ public class FilePulseSourceTask extends SourceTask {
             reporter.notify(
                 contextToBeCommitted.metadata(),
                 contextToBeCommitted.offset(),
-                FileInputState.Status.READING);
+                SourceStatus.READING);
         }
     }
 

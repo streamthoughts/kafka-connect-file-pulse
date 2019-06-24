@@ -40,15 +40,15 @@ public class IOUtils {
         }
     }
 
-    public static  void createParentIfNotExists(final Path targetPath) throws IOException {
+    public static void createParentIfNotExists(final Path targetPath) throws IOException {
         Objects.requireNonNull(targetPath, "file cannot be null");
         if (!Files.exists(targetPath.getParent())) {
             Files.createDirectories(targetPath.getParent());
         }
     }
 
-    public static  boolean isAbsolute(final String to) {
-        return to.startsWith("/");
+    public static boolean isAbsolute(final String to) {
+        return to.startsWith(File.separator);
     }
 
     public static String getRelativePathFrom(final String basePath, final File file) {

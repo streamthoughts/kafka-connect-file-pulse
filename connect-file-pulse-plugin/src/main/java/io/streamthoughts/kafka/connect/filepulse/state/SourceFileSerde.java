@@ -21,18 +21,19 @@ import com.jsoniter.output.JsonStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 import org.apache.kafka.common.errors.SerializationException;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSerde;
 
 /**
  */
-public class FileInputStateSerde implements StateSerde<FileInputState> {
+public class SourceFileSerde implements StateSerde<SourceFile> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public byte[] serialize(final FileInputState state) {
+    public byte[] serialize(final SourceFile state) {
         if (state == null) {
             return null;
         }
@@ -45,10 +46,10 @@ public class FileInputStateSerde implements StateSerde<FileInputState> {
      * {@inheritDoc}
      */
     @Override
-    public FileInputState deserialize(byte[] data) {
+    public SourceFile deserialize(byte[] data) {
         JsonIterator iterator = JsonIterator.parse(data);
         try {
-            return iterator.read(FileInputState.class);
+            return iterator.read(SourceFile.class);
         } catch (IOException e) {
             throw new SerializationException();
         }

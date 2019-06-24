@@ -16,7 +16,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
 import org.apache.kafka.common.utils.SystemTime;
 
 import java.util.Objects;

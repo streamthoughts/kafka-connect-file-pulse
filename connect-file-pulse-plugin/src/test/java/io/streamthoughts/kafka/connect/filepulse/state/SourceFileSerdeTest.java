@@ -16,11 +16,15 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.state;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collections;
+
+import io.streamthoughts.kafka.connect.filepulse.source.SourceStatus;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +33,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  */
 
-public class FileSourceStateSerdeTest {
+public class SourceFileSerdeTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
@@ -37,13 +41,13 @@ public class FileSourceStateSerdeTest {
 
     @Test
     public void shouldSerializeAndDeserializeGivenValidObject() throws IOException {
-        FileInputStateSerde serde = new FileInputStateSerde();
+        SourceFileSerde serde = new SourceFileSerde();
 
-        FileInputState state = new FileInputState(
-                "localhost",
-                FileInputState.Status.STARTED,
+        SourceFile state = new SourceFile(
                 SourceMetadata.fromFile(testFolder.newFile()),
-                new SourceOffset(10L, 10L, Instant.now().getEpochSecond())
+                new SourceOffset(10L, 10L, Instant.now().getEpochSecond()),
+                SourceStatus.STARTED,
+                Collections.singletonMap("hostname", "localhost")
                 //new FileInputOffset(10L, 10L, 10L)
         );
         byte[] bytes = serde.serialize(state);

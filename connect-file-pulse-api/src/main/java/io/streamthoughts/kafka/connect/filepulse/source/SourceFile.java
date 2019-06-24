@@ -16,70 +16,66 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
+import com.jsoniter.annotation.JsonCreator;
+import com.jsoniter.annotation.JsonProperty;
+
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
 
 /**
- * Immutable class which is use to wrap contextual information about an input file.
+ * Default class to wrap all information about a source file.
  */
-public class FileInputContext {
+public class SourceFile {
 
     private final SourceMetadata metadata;
-
     private final SourceOffset offset;
+    private final SourceStatus status;
+
+    private final Map<String, Object> props;
 
     /**
-     * Creates a new {@link FileInputContext} instance.
+     * Creates a new {@link SourceFile} instance.
      *
-     * @param metadata  the source metadata.
+     * @param metadata  the source file metadata.
+     * @param offset    the source file offset.
      */
-    public FileInputContext(final SourceMetadata metadata) {
-        this(metadata, SourceOffset.empty());
-    }
-
-    /**
-     * Creates a new {@link FileInputContext} instance.
-     *
-     * @param metadata  the source metadata.
-     * @param offset    teh source startPosition.
-     */
-    public FileInputContext(final SourceMetadata metadata,
-                            final SourceOffset offset) {
+    @JsonCreator
+    public SourceFile(@JsonProperty("metadata") final SourceMetadata metadata,
+                      @JsonProperty("offset") final SourceOffset offset,
+                      @JsonProperty("status") final SourceStatus status,
+                      @JsonProperty("props") final Map<String, Object> props) {
         Objects.requireNonNull(metadata, "metadata can't be null");
-        Objects.requireNonNull(offset, "startPosition can't be null");
+        Objects.requireNonNull(offset, "offset can't be null");
+        Objects.requireNonNull(status, "status can't be null");
         this.metadata = metadata;
         this.offset = offset;
+        this.status = status;
+        this.props = props;
     }
 
-    /**
-     * Returns this file.
-     *
-     * @return a new {@link File} instance.
-     */
-    public File file() {
-        return new File(metadata.absolutePath());
-    }
-
-    /**
-     * Returns the metadata for this file.
-     *
-     * @return the {@link SourceMetadata} instance.
-     */
     public SourceMetadata metadata() {
         return metadata;
     }
 
-    /**
-     * Returns the startPosition of the next bytes to read in this file.
-     *
-     * @return the {@link FileInputOffset} instance.
-     */
     public SourceOffset offset() {
         return offset;
     }
-    
-    public FileInputContext withOffset(final SourceOffset offset) {
-        return new FileInputContext(metadata, offset);
+
+    public SourceStatus status() {
+        return status;
+    }
+
+    public Map<String, Object> props() {
+        return props;
+    }
+
+    public File file() {
+        return new File(metadata.path(), metadata.name());
+    }
+
+    public SourceFile withStatus(final SourceStatus status) {
+        return new SourceFile(metadata, offset, status, props);
     }
 
     /**
@@ -88,10 +84,11 @@ public class FileInputContext {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FileInputContext)) return false;
-        FileInputContext that = (FileInputContext) o;
+        if (!(o instanceof SourceFile)) return false;
+        SourceFile that = (SourceFile) o;
         return Objects.equals(metadata, that.metadata) &&
-                Objects.equals(offset, that.offset);
+               Objects.equals(status, that.status) &&
+               Objects.equals(offset, that.offset);
     }
 
     /**
@@ -99,14 +96,19 @@ public class FileInputContext {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(metadata, offset);
+        return Objects.hash(metadata, offset, status);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "[" +
                 "metadata=" + metadata +
                 ", offset=" + offset +
+                ", status=" + status +
+                ", props=" + props +
                 ']';
     }
 }

@@ -17,7 +17,7 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
 
 /**

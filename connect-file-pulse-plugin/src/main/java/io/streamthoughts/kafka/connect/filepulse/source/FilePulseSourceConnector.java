@@ -27,7 +27,6 @@ import io.streamthoughts.kafka.connect.filepulse.scanner.FileSystemScanner;
 import io.streamthoughts.kafka.connect.filepulse.scanner.LocalFileSystemScanner;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.FSDirectoryWalker;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.CompositeFileListFilter;
-import io.streamthoughts.kafka.connect.filepulse.state.FileInputState;
 import io.streamthoughts.kafka.connect.filepulse.state.FileStateBackingStore;
 
 import java.util.ArrayList;
@@ -94,7 +93,7 @@ public class FilePulseSourceConnector extends SourceConnector {
                     groupId, configs);
         });
 
-        final StateBackingStore<FileInputState> store = StateBackingStoreRegistry.instance().get(groupId);
+        final StateBackingStore<SourceFile> store = StateBackingStoreRegistry.instance().get(groupId);
 
         final FSDirectoryWalker directoryScanner = this.config.directoryScanner();
         directoryScanner.setFilter(new CompositeFileListFilter(config.filters()));

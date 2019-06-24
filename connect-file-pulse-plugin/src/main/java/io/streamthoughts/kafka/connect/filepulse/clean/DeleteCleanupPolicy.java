@@ -16,8 +16,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

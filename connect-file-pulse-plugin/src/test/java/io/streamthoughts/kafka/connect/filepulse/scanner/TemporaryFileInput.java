@@ -16,12 +16,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.scanner;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.state.FileInputState;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 
 import java.io.IOException;
 
+import io.streamthoughts.kafka.connect.filepulse.source.SourceStatus;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -30,6 +31,7 @@ import org.junit.runners.model.Statement;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TemporaryFileInput implements TestRule {
@@ -76,12 +78,12 @@ public class TemporaryFileInput implements TestRule {
         return sources.get(index);
     }
 
-    FileInputState stateFor(int index, final FileInputState.Status status) {
-        return new FileInputState(
-                "",
-                status,
+    SourceFile stateFor(int index, final SourceStatus status) {
+        return new SourceFile(
                 metadataFor(index),
-                new SourceOffset(0L, 0L, 0L)
+                new SourceOffset(0L, 0L, 0L),
+                status,
+                Collections.emptyMap()
         );
     }
 

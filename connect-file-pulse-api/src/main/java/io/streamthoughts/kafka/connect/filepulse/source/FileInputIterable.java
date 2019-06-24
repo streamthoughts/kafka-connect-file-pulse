@@ -16,8 +16,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.offset.SourceOffset;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;

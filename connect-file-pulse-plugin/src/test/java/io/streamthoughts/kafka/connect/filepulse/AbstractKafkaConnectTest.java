@@ -64,8 +64,8 @@ public class AbstractKafkaConnectTest {
     private static final String DOCKER_CONFLUENT_TAG    = "5.2.1";
     private static final String CP_ZOOKEEPER_IMAGE      = "cp-zookeeper";
     private static final String CP_KAFKA_IMAGE          = "cp-kafka";
-    private static final String CP_CONNECT_IMAGE        = CP_KAFKA_IMAGE + "-connect";
-    private static final String CONNECTOR_DIR_NAME      = "kafka-connect-file-pulse";
+    private static final String CP_CONNECT_IMAGE        = "cp-kafka-connect-base";
+    private static final String CONNECTOR_DIR_NAME      = "kafka-connect-file-pulse-plugin";
 
     @ClassRule
     public static Network NETWORK = Network.newNetwork();

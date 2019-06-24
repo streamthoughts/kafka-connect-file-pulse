@@ -3,11 +3,14 @@
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 version: 2
+# Use dedicated machine for testcontainer
+# https://www.testcontainers.org/supported_docker_environment/continuous_integration/circle_ci/
+executorType: machine
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+#   docker:
+#      # specify the version you desire here
+#     - image: circleci/openjdk:8-jdk
 
     working_directory: ~/repo
 

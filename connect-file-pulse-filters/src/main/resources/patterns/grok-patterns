@@ -1,5 +1,5 @@
 # This file is a copy from project : Logstash plugins
-# https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns
+# https://github.com/logstash-plugins/logstash-patterns-core/tree/v4.1.2
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 
 USERNAME [a-zA-Z0-9._-]+
 USER %{USERNAME}

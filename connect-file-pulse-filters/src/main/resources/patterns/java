@@ -1,5 +1,5 @@
 # This file is a copy from project : Logstash plugins
-# https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns
+# https://github.com/logstash-plugins/logstash-patterns-core/tree/v4.1.2
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ JAVAMETHOD (?:(<(?:cl)?init>)|[a-zA-Z$_][a-zA-Z$_0-9]*)
 JAVASTACKTRACEPART %{SPACE}at %{JAVACLASS:class}\.%{JAVAMETHOD:method}\(%{JAVAFILE:file}(?::%{NUMBER:line})?\)
 # Java Logs
 JAVATHREAD (?:[A-Z]{2}-Processor[\d]+)
+#JAVACLASS (?:[a-zA-Z0-9-]+\.)+[A-Za-z0-9$]+
+#JAVAFILE (?:[A-Za-z0-9_.-]+)
 JAVALOGMESSAGE (.*)
 # MMM dd, yyyy HH:mm:ss eg: Jan 9, 2014 7:13:13 AM
 CATALINA_DATESTAMP %{MONTH} %{MONTHDAY}, 20%{YEAR} %{HOUR}:?%{MINUTE}(?::?%{SECOND}) (?:AM|PM)

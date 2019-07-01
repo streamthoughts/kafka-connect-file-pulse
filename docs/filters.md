@@ -7,6 +7,8 @@ These filters are available for use with Kafka Connect File Pulse:
 | [AppendFilter](#appendfilter) | Appends one or more values to an existing or non-existing array field  |
 | [ConvertFilter](#convertfilter)  | Converts a message field's value to a specific type |
 | [DelimitedRowFilter](#delimitedrowfilter)  | Parses a message field's value containing columns delimited by a separator into a struct |
+| [DropFilter](#dropfilter)  | Drops messages satisfying a specific condition without throwing exception |
+| [FailFilter](#failfilter)  | Throws an exception when a message satisfy a specific condition |
 | [GrokFilter](#grokfilter)  | Parses an unstructured message field's value to a struct by combining Grok patterns |
 | [GroupRowFilter](#grouprowfilter)  | Regroups multiple following messages into a single message by composing a grouping key|
 | [JSONFilter](#jsonfilter)  | Unmarshallings a JSON message field's value to a complex struct |
@@ -70,6 +72,57 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 ```
 ```
 
+## DropFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.DropFilter`
+
+The drop filter can be used to prevent some messages (i.n records) to be written into Kafka.
+
+### Configuration
+
+| Configuration |   Description |   Type    |   Default |   Importance  |
+| --------------| --------------|-----------| --------- | ------------- |
+|`if` | Condition to apply the filter on the current record. | string |** |  high |
+|`invert` | Invert the boolean value return from the filter condition. |  boolean | *false* | medium |
+
+For more information about `if` property, see : [Conditional execution](conditional-execution).
+
+### Example
+
+```
+filters=Drop
+
+filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
+filters.Drop.if={{ equals(level, ERROR) }}
+filters.Drop.invert=true
+
+```
+
+## FailFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.FailFilter`
+
+The fail filter can be used to throw an exception with a provided error message.
+For example, this can be useful to stop processing a file when a non-conform record is read.
+
+### Configuration
+
+| Configuration |   Description |   Type    |   Default |   Importance  |
+| --------------| --------------|-----------| --------- | ------------- |
+|`if` | Condition to apply the filter on the current record. | string |*-* |  high |
+|`invert` | Invert the boolean value return from the filter condition. |  boolean | *false* | medium |
+|`message` | The error message thrown by the filter. Expression are supported |  string | *-* | high |
+
+### Example
+
+```
+filters=Fail
+
+filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
+filters.Fail.if={{ is_null(user_id) }}
+filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
+```
+
 ## GrokFilter
 
 The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter`
@@ -86,7 +139,7 @@ The regular expression library is [Joni](https://github.com/jruby/joni), a Java 
 | --------------| --------------|-----------| --------- | ------------- |
 | `namedCapturesOnly` | If true, only store named captures from grok. | boolean | *true* | high |
 | `matches` | The Grok pattern to match. | string | *-* | high |
-| `overwrite` | The fields to overwrite.    | list | moderate |
+| `overwrite` | The fields to overwrite.    | list | medium |
 | `patternDefinitions` | Custom pattern definitions. | list | *-* | low |
 | `patternsDir` | List of user-defined pattern directories | string | *-* | low |
 | `source` | The input field on which to apply the filter  | string | *message* | medium |
@@ -190,7 +243,7 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
 | `split` | Split a message field's value to array    | string | *-* | high |
-| `separator` | The separator used for splitting a withMessage field's value to array  | string | *,* | high |
+| `separator` | The separator used for splitting a message field's value to array  | string | *,* | high |
 | `target` | he target field to put the parsed JSON data  | string | *-* | high |
 
 {% include_relative plan.md %}

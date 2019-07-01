@@ -197,7 +197,9 @@ public class InternalFilterContext extends SimpleEvaluationContext implements Fi
      */
     @Override
     public boolean has(final String name) {
-        return super.has(name) || variables.get(FIELD_RECORD_DATA).schema().field(name) != null;
+        return super.has(name) ||
+                (variables.containsKey(FIELD_RECORD_DATA) &&
+                 variables.get(FIELD_RECORD_DATA).schema().field(name) != null);
     }
 
     /**

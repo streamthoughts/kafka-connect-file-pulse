@@ -20,8 +20,10 @@ import io.streamthoughts.kafka.connect.filepulse.config.MultiRowFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokMatcher;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternCompiler;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternResolver;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
 import org.apache.kafka.common.config.ConfigDef;
 import org.joni.Matcher;
 import org.joni.Option;
@@ -46,6 +48,8 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
 
     private final Collection<String> latest = new LinkedList<>();
 
+    private FileInputOffset offset;
+
     /**
      * {@inheritDoc}
      */
@@ -54,13 +58,14 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
         super.configure(configs);
         this.configs = new MultiRowFilterConfig(configs);
 
-        this.compiler = new GrokPatternCompiler(
-                new GrokPatternResolver(
-                        this.configs.patternDefinitions(),
-                        this.configs.patternsDir()), true);
-        this.matcher = this.compiler.compile(this.configs.pattern());
-        this.separator = this.configs.separator();
-        this.negate = this.configs.negate();
+        compiler = new GrokPatternCompiler(
+            new GrokPatternResolver(
+                this.configs.patternDefinitions(),
+                this.configs.patternsDir()),
+            true);
+        matcher = compiler.compile(this.configs.pattern());
+        separator = this.configs.separator();
+        negate = this.configs.negate();
     }
 
     /**
@@ -90,7 +95,19 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
         if (!hasNext) {
             next.add(FileInputData.defaultStruct(mergeMultiLines(latest)));
         }
+        offset = context.offset();
         return new RecordsIterable<>(next);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RecordsIterable<FileInputRecord> flush() {
+        if (latest.isEmpty()) RecordsIterable.empty();
+
+        FileInputData data = FileInputData.defaultStruct(mergeMultiLines(latest));
+        return new RecordsIterable<>(new FileInputRecord(offset, data));
     }
 
     private boolean mayNotMatchPreviousLines(final String message) {

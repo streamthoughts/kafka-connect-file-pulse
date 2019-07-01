@@ -17,8 +17,10 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.GroupRowFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
@@ -43,6 +45,8 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
     private List<Struct> buffered = new LinkedList<>();
 
     private int latestKeys = -1;
+
+    private FileInputOffset offset;
 
     /**
      * {@inheritDoc}
@@ -89,7 +93,19 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
             forward.add(groupBufferedRecords());
         }
 
+        offset = context.offset();
         return new RecordsIterable<>(forward);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RecordsIterable<FileInputRecord> flush() {
+        if (buffered.size() == 0) RecordsIterable.empty();
+
+        FileInputData data = groupBufferedRecords();
+        return new RecordsIterable<>(new FileInputRecord(offset, data));
     }
 
     private boolean mayForwardPreviousBufferedRecords(final int key) {

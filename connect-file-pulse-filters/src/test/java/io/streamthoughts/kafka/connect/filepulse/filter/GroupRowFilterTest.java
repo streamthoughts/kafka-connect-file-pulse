@@ -18,6 +18,8 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.GroupRowFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
@@ -44,7 +46,9 @@ public class GroupRowFilterTest {
             .field(VALUE, Schema.STRING_SCHEMA)
             .build();
 
-    List<FileInputData> inputs;
+    private FilterContext context;
+
+    private List<FileInputData> inputs;
 
     @Before
     public void setUp() {
@@ -53,6 +57,9 @@ public class GroupRowFilterTest {
         inputs.addAll(generate(KEY_1, KEY_2, 2));
         inputs.addAll(generate(KEY_2, KEY_1, 2));
         inputs.addAll(generate(KEY_2, KEY_2, 2));
+
+        SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
+        context = InternalFilterContext.with(metadata, FileInputOffset.empty());
     }
 
     @Test
@@ -66,7 +73,7 @@ public class GroupRowFilterTest {
         List<FileInputData> output = new LinkedList<>();
         Iterator<FileInputData> iterator = inputs.iterator();
         while (iterator.hasNext()) {
-            output.addAll(filter.apply(null, iterator.next(), iterator.hasNext()).collect());
+            output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
         Assert.assertSame(2, output.size());
     }
@@ -82,7 +89,7 @@ public class GroupRowFilterTest {
         List<FileInputData> output = new LinkedList<>();
         Iterator<FileInputData> iterator = inputs.iterator();
         while (iterator.hasNext()) {
-            output.addAll(filter.apply(null, iterator.next(), iterator.hasNext()).collect());
+            output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
         Assert.assertEquals(4, output.size());
     }
@@ -98,7 +105,7 @@ public class GroupRowFilterTest {
         List<FileInputData> output = new LinkedList<>();
         Iterator<FileInputData> iterator = inputs.iterator();
         while (iterator.hasNext()) {
-            output.addAll(filter.apply(null, iterator.next(), iterator.hasNext()).collect());
+            output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
         Assert.assertEquals(8, output.size());
     }

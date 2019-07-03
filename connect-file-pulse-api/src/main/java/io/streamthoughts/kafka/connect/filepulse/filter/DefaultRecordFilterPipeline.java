@@ -34,7 +34,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRecordFilterPipeline.class);
 
-    private final FilterNode node;
+    private final FilterNode rootNode;
 
     private FileInputContext context;
 
@@ -50,7 +50,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
         while (filterIterator.hasPrevious()) {
             next = new FilterNode(filterIterator.previous(), next);
         }
-        node = next;
+        rootNode = next;
     }
 
     /**
@@ -59,6 +59,17 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
     @Override
     public void init(final FileInputContext context) {
         this.context = context;
+        FilterNode node = rootNode;
+        while (node != null) {
+            // Initialize on failure pipeline
+            RecordFilterPipeline<FileInputRecord> pipelineOnFailure = node.filter.onFailure();
+            if (pipelineOnFailure != null) {
+                pipelineOnFailure.init(context);
+            }
+            // Prepare filter for next input file.
+            node.filter.clear();
+            node = node.onSuccess;
+        }
     }
 
     /**
@@ -66,7 +77,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
      */
     @Override
     public RecordsIterable<FileInputRecord> apply(final RecordsIterable<FileInputRecord> records,
-                                                  final boolean hasNext) {
+                                                  final boolean hasNext) throws FilterException {
         checkState();
         List<FileInputRecord> results = new LinkedList<>();
         final Iterator<FileInputRecord> iterator = records.iterator();
@@ -75,7 +86,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
             boolean doHasNext = hasNext || iterator.hasNext();
             InternalFilterContext context =
                 InternalFilterContext.with(this.context.metadata(), record.offset(), record.data());
-            results.addAll( apply(context, record.data(), doHasNext));
+            results.addAll(apply(context, record.data(), doHasNext));
         }
         return new RecordsIterable<>(results);
     }
@@ -93,23 +104,23 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
     public List<FileInputRecord> apply(final FilterContext context,
                                        final FileInputData record,
                                        final boolean hasNext) {
-        return node.apply(context, record, hasNext);
+        return rootNode.apply(context, record, hasNext);
     }
 
     private class FilterNode {
 
-        private final RecordFilter current;
+        private final RecordFilter filter;
         private final FilterNode onSuccess;
 
         /**
          * Creates a new {@link FilterNode} instance.
          *
-         * @param current
-         * @param onSuccess
+         * @param filter       the current filter.
+         * @param onSuccess    the next filter ot be apply on success.
          */
-        private FilterNode(final RecordFilter current,
+        private FilterNode(final RecordFilter filter,
                            final FilterNode onSuccess) {
-            this.current = current;
+            this.filter = filter;
             this.onSuccess = onSuccess;
         }
 
@@ -119,109 +130,114 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
 
             final List<FileInputRecord> filtered = new LinkedList<>();
 
-            if (current.accept(context, record)) {
+            if (filter.accept(context, record)) {
                 try {
-                    RecordsIterable<FileInputData> data = current.apply(context, record, hasNext);
+                    RecordsIterable<FileInputData> data = filter.apply(context, record, hasNext);
                     List<FileInputRecord> records = data
                         .stream()
                         .map(s -> new FileInputRecord(context.offset(), s))
                         .collect(Collectors.toList());
                     filtered.addAll(records);
-                } catch (final Exception e) {
-                    RecordFilterPipeline<FileInputRecord> pipelineOnFailure = current.onFailure();
 
-                    if (pipelineOnFailure != null || current.ignoreFailure()) {
-                        // Some filter could buffered records to build aggregates,
-                        // those buffered records are normally return at certain time while the method apply is invoked.
-                        //
-                        // When current filter is not accepting current data and
-                        // no records are remaining we should force a flush.
-                        RecordsIterable<FileInputRecord> buffered = current.flush();
-
-                        if (onSuccess != null) {
-                            filtered.addAll(buffered.stream()
-                                .flatMap(r -> {
-                                    // create a new context for buffered records.
-                                    InternalFilterContext localContext =
-                                        InternalFilterContext.with(context.metadata(), r.offset(), r.data());
-                                    return onSuccess.apply(localContext, r.data(), hasNext).stream();
-                                })
-                                .collect(Collectors.toList()));
-                        } else {
-                            filtered.addAll(buffered.collect());
-                        }
+                    if (onSuccess == null) {
+                        return filtered;
                     }
+                    return filtered
+                        .stream()
+                        .flatMap(r ->
+                            onSuccess.apply(newInternalFilterContext(context, r), r.data(), hasNext)
+                                     .stream()
+                        )
+                        .collect(Collectors.toList());
+                // handle any exception
+                } catch (final Exception e) {
 
-                    if (pipelineOnFailure != null) {
+                    if (filter.onFailure() == null && !filter.ignoreFailure()) {
+                        LOG.error(
+                            "Error occurred while executing filter '{}' with schema='{}', record='{}'",
+                            filter.label(),
+                            record.schema(),
+                            record.value());
+                        throw e;
+                    }
+                    // Some filters can aggregate records which follow each other by maintaining internal buffers.
+                    // Those buffered records are expected to be returned at a certain point in time on the
+                    // invocation of the method apply.
+                    // When an error occurred, current record can be ignored or forward to an error pipeline.
+                    // Thus, following records can potentially trigger unexpected aggregates to be built.
+                    // To address that we force a flush of all records still buffered by the current filter.
+                    List<FileInputRecord> flushed = flush(context);
+                    filtered.addAll(flushed);
+
+                    if (filter.onFailure() != null) {
                         final InternalFilterContext errorContext = InternalFilterContext.with(
                             context.metadata(),
                             context.offset(),
                             record,
                             context.values(),
-                            new ExceptionContext(e.getLocalizedMessage(), current.label()));
-                        filtered.addAll(pipelineOnFailure.apply(errorContext, record, hasNext));
-                    } else if (current.ignoreFailure()) {
+                            new ExceptionContext(e.getLocalizedMessage(), filter.label()));
+                        filtered.addAll(filter.onFailure().apply(errorContext, record, hasNext));
+                    } else {
                         if (onSuccess != null) {
                             filtered.addAll(onSuccess.apply(context, record, hasNext));
                         } else {
                             filtered.add(new FileInputRecord(context.offset(), record));
                         }
-                    } else {
-                        LOG.error(
-                            "Error occurred while executing filter '{}' with schema='{}', record='{}'",
-                            current.label(),
-                            record.schema(),
-                            record.value());
-                        throw e;
                     }
                     return filtered;
                 }
-                // If no exception occurred previously then forward to the next filter.
-                if (onSuccess != null) {
-                    return filtered
-                        .stream()
-                        .flatMap(r -> {
-                            final InternalFilterContext localContext = InternalFilterContext.with(
-                                context.metadata(),
-                                context.offset(),
-                                r.data(),
-                                context.values(),
-                                context.exception());
-                            return onSuccess.apply(localContext, r.data(), hasNext).stream();
-                        })
-                        .collect(Collectors.toList());
-                }
 
-                return filtered;
-
-            } else if (!hasNext) {
-                // Some filter could buffered records to build aggregates,
-                // those buffered records are normally return at certain time while the method apply is invoked.
-                //
-                // When current filter is not accepting current data and
-                // no records are remaining we should force a flush.
-                RecordsIterable<FileInputRecord> buffered = current.flush();
-                if (onSuccess!= null) {
-                    filtered.addAll(buffered.stream()
-                        .flatMap(r -> {
-                            // create a new context for buffered records.
-                            InternalFilterContext localContext =
-                                InternalFilterContext.with(context.metadata(), r.offset(), r.data());
-                            return onSuccess.apply(localContext, r.data(), hasNext).stream();
-                        })
-                        .collect(Collectors.toList()));
-                } else {
-                    filtered.addAll(buffered.collect());
-                }
             }
-
+            // skip current filter and forward record to the next one.
             if (onSuccess != null) {
                 filtered.addAll(onSuccess.apply(context, record, hasNext));
             } else {
+                if (!hasNext) {
+                    final List<FileInputRecord> flushed = flush(context);
+                    filtered.addAll(flushed);
+                }
+                // add current record to filtered result.
                 filtered.add(new FileInputRecord(context.offset(), record));
             }
-
            return filtered;
+        }
+
+        private InternalFilterContext newInternalFilterContext(final FilterContext context,
+                                                               final FileInputRecord record) {
+            return InternalFilterContext.with(
+                                        context.metadata(),
+                                        context.offset(),
+                                        record.data(),
+                                        context.values(),
+                                        context.exception());
+        }
+
+        /**
+         * Flush and apply the filter chain on any remaining records buffered by this.
+         *
+         * @param context the filter context to be used.
+         */
+        List<FileInputRecord> flush(final FilterContext context) {
+
+            final List<FileInputRecord> filtered = new LinkedList<>();
+
+            RecordsIterable<FileInputRecord> buffered = filter.flush();
+
+            if (onSuccess != null) {
+                Iterator<FileInputRecord> iterator = buffered.iterator();
+                while (iterator.hasNext()) {
+                    final FileInputRecord record = iterator.next();
+                    // create a new context for buffered records.
+                    final InternalFilterContext localContext = InternalFilterContext.with(
+                            context.metadata(),
+                            record.offset(),
+                            record.data());
+                    filtered.addAll(onSuccess.apply(localContext, record.data(), iterator.hasNext()));
+                }
+            } else {
+                filtered.addAll(buffered.collect());
+            }
+            return filtered;
         }
     }
 }

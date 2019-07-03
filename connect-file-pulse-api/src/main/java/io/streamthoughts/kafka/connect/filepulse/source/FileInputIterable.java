@@ -81,7 +81,7 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileInputReco
     }
 
     boolean isOpen() {
-        return isOpen.get();
+        return isOpen.get() && !iterator.isClose();
     }
 
     boolean isValid() {

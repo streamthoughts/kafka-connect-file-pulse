@@ -39,6 +39,10 @@ public class FileInputOffset {
         return new FileInputOffset(-1, -1,0, SystemTime.SYSTEM.milliseconds(), -1);
     }
 
+    public static FileInputOffset with(long startPosition, long endPosition) {
+        return new FileInputOffset(startPosition, endPosition,0, SystemTime.SYSTEM.milliseconds(), -1);
+    }
+
     /**
      * Creates a new {@link FileInputOffset} instance.
      *

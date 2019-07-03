@@ -55,8 +55,8 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter> imple
      */
     @Override
     public abstract RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                         final FileInputData struct,
-                                                         final boolean hasNext);
+                                                         final FileInputData record,
+                                                         final boolean hasNext) throws FilterException;
 
     @SuppressWarnings("unchecked")
     public T withOnCondition(final FilterCondition condition) {

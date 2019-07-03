@@ -82,7 +82,7 @@ public class MultiRowFilterTest {
         List<FileInputData> output = new LinkedList<>();
         Iterator<FileInputData> iterator = generates().iterator();
         while (iterator.hasNext()) {
-            output.addAll(filter.apply(null, iterator.next(), iterator.hasNext()).collect());
+            output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
         assertOutput(output);
     }
@@ -96,7 +96,7 @@ public class MultiRowFilterTest {
         List<FileInputData> output = new LinkedList<>();
         Iterator<FileInputData> iterator = generates().iterator();
         while (iterator.hasNext()) {
-            output.addAll(filter.apply(null, iterator.next(), iterator.hasNext()).collect());
+            output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
         assertOutput(output);
     }

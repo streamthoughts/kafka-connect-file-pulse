@@ -103,6 +103,14 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
      * {@inheritDoc}
      */
     @Override
+    public void clear() {
+        latest.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public RecordsIterable<FileInputRecord> flush() {
         if (latest.isEmpty()) RecordsIterable.empty();
 

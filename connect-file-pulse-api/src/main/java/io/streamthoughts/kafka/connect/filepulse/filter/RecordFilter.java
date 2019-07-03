@@ -53,12 +53,24 @@ public interface RecordFilter extends Configurable {
      * @param context   the filter execution context.
      * @param record    the data to apply.
      * @param hasNext   is there is still incoming records.
+     *
+     * @throws FilterException if an occurred while filtering input record.
      * @return the output filtered records.
      */
-    RecordsIterable<FileInputData> apply(final FilterContext context, final FileInputData record, final boolean hasNext);
+    RecordsIterable<FileInputData> apply(final FilterContext context,
+                                         final FileInputData record,
+                                         final boolean hasNext) throws FilterException;
 
     /**
-     * A {@link RecordFilter} implement are allow to buffer input records to build aggregates.
+     * Clears all internal states (i.s buffered records)
+     * This method is invoke each time records from a new file is starting to be filtered.
+     */
+    default void clear() {
+
+    }
+
+    /**
+     * Flushes any remaining buffered input records.
      *
      * @return an iterable of {@link FileInputRecord} to be flushed.
      */

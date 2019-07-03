@@ -44,9 +44,17 @@ public interface RecordFilterPipeline<T extends FileInputRecord> {
      *                  This flag should be used by filters to flush buffered records  when equals {@code false}.
      * @return          the filtered records.
      */
-    RecordsIterable<T> apply(final RecordsIterable<T> records, final boolean hasNext);
+    RecordsIterable<T> apply(final RecordsIterable<T> records, final boolean hasNext) throws FilterException;
 
-
+    /**
+     * Execute the filter chain on a single record.
+     *
+     * @param context   the record context.
+     * @param record    the record to be filtered.
+     * @param hasNext   flag to indicate if there is remaining records for the current input file.
+     *                  This flag should be used by filters to flush buffered records  when equals {@code false}.
+     * @return          the filtered records.
+     */
     List<T> apply(final FilterContext context,
                   final FileInputData record,
                   final boolean hasNext);

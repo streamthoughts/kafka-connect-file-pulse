@@ -37,8 +37,10 @@
     <!-- Those classes are copy from kafka-connect api-->
     <suppress checks="LineLength" files="KafkaBasedLog.java"/>
     <suppress checks="LineLength" files="KafkaStateBackingStore.java"/>
+    <suppress checks="NPathComplexity" files="DefaultFileRecordsPollingConsumer.java"/>
     <suppress checks="Header" files="kafka-connect-source-file-pulse-version.properties"/>
     <suppress checks="Header" files="log4j.properties"/>
 
     <suppress checks="Header" files="log4j.properties"/>
+
 </suppressions>

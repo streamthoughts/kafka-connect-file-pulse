@@ -57,7 +57,7 @@ public class SplitFilter extends AbstractRecordFilter<SplitFilter> {
     @Override
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData record,
-                                                final boolean hasNext) {
+                                                final boolean hasNext) throws FilterException {
         final Struct struct = maySplitFields(record.value());
         return new RecordsIterable<>(new FileInputData(struct));
     }

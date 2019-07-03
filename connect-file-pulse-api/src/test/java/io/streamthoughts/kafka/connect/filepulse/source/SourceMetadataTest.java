@@ -16,7 +16,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;

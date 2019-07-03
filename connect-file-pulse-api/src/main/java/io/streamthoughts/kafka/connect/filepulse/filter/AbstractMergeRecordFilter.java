@@ -52,7 +52,7 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> 
     @Override
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData record,
-                                                final boolean hasNext) {
+                                                final boolean hasNext) throws FilterException {
 
         final RecordsIterable<FileInputData> filtered = apply(context, record);
 
@@ -69,7 +69,8 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> 
      * @param record  a data.
      * @return  a new {@link FileInputRecord} instance.
      */
-    abstract protected RecordsIterable<FileInputData> apply(final FilterContext context, final FileInputData record);
+    abstract protected RecordsIterable<FileInputData> apply(final FilterContext context,
+                                                            final FileInputData record) throws FilterException ;
 
     /**
      * Returns a list of fields that must be overwrite.

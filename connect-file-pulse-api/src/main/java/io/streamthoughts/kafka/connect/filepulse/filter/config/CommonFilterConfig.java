@@ -38,7 +38,7 @@ public class CommonFilterConfig extends AbstractConfig {
     public static final String ON_FAILURE_DOC             = "List of filters aliases to apply on each data after failure (order is important).";
 
     public static final String CONDITION_CONFIG           = "if";
-    public static final String CONDITION_DOC              = "Condition to apply the filter on the current data.";
+    public static final String CONDITION_DOC              = "Condition to apply the filter on the current record.";
 
     public static final String CONDITION_NOT_CONFIG       = "invert";
     public static final String CONDITION_NOT_DOC          = "Invert the boolean value return from the filter condition.";

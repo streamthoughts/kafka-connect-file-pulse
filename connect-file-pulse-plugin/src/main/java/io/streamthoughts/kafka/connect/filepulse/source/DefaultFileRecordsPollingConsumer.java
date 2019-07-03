@@ -25,6 +25,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
+import io.streamthoughts.kafka.connect.filepulse.filter.FilterException;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
@@ -157,11 +159,32 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
         }
 
         final RecordsIterable<FileInputRecord> records = currentIterator.next();
-        final RecordsIterable<FileInputRecord> filtered = pipeline.apply(records, currentIterator.hasNext());
-        if (!filtered.isEmpty()) {
-            latestPollRecord = filtered.last();
+
+        Exception exception = null;
+        try {
+            final RecordsIterable<FileInputRecord> filtered = pipeline.apply(records, currentIterator.hasNext());
+            if (!filtered.isEmpty()) {
+                latestPollRecord = filtered.last();
+            }
+            return filtered;
+        } catch (final FilterException e) {
+            exception = e;
+            // ignore the exception - and skip the current file.
+            return RecordsIterable.empty();
+
+        } catch (final ConnectFilePulseException e) {
+            exception = e;
+            throw e;
+
+        } catch (final Exception e) {
+            exception = e;
+            throw new ConnectFilePulseException(e);
+
+        } finally {
+            if (exception != null) {
+                closeIterator(currentIterator, exception);
+            }
         }
-        return filtered;
     }
 
     /**
@@ -249,30 +272,34 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
                     listener.onStart(newIterator.context());
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             deleteFileQueueAndInvokeListener(new FileInputContext(metadata), e);
         }
         return newIterator;
     }
 
     private FileInputIterator<FileInputRecord> getOrCloseIteratorIfNoMoreRecord(final FileInputIterable iterable) {
-        final File inputFile = iterable.file();
 
         final FileInputIterator<FileInputRecord> currItr = iterable.iterator();
         // then check if there is still records to consume.
         if (!currItr.hasNext()) {
-            try {
-                // close otherwise.
-                iterable.close();
-            } catch (Exception e) {
-                LOG.debug("Error while closing file '{}'", inputFile.getName(), e);
-            } finally {
-                deleteFileQueueAndInvokeListener(currItr.context(), null);
-            }
+            // close otherwise.
+            closeIterator(currItr, null);
         } else {
             return currItr;
         }
         return null;
+    }
+
+    private void closeIterator(final FileInputIterator<FileInputRecord> iterator,
+                               final Exception cause) {
+        try {
+            iterator.close();
+        } catch (final Exception e) {
+            LOG.debug("Error while closing file '{}'", iterator.context(), e);
+        } finally {
+            deleteFileQueueAndInvokeListener(iterator.context(), cause);
+        }
     }
 
     private void deleteFileQueueAndInvokeListener(final FileInputContext taskContext,

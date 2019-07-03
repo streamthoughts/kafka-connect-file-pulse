@@ -44,7 +44,7 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
 
     private List<Struct> buffered = new LinkedList<>();
 
-    private int latestKeys = -1;
+    private int lastObservedKey = -1;
 
     private FileInputOffset offset;
 
@@ -86,7 +86,7 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
         if (mayForwardPreviousBufferedRecords(key)) {
             forward.add(groupBufferedRecords());
         }
-        latestKeys = key;
+        lastObservedKey = key;
         buffered.add(record.value());
 
         if (!hasNext && hasRecordsBuffered()) {
@@ -101,6 +101,15 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
      * {@inheritDoc}
      */
     @Override
+    public void clear() {
+        buffered.clear();
+        lastObservedKey = -1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public RecordsIterable<FileInputRecord> flush() {
         if (buffered.size() == 0) RecordsIterable.empty();
 
@@ -109,7 +118,7 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
     }
 
     private boolean mayForwardPreviousBufferedRecords(final int key) {
-        return latestKeys != -1 && latestKeys != key && hasRecordsBuffered();
+        return lastObservedKey != -1 && lastObservedKey != key && hasRecordsBuffered();
     }
 
     private boolean hasRecordsBuffered() {

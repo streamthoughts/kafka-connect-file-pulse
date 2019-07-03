@@ -46,6 +46,11 @@ public class RecordsIterable<T> implements Iterable<T> {
         return new RecordsIterable<>(Collections.emptyList());
     }
 
+    @SafeVarargs
+    public static <T> RecordsIterable<T> of(final T... records) {
+        return new RecordsIterable<>(records);
+    }
+
     /**
      * Creates a new {@link RecordsIterable} instance.
      * @param records   the records.

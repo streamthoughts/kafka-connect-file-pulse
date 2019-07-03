@@ -19,6 +19,8 @@ package io.streamthoughts.kafka.connect.filepulse.reader;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
 
+import java.util.Objects;
+
 /**
  * Simple pair of {@link FileInputData} and {@link FileInputOffset}.
  */
@@ -45,6 +47,20 @@ public class FileInputRecord {
 
     public FileInputData data() {
         return data;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileInputRecord)) return false;
+        FileInputRecord that = (FileInputRecord) o;
+        return Objects.equals(data, that.data) &&
+                Objects.equals(offset, that.offset);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data, offset);
     }
 
     @Override

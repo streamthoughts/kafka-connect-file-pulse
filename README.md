@@ -15,7 +15,7 @@ Connect File Pulse  attends to be a simple solution to deal with those kind of f
 
 Connect File Pulse is largely inspired from functionality provided by both Elasticsearch and Logstash.
 
-## Features
+## Key-Features
 
 * Recursively scan local directories
 * Reading and writing files into Kafka line by line
@@ -23,6 +23,7 @@ Connect File Pulse is largely inspired from functionality provided by both Elast
 * Error handler definition
 * Monitoring files while they are being written into Kafka
 * Plugeable strategies for cleaning completed files
+* At-least-once guarantee
 
 
 ## Getting Started
@@ -39,7 +40,7 @@ cd kafka-connect-file-pulse
 You can build kafka-connect-file-pulse with Maven using standard lifecycle.
 
 ```bash
-mvn clean install -DskipTests
+mvn clean package
 ```
 
 
@@ -166,11 +167,11 @@ docker exec -it connect kafka-avro-console-consumer --topic connect-file-pulse-q
 
 ## Documentation
 
-Documentation for this connector can be found on [GitHub Page](https://streamthoughts.github.io/kafka-connect-file-pulse/)
+If you want to read about using Connect File Pulse, the documentation can be found on [GitHub Page](https://streamthoughts.github.io/kafka-connect-file-pulse/)
 
 ## Contributions
 
-Any feedback, bug reports and PRs are greatly appreciated!
+Any feedback, bug reports and PRs are greatly appreciated! See our [guideline](./CONTRIBUTING.md)
 
 ## Licence
 

@@ -82,7 +82,7 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
     @Override
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData record,
-                                                final boolean hasNext) {
+                                                final boolean hasNext) throws FilterException {
 
         final List<FileInputData> next = new LinkedList<>();
         final String message = record.getFirstValueForField(FileInputData.DEFAULT_MESSAGE_FIELD);

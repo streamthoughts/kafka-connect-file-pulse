@@ -80,7 +80,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
             return new FileInputData(struct);
 
         } catch (Exception e) {
-            throw new ReaderException("Error while reading json data, invalid JSON withMessage.", e);
+            throw new ReaderException("Error while reading json data, invalid JSON message.", e);
         }
 
     }

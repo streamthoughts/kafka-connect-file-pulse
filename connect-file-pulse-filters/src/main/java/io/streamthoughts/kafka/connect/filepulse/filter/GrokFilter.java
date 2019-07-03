@@ -81,7 +81,8 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
      * {@inheritDoc}
      */
     @Override
-    protected RecordsIterable<FileInputData> apply(final FilterContext context, final FileInputData record) {
+    protected RecordsIterable<FileInputData> apply(final FilterContext context,
+                                                   final FileInputData record) throws FilterException {
 
         final String value = record.value().getString(configs.source());
 

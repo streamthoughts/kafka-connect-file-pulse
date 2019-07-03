@@ -65,15 +65,19 @@ public class JSONFilter extends AbstractMergeRecordFilter<JSONFilter> {
 
         if (value == null) return null;
 
-        final FileInputData json = converter.readJson(value);
-
-        if (target != null) {
-            Schema schema = SchemaBuilder.struct().field(target, json.schema()).build();
-            return new RecordsIterable<>(
-                    new FileInputData(new Struct(schema).put(target, json.value()))
-            );
+        try {
+            final FileInputData json = converter.readJson(value);
+            if (target != null) {
+                Schema schema = SchemaBuilder.struct().field(target, json.schema()).build();
+                return RecordsIterable.of(
+                        new FileInputData(new Struct(schema).put(target, json.value()))
+                );
+            }
+            return new RecordsIterable<>(json);
+        } catch (Exception e) {
+            throw new FilterException(e.getLocalizedMessage(), e.getCause());
         }
-        return new RecordsIterable<>(json);
+
     }
 
     /**

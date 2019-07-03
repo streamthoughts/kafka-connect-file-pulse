@@ -58,15 +58,7 @@ public class SplitFilter extends AbstractRecordFilter<SplitFilter> {
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData record,
                                                 final boolean hasNext) throws FilterException {
-        final Struct struct = maySplitFields(record.value());
-        return new RecordsIterable<>(new FileInputData(struct));
-    }
-
-    private Struct maySplitFields(final Struct struct) {
-
-        if (configs.split().isEmpty()) {
-            return struct;
-        }
+        final Struct struct = record.value();
 
         final Schema prevSchema = struct.schema();
         final SchemaBuilder newSchemaBuilder = SchemaUtils.copySchemaBasics(prevSchema);
@@ -75,8 +67,8 @@ public class SplitFilter extends AbstractRecordFilter<SplitFilter> {
             final Field field = prevSchema.field(key);
             if (field != null) {
                 SchemaBuilder optionalArray = SchemaBuilder.array(SchemaBuilder.string())
-                                                           .optional()
-                                                           .defaultValue(null);
+                    .optional()
+                    .defaultValue(null);
                 newSchemaBuilder.field(key, optionalArray);
             }
         }
@@ -100,6 +92,6 @@ public class SplitFilter extends AbstractRecordFilter<SplitFilter> {
             }
         }
 
-        return newStruct;
+        return new RecordsIterable<>(new FileInputData(newStruct));
     }
 }

@@ -18,7 +18,6 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
@@ -26,7 +25,6 @@ import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
-import org.apache.kafka.connect.errors.ConnectException;
 
 import java.util.List;
 import java.util.Map;
@@ -86,7 +84,7 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
     @Override
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData record,
-                                                final boolean hasNext) {
+                                                final boolean hasNext) throws FilterException {
 
         final String source = record.getFirstValueForField(FileInputData.DEFAULT_MESSAGE_FIELD);
 
@@ -103,7 +101,7 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
             final String fieldName = configs.extractColumnName();
             String field = record.getFirstValueForField(fieldName);
             if (field == null) {
-                throw new ConnectException(
+                throw new FilterException(
                     "Can't found field for name '" + fieldName + "' to determine columns names");
             }
             final String[] columns = splitFields(field);
@@ -119,7 +117,7 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
                 }
                 schema = sb.build();
         } else {
-            throw new ConnectException("Can't found valid configuration to determine schema for input data");
+            throw new FilterException("Can't found valid configuration to determine schema for input data");
         }
         return schema;
     }
@@ -131,7 +129,7 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
     private Struct buildStructForFields(final String[] fieldValues, final Schema schema) {
         List<Field> fieldsSchema = schema.fields();
         if (fieldValues.length > fieldsSchema.size()) {
-            throw new ReaderException(
+            throw new FilterException(
                 "Error while reading delimited input row. Too large number of fields (" + fieldValues.length + ")");
         }
         Struct struct = new Struct(schema);

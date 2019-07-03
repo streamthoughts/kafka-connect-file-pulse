@@ -56,7 +56,7 @@ public class ConvertFilter extends AbstractRecordFilter<ConvertFilter> {
     @Override
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData record,
-                                                final boolean hasNext) {
+                                                final boolean hasNext) throws FilterException {
 
         final Field field = record.value().schema().field(config.field());
         if (field != null) {

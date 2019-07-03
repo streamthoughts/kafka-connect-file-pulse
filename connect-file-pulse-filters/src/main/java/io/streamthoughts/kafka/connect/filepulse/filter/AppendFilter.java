@@ -61,7 +61,8 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
      * {@inheritDoc}
      */
     @Override
-    protected RecordsIterable<FileInputData> apply(final FilterContext context, final FileInputData record) {
+    protected RecordsIterable<FileInputData> apply(final FilterContext context,
+                                                   final FileInputData record) throws FilterException {
 
         Struct struct = null;
 

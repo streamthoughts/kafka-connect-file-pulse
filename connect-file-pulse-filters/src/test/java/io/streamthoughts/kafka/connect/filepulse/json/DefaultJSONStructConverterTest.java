@@ -31,7 +31,7 @@ public class DefaultJSONStructConverterTest {
     private JSONStructConverter converter = new DefaultJSONStructConverter();
 
     @Test
-    public void shouldConvertGivenFieldsWithStringType() {
+    public void shouldConvertGivenFieldsWithStringType() throws Exception {
 
         FileInputData output = converter.readJson("{\"field-one\" : \"one\", \"field-two\":\"two\"}");
 
@@ -50,7 +50,7 @@ public class DefaultJSONStructConverterTest {
     }
 
     @Test
-    public void shouldConvertGivenOneFieldWithArrayOfPrimitiveType() {
+    public void shouldConvertGivenOneFieldWithArrayOfPrimitiveType() throws Exception {
 
         FileInputData output = converter.readJson("{\"field-one\" : [\"foo\", \"bar\"]}");
 
@@ -66,7 +66,7 @@ public class DefaultJSONStructConverterTest {
     }
 
     @Test
-    public void shouldConvertGivenFieldsWithNumberType() {
+    public void shouldConvertGivenFieldsWithNumberType() throws Exception {
 
         FileInputData output = converter.readJson("{\"field-int\" : " + Integer.MAX_VALUE + ", " +
                       "\"field-long\":" + Long.MAX_VALUE + ", " +

@@ -57,7 +57,7 @@ public class FailFilter extends AbstractRecordFilter<FailFilter> {
     @Override
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData struct,
-                                                final boolean hasNext) {
+                                                final boolean hasNext) throws FilterException {
         if (condition.apply(context, struct)) {
             final SchemaAndValue value = expression.evaluate(context);
             throw new FilterException(value.value().toString());

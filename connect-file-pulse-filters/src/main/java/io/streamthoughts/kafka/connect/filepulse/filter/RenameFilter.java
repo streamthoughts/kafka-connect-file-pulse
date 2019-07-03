@@ -55,7 +55,7 @@ public class RenameFilter extends AbstractRecordFilter<RenameFilter> {
     @Override
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData record,
-                                                final boolean hasNext) {
+                                                final boolean hasNext) throws FilterException {
 
         if (record.has(configs.field())) {
             Struct renamed = rename(record, record.field(configs.field()), configs.target());

@@ -30,5 +30,5 @@ public interface JSONStructConverter {
      * @param data  the json withMessage to convert to {@link Struct}.
      * @return  a new {@link Struct} instance.
      */
-    FileInputData readJson(final String data);
+    FileInputData readJson(final String data) throws Exception;
 }

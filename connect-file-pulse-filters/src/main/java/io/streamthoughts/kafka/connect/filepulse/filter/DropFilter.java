@@ -37,7 +37,7 @@ public class DropFilter extends AbstractRecordFilter<DropFilter>  {
     @Override
     public RecordsIterable<FileInputData> apply(final FilterContext context,
                                                 final FileInputData struct,
-                                                final boolean hasNext) {
+                                                final boolean hasNext) throws FilterException {
         return condition.apply(context, struct) ? RecordsIterable.empty() : new RecordsIterable<>(struct)  ;
     }
 

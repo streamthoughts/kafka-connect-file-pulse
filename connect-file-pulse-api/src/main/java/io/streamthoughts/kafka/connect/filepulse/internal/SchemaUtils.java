@@ -70,28 +70,58 @@ public class SchemaUtils {
                 continue;
             }
 
-            if (!isOverwrite && !isTypeOf(rightField, Schema.Type.ARRAY)) {
-                Schema.Type rFieldType = rightField.schema().type();
-                Schema.Type lFieldType = leftField.schema().type();
-                if (!lFieldType.equals(rFieldType)) {
-                    throw new DataException(
-                        String.format(
-                            "Cannot merge fields '{}' with different types : {}<>{}",
-                            leftFieldName,
-                            lFieldType,
-                            rFieldType));
-                }
+            if (isOverwrite) {
+                continue; // skip the left field
+            }
+
+            checkIfFieldsCanBeMerged(leftField, rightField);
+
+            if (isTypeOf(leftField, Schema.Type.ARRAY)) {
+                builder.field(leftFieldName, leftField.schema());
+            } else {
                 final SchemaBuilder optionalArray = SchemaBuilder
                         .array(leftField.schema())
                         .optional();
                 builder.field(leftFieldName, optionalArray);
-                rightFields.remove(leftFieldName);
             }
+            rightFields.remove(leftFieldName);
         }
         // Copy all remaining fields from right struct.
         for (Field f : rightFields.values()) {
             Schema schema = f.schema();
             builder.field(f.name(), schema);
+        }
+    }
+
+    private static void checkIfFieldsCanBeMerged(final Field left, final Field right) {
+        final String name = left.name();
+        if (isTypeOf(left, Schema.Type.ARRAY)) {
+            Schema valueSchemaLeft = left.schema().valueSchema();
+            if (isTypeOf(right, Schema.Type.ARRAY)) {
+                Schema valueSchemaRight = right.schema().valueSchema();
+                throwIfTypesAreNotEqual(name, valueSchemaLeft, valueSchemaRight,
+                        "Cannot merge fields '%s' of type array with different value types : Array[%s]<>Array[%s]");
+            } else {
+                throwIfTypesAreNotEqual(name, valueSchemaLeft, right.schema(),
+                        "Cannot merge fields '%s' with different array value types : Array[%s]<>%s");
+            }
+        } else if (isTypeOf(right, Schema.Type.ARRAY)) {
+            Schema valueSchemaRight = right.schema().valueSchema();
+            throwIfTypesAreNotEqual(name, left.schema(), valueSchemaRight,
+                    "Cannot merge fields '%s' with different array value types : %s<>Array[%s]");
+        // neither left or right is of type array
+        } else {
+            throwIfTypesAreNotEqual(name, left.schema(), right.schema(),
+                    "Cannot merge fields '%s' with different types : %s<>%s");
+        }
+    }
+
+    private static void throwIfTypesAreNotEqual(final String field,
+                                                final Schema s1,
+                                                final Schema s2,
+                                                final String message) {
+        if (!s1.type().equals(s2.type())) {
+            throw new DataException(String.format(message, field, s1.type(), s2.type()));
         }
     }
 

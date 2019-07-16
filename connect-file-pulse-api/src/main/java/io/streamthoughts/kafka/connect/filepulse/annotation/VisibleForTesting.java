@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.data;
+package io.streamthoughts.kafka.connect.filepulse.annotation;
 
-import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
-public final class DataException extends ConnectFilePulseException {
-
-    /**
-     * Creates a new {@link DataException} instance.
-     *
-     * @param message the error withMessage.
-     */
-    public DataException(final String message) {
-        super(message);
-    }
-}
+/**
+ * Annotates a function, field, constructor, or entire type that
+ * is more widely visible than otherwise necessary, only for use in test code.
+ */
+@Documented
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR })
+public @interface VisibleForTesting {}

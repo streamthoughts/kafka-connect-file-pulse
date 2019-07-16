@@ -18,9 +18,9 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 
 import com.jsoniter.annotation.JsonCreator;
 import com.jsoniter.annotation.JsonProperty;
+import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
 import io.streamthoughts.kafka.connect.filepulse.internal.Network;
 import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
-import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.header.ConnectHeaders;
 
 import java.io.File;
@@ -62,7 +62,7 @@ public class SourceMetadata implements Comparable<SourceMetadata> {
                 IOUtils.getUnixInode(file).orElse(null),
                 hash);
         } catch (IOException e) {
-            throw new ConnectException(
+            throw new ConnectFilePulseException(
                 "Error while computing CRC32 hash for file : " + file.getName() + " - " + e.getLocalizedMessage());
         }
     }

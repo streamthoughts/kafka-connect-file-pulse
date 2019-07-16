@@ -16,6 +16,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
@@ -34,7 +35,6 @@ import java.util.stream.Collectors;
 import static io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils.copySchemaBasics;
 import static io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils.groupFieldByName;
 import static io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils.isTypeOf;
-
 
 public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> extends AbstractRecordFilter<T> {
     
@@ -58,7 +58,10 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> 
 
         final List<FileInputData> merged = filtered
                 .stream()
-                .map(r -> merge(record, r, overwrite()))
+                .map(r -> {
+                    Struct struct = merge(record.value(), r.value(), overwrite());
+                    return new FileInputData(struct);
+                })
                 .collect(Collectors.toList());
         return new RecordsIterable<>(merged);
     }
@@ -82,26 +85,34 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> 
     /**
      * Straightforward method to merge two connect {@link Struct} instances.
      *
-     * @param prevStruct
-     * @param newStruct
-     * @return a new {@link FileInputRecord} instance.
+     * @param left   the left {@link Struct} to be merged.
+     * @param right  the right {@link Struct} to be merged.
+     *
+     * @return a new {@link Struct} instance.
      */
-    FileInputData merge(final FileInputData prevStruct,
-                        final FileInputData newStruct,
+    @VisibleForTesting
+    static Struct merge(final Struct left,
+                        final Struct right,
                         final Set<String> overwrite) {
 
-        final Schema leftSchema = prevStruct.schema();
-        final Schema rightSchema = newStruct.schema();
+        final Schema leftSchema = left.schema();
+        final Schema rightSchema = right.schema();
 
         SchemaBuilder builder = copySchemaBasics(leftSchema);
         SchemaUtils.merge(leftSchema, rightSchema, builder, overwrite);
 
         Struct struct = new Struct(builder.build());
-        copyValues(prevStruct.value(), struct);
-        copyValues(newStruct.value(), struct);
-        return new FileInputData(struct);
+        copyValues(left, struct);
+        copyValues(right, struct);
+        return struct;
     }
 
+    /**
+     * Copies the source connect {@link Struct} fields into the specified target.
+     *
+     * @param source    the source struct to copy.
+     * @param target    the target struct.
+     */
     private static void copyValues(final Struct source, final Struct target) {
         Map<String, Field> sourceFieldByName = groupFieldByName(source.schema().fields());
         Map<String, Field> targetFieldByName = groupFieldByName(target.schema().fields());
@@ -111,7 +122,9 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> 
 
             if (!targetFieldByName.containsKey(name)) {
                 // should not happen.
-                throw new FilterException("Cannot merge struct objects - no field '" + name + "' defined in target struct schema.");
+                throw new FilterException(
+                        String.format("Cannot merge struct objects - no field '%s' defined in target struct schema.", name)
+                );
             }
             Field fieldTarget = targetFieldByName.get(name);
             Object value = source.getWithoutDefault(name);

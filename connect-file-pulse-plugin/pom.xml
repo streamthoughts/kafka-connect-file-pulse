@@ -27,6 +27,10 @@
         </license>
     </licenses>
 
+    <properties>
+        <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
+    </properties>
+
     <build>
         <resources>
             <resource>

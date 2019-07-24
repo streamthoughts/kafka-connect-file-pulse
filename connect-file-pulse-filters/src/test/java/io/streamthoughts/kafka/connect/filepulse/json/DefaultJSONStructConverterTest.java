@@ -16,9 +16,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.json;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.Struct;
+import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,17 +33,16 @@ public class DefaultJSONStructConverterTest {
     @Test
     public void shouldConvertGivenFieldsWithStringType() throws Exception {
 
-        FileInputData output = converter.readJson("{\"field-one\" : \"one\", \"field-two\":\"two\"}");
+        TypedStruct struct = converter.readJson("{\"field-one\" : \"one\", \"field-two\":\"two\"}");
 
-        Assert.assertNotNull(output);
-        Struct struct = output.value();
+        Assert.assertNotNull(struct);
 
-        Schema schema = struct.schema();
+        StructSchema schema = struct.schema();
         assertEquals(2, schema.fields().size());
         assertNotNull(schema.field("field-one"));
-        assertEquals(Schema.Type.STRING, schema.field("field-one").schema().type());
+        assertEquals(Type.STRING, schema.field("field-one").schema().type());
         assertNotNull(schema.field("field-two"));
-        assertEquals(Schema.Type.STRING, schema.field("field-two").schema().type());
+        assertEquals(Type.STRING, schema.field("field-two").schema().type());
 
         assertEquals("one", struct.getString("field-one"));
         assertEquals("two", struct.getString("field-two"));
@@ -52,15 +51,14 @@ public class DefaultJSONStructConverterTest {
     @Test
     public void shouldConvertGivenOneFieldWithArrayOfPrimitiveType() throws Exception {
 
-        FileInputData output = converter.readJson("{\"field-one\" : [\"foo\", \"bar\"]}");
+        TypedStruct struct = converter.readJson("{\"field-one\" : [\"foo\", \"bar\"]}");
 
-        Assert.assertNotNull(output);
-        Struct struct = output.value();
+        Assert.assertNotNull(struct);
 
-        Schema schema = struct.schema();
+        StructSchema schema = struct.schema();
         assertEquals(1, schema.fields().size());
         assertNotNull(schema.field("field-one"));
-        assertEquals(Schema.Type.ARRAY, schema.field("field-one").schema().type());
+        assertEquals(Type.ARRAY, schema.field("field-one").schema().type());
 
         assertEquals(Arrays.asList("foo", "bar"), struct.getArray("field-one"));
     }
@@ -68,32 +66,31 @@ public class DefaultJSONStructConverterTest {
     @Test
     public void shouldConvertGivenFieldsWithNumberType() throws Exception {
 
-        FileInputData output = converter.readJson("{\"field-int\" : " + Integer.MAX_VALUE + ", " +
+        TypedStruct struct = converter.readJson("{\"field-int\" : " + Integer.MAX_VALUE + ", " +
                       "\"field-long\":" + Long.MAX_VALUE + ", " +
                       "\"field-double\":" + Double.MAX_VALUE + "," +
                       "\"field-float\":" + Float.MAX_VALUE + "}");
 
-        Assert.assertNotNull(output);
-        Struct struct = output.value();
+        Assert.assertNotNull(struct);
 
-        Schema schema = struct.schema();
+        StructSchema schema = struct.schema();
         assertEquals(4, schema.fields().size());
         assertNotNull(schema.field("field-int"));
-        assertEquals(Schema.Type.INT64, schema.field("field-int").schema().type());
+        assertEquals(Type.LONG, schema.field("field-int").type());
 
         assertNotNull(schema.field("field-long"));
-        assertEquals(Schema.Type.INT64, schema.field("field-long").schema().type());
+        assertEquals(Type.LONG, schema.field("field-long").type());
 
         assertNotNull(schema.field("field-float"));
-        assertEquals(Schema.Type.FLOAT64, schema.field("field-float").schema().type());
+        assertEquals(Type.DOUBLE, schema.field("field-float").type());
 
         assertNotNull(schema.field("field-double"));
-        assertEquals(Schema.Type.FLOAT64, schema.field("field-double").schema().type());
+        assertEquals(Type.DOUBLE, schema.field("field-double").type());
 
-        assertEquals(Integer.MAX_VALUE, struct.getInt64("field-int").intValue());
-        assertEquals(Long.MAX_VALUE, struct.getInt64("field-long").longValue());
-        assertEquals(Double.MAX_VALUE, struct.getFloat64("field-double"), 0.0);
-        assertEquals(Float.MAX_VALUE, struct.getFloat64("field-float").floatValue(), 0.0);
+        assertEquals(Integer.MAX_VALUE, struct.getLong("field-int").intValue());
+        assertEquals(Long.MAX_VALUE, struct.getLong("field-long").longValue());
+        assertEquals(Double.MAX_VALUE, struct.getDouble("field-double"), 0.0);
+        assertEquals(Float.MAX_VALUE, struct.getDouble("field-float").floatValue(), 0.0);
 
     }
 

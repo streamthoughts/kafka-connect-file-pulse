@@ -18,19 +18,19 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import java.util.Objects;
 
-public class ExceptionContext {
+public class FilterError {
 
     private final String message;
 
     private final String filter;
 
     /**
-     * Creates a new {@link ExceptionContext} instance.
+     * Creates a new {@link FilterError} instance.
      *
-     * @param error     the exception message message.
+     * @param error     the error message message.
      * @param filter    the filter name that failed.
      */
-    public ExceptionContext(final String error, final String filter) {
+    FilterError(final String error, final String filter) {
         Objects.requireNonNull(error, "The message message");
         Objects.requireNonNull(filter, "The filter message");
         this.message = error;
@@ -47,9 +47,9 @@ public class ExceptionContext {
 
     @Override
     public String toString() {
-        return "ExceptionContext{" +
-                "message='" + message + '\'' +
-                ", filter='" + filter + '\'' +
-                '}';
+        return "[" +
+                "message=" + message +
+                ", filter=" + filter +
+                ']';
     }
 }

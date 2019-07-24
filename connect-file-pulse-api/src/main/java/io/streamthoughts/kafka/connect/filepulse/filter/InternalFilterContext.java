@@ -16,15 +16,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.expression.SimpleEvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.internal.Environment;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
+import org.apache.kafka.connect.header.ConnectHeaders;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,189 +29,65 @@ import java.util.Objects;
 /**
  * Simple {@link FilterContext} implementation class.
  */
-public class InternalFilterContext extends SimpleEvaluationContext implements FilterContext {
+public class InternalFilterContext extends Environment implements FilterContext {
 
-    private static final String FIELD_FILE = "$file";
-    private static final String FIELD_RECORD_OFFSET = "$offset";
-    private static final String FIELD_RECORD_LINE = "$row";
-    private static final String FIELD_RECORD_DATA = "$value";
-
-    private static final String FIELD_FILE_NAME = "name";
-    private static final String FIELD_FILE_HASH = "hash";
-    private static final String FIELD_FILE_LAST_MODIFIED = "lastModified";
-    private static final String FIELD_FILE_ABSOLUTE_PATH = "absPath";
-    private static final String FIELD_FILE_PATH = "path";
-    private static final String FIELD_FILE_SIZE = "size";
-
-    private static final String EXCEPTION_FIELD = "$error";
-    private static final String EXCEPTION_MESSAGE_FIELD = "message";
-    private static final String EXCEPTION_FILTER_FIELD = "filter";
-
-    private static final Schema EXCEPTION_SCHEMA = SchemaBuilder
-            .struct()
-            .field(EXCEPTION_MESSAGE_FIELD, Schema.STRING_SCHEMA).optional()
-            .field(EXCEPTION_FILTER_FIELD, Schema.STRING_SCHEMA).optional()
-            .build();
-
-    private static final Schema FILE_SCHEMA = SchemaBuilder
-            .struct()
-            .field(FIELD_FILE_NAME, Schema.STRING_SCHEMA).optional()
-            .field(FIELD_FILE_HASH, Schema.INT64_SCHEMA).optional()
-            .field(FIELD_FILE_LAST_MODIFIED, Schema.INT64_SCHEMA).optional()
-            .field(FIELD_FILE_ABSOLUTE_PATH, Schema.STRING_SCHEMA).optional()
-            .field(FIELD_FILE_PATH, Schema.STRING_SCHEMA).optional()
-            .field(FIELD_FILE_SIZE, Schema.INT64_SCHEMA).optional()
-            .build();
-
-    protected long size;
+    private ConnectHeaders headers;
 
     private SourceMetadata metadata;
 
-    private ExceptionContext exception;
+    private FilterError exception;
 
-    private FileInputOffset offset;
+    private FileRecordOffset offset;
 
+    private String topic;
 
-    /**
-     * Creates a new {@link InternalFilterContext} for the specified arguments.
-     *
-     * @param metadata  the source metadata
-     * @param offset    the record offset
-     *
-     * @return a new {@link InternalFilterContext} instance.
-     */
-    public static InternalFilterContext with(final SourceMetadata metadata,
-                                             final FileInputOffset offset) {
-        return new InternalFilterContext(metadata, offset, null, new HashMap<>(), null);
-    }
+    private Integer partition;
 
-    /**
-     * Creates a new {@link InternalFilterContext} for the specified arguments.
-     *
-     * @param metadata  the source metadata
-     * @param offset    the record offset
-     * @param data      the record data
-     *
-     * @return a new {@link InternalFilterContext} instance.
-     */
-    public static InternalFilterContext with(final SourceMetadata metadata,
-                                             final FileInputOffset offset,
-                                             final FileInputData data) {
-        return new InternalFilterContext(metadata, offset, data, new HashMap<>(), null);
-    }
+    private long timestamp;
 
-    /**
-     * Creates a new {@link InternalFilterContext} for the specified arguments.
-     *
-     * @param metadata  the source metadata
-     * @param offset    the record offset
-     * @param data      the record data
-     * @param variables the context variables
-     *
-     *
-     * @return a new {@link InternalFilterContext} instance.
-     */
-    public static InternalFilterContext with(final SourceMetadata metadata,
-                                             final FileInputOffset offset,
-                                             final FileInputData data,
-                                             final Map<String, SchemaAndValue> variables) {
-        return new InternalFilterContext(metadata, offset, data, variables, null);
-    }
+    private TypedStruct value;
 
-    /**
-     * Creates a new {@link InternalFilterContext} for the specified arguments.
-     *
-     * @param metadata  the source metadata
-     * @param offset    the record offset
-     * @param data      the record data
-     * @param variables the context variables
-     * @param exception the exception throw by prefious filter
-     *
-     * @return a new {@link InternalFilterContext} instance.
-     */
-    public static InternalFilterContext with(final SourceMetadata metadata,
-                                             final FileInputOffset offset,
-                                             final FileInputData data,
-                                             final Map<String, SchemaAndValue> variables,
-                                             final ExceptionContext exception) {
-        return new InternalFilterContext(metadata, offset, data, variables, exception);
-    }
+    private String key;
+
+    private Map<String, Object> variables;
 
     /**
      * Creates a new {@link InternalFilterContext} instance.
      *
-     * @param metadata  the source metadata
-     * @param offset    the record offset
-     * @param data      the record data
-     * @param variables the context variables
-     * @param exception the exception throw by prefious filter
+     * @param metadata  the {@link SourceMetadata} instance.
+     * @param offset    the {@link FileRecordOffset} instance.
+     * @param topic     the topic to be used for source-record - may be {@code null}.
+     * @param partition the partition to be used for source-record - may be {@code null}.
+     * @param timestamp the timestamp to be used for source-record - may be {@code null}.
+     * @param key       the key to be used for source-record - may be {@code null}.
+     * @param headers   the headers to be added for source-record - may be {@code null}.
+     * @param exception the record-source target topic (can be {@code null}).
+     * @param variables the variables attached to this context.
      */
-    private InternalFilterContext(final SourceMetadata metadata,
-                                  final FileInputOffset offset,
-                                  final FileInputData data,
-                                  final Map<String, SchemaAndValue> variables,
-                                  final ExceptionContext exception) {
-        super(variables);
-        setSourceMetadata(Objects.requireNonNull(metadata, "metadata cannot be null"));
-        setSourceOffset(Objects.requireNonNull(offset, "offset cannot be null"));
-        if (data != null) setData(data);
-        if (exception != null) setException(exception);
-    }
-
-    private void setSourceMetadata(final SourceMetadata metadata) {
+    public InternalFilterContext(final SourceMetadata metadata,
+                                 final FileRecordOffset offset,
+                                 final String topic,
+                                 final Integer partition,
+                                 final Long timestamp,
+                                 final String key,
+                                 final ConnectHeaders headers,
+                                 final FilterError exception,
+                                 final Map<String, Object> variables) {
+        Objects.requireNonNull(metadata, "metadata can't be null");
+        Objects.requireNonNull(offset, "offset can't be null");
         this.metadata = metadata;
-        Struct struct = new Struct(FILE_SCHEMA)
-                .put(FIELD_FILE_NAME, metadata.name())
-                .put(FIELD_FILE_HASH, metadata.hash())
-                .put(FIELD_FILE_LAST_MODIFIED, metadata.lastModified())
-                .put(FIELD_FILE_ABSOLUTE_PATH, metadata.absolutePath())
-                .put(FIELD_FILE_PATH, metadata.path())
-                .put(FIELD_FILE_SIZE, metadata.size());
-        set(FIELD_FILE, new SchemaAndValue(FILE_SCHEMA, struct));
-    }
-
-    private void setSourceOffset(final FileInputOffset offset) {
         this.offset = offset;
-        set(FIELD_RECORD_OFFSET, new SchemaAndValue(SchemaBuilder.int64(), offset.startPosition()));
-        set(FIELD_RECORD_LINE, new SchemaAndValue(SchemaBuilder.int64(), offset.rows()));
-    }
-
-    private void setData(final FileInputData data) {
-        set(FIELD_RECORD_DATA, new SchemaAndValue(data.schema(), data.value()));
-    }
-
-    private void setException(final ExceptionContext exception) {
+        this.headers = headers;
         this.exception = exception;
-        Struct struct = new Struct(EXCEPTION_SCHEMA)
-                .put(EXCEPTION_MESSAGE_FIELD, exception.message())
-                .put(EXCEPTION_FILTER_FIELD, exception.filter());
-        set(EXCEPTION_FIELD, new SchemaAndValue(EXCEPTION_SCHEMA, struct));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean has(final String name) {
-        return super.has(name) ||
-                (variables.containsKey(FIELD_RECORD_DATA) &&
-                 variables.get(FIELD_RECORD_DATA).schema().field(name) != null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SchemaAndValue get(final String name) {
-        if (super.has(name)) {
-            return variables.get(name);
+        this.topic = topic;
+        this.partition = partition;
+        this.timestamp = timestamp;
+        this.key = key;
+        if (variables != null) {
+            this.variables = new HashMap<>(variables);
+        } else {
+            this.variables = new HashMap<>();
         }
-        else if (has(name) ){
-            final SchemaAndValue sv = variables.get(FIELD_RECORD_DATA);
-            final Field field = sv.schema().field(name);
-            return new SchemaAndValue(field.schema(), ((Struct)sv.value()).get(name));
-        }
-        return null;
     }
 
     /**
@@ -230,7 +102,7 @@ public class InternalFilterContext extends SimpleEvaluationContext implements Fi
      * {@inheritDoc}
      */
     @Override
-    public FileInputOffset offset() {
+    public FileRecordOffset offset() {
         return offset;
     }
 
@@ -238,8 +110,76 @@ public class InternalFilterContext extends SimpleEvaluationContext implements Fi
      * {@inheritDoc}
      */
     @Override
-    public ExceptionContext exception() {
+    public ConnectHeaders headers() {
+        return headers;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer partition() {
+        return partition;
+    }
+
+    public void setPartition(final Integer partition) {
+        this.partition = partition;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String topic() {
+        return topic;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String key() {
+        return key;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long timestamp() {
+        return timestamp;
+    }
+
+    public void setKey(final String key) {
+        this.key = key;
+    }
+
+    public TypedStruct value() {
+        return value;
+    }
+
+    public void setValue(final TypedStruct value){
+        this.value = value;
+    }
+
+    public void setTopic(final String topic) {
+        this.topic = topic;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FilterError error() {
         return exception;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Object> variables() {
+        return variables;
     }
 }
 

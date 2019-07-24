@@ -16,22 +16,28 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.TypedExpressionFunction;
 
 /**
  * Simple function to lowercase a string field.
  */
-public class Lowercase implements ExpressionFunction<Arguments> {
+public class Lowercase extends TypedExpressionFunction<String, Arguments> {
+
+    /**
+     * Creates a new {@link Lowercase} instance.
+     */
+    public Lowercase() {
+        super(Type.STRING);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments prepare(TypeValue[] args) {
+    public Arguments prepare(final TypedValue[] args) {
         return Arguments.empty();
     }
 
@@ -39,14 +45,8 @@ public class Lowercase implements ExpressionFunction<Arguments> {
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final SchemaAndValue value) {
-        return value.schema().type().equals(Schema.Type.STRING);
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SchemaAndValue apply(final SchemaAndValue field, final Arguments args) {
-        return new SchemaAndValue(Schema.STRING_SCHEMA, ((String) field.value()).toLowerCase());
+    public TypedValue apply(final TypedValue field, final Arguments args) {
+        final String value = field.value();
+        return TypedValue.string(value.toLowerCase());
     }
 }

@@ -16,7 +16,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -56,7 +56,7 @@ public class RowFileInputReader implements FileInputReader {
      * {@inheritDoc}
      */
     @Override
-    public RowFileInputIterator newIterator(final FileInputContext context) {
+    public RowFileInputIterator newIterator(final FileContext context) {
         final RowFileInputIterator iterator = RowFileInputIterator.newBuilder()
                 .withContext(context)
                 .withCharset(configs.charset())

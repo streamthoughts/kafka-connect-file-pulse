@@ -16,8 +16,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression;
 
-import org.apache.kafka.connect.data.SchemaAndValue;
-
 public interface Expression {
 
     /**
@@ -26,7 +24,17 @@ public interface Expression {
      * @param context   the expression context.
      * @return          the object resulting from the expression evaluation.
      */
-    SchemaAndValue evaluate(final EvaluationContext context);
+    Object readValue(final EvaluationContext context);
+
+    /**
+     * Evaluates the variables defined into the given context.
+     *
+     * @param context   the expression context.
+     * @return          the object resulting from the expression evaluation.
+     */
+    <T> T readValue(final EvaluationContext context, final Class<T> expectedType);
+
+    void writeValue(final Object value, final EvaluationContext context);
 
     /**
      * Returns the originals string expression.

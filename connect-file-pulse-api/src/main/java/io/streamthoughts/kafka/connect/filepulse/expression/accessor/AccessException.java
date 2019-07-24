@@ -22,7 +22,8 @@ public class AccessException extends ExpressionException {
 
     /**
      * Creates a new {@link AccessException} instance.
-     * @param message
+     *
+     * @param message   the cause message.
      */
     public AccessException(final String message) {
         super(message);

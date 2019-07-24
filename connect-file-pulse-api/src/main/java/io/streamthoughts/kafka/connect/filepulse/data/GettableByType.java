@@ -32,15 +32,6 @@ public interface GettableByType {
      */
     <K, V> Map<K, V> getMap() throws DataException;
 
-
-    /**
-     * Returns the inner object without any type conversion.
-     *
-     * @param <T> the object-type
-     * @return  the object of type T.
-     */
-    <T> T get();
-
     /**
      * Returns this value content as a collection.
      *
@@ -106,12 +97,19 @@ public interface GettableByType {
      */
     Date getDate() throws DataException;
 
-
     /**
-     * Returns this content as a withMessage.
+     * Returns this content as a string.
      *
-     * @return {@code String} value.
+     * @return {@code string} value.
      * @throws DataException if <code>this</code> cannot be convert to {@link String}.
      */
     String getString() throws DataException;
+
+    /**
+     * Returns this content as a struct.
+     *
+     * @return {@code TypedStruct} value.
+     * @throws DataException if <code>this</code> cannot be convert to {@link TypedStruct}.
+     */
+    TypedStruct getStruct() throws DataException;
 }

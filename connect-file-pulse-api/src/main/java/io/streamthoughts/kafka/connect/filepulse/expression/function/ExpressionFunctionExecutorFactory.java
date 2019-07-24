@@ -16,7 +16,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Converts;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.EndsWith;
@@ -28,7 +28,9 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Lowerc
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Matches;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Nlv;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Length;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.ReplaceAll;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.StartsWith;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Trim;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Uppercase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,7 @@ public class ExpressionFunctionExecutorFactory {
         INSTANCE = new ExpressionFunctionExecutorFactory();
     }
 
-    private final Map<String, ExpressionFunction> functions = new HashMap<>();
+    private final Map<String, ExpressionFunction<?>> functions = new HashMap<>();
 
 
     public static ExpressionFunctionExecutorFactory getInstance() {
@@ -58,6 +60,7 @@ public class ExpressionFunctionExecutorFactory {
      * Creates a new {@link ExpressionFunctionExecutorFactory} instance.
      */
     private ExpressionFunctionExecutorFactory() {
+        // TODO function registration is hard-coded
         register(new Lowercase());
         register(new Uppercase());
         register(new Converts());
@@ -70,9 +73,12 @@ public class ExpressionFunctionExecutorFactory {
         register(new Matches());
         register(new Exists());
         register(new Equals());
+        register(new Trim());
+        register(new ReplaceAll());
     }
 
-    public ExpressionFunctionExecutor make(final String functionName, final TypeValue[] arguments) {
+    @SuppressWarnings("unchecked")
+    public ExpressionFunctionExecutor make(final String functionName, final TypedValue[] arguments) {
         Objects.requireNonNull(functionName, "functionName cannot be null");
         boolean exists = functions.containsKey(functionName);
         if (!exists) {
@@ -90,7 +96,7 @@ public class ExpressionFunctionExecutorFactory {
         return new ExpressionFunctionExecutor(functionName, function, prepared);
     }
 
-    private void register(final ExpressionFunction function) {
+    private void register(final ExpressionFunction<?> function) {
         LOG.info("Registered expression function '" + function.name() + "'");
         functions.put(function.name(), function);
     }

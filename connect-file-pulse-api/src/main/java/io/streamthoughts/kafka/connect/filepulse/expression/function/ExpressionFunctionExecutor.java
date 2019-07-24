@@ -16,8 +16,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
-import org.apache.kafka.connect.data.SchemaAndValue;
 
 import java.util.Objects;
 
@@ -47,16 +47,17 @@ public class ExpressionFunctionExecutor {
         this.arguments = arguments;
     }
 
-    public SchemaAndValue execute(final SchemaAndValue record) {
+    public TypedValue execute(final TypedValue record) {
         if (function.accept(record)) {
             return function.apply(record, arguments);
         } else {
             throw new ExpressionException(
                 String.format(
-                    "Cannot applied method '%s' on record with schema=%s, value=%s",
+                    "Cannot applied method '%s' on record of type %s : %s",
                     name,
-                    record.schema(),
-                    record.value()));
+                    record.getClass(),
+                    record)
+            );
         }
 
     }

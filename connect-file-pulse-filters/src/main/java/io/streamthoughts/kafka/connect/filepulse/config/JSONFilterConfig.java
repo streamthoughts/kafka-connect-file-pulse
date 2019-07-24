@@ -26,7 +26,7 @@ import java.util.Set;
 public class JSONFilterConfig extends CommonFilterConfig {
 
     public static final String JSON_TARGET_CONFIG    = "target";
-    public static final String JSON_TARGET_DOC       = "The target field to put the parsed JSON data";
+    public static final String JSON_TARGET_DOC       = "The target field to put the parsed JSON value";
 
     /**
      * Creates a new {@link JSONFilterConfig} instance.

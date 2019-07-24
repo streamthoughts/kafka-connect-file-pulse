@@ -17,22 +17,22 @@
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 
 import java.util.Iterator;
 
 /**
  * Default interface to iterate over an input file.
  *
- * @param <T> type of data.
+ * @param <T> type of value.
  */
 public interface FileInputIterator<T> extends Iterator<RecordsIterable<T>> {
 
     /**
      * Gets the iterator context.
-     * @return  a {@link FileInputContext} instance.
+     * @return  a {@link FileContext} instance.
      */
-    FileInputContext context();
+    FileContext context();
 
     /**
      * Seeks iterator to the specified startPosition.

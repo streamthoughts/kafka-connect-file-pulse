@@ -29,6 +29,7 @@
 
     <properties>
         <org.jruby.joni.version>2.1.25</org.jruby.joni.version>
+        <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
     </properties>
 
     <dependencies>

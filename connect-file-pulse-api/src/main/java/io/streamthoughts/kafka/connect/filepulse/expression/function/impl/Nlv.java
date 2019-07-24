@@ -16,13 +16,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import org.apache.kafka.connect.data.SchemaAndValue;
 
 /**
  * Replace a null value with a non-null value.
@@ -35,7 +33,7 @@ public class Nlv implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypeValue[] args) {
+    public SimpleArguments prepare(final TypedValue[] args) {
         if (args.length < 1) {
             return new SimpleArguments(new MissingArgumentValue(DEFAULT_ARG));
         }
@@ -46,11 +44,7 @@ public class Nlv implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue apply(final SchemaAndValue data, final SimpleArguments args) {
-        if (data.value() == null) {
-            Object defaultVal = args.valueOf(DEFAULT_ARG);
-            return new SchemaAndValue(data.schema(), Type.fromSchemaType(data.schema().type()).convert(defaultVal));
-        }
-        return data;
+    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
+        return field.isNull() ? args.valueOf(DEFAULT_ARG) : field;
     }
 }

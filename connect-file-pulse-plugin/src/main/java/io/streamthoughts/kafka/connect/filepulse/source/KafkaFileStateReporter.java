@@ -72,7 +72,7 @@ public class KafkaFileStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onScheduled(final FileInputContext context) {
+    public void onScheduled(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Scheduling source file '{}'", context.metadata());
         notify(context.metadata(), context.offset(), SourceStatus.SCHEDULED);
@@ -82,7 +82,7 @@ public class KafkaFileStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onInvalid(final FileInputContext context) {
+    public void onInvalid(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         notify(context.metadata(), context.offset(), SourceStatus.INVALID);
     }
@@ -91,7 +91,7 @@ public class KafkaFileStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onStart(final FileInputContext context) {
+    public void onStart(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Starting to precess source file '{}'", context.metadata());
         notify(context.metadata(), context.offset(), SourceStatus.STARTED);
@@ -101,7 +101,7 @@ public class KafkaFileStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onCompleted(final FileInputContext context) {
+    public void onCompleted(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Completed source file '{}'", context.metadata());
         notify(context.metadata(), context.offset(), SourceStatus.COMPLETED);
@@ -111,7 +111,7 @@ public class KafkaFileStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onFailure(final FileInputContext context, final Throwable t) {
+    public void onFailure(final FileContext context, final Throwable t) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.error("Error while processing source file '{}'", context.metadata(), t);
         notify(context.metadata(), context.offset(), SourceStatus.FAILED);

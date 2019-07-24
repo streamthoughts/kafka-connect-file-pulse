@@ -18,6 +18,7 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,6 +26,13 @@ import java.util.Optional;
 public class SimpleArguments implements Arguments {
 
     private final List<ArgumentValue> arguments;
+
+    /**
+     * Creates a new {@link SimpleArguments} instance.
+     */
+    public SimpleArguments() {
+        this(new LinkedList<>());
+    }
 
     /**
      * Creates a new {@link SimpleArguments} instance.
@@ -38,9 +46,15 @@ public class SimpleArguments implements Arguments {
     /**
      * Creates a new {@link SimpleArguments} instance.
      * @param arguments the list of arguments.
+     *
      */
     public SimpleArguments(final List<ArgumentValue> arguments) {
         this.arguments = arguments;
+    }
+
+    public SimpleArguments withArg(final ArgumentValue argument) {
+        arguments.add(argument);
+        return this;
     }
 
     /**

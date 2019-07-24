@@ -276,11 +276,11 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
                         }
                     }
                 } else {
-                    LOG.trace("Discarding state update data - not belong to group {} : {}", groupId,
+                    LOG.trace("Discarding state update value - not belong to group {} : {}", groupId,
                             record.key());
                 }
             } else {
-                LOG.warn("Discarding state update data with invalid key : {}", record.key());
+                LOG.warn("Discarding state update value with invalid key : {}", record.key());
             }
         }
     }

@@ -17,11 +17,7 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.RenameFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,13 +25,10 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RenameFilterTest {
 
     private RenameFilter filter;
-
-    private FilterContext context;
 
     private Map<String, String> configs;
 
@@ -43,8 +36,6 @@ public class RenameFilterTest {
     public void setUp() {
         filter = new RenameFilter();
         configs = new HashMap<>();
-        SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
-        context = InternalFilterContext.with(metadata, FileInputOffset.empty());
     }
 
     @Test
@@ -54,18 +45,13 @@ public class RenameFilterTest {
         configs.put(RenameFilterConfig.RENAME_TARGET_CONFIG, "bar");
         filter.configure(configs);
 
-        SchemaBuilder schema = SchemaBuilder.struct().field("foo", SchemaBuilder.string());
-        Struct struct = new Struct(schema).put("foo", "dummy-value");
-        FileInputData record = new FileInputData(struct);
-        List<Struct> results = this.filter.apply(null, record, false)
-                .stream()
-                .map(o -> (Struct) o.value())
-                .collect(Collectors.toList());
+        TypedStruct record = new TypedStruct().put("foo", "dummy-value");
+        List<TypedStruct> results = this.filter.apply(null, record, false).collect();
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
 
-        Struct result = results.get(0);
+        TypedStruct result = results.get(0);
         Assert.assertEquals("dummy-value", result.getString("bar"));
     }
 }

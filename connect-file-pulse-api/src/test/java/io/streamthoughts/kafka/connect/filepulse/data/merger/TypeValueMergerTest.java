@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.filter;
+package io.streamthoughts.kafka.connect.filepulse.data.merger;
 
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-public class AbstractMergeRecordFilterTest {
+public class TypeValueMergerTest {
 
     private static final String FIELD_VALUE_A = "a";
     private static final String FIELD_VALUE_B = "b";
@@ -35,15 +31,17 @@ public class AbstractMergeRecordFilterTest {
     private static final String VALUE_A = "value-a";
     private static final String VALUE_B = "value-b";
 
+    private final TypeValueMerger merger = new DefaultTypeValueMerger();
+
     @Test
     public void shouldMergeStructGivenTwoFieldsWithDifferentName() {
-        final Struct structLeft = new Struct(buildSchemaWithStringFields(FIELD_VALUE_A))
+        final TypedStruct structLeft = new TypedStruct()
                 .put(FIELD_VALUE_A, VALUE_A);
 
-        final Struct structRight = new Struct(buildSchemaWithStringFields(FIELD_VALUE_B))
+        final TypedStruct structRight = new TypedStruct()
                 .put(FIELD_VALUE_B, VALUE_B);
 
-        final Struct merged = AbstractMergeRecordFilter.merge(structLeft, structRight, Collections.emptySet());
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
 
         assertNotNull(merged);
 
@@ -53,13 +51,13 @@ public class AbstractMergeRecordFilterTest {
 
     @Test
     public void shouldMergeStructGivenTwoFieldsWithDifferentTypeGivenOverride() {
-        final Struct structLeft = new Struct(buildSchemaWithStringFields(FIELD_VALUE_A))
+        final TypedStruct structLeft = new TypedStruct()
                 .put(FIELD_VALUE_A, VALUE_A);
 
-        final Struct structRight = new Struct(buildSchemaWithStringFields(FIELD_VALUE_A))
+        final TypedStruct structRight = new TypedStruct()
                 .put(FIELD_VALUE_A, VALUE_B);
 
-        final Struct merged = AbstractMergeRecordFilter.merge(structLeft, structRight, Collections.singleton(FIELD_VALUE_A));
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.singleton(FIELD_VALUE_A));
 
         assertNotNull(merged);
         assertEquals(VALUE_B,  merged.getString(FIELD_VALUE_A));
@@ -67,13 +65,13 @@ public class AbstractMergeRecordFilterTest {
 
     @Test
     public void shouldMergeStructGivenTwoFieldsWithSameNameIntoArray() {
-        final Struct structLeft = new Struct(buildSchemaWithStringFields(FIELD_VALUE_A))
+        final TypedStruct structLeft = new TypedStruct()
                 .put(FIELD_VALUE_A, VALUE_A);
 
-        final Struct structRight = new Struct(buildSchemaWithStringFields(FIELD_VALUE_A))
+        final TypedStruct structRight = new TypedStruct()
                 .put(FIELD_VALUE_A, VALUE_B);
 
-        final Struct merged = AbstractMergeRecordFilter.merge(structLeft, structRight, Collections.emptySet());
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
 
         assertNotNull(merged);
 
@@ -84,13 +82,13 @@ public class AbstractMergeRecordFilterTest {
 
     @Test
     public void shouldMergeStructGivenLeftFieldWithArrayTypeEqualToRightField() {
-        final Struct structLeft = new Struct(buildSchemaWithArrayFields(FIELD_VALUE_A))
+        final TypedStruct structLeft = new TypedStruct()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_A));
 
-        final Struct structRight = new Struct(buildSchemaWithStringFields(FIELD_VALUE_A))
+        final TypedStruct structRight = new TypedStruct()
                 .put(FIELD_VALUE_A, VALUE_B);
 
-        final Struct merged = AbstractMergeRecordFilter.merge(structLeft, structRight, Collections.emptySet());
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
 
         assertNotNull(merged);
 
@@ -101,13 +99,13 @@ public class AbstractMergeRecordFilterTest {
 
     @Test
     public void shouldMergeStructGivenRightFieldWithArrayTypeEqualToLeftField() {
-        final Struct structLeft = new Struct(buildSchemaWithStringFields(FIELD_VALUE_A))
+        final TypedStruct structLeft = new TypedStruct()
                 .put(FIELD_VALUE_A, VALUE_A);
 
-        final Struct structRight = new Struct(buildSchemaWithArrayFields(FIELD_VALUE_A))
+        final TypedStruct structRight = new TypedStruct()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_B));
 
-        final Struct merged = AbstractMergeRecordFilter.merge(structLeft, structRight, Collections.emptySet());
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
 
         assertNotNull(merged);
 
@@ -118,13 +116,13 @@ public class AbstractMergeRecordFilterTest {
 
     @Test
     public void shouldMergeStructGivenTwoArrayFieldsWithEqualsValueType() {
-        final Struct structLeft =  new Struct(buildSchemaWithArrayFields(FIELD_VALUE_A))
+        final TypedStruct structLeft =  new TypedStruct()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_A));
 
-        final Struct structRight = new Struct(buildSchemaWithArrayFields(FIELD_VALUE_A))
+        final TypedStruct structRight = new TypedStruct()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_B));
 
-        final Struct merged = AbstractMergeRecordFilter.merge(structLeft, structRight, Collections.emptySet());
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
 
         assertNotNull(merged);
 
@@ -132,19 +130,4 @@ public class AbstractMergeRecordFilterTest {
         assertEquals(VALUE_A,  merged.getArray(FIELD_VALUE_A).get(0));
         assertEquals(VALUE_B,  merged.getArray(FIELD_VALUE_A).get(1));
     }
-
-    private Schema buildSchemaWithArrayFields(final String ... fields) {
-        SchemaBuilder sb = SchemaBuilder.struct();
-        Arrays.stream(fields)
-                .forEach(s -> sb.field(s, SchemaBuilder.array(SchemaBuilder.string())));
-        return sb.build();
-    }
-
-    private Schema buildSchemaWithStringFields(final String ... fields) {
-        SchemaBuilder sb = SchemaBuilder.struct();
-        Arrays.stream(fields)
-              .forEach(s -> sb.field(s, Schema.STRING_SCHEMA));
-        return sb.build();
-    }
-
 }

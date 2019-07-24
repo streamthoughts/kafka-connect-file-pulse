@@ -17,14 +17,13 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.Schema;
+import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 
 import java.util.List;
 import java.util.Map;
@@ -36,13 +35,15 @@ import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilte
 
 public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter> {
 
-    private static SchemaBuilder DEFAULT_COLUMN_TYPE = SchemaBuilder.string().optional().defaultValue(null);
+    private static final String DEFAULT_SOURCE_FIELD = "message";
+
+    private static Schema DEFAULT_COLUMN_TYPE = Schema.string();
 
     private static final String AUTO_GENERATED_COLUMN_NAME_PREFIX = "column";
 
     private DelimitedRowFilterConfig configs;
 
-    private Schema schema;
+    private StructSchema schema;
 
     /**
      * {@inheritDoc}
@@ -82,42 +83,40 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                final FileInputData record,
+    public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                                final TypedStruct record,
                                                 final boolean hasNext) throws FilterException {
 
-        final String source = record.getFirstValueForField(FileInputData.DEFAULT_MESSAGE_FIELD);
+        final String source = record.first(DEFAULT_SOURCE_FIELD).getString();
 
         String[] fieldValues = splitFields(source);
-        final Schema schema = getSchema(record, fieldValues.length);
-        final Struct struct = buildStructForFields(fieldValues, schema);
-        return new RecordsIterable<>(new FileInputData(struct));
+        final StructSchema schema = getSchema(record, fieldValues.length);
+        final TypedStruct struct = buildStructForFields(fieldValues, schema);
+        return RecordsIterable.of(struct);
     }
 
-    private Schema getSchema(final FileInputData record, int n) {
+    private StructSchema getSchema(final TypedStruct record, int n) {
         if (schema != null) return schema;
 
+        schema = Schema.struct();
         if (configs.extractColumnName() != null) {
             final String fieldName = configs.extractColumnName();
-            String field = record.getFirstValueForField(fieldName);
+            String field = record.first(fieldName).getString();
             if (field == null) {
                 throw new FilterException(
                     "Can't found field for name '" + fieldName + "' to determine columns names");
             }
             final String[] columns = splitFields(field);
-            SchemaBuilder sb = SchemaBuilder.struct();
+
             for (String column : columns) {
-                sb = sb.field(column, DEFAULT_COLUMN_TYPE);
+                schema.field(column, DEFAULT_COLUMN_TYPE);
             }
-            schema = sb.build();
         } else if (configs.isAutoGenerateColumnNames()) {
-                SchemaBuilder sb = SchemaBuilder.struct();
                 for (int i = 0; i < n; i++) {
-                    sb = sb.field(AUTO_GENERATED_COLUMN_NAME_PREFIX + (i + 1), DEFAULT_COLUMN_TYPE);
+                    schema.field(AUTO_GENERATED_COLUMN_NAME_PREFIX + (i + 1), DEFAULT_COLUMN_TYPE);
                 }
-                schema = sb.build();
         } else {
-            throw new FilterException("Can't found valid configuration to determine schema for input data");
+            throw new FilterException("Can't found valid configuration to determine schema for input value");
         }
         return schema;
     }
@@ -126,19 +125,20 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
         return value.split(configs.delimiter());
     }
 
-    private Struct buildStructForFields(final String[] fieldValues, final Schema schema) {
-        List<Field> fieldsSchema = schema.fields();
-        if (fieldValues.length > fieldsSchema.size()) {
+    private TypedStruct buildStructForFields(final String[] fieldValues, final StructSchema schema) {
+        List<TypedField> fields = schema.fields();
+        if (fieldValues.length > fields.size()) {
             throw new FilterException(
                 "Error while reading delimited input row. Too large number of fields (" + fieldValues.length + ")");
         }
-        Struct struct = new Struct(schema);
+        TypedStruct struct = new TypedStruct();
         for (int i = 0; i < fieldValues.length; i++) {
             String fieldValue = fieldValues[i];
             if (configs.isTrimColumn()) {
                 fieldValue = fieldValue.trim();
             }
-            struct = struct.put(fieldsSchema.get(i), fieldValue);
+            TypedField field = fields.get(i);
+            struct = struct.put(field.name(), fieldValue);
         }
         return struct;
     }

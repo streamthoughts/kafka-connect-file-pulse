@@ -16,28 +16,29 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class LowercaseTest {
 
     private static final String DEFAULT_VALUE = "DEFAULT-VALUE";
-    private static final SchemaAndValue SCHEMA_AND_VALUE = new SchemaAndValue(Schema.STRING_SCHEMA, DEFAULT_VALUE);
+
+    private static final TypedValue DEFAULT_TYPE_VALUE = TypedValue.string(DEFAULT_VALUE);
 
     private final Lowercase lowercase = new Lowercase();
 
     @Test
     public void shouldAcceptGivenStringSchemaAndValue() {
-        Assert.assertTrue(lowercase.accept(SCHEMA_AND_VALUE));
+        Assert.assertTrue(lowercase.accept(DEFAULT_TYPE_VALUE));
     }
 
     @Test
     public void shouldApplyGivenValidArgument() {
-        SchemaAndValue output = lowercase.apply(SCHEMA_AND_VALUE, Arguments.empty());
-        Assert.assertEquals(Schema.STRING_SCHEMA, output.schema());
+        TypedValue output = lowercase.apply(DEFAULT_TYPE_VALUE, Arguments.empty());
+        Assert.assertEquals(Type.STRING, output.type());
         Assert.assertEquals(DEFAULT_VALUE.toLowerCase(), output.value());
     }
 }

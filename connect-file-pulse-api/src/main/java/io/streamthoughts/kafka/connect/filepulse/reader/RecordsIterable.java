@@ -30,7 +30,7 @@ import java.util.stream.StreamSupport;
  * Default class to iterate over a bunch of records return from either a {@link FileInputReader} or
  * a {@link io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter}
  *
- * @param <T> type of data.
+ * @param <T> type of value.
  */
 public class RecordsIterable<T> implements Iterable<T> {
 
@@ -39,7 +39,7 @@ public class RecordsIterable<T> implements Iterable<T> {
     /**
      * Return a new {@link RecordsIterable} instance with no records.
      *
-     * @param <T> type of data.
+     * @param <T> type of value.
      * @return a new {@link RecordsIterable} instance
      */
     public static <T> RecordsIterable<T> empty() {

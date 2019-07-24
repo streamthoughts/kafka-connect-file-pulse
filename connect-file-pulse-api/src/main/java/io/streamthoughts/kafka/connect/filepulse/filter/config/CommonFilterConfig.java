@@ -16,13 +16,14 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter.config;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.ExpressionFilterCondition;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.FilterCondition;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.errors.ConnectException;
@@ -35,7 +36,7 @@ import java.util.Map;
 public class CommonFilterConfig extends AbstractConfig {
 
     public static final String ON_FAILURE_CONFIG          = "withOnFailure";
-    public static final String ON_FAILURE_DOC             = "List of filters aliases to apply on each data after failure (order is important).";
+    public static final String ON_FAILURE_DOC             = "List of filters aliases to apply on each value after failure (order is important).";
 
     public static final String CONDITION_CONFIG           = "if";
     public static final String CONDITION_DOC              = "Condition to apply the filter on the current record.";
@@ -85,7 +86,7 @@ public class CommonFilterConfig extends AbstractConfig {
         return getBoolean(IGNORE_FAILURE_CONFIG);
     }
 
-    public RecordFilterPipeline<FileInputRecord> onFailure() {
+    public RecordFilterPipeline<FileRecord<TypedStruct>> onFailure() {
         final List<String> filterAliases = getList(ON_FAILURE_CONFIG);
 
         if (filterAliases == null) return null;
@@ -113,7 +114,7 @@ public class CommonFilterConfig extends AbstractConfig {
     }
 
     public static ConfigDef withSource(final ConfigDef def) {
-        return def.define(CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG, ConfigDef.Type.STRING, FileInputData.DEFAULT_MESSAGE_FIELD,
+        return def.define(CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG, ConfigDef.Type.STRING, TypedFileRecord.DEFAULT_MESSAGE_FIELD,
                 ConfigDef.Importance.HIGH, CommonFilterConfig.FILTER_SOURCE_FIELD_DOC);
     }
 

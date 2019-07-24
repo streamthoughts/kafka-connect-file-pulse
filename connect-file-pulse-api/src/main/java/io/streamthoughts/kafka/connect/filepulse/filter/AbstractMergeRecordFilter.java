@@ -16,28 +16,20 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
-import io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils;
+import io.streamthoughts.kafka.connect.filepulse.data.merger.DefaultTypeValueMerger;
+import io.streamthoughts.kafka.connect.filepulse.data.merger.TypeValueMerger;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils.copySchemaBasics;
-import static io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils.groupFieldByName;
-import static io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils.isTypeOf;
-
 public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> extends AbstractRecordFilter<T> {
-    
+
+    private TypeValueMerger merger = new DefaultTypeValueMerger();
+
     /**
      * {@inheritDoc}
      */
@@ -50,30 +42,27 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> 
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                final FileInputData record,
-                                                final boolean hasNext) throws FilterException {
+    public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                              final TypedStruct record,
+                                              final boolean hasNext) throws FilterException {
 
-        final RecordsIterable<FileInputData> filtered = apply(context, record);
+        final RecordsIterable<TypedStruct> filtered = apply(context, record);
 
-        final List<FileInputData> merged = filtered
+        final List<TypedStruct> merged = filtered
                 .stream()
-                .map(r -> {
-                    Struct struct = merge(record.value(), r.value(), overwrite());
-                    return new FileInputData(struct);
-                })
+                .map(r -> merger.merge(record, r, overwrite()))
                 .collect(Collectors.toList());
         return new RecordsIterable<>(merged);
     }
 
     /**
-     * Apply the filter logic for the specified data.
+     * Apply the filter logic for the specified value.
      *
-     * @param record  a data.
-     * @return  a new {@link FileInputRecord} instance.
+     * @param record  a value.
+     * @return  a new RecordsIterable<TypedStruct> instance.
      */
-    abstract protected RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                            final FileInputData record) throws FilterException ;
+    abstract protected RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                                          final TypedStruct record) throws FilterException ;
 
     /**
      * Returns a list of fields that must be overwrite.
@@ -81,71 +70,4 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> 
      * @return a set of field names.
      */
     abstract protected Set<String> overwrite();
-
-    /**
-     * Straightforward method to merge two connect {@link Struct} instances.
-     *
-     * @param left   the left {@link Struct} to be merged.
-     * @param right  the right {@link Struct} to be merged.
-     *
-     * @return a new {@link Struct} instance.
-     */
-    @VisibleForTesting
-    static Struct merge(final Struct left,
-                        final Struct right,
-                        final Set<String> overwrite) {
-
-        final Schema leftSchema = left.schema();
-        final Schema rightSchema = right.schema();
-
-        SchemaBuilder builder = copySchemaBasics(leftSchema);
-        SchemaUtils.merge(leftSchema, rightSchema, builder, overwrite);
-
-        Struct struct = new Struct(builder.build());
-        copyValues(left, struct);
-        copyValues(right, struct);
-        return struct;
-    }
-
-    /**
-     * Copies the source connect {@link Struct} fields into the specified target.
-     *
-     * @param source    the source struct to copy.
-     * @param target    the target struct.
-     */
-    private static void copyValues(final Struct source, final Struct target) {
-        Map<String, Field> sourceFieldByName = groupFieldByName(source.schema().fields());
-        Map<String, Field> targetFieldByName = groupFieldByName(target.schema().fields());
-
-        for (final Field fieldSource : sourceFieldByName.values()) {
-            final String name = fieldSource.name();
-
-            if (!targetFieldByName.containsKey(name)) {
-                // should not happen.
-                throw new FilterException(
-                        String.format("Cannot merge struct objects - no field '%s' defined in target struct schema.", name)
-                );
-            }
-            Field fieldTarget = targetFieldByName.get(name);
-            Object value = source.getWithoutDefault(name);
-            if (value != null) {
-                if (isTypeOf(fieldTarget, Schema.Type.ARRAY)) {
-                    List<Object> objects = target.getArray(fieldSource.name());
-                    if (objects == null) {
-                        objects = new LinkedList<>();
-                    }
-                    if (isTypeOf(fieldSource, Schema.Type.ARRAY)) {
-                        objects.addAll(source.getArray(name));
-                    } else {
-                        objects.add(value);
-                    }
-                    target.put(name, objects);
-                } else {
-                    // We simply copy the field value if target type is not an array
-                    // should we check if source and target type are equal ???
-                    target.put(name, value);
-                }
-            }
-        }
-    }
 }

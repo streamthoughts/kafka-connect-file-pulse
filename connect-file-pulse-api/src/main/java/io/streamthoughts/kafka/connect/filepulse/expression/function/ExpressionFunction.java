@@ -16,16 +16,32 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import org.apache.kafka.connect.data.SchemaAndValue;
 
+/**
+ * Default interface to define a function that can be used into an expression.
+ *
+ * @param <T>   the type of {@link Arguments}.
+ */
 public interface ExpressionFunction<T extends Arguments> {
 
+    /**
+     * Returns the case-insensitive function name.
+     *
+     * @return the function name.
+     */
     default String name() {
         return functionNameFor(this);
     }
 
-    T prepare(final TypeValue[] args);
+    /**
+     * Prepares the arguments that will be passed to {@link #apply(TypedValue, Arguments)}.
+     *
+     * @param args  list of {@link TypedValue} arguments.
+     * @return  an instance of {@link Arguments}.
+     */
+    T prepare(final TypedValue[] args);
 
     /**
      * Checks whether this function accepts the specified value.
@@ -33,17 +49,19 @@ public interface ExpressionFunction<T extends Arguments> {
      * @param value the value to be checked.
      * @return  {@code true} if this function can be executed on the value.
      */
-    default boolean accept(final SchemaAndValue value) {
+    default boolean accept(final TypedValue value) {
         return true;
     }
 
     /**
-     * Executes the function on the specified data for the specified arguments.
+     * Executes the function on the specified value for the specified arguments.
+     *
      * @param field the field on which to apply the function.
      * @param args  the function arguments.
+     *
      * @return  a new {@link SchemaAndValue}.
      */
-    SchemaAndValue apply(final SchemaAndValue field, final T args);
+    TypedValue apply(final TypedValue field, final T args);
 
     static String functionNameFor(final ExpressionFunction function) {
         // simple class name conversion to camelCase

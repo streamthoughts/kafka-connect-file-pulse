@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  *
  */
-public class FileInputOffset {
+public class FileRecordOffset {
 
     private final long startPosition;
 
@@ -35,27 +35,37 @@ public class FileInputOffset {
 
     private final long size;
 
-    public static FileInputOffset empty() {
-        return new FileInputOffset(-1, -1,0, SystemTime.SYSTEM.milliseconds(), -1);
+    public static FileRecordOffset empty() {
+        return new FileRecordOffset(
+            -1,
+            -1,
+            0,
+            SystemTime.SYSTEM.milliseconds(),
+            -1);
     }
 
-    public static FileInputOffset with(long startPosition, long endPosition) {
-        return new FileInputOffset(startPosition, endPosition,0, SystemTime.SYSTEM.milliseconds(), -1);
+    public static FileRecordOffset with(long startPosition, long endPosition) {
+        return new FileRecordOffset(
+            startPosition,
+            endPosition,
+            0,
+            SystemTime.SYSTEM.milliseconds(),
+            -1);
     }
 
     /**
-     * Creates a new {@link FileInputOffset} instance.
+     * Creates a new {@link FileRecordOffset} instance.
      *
      * @param startPosition the starting position.
      * @param endPosition   the ending position.
      * @param rows          the number of rows already read from the input source.
      * @param timestamp     the current timestamp.
      */
-    public FileInputOffset(long startPosition,
-                           long endPosition,
-                           long rows,
-                           long timestamp,
-                           long size) {
+    public FileRecordOffset(long startPosition,
+                            long endPosition,
+                            long rows,
+                            long timestamp,
+                            long size) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.rows = rows;
@@ -110,8 +120,8 @@ public class FileInputOffset {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FileInputOffset)) return false;
-        FileInputOffset that = (FileInputOffset) o;
+        if (!(o instanceof FileRecordOffset)) return false;
+        FileRecordOffset that = (FileRecordOffset) o;
         return startPosition == that.startPosition &&
                 endPosition == that.endPosition &&
                 rows == that.rows &&

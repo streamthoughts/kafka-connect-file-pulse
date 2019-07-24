@@ -16,7 +16,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class JSONFilterTest {
 
     private static final String JSON = "    {\"firstName\" : \"foo\", \"lastName\" : \"bar\"}";
 
-    private static final FileInputData DATA = FileInputData.defaultStruct(JSON);
+    private static final TypedStruct DATA = TypedStruct.struct().put("message", JSON);
 
     private JSONFilter filter;
 
@@ -40,13 +40,13 @@ public class JSONFilterTest {
 
     @Test
     public void testGivenNoTarget() {
-        List<FileInputData> output = this.filter.apply(null, DATA, false).collect();
+        List<TypedStruct> output = this.filter.apply(null, DATA, false).collect();
         Assert.assertEquals(1, output.size());
     }
 
     @Test
     public void testGivenTarget() {
-        List<FileInputData> output = this.filter.apply(null, DATA, false).collect();
+        List<TypedStruct> output = this.filter.apply(null, DATA, false).collect();
         Assert.assertEquals(1, output.size());
     }
 }

@@ -17,13 +17,14 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.MultiRowFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokMatcher;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternCompiler;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternResolver;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.apache.kafka.common.config.ConfigDef;
 import org.joni.Matcher;
 import org.joni.Option;
@@ -35,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 
 public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
+
+    private static final String DEFAULT_SOURCE_FIELD = "message";
 
     private MultiRowFilterConfig configs;
 
@@ -48,7 +51,7 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
 
     private final Collection<String> latest = new LinkedList<>();
 
-    private FileInputOffset offset;
+    private FileRecordOffset offset;
 
     /**
      * {@inheritDoc}
@@ -80,23 +83,31 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                final FileInputData record,
-                                                final boolean hasNext) throws FilterException {
+    public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                              final TypedStruct record,
+                                              final boolean hasNext) throws FilterException {
 
-        final List<FileInputData> next = new LinkedList<>();
-        final String message = record.getFirstValueForField(FileInputData.DEFAULT_MESSAGE_FIELD);
+        final List<TypedStruct> next = new LinkedList<>();
+
+        final String message = record.getString(DEFAULT_SOURCE_FIELD);
         if (mayNotMatchPreviousLines(message)) {
-            next.add(FileInputData.defaultStruct(mergeMultiLines(latest)));
+            final TypedStruct struct = buildOutputStruct();
+            next.add(struct);
             latest.clear();
         }
         latest.add(message);
 
         if (!hasNext) {
-            next.add(FileInputData.defaultStruct(mergeMultiLines(latest)));
+            final TypedStruct struct = buildOutputStruct();
+            next.add(struct);
         }
         offset = context.offset();
         return new RecordsIterable<>(next);
+    }
+
+    private TypedStruct buildOutputStruct() {
+        return new TypedStruct()
+                .put(DEFAULT_SOURCE_FIELD, mergeMultiLines(latest));
     }
 
     /**
@@ -111,11 +122,10 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputRecord> flush() {
+    public RecordsIterable<FileRecord<TypedStruct>> flush() {
         if (latest.isEmpty()) RecordsIterable.empty();
-
-        FileInputData data = FileInputData.defaultStruct(mergeMultiLines(latest));
-        return new RecordsIterable<>(new FileInputRecord(offset, data));
+        TypedStruct data = buildOutputStruct();
+        return RecordsIterable.of(new TypedFileRecord(offset, data));
     }
 
     private boolean mayNotMatchPreviousLines(final String message) {
@@ -127,7 +137,7 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
      * Checks whether the configured pattern can be found into the specified defaultStruct.
      *
      * @param message   the input defaultStruct
-     * @return          <code>true</code> if a matches is found.
+     * @return          {@code true} if a matches is found.
      */
     private boolean isInputContainsPattern(final String message) {
         final Regex regex = matcher.regex();

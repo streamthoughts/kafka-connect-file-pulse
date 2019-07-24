@@ -32,7 +32,7 @@ import java.util.Map;
 public class CommonConfig extends AbstractConfig {
 
     public static final String OUTPUT_TOPIC_CONFIG              = "topic";
-    private static final String OUTPUT_TOPIC_DOC                = "The Kafka topic to write the data to.";
+    private static final String OUTPUT_TOPIC_DOC                = "The Kafka topic to write the value to.";
 
     public static final String FILE_READER_CLASS_CONFIG         = "task.reader.class";
     private static final String FILE_READER_CLASS_CONFIG_DOC    = "Class which is used by tasks to read an input file";
@@ -43,7 +43,7 @@ public class CommonConfig extends AbstractConfig {
 
     public static final String FILTERS_GROUP                    = "Filters";
     public static final String FILTER_CONFIG                    = "filters";
-    private static final String FILTER_DOC                      = "List of filters aliases to apply on each data (order is important).";
+    private static final String FILTER_DOC                      = "List of filters aliases to apply on each value (order is important).";
 
     public static final String TASKS_REPORTER_TOPIC             = "internal.kafka.reporter.topic";
     private static final String TASKS_REPORTER_TOPIC_DOC        = "Topic name which is used to report file states";

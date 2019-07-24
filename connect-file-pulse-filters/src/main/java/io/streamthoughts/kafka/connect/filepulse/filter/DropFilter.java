@@ -16,9 +16,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.config.CommonFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
 
 public class DropFilter extends AbstractRecordFilter<DropFilter>  {
@@ -35,17 +35,18 @@ public class DropFilter extends AbstractRecordFilter<DropFilter>  {
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                final FileInputData struct,
-                                                final boolean hasNext) throws FilterException {
-        return condition.apply(context, struct) ? RecordsIterable.empty() : new RecordsIterable<>(struct)  ;
+    public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                              final TypedStruct record,
+                                              final boolean hasNext) throws FilterException {
+
+        return condition.apply(context, record) ? RecordsIterable.empty() : RecordsIterable.of(record);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final FilterContext context, final FileInputData record) {
+    public boolean accept(final FilterContext context, final TypedStruct record) {
         // We should always accept record to filter into the apply method.
         return true;
     }

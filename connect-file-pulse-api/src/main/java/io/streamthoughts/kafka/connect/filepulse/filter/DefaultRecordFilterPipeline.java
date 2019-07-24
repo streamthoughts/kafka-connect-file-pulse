@@ -16,10 +16,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +33,13 @@ import java.util.ListIterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInputRecord> {
+public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRecord<TypedStruct>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRecordFilterPipeline.class);
 
     private final FilterNode rootNode;
 
-    private FileInputContext context;
+    private FileContext context;
 
     /**
      * Creates a new {@link RecordFilterPipeline} instance.
@@ -57,12 +60,12 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
      * {@inheritDoc}
      */
     @Override
-    public void init(final FileInputContext context) {
+    public void init(final FileContext context) {
         this.context = context;
         FilterNode node = rootNode;
         while (node != null) {
             // Initialize on failure pipeline
-            RecordFilterPipeline<FileInputRecord> pipelineOnFailure = node.filter.onFailure();
+            RecordFilterPipeline<FileRecord<TypedStruct>> pipelineOnFailure = node.filter.onFailure();
             if (pipelineOnFailure != null) {
                 pipelineOnFailure.init(context);
             }
@@ -76,19 +79,27 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputRecord> apply(final RecordsIterable<FileInputRecord> records,
-                                                  final boolean hasNext) throws FilterException {
+    public RecordsIterable<FileRecord<TypedStruct>> apply(final RecordsIterable<FileRecord<TypedStruct>> records,
+                                                          final boolean hasNext) throws FilterException {
         checkState();
-        List<FileInputRecord> results = new LinkedList<>();
-        final Iterator<FileInputRecord> iterator = records.iterator();
+        List<FileRecord<TypedStruct>> results = new LinkedList<>();
+        final Iterator<FileRecord<TypedStruct>> iterator = records.iterator();
         while (iterator.hasNext()) {
-            FileInputRecord record = iterator.next();
+            FileRecord<TypedStruct> record = iterator.next();
             boolean doHasNext = hasNext || iterator.hasNext();
-            InternalFilterContext context =
-                InternalFilterContext.with(this.context.metadata(), record.offset(), record.data());
-            results.addAll(apply(context, record.data(), doHasNext));
+            FilterContext context = getContextFor(record, this.context.metadata());
+            results.addAll(apply(context, record.value(), doHasNext));
         }
         return new RecordsIterable<>(results);
+    }
+
+    private FilterContext getContextFor(final FileRecord<TypedStruct> record,
+                                        final SourceMetadata metadata) {
+        return FilterContextBuilder
+                .newBuilder()
+                .withMetadata(metadata)
+                .withOffset(record.offset())
+                .build();
     }
 
     private void checkState() {
@@ -101,9 +112,9 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
      * {@inheritDoc}
      */
     @Override
-    public List<FileInputRecord> apply(final FilterContext context,
-                                       final FileInputData record,
-                                       final boolean hasNext) {
+    public List<FileRecord<TypedStruct>> apply(final FilterContext context,
+                                               final TypedStruct record,
+                                               final boolean hasNext) {
         return rootNode.apply(context, record, hasNext);
     }
 
@@ -124,18 +135,18 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
             this.onSuccess = onSuccess;
         }
 
-        public List<FileInputRecord> apply(final FilterContext context,
-                                           final FileInputData record,
-                                           final boolean hasNext) {
+        public List<FileRecord<TypedStruct>> apply(final FilterContext context,
+                                       final TypedStruct record,
+                                       final boolean hasNext) {
 
-            final List<FileInputRecord> filtered = new LinkedList<>();
+            final List<FileRecord<TypedStruct>> filtered = new LinkedList<>();
 
             if (filter.accept(context, record)) {
                 try {
-                    RecordsIterable<FileInputData> data = filter.apply(context, record, hasNext);
-                    List<FileInputRecord> records = data
+                    RecordsIterable<TypedStruct> data = filter.apply(context, record, hasNext);
+                    List<FileRecord<TypedStruct>> records = data
                         .stream()
-                        .map(s -> new FileInputRecord(context.offset(), s))
+                        .map(s -> newRecordFor(context, s))
                         .collect(Collectors.toList());
                     filtered.addAll(records);
 
@@ -145,19 +156,18 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
                     return filtered
                         .stream()
                         .flatMap(r ->
-                            onSuccess.apply(newInternalFilterContext(context, r), r.data(), hasNext)
+                            onSuccess.apply(FilterContextBuilder.newBuilder(context).build(), r.value(), hasNext)
                                      .stream()
                         )
                         .collect(Collectors.toList());
-                // handle any exception
+                // handle any error
                 } catch (final Exception e) {
 
                     if (filter.onFailure() == null && !filter.ignoreFailure()) {
                         LOG.error(
-                            "Error occurred while executing filter '{}' with schema='{}', record='{}'",
+                            "Error occurred while executing filter '{}' on record='{}'",
                             filter.label(),
-                            record.schema(),
-                            record.value());
+                            record);
                         throw e;
                     }
                     // Some filters can aggregate records which follow each other by maintaining internal buffers.
@@ -166,22 +176,19 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
                     // When an error occurred, current record can be ignored or forward to an error pipeline.
                     // Thus, following records can potentially trigger unexpected aggregates to be built.
                     // To address that we force a flush of all records still buffered by the current filter.
-                    List<FileInputRecord> flushed = flush(context);
+                    List<FileRecord<TypedStruct>> flushed = flush(context);
                     filtered.addAll(flushed);
 
                     if (filter.onFailure() != null) {
-                        final InternalFilterContext errorContext = InternalFilterContext.with(
-                            context.metadata(),
-                            context.offset(),
-                            record,
-                            context.values(),
-                            new ExceptionContext(e.getLocalizedMessage(), filter.label()));
+                        final FilterContext errorContext = FilterContextBuilder.newBuilder(context)
+                                .withException(new FilterError(e.getLocalizedMessage(), filter.label()))
+                                .build();
                         filtered.addAll(filter.onFailure().apply(errorContext, record, hasNext));
                     } else {
                         if (onSuccess != null) {
                             filtered.addAll(onSuccess.apply(context, record, hasNext));
                         } else {
-                            filtered.add(new FileInputRecord(context.offset(), record));
+                            filtered.add(new TypedFileRecord(context.offset(), record));
                         }
                     }
                     return filtered;
@@ -193,23 +200,22 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
                 filtered.addAll(onSuccess.apply(context, record, hasNext));
             } else {
                 if (!hasNext) {
-                    final List<FileInputRecord> flushed = flush(context);
+                    final List<FileRecord<TypedStruct>> flushed = flush(context);
                     filtered.addAll(flushed);
                 }
                 // add current record to filtered result.
-                filtered.add(new FileInputRecord(context.offset(), record));
+                filtered.add(new TypedFileRecord(context.offset(), record));
             }
            return filtered;
         }
 
-        private InternalFilterContext newInternalFilterContext(final FilterContext context,
-                                                               final FileInputRecord record) {
-            return InternalFilterContext.with(
-                                        context.metadata(),
-                                        context.offset(),
-                                        record.data(),
-                                        context.values(),
-                                        context.exception());
+        private TypedFileRecord newRecordFor(final FilterContext context, final TypedStruct s) {
+            return new TypedFileRecord(context.offset(), s)
+                    .withTopic(context.topic())
+                    .withPartition(context.partition())
+                    .withTimestamp(context.timestamp())
+                    .withHeaders(context.headers())
+                    .withKey(TypedValue.string(context.key()));
         }
 
         /**
@@ -217,22 +223,19 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileInp
          *
          * @param context the filter context to be used.
          */
-        List<FileInputRecord> flush(final FilterContext context) {
+        List<FileRecord<TypedStruct>> flush(final FilterContext context) {
 
-            final List<FileInputRecord> filtered = new LinkedList<>();
+            final List<FileRecord<TypedStruct>> filtered = new LinkedList<>();
 
-            RecordsIterable<FileInputRecord> buffered = filter.flush();
+            RecordsIterable<FileRecord<TypedStruct>> buffered = filter.flush();
 
             if (onSuccess != null) {
-                Iterator<FileInputRecord> iterator = buffered.iterator();
+                Iterator<FileRecord<TypedStruct>> iterator = buffered.iterator();
                 while (iterator.hasNext()) {
-                    final FileInputRecord record = iterator.next();
+                    final FileRecord<TypedStruct> record = iterator.next();
                     // create a new context for buffered records.
-                    final InternalFilterContext localContext = InternalFilterContext.with(
-                            context.metadata(),
-                            record.offset(),
-                            record.data());
-                    filtered.addAll(onSuccess.apply(localContext, record.data(), iterator.hasNext()));
+                    final FilterContext renewedContext = getContextFor(record, context.metadata());
+                    filtered.addAll(onSuccess.apply(renewedContext, record.value(), iterator.hasNext()));
                 }
             } else {
                 filtered.addAll(buffered.collect());

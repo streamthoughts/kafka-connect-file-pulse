@@ -16,25 +16,25 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputContext;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
 import java.util.List;
 
 /**
  * Default interface to apply all filters on input records.
  *
- * @param <T> type of the input data.
+ * @param <T> type of the input value.
  */
-public interface RecordFilterPipeline<T extends FileInputRecord> {
+public interface RecordFilterPipeline<T extends FileRecord<TypedStruct>> {
 
     /**
-     * Initialize the data-filter chain for the specified context.
+     * Initialize the value-filter chain for the specified context.
      * @param context   the input file context.
      */
-    void init(final FileInputContext context);
+    void init(final FileContext context);
 
     /**
      * Execute filters on the given records.
@@ -56,6 +56,6 @@ public interface RecordFilterPipeline<T extends FileInputRecord> {
      * @return          the filtered records.
      */
     List<T> apply(final FilterContext context,
-                  final FileInputData record,
+                  final TypedStruct record,
                   final boolean hasNext);
 }

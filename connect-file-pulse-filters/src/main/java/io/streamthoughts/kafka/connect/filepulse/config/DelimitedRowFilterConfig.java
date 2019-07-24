@@ -16,11 +16,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import io.streamthoughts.kafka.connect.filepulse.data.Schema;
+import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.filter.config.CommonFilterConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -69,11 +70,11 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
         return getBoolean(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG);
     }
 
-    public SchemaBuilder schema() {
+    public StructSchema schema() {
         final String columns = getString(READER_FIELD_COLUMNS_CONFIG);
         if (columns == null) return null;
 
-        SchemaBuilder builder = SchemaBuilder.struct();
+        StructSchema schema = Schema.struct();
         for (String column : columns.split(delimiter())) {
             if (!column.contains(":")) {
                 throw new ConfigException(
@@ -83,11 +84,10 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
             final String fieldName = typeAndName[0];
             final String fieldType = typeAndName[1];
             try {
-                Schema schemaType =  new SchemaBuilder(Schema.Type.valueOf(fieldType.toUpperCase())).optional().defaultValue(null);
-                builder = builder.field(fieldName, schemaType);
+                schema.field(fieldName, Schema.of(Type.forName(fieldType.toUpperCase())));
             } catch (IllegalArgumentException e) {
                 final String types = Arrays
-                    .stream(Schema.Type.values())
+                    .stream(Type.values())
                     .map(Enum::name)
                     .collect(Collectors.joining(", ", "[", "]"));
                 throw new ConfigException(
@@ -95,7 +95,7 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
             }
         }
 
-        return builder;
+        return schema;
     }
 
     public static ConfigDef configDef() {

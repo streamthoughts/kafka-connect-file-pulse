@@ -30,7 +30,7 @@ public class RenameFilterConfig extends CommonFilterConfig {
     private static final String RENAME_TARGET_DOC     = "The target name";
 
     public static final String RENAME_IGNORE_MISSING_CONFIG  = "ignoreMissing";
-    private static final String RENAME_IGNORE_MISSING_DOC    = "If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified.";
+    private static final String RENAME_IGNORE_MISSING_DOC    = "If true and field does not exist the filter will be apply successfully without modifying the value. If field is null the schema will be modified.";
 
     /**
      * Creates a new {@link RenameFilterConfig} instance.

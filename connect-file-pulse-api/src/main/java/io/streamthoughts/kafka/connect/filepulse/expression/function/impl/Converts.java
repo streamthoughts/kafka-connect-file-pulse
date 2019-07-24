@@ -17,12 +17,11 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import org.apache.kafka.connect.data.SchemaAndValue;
 
 /**
  * Simple function to convert a field into a new type.
@@ -35,11 +34,11 @@ public class Converts implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypeValue[] args) {
+    public SimpleArguments prepare(final TypedValue[] args) {
         if (args.length < 1) {
             return new SimpleArguments(new MissingArgumentValue(TYPE));
         }
-        TypeValue targetType = args[0];
+        TypedValue targetType = args[0];
         try {
             Type type = Type.valueOf(targetType.getString());
             return new SimpleArguments(new ArgumentValue(TYPE, type));
@@ -55,8 +54,8 @@ public class Converts implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue apply(final SchemaAndValue data, final SimpleArguments args) {
+    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
         Type type = args.valueOf(TYPE);
-        return new SchemaAndValue(type.schema(), type.convert(data.value()));
+        return TypedValue.of(type.convert(field.value()), type);
     }
 }

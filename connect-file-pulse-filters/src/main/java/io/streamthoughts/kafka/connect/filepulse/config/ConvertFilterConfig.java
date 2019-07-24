@@ -32,7 +32,7 @@ public class ConvertFilterConfig extends AbstractConfig {
     private static final String CONVERT_TYPE_DOC = "The type field must be converted to";
 
     public static final String CONVERT_IGNORE_MISSING_CONFIG = "ignoreMissing";
-    private static final String CONVERT_IGNORE_MISSING_DOC = "If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified.";
+    private static final String CONVERT_IGNORE_MISSING_DOC = "If true and field does not exist the filter will be apply successfully without modifying the value. If field is null the schema will be modified.";
 
 
     /**

@@ -17,9 +17,9 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.FailFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.config.CommonFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,15 +30,19 @@ import java.util.Map;
 
 public class FailFilterTest {
 
-    public static final FileInputData DEFAULT_DATA = FileInputData.defaultStruct("simple record");
+    private static final TypedStruct DEFAULT_DATA = new TypedStruct()
+            .put("message", "simple record");
+
     private FilterContext context;
 
     private Map<String, String> configs;
 
     @Before
     public void setUp() {
-        SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
-        context = InternalFilterContext.with(metadata, FileInputOffset.empty(), DEFAULT_DATA);
+        context = FilterContextBuilder.newBuilder()
+                .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
+                .withOffset(FileRecordOffset.empty())
+                .build();
         configs = new HashMap<>();
         configs.put(CommonFilterConfig.CONDITION_CONFIG, "{{ exists($value, tags) }}");
         configs.put(CommonFilterConfig.CONDITION_NOT_CONFIG, "true");
@@ -62,7 +66,7 @@ public class FailFilterTest {
 
     @Test
     public void shouldEvaluateMessageExpression() {
-        configs.put(FailFilterConfig.MESSAGE_CONFIG, "Unexpected error : {{$value.message }}");
+        configs.put(FailFilterConfig.MESSAGE_CONFIG, "Unexpected error : {{ $value.message }}");
         FailFilter filter = new FailFilter();
         filter.configure(configs);
 

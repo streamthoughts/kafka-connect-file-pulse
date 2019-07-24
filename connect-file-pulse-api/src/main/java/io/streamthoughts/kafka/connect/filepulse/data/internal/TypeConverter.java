@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.data;
+package io.streamthoughts.kafka.connect.filepulse.data.internal;
+
+import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -16,9 +16,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import org.apache.kafka.common.Configurable;
 import org.apache.kafka.common.config.ConfigDef;
 
@@ -39,7 +39,7 @@ public interface RecordFilter extends Configurable {
     ConfigDef configDef();
 
     /**
-     * Returns the string label to uniquely identify a data filter (useful for debugging).
+     * Returns the string label to uniquely identify a value filter (useful for debugging).
      *
      * @return a string label.
      */
@@ -51,15 +51,15 @@ public interface RecordFilter extends Configurable {
      * Filters the specified records.
      *
      * @param context   the filter execution context.
-     * @param record    the data to apply.
+     * @param record    the value to apply.
      * @param hasNext   is there is still incoming records.
      *
      * @throws FilterException if an occurred while filtering input record.
      * @return the output filtered records.
      */
-    RecordsIterable<FileInputData> apply(final FilterContext context,
-                                         final FileInputData record,
-                                         final boolean hasNext) throws FilterException;
+    RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                       final TypedStruct record,
+                                       final boolean hasNext) throws FilterException;
 
     /**
      * Clears all internal states (i.s buffered records)
@@ -72,17 +72,18 @@ public interface RecordFilter extends Configurable {
     /**
      * Flushes any remaining buffered input records.
      *
-     * @return an iterable of {@link FileInputRecord} to be flushed.
+     * @return an iterable of {@link FileRecord<TypedStruct>} to be flushed.
      */
-    default RecordsIterable<FileInputRecord> flush() {
+    default RecordsIterable<FileRecord<TypedStruct>> flush() {
         return RecordsIterable.empty();
     }
 
     /**
-     * Checks whether this filter should be apply on the input {@link FileInputRecord}.
+     * Checks whether this filter should be apply on the input {@link TypedStruct}.
      * @return {@code true} if the filter must be applied.
      */
-    default boolean accept(final FilterContext context, final FileInputData record) {
+    default boolean accept(final FilterContext context,
+                           final TypedStruct record) {
         return true;
     }
 
@@ -93,7 +94,7 @@ public interface RecordFilter extends Configurable {
      *
      * @return either a new {@link RecordFilterPipeline} instance or {@code null}.
      */
-    default RecordFilterPipeline<FileInputRecord> onFailure() {
+    default RecordFilterPipeline<FileRecord<TypedStruct>> onFailure() {
         return null;
     }
 

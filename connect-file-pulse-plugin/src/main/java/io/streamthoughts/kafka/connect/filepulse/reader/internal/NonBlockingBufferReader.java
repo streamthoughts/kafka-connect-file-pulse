@@ -124,7 +124,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
 
     public List<TextBlock> readLines(int minRecords) throws IOException {
         // Unfortunately we can't just use readLine() because it blocks in an uninterruptible way.
-        // Instead we have to manage splitting lines ourselves, using simple backoff when no new data
+        // Instead we have to manage splitting lines ourselves, using simple backoff when no new value
         // is available.
         final List<TextBlock> records = new LinkedList<>();
         nread = 0;

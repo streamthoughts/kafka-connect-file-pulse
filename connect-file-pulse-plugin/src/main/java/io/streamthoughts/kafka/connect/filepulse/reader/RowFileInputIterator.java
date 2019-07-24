@@ -16,17 +16,17 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
 import io.streamthoughts.kafka.connect.filepulse.reader.internal.NonBlockingBufferReader;
 import io.streamthoughts.kafka.connect.filepulse.reader.internal.TextBlock;
 import io.streamthoughts.kafka.connect.filepulse.reader.internal.ReversedInputFileReader;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputContext;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class RowFileInputIterator implements FileInputIterator<FileInputRecord> {
+public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedStruct>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RowFileInputIterator.class);
 
@@ -51,7 +51,7 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
     /**
      * The input-source context.
      */
-    private FileInputContext context;
+    private FileContext context;
 
     /**
      * The buffer reader.
@@ -101,7 +101,7 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
      * @param reader            the buffer reader.
      * @param iteratorManager   the iterator manager.
      */
-    private RowFileInputIterator(final FileInputContext context,
+    private RowFileInputIterator(final FileContext context,
                                  final NonBlockingBufferReader reader,
                                  final IteratorManager iteratorManager,
                                  final Charset charset) {
@@ -148,7 +148,7 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
      * {@inheritDoc}
      */
     @Override
-    public FileInputContext context() {
+    public FileContext context() {
         return context;
     }
 
@@ -156,10 +156,10 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputRecord> next() {
+    public RecordsIterable<FileRecord<TypedStruct>> next() {
         try {
             initializeIfNeeded();
-            List<FileInputRecord> records = new LinkedList<>();
+            List<FileRecord<TypedStruct>> records = new LinkedList<>();
             List<TextBlock> lines = reader.readLines(minNumReadRecords);
             if (lines != null) {
                 for (TextBlock line : lines) {
@@ -187,10 +187,10 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
         context = context.withOffset(offset);
     }
 
-    private FileInputRecord createOutputRecord(final TextBlock record) {
+    private FileRecord<TypedStruct> createOutputRecord(final TextBlock record) {
 
-        Struct struct = new Struct(schema);
-        struct.put(FileInputData.DEFAULT_MESSAGE_FIELD, record.data());
+        TypedStruct struct = new TypedStruct();
+        struct.put(TypedFileRecord.DEFAULT_MESSAGE_FIELD, record.data());
         if (skipHeaders > 0) {
             struct.put(HEADERS_RECORD_FIELD, headerStrings);
         }
@@ -199,30 +199,19 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
             struct.put(FOOTERS_RECORD_FIELD, footersStrings);
         }
 
-        final FileInputOffset offset = new FileInputOffset(
+        final FileRecordOffset offset = new FileRecordOffset(
                 record.startOffset(),
                 record.endOffset(),
                 offsetLines,
                 Time.SYSTEM.milliseconds(),
                 record.size());
-        return new FileInputRecord(offset, new FileInputData(struct));
+        return new TypedFileRecord(offset, struct);
     }
 
     private void initializeIfNeeded() {
         if (!initialized.get()) {
             mayReadHeaders();
             mayReadFooters();
-
-            final SchemaBuilder builder = FileInputData.defaultSchema();
-            final SchemaBuilder array = SchemaBuilder.array(SchemaBuilder.string());
-            if (skipHeaders > 0) {
-                builder.field(HEADERS_RECORD_FIELD, array).optional();
-            }
-
-            if (skipFooters > 0) {
-                builder.field(FOOTERS_RECORD_FIELD, array).optional();
-            }
-            schema = builder.build();
             initialized.set(true);
         }
     }
@@ -290,7 +279,7 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
                 throw new RuntimeException("", e);
             }
             if (footers.size() < skipFooters) {
-                throw new ReaderException("Not enough data for reading footer lines from file "
+                throw new ReaderException("Not enough value for reading footer lines from file "
                         + path
                         + " (available=" + footers.size() + ", expecting=" + skipFooters + ")");
             }
@@ -317,7 +306,7 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
             if (headers.size() < skipHeaders) {
                 throw new ReaderException(
                     String.format(
-                        "Not enough data for reading header lines from file %s (available=%d, expecting=%d)",
+                        "Not enough value for reading header lines from file %s (available=%d, expecting=%d)",
                         path,
                         headers.size(),
                         skipHeaders)
@@ -343,7 +332,7 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
 
         private Charset charset;
         private int minNumReadRecords;
-        private FileInputContext context;
+        private FileContext context;
         private int initialBufferSize;
         private int skipHeaders;
         private int skipFooters;
@@ -359,7 +348,7 @@ public class RowFileInputIterator implements FileInputIterator<FileInputRecord> 
             this.initialBufferSize = NonBlockingBufferReader.DEFAULT_INITIAL_CAPACITY;
         }
 
-        Builder withContext(final FileInputContext context) {
+        Builder withContext(final FileContext context) {
             this.context = context;
             return this;
         }

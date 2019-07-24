@@ -30,11 +30,11 @@ public class TextBlock {
     /**
      * Creates a new {@link TextBlock} instance.
      *
-     * @param data          the textual data.
+     * @param data          the textual value.
      * @param charset       the charset.
-     * @param startOffset   the byte starting position of the data.
-     * @param endOffset     the byte ending position of the data.
-     * @param size          the size of data in bytes
+     * @param startOffset   the byte starting position of the value.
+     * @param endOffset     the byte ending position of the value.
+     * @param size          the size of value in bytes
      */
     TextBlock(final String data,
                      final Charset charset,
@@ -100,7 +100,7 @@ public class TextBlock {
     @Override
     public String toString() {
         return "TextBlock{" +
-                "data='" + data + '\'' +
+                "value='" + data + '\'' +
                 ", startOffset=" + startOffset +
                 ", endOffset=" + endOffset +
                 ", size=" + size +

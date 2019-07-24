@@ -16,10 +16,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter.condition;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.FilterContext;
 import io.streamthoughts.kafka.connect.filepulse.filter.FilterException;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 
 /**
  * Default interface to determine if a {@link io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter}
@@ -30,14 +29,14 @@ public interface FilterCondition {
     FilterCondition TRUE = (ctx, data) -> true;
 
     /**
-     * Checks whether a filter can be applied on the specified {@link FileInputRecord}.
+     * Checks whether a filter can be applied on the specified {@link TypedStruct}.
      *
      * @param context   the filter execution context.
-     * @param record    the data to apply.
+     * @param record    the value to apply.
      *
      * @return {@code true} if filter can be applied.
      */
-    boolean apply(final FilterContext context, final FileInputData record) throws FilterException;
+    boolean apply(final FilterContext context, final TypedStruct record) throws FilterException;
 
 
     static FilterCondition revert(final FilterCondition condition) {

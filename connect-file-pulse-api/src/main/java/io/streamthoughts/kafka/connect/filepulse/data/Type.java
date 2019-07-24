@@ -17,82 +17,122 @@
 package io.streamthoughts.kafka.connect.filepulse.data;
 
 import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum Type {
 
-    SHORT(Schema.Type.INT16) {
-        /**
-         * {@inheritDoc}
-         */
+    // This is a special type used to deal with NULL object.
+    NULL(null, null) {
         @Override
         public Short convert(final Object o) {
-            return TypeValue.of(o).getShort();
+            throw new UnsupportedOperationException("Cannot convert an object to type NULL");
+        }
+        @Override
+        protected boolean isInternal() {
+            return true;
         }
     },
-    INTEGER(Schema.Type.INT32) {
-        /**
-         * {@inheritDoc}
-         */
+
+    SHORT(Collections.singletonList(Short.class), Schema.Type.INT16) {
+        @Override
+        public Short convert(final Object o) {
+            return TypedValue.any(o).getShort();
+        }
+    },
+
+    INTEGER(Collections.singletonList(Integer.class), Schema.Type.INT32) {
+
         @Override
         public Integer convert(final Object o) {
-            return TypeValue.of(o).getInt();
+            return TypedValue.any(o).getInt();
         }
     },
-    LONG(Schema.Type.INT64) {
-        /**
-         * {@inheritDoc}
-         */
+
+    LONG(Collections.singletonList(Long.class), Schema.Type.INT64) {
         @Override
         public Long convert(final Object o) {
-            return TypeValue.of(o).getLong();
+            return TypedValue.any(o).getLong();
         }
     },
-    FLOAT(Schema.Type.FLOAT32) {
-        /**
-         * {@inheritDoc}
-         */
+
+    FLOAT(Collections.singletonList(Float.class), Schema.Type.FLOAT32) {
         @Override
         public Float convert(final Object o) {
-            return TypeValue.of(o).getFloat();
+            return TypedValue.any(o).getFloat();
         }
     },
-    DOUBLE(Schema.Type.FLOAT64) {
-        /**
-         * {@inheritDoc}
-         */
+
+    DOUBLE(Collections.singletonList(Double.class), Schema.Type.FLOAT64) {
         @Override
         public Double convert(final Object o) {
-            return TypeValue.of(o).getDouble();
+            return TypedValue.any(o).getDouble();
         }
     },
-    BOOLEAN(Schema.Type.BOOLEAN) {
-        /**
-         * {@inheritDoc}
-         */
+
+    BOOLEAN(Collections.singletonList(Boolean.class), Schema.Type.BOOLEAN) {
         @Override
         public Boolean convert(final Object o) {
-            return TypeValue.of(o).getBool();
+            return TypedValue.any(o).getBool();
         }
     },
-    STRING(Schema.Type.STRING) {
-        /**
-         * {@inheritDoc}
-         */
+
+    STRING(Collections.singletonList(String.class), Schema.Type.STRING) {
         @Override
         public String convert(final Object o) {
-            return TypeValue.of(o).getString();
+            return TypedValue.any(o).getString();
+        }
+    },
+
+    ARRAY(Collections.singletonList(Collection.class), Schema.Type.ARRAY) {
+        @Override
+        public Collection convert(final Object o) {
+            return TypedValue.any(o).getArray();
+        }
+
+    },
+
+    MAP(Collections.singletonList(Map.class), Schema.Type.MAP) {
+        @Override
+        public Map<String, ?> convert(final Object o) {
+            return TypedValue.any(o).getMap();
+        }
+    },
+
+    STRUCT(Collections.singletonList(TypedStruct.class), Schema.Type.STRUCT) {
+        @Override
+        public TypedStruct convert(Object o) {
+            return TypedValue.any(o).getStruct();
         }
     };
 
-    private Schema.Type  schemaType;
+    private final static Map<Class<?>, Type> JAVA_CLASS_TYPES = new HashMap<>();
+
+    static {
+        for (Type type : Type.values()) {
+            if (!type.isInternal()) {
+                Collection<Class<?>> typeClasses = type.classes;
+                for (Class<?> typeClass : typeClasses) {
+                    JAVA_CLASS_TYPES.put(typeClass, type);
+                }
+            }
+        }
+    }
+
+    private Schema.Type schemaType;
+
+    private Collection<Class<?>> classes;
 
     /**
      * Creates a new {@link Type} instance.
      *
      * @param schemaType the connect schema type.
      */
-    Type(final Schema.Type schemaType) {
+    Type(final Collection<Class<?>> classes, final Schema.Type schemaType) {
+        this.classes = classes;
         this.schemaType = schemaType;
     }
 
@@ -105,10 +145,6 @@ public enum Type {
         return schemaType;
     }
 
-    public SchemaBuilder schema() {
-        return new SchemaBuilder(schemaType);
-    }
-
     /**
      * Converts the specified object to this type.
      *
@@ -117,7 +153,63 @@ public enum Type {
      */
     public abstract Object convert(final Object o) ;
 
-    public static Type fromSchemaType(final Schema.Type schemaType) {
+    /**
+     * Checks whether this is type is internal.
+     * Internal types cannot be resolved from a class or string name.
+     *
+     * @return {@code false}.
+     */
+    protected boolean isInternal() {
+        return false;
+    }
+
+    public boolean isPrimitive() {
+
+        switch (this) {
+            case FLOAT:
+            case DOUBLE:
+            case INTEGER:
+            case LONG:
+            case BOOLEAN:
+            case STRING:
+                return true;
+            default:
+        }
+        return false;
+    }
+
+    public static Type forName(final String name) {
+        for (Type type : Type.values()) {
+            if (!type.isInternal()
+                && (type.name().equals(name) || type.schemaType.name().equals(name))) {
+                return type;
+            }
+        }
+        throw new DataException("Cannot find corresponding Type for name : " + name);
+    }
+
+    public static Type forClass(final Class<?> cls) {
+        synchronized (JAVA_CLASS_TYPES) {
+            Type type = JAVA_CLASS_TYPES.get(cls);
+            if (type != null)
+                return type;
+
+            // Since the lookup only checks the class, we need to also try
+            for (Map.Entry<Class<?>, Type> entry : JAVA_CLASS_TYPES.entrySet()) {
+                try {
+                    cls.asSubclass(entry.getKey());
+                    // Cache this for subsequent lookups
+                    JAVA_CLASS_TYPES.put(cls, entry.getValue());
+                    return entry.getValue();
+                } catch (ClassCastException e) {
+                    // Expected, ignore
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Type forConnectSchemaType(final Schema.Type schemaType) {
         for (Type type : Type.values()) {
             if (type.schemaType.equals(schemaType)) {
                 return type;

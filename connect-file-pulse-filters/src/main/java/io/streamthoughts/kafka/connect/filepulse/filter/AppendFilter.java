@@ -17,17 +17,13 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.AppendFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
-import io.streamthoughts.kafka.connect.filepulse.expression.parser.RegexExpressionParser;
+import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.parser.regex.RegexExpressionParser;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +31,14 @@ import java.util.Set;
 
 public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
 
+    private static final String DEFAULT_ROOT_OBJECT = "value";
+
     private AppendFilterConfig config;
 
-    private List<Expression> expressions;
+    private List<Expression> values;
+    private Expression target;
+
+    private RegexExpressionParser parser;
 
     /**
      * {@inheritDoc}
@@ -46,7 +47,11 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
     public void configure(final Map<String, ?> props) {
         super.configure(props);
         config = new AppendFilterConfig(props);
-        expressions = Collections.singletonList(new RegexExpressionParser().parseExpression(config.value()));
+
+        parser = new RegexExpressionParser();
+        // currently, multiple expressions is not supported
+        values = Collections.singletonList(parser.parseExpression(config.value(), DEFAULT_ROOT_OBJECT, true));
+        target = parser.parseExpression(config.field());
     }
 
     /**
@@ -61,34 +66,36 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
      * {@inheritDoc}
      */
     @Override
-    protected RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                   final FileInputData record) throws FilterException {
+    protected RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                                 final TypedStruct record) throws FilterException {
 
-        Struct struct = null;
+        InternalFilterContext internalContext = (InternalFilterContext) context;
 
-        for (Expression expression : expressions) {
-            final SchemaAndValue schemaAndValue = expression.evaluate(context);
-            if (schemaAndValue != null) {
-                if (struct == null) {
-                    Schema valueSchema = expressions.size() > 1 ?
-                            SchemaBuilder.array(schemaAndValue.schema()).optional() :
-                            schemaAndValue.schema();
-                    SchemaBuilder sb = SchemaBuilder.struct().field(config.field(), valueSchema);
-                    struct = new Struct(sb);
-                }
-                Object value = schemaAndValue.value();
-                if (expressions.size() > 1) {
-                    List<Object> o = struct.getArray(config.field());
-                    if (o == null) {
-                        o = new ArrayList<>();
-                    }
-                    o.add(value);
-                    value = o;
-                }
-                struct.put(config.field(), value);
+        StandardEvaluationContext readEvaluationContext = new StandardEvaluationContext(
+                internalContext,
+                internalContext.variables()
+        );
+
+        final String evaluatedTarget = target.readValue(readEvaluationContext, String.class);
+        final Expression targetExpression = parser.parseExpression(evaluatedTarget, DEFAULT_ROOT_OBJECT, false);
+
+        final TypedStruct target = TypedStruct.struct();
+        for (final Expression expression : values) {
+
+            internalContext.setValue(record);
+            final Object typed = expression.readValue(readEvaluationContext);
+
+            if (typed != null) {
+                internalContext.setValue(target);
+
+                final StandardEvaluationContext writeEvaluationContext = new StandardEvaluationContext(
+                    internalContext,
+                    internalContext.variables()
+                );
+                targetExpression.writeValue(typed, writeEvaluationContext);
             }
         }
-        return new RecordsIterable<>(new FileInputData(struct));
+        return RecordsIterable.of(target);
     }
 
     /**

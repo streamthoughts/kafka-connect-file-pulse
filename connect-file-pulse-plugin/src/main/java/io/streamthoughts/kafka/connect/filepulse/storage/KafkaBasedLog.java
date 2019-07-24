@@ -52,7 +52,7 @@ import java.util.concurrent.Future;
  *     clients need to consume and, at times, agree on their startPosition / that they have read to the end of the log.
  * </p>
  * <p>
- *     This functionality is useful for storing different types of data that all clients may need to agree on --
+ *     This functionality is useful for storing different types of value that all clients may need to agree on --
  *     offsets or configDef for example. This class runs a consumer in a background thread to continuously tail the target
  *     topic, accepts write requests which it writes to the topic using an internal producer, and provides some helpful
  *     utilities like checking the current log end startPosition and waiting until the current end of the log is reached.
@@ -61,8 +61,8 @@ import java.util.concurrent.Future;
  *     To support different use cases, this class works with either single- or multi-partition topics.
  * </p>
  * <p>
- *     Since this class is generic, it delegates the details of data storage via a callback that is invoked for each
- *     data that is consumed from the topic. The invocation of callbacks is guaranteed to be serialized -- if the
+ *     Since this class is generic, it delegates the details of value storage via a callback that is invoked for each
+ *     value that is consumed from the topic. The invocation of callbacks is guaranteed to be serialized -- if the
  *     calling class keeps track of state based on the log and only writes to it when consume callbacks are invoked
  *     and only reads it in {@link #readToEnd(Callback)} callbacks then no additional synchronization will be required.
  * </p>
@@ -250,7 +250,7 @@ public class KafkaBasedLog<K, V> {
     }
 
     private Consumer<K, V> createConsumer() {
-        // Always force reset to the beginning of the log since this class wants to consume all available log data
+        // Always force reset to the beginning of the log since this class wants to consume all available log value
         consumerConfigs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         // Turn off autocommit since we always want to consume the full log
@@ -338,7 +338,7 @@ public class KafkaBasedLog<K, V> {
                     }
                 }
             } catch (Throwable t) {
-                log.error("Unexpected exception in {}", this, t);
+                log.error("Unexpected error in {}", this, t);
             }
         }
     }

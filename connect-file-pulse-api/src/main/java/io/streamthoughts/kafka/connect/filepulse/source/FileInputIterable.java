@@ -16,8 +16,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 
@@ -28,14 +28,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileInputIterable implements Iterable<RecordsIterable<FileInputRecord>> {
+public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<TypedStruct>>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileInputIterable.class);
 
     private final File file;
     private final FileInputReader reader;
     private SourceMetadata metadata;
-    private FileInputIterator<FileInputRecord> iterator;
+    private FileInputIterator<FileRecord<TypedStruct>> iterator;
 
     private AtomicBoolean isOpen = new AtomicBoolean(false);
 
@@ -59,9 +59,9 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileInputReco
      * @param offset    the offset to seek the iterator.
      * @return a new {@link FileInputIterator} instance.
      */
-    public FileInputIterator<FileInputRecord> open(final SourceOffset offset) {
+    public FileInputIterator<FileRecord<TypedStruct>> open(final SourceOffset offset) {
         LOG.info("Opening new iterator for source : {}", metadata);
-        iterator = reader.newIterator(new FileInputContext(metadata));
+        iterator = reader.newIterator(new FileContext(metadata));
         iterator.seekTo(offset);
         isOpen.set(true);
         return iterator;
@@ -75,7 +75,7 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileInputReco
      * {@inheritDoc}
      */
     @Override
-    public FileInputIterator<FileInputRecord> iterator() {
+    public FileInputIterator<FileRecord<TypedStruct>> iterator() {
         checkState();
         return iterator;
     }

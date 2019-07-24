@@ -42,7 +42,7 @@ public class ArgumentValue {
      *
      * @param name  the argument name.
      * @param value the argument value.
-     * @param errorMessage the argument exception if is invalid.
+     * @param errorMessage the argument error if is invalid.
      */
     public ArgumentValue(final String name,
                          final Object value,
@@ -55,7 +55,7 @@ public class ArgumentValue {
      *
      * @param name  the argument name.
      * @param value the argument value.
-     * @param errorMessages the argument exception if is invalid.
+     * @param errorMessages the argument error if is invalid.
      */
     public ArgumentValue(final String name,
                          final Object value,

@@ -17,10 +17,11 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.MultiRowFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,10 +58,10 @@ public class MultiRowFilterTest {
             .collect(Collectors.toList());
 
 
-    private RecordsIterable<FileInputData> generates() {
-        List<FileInputData> records  = INPUTS.stream()
+    private RecordsIterable<TypedStruct> generates() {
+        List<TypedStruct> records  = INPUTS.stream()
                 .flatMap(Collection::stream)
-                .map(FileInputData::defaultStruct)
+                .map(m -> TypedStruct.struct().put("message", m))
                 .collect(Collectors.toList());
         return new RecordsIterable<>(records);
     }
@@ -69,8 +70,10 @@ public class MultiRowFilterTest {
     public void setUp() {
         filter = new MultiRowFilter();
         configs = new HashMap<>();
-        SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
-        context = InternalFilterContext.with(metadata, FileInputOffset.empty());
+        context = FilterContextBuilder.newBuilder()
+                .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
+                .withOffset(FileRecordOffset.empty())
+                .build();
     }
 
     @Test
@@ -79,8 +82,8 @@ public class MultiRowFilterTest {
         configs.put(MultiRowFilterConfig.MULTI_ROW_PATTERN_CONFIG, "^[\\t]");
         filter.configure(configs);
 
-        List<FileInputData> output = new LinkedList<>();
-        Iterator<FileInputData> iterator = generates().iterator();
+        List<TypedStruct> output = new LinkedList<>();
+        Iterator<TypedStruct> iterator = generates().iterator();
         while (iterator.hasNext()) {
             output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
@@ -93,19 +96,19 @@ public class MultiRowFilterTest {
         configs.put(MultiRowFilterConfig.MULTI_ROW_PATTERN_CONFIG, "^\\[INFO|ERROR\\]");
         filter.configure(configs);
 
-        List<FileInputData> output = new LinkedList<>();
-        Iterator<FileInputData> iterator = generates().iterator();
+        List<TypedStruct> output = new LinkedList<>();
+        Iterator<TypedStruct> iterator = generates().iterator();
         while (iterator.hasNext()) {
             output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
         assertOutput(output);
     }
 
-    private void assertOutput(List<FileInputData> records) {
+    private void assertOutput(List<TypedStruct> records) {
         Assert.assertEquals(EXPECTED.size(), records.size());
 
         for (int i = 0; i < EXPECTED.size(); i++) {
-            String value = records.get(i).getFirstValueForField(FileInputData.DEFAULT_MESSAGE_FIELD);
+            String value = records.get(i).getString(TypedFileRecord.DEFAULT_MESSAGE_FIELD);
             Assert.assertEquals(EXPECTED.get(i), value);
         }
     }

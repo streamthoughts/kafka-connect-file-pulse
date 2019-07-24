@@ -16,16 +16,17 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
 import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class NlvTest {
+
+    private static final TypedValue DEFAULT_ARGUMENT = TypedValue.any("default");
 
     private final Nlv nlv = new Nlv();
 
@@ -36,17 +37,17 @@ public class NlvTest {
 
     @Test
     public void shouldReturnGivenNonNullValue() {
-        SimpleArguments arguments = nlv.prepare(new TypeValue[]{TypeValue.of("default")});
-        SchemaAndValue output = nlv.apply(new SchemaAndValue(Schema.STRING_SCHEMA, "nonempty"), arguments);
-        assertEquals(Schema.STRING_SCHEMA, output.schema());
+        SimpleArguments arguments = nlv.prepare(new TypedValue[]{DEFAULT_ARGUMENT});
+        TypedValue output = nlv.apply(TypedValue.string("nonempty"), arguments);
+        assertEquals(Type.STRING, output.type());
         assertEquals("nonempty", output.value());
     }
 
     @Test
     public void shouldReturnDefaultGivenNullValue() {
-        SimpleArguments arguments = nlv.prepare(new TypeValue[]{TypeValue.of("default")});
-        SchemaAndValue output = nlv.apply(new SchemaAndValue(Schema.STRING_SCHEMA, null), arguments);
-        assertEquals(Schema.STRING_SCHEMA, output.schema());
+        SimpleArguments arguments = nlv.prepare(new TypedValue[]{DEFAULT_ARGUMENT});
+        TypedValue output = nlv.apply(TypedValue.string(null), arguments);
+        assertEquals(Type.STRING, output.type());
         assertEquals("default", output.value());
     }
 }

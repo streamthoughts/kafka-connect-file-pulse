@@ -17,13 +17,12 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.JSONFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.json.DefaultJSONStructConverter;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,24 +59,38 @@ public class JSONFilter extends AbstractMergeRecordFilter<JSONFilter> {
      * {@inheritDoc}
      */
     @Override
-    protected RecordsIterable<FileInputData> apply(final FilterContext context, final FileInputData record) {
-        final String value = record.value().getString(source);
+    protected RecordsIterable<TypedStruct> apply(final FilterContext context, final TypedStruct record) {
 
-        if (value == null) return null;
+        final TypedValue value = record.get(source);
+
+        checkIsNotNull(value);
+        checkType(value);
 
         try {
-            final FileInputData json = converter.readJson(value);
+            final TypedStruct json = converter.readJson(value.getString());
             if (target != null) {
-                Schema schema = SchemaBuilder.struct().field(target, json.schema()).build();
-                return RecordsIterable.of(
-                        new FileInputData(new Struct(schema).put(target, json.value()))
-                );
+                record.put(target, json);
+                return RecordsIterable.of(record);
             }
-            return new RecordsIterable<>(json);
+            return RecordsIterable.of(json);
         } catch (Exception e) {
             throw new FilterException(e.getLocalizedMessage(), e.getCause());
         }
 
+    }
+
+    private void checkType(final TypedValue value) {
+        if (value.type() != Type.STRING) {
+            throw new FilterException(
+                "Invalid field '" + source + "', cannot convert field of type '" + value.type() + "'");
+        }
+    }
+
+    private void checkIsNotNull(final TypedValue value) {
+        if (value.isNull()) {
+            throw new FilterException(
+                "Invalid field '" + source + "', cannot convert empty value to JSON");
+        }
     }
 
     /**

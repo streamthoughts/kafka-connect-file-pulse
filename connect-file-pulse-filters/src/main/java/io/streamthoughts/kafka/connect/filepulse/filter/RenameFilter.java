@@ -17,14 +17,9 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.RenameFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 
 import java.util.Map;
 
@@ -53,44 +48,18 @@ public class RenameFilter extends AbstractRecordFilter<RenameFilter> {
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                final FileInputData record,
-                                                final boolean hasNext) throws FilterException {
+    public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                              final TypedStruct record,
+                                              final boolean hasNext) throws FilterException {
 
         if (record.has(configs.field())) {
-            Struct renamed = rename(record, record.field(configs.field()), configs.target());
-            return new RecordsIterable<>(new FileInputData(renamed));
+            record.rename(configs.field(), configs.target());
+            return new RecordsIterable<>(record);
+
         } else if (!configs.ignoreMissing()) {
-            throw new FilterException("Cannot find field with name '" + configs.field() + "'");
+            throw new FilterException("Invalid field name '" + configs.field() + "'");
         }
 
         return new RecordsIterable<>(record);
-    }
-
-    private Struct rename(final FileInputData record,
-                          final Field source,
-                          final String target) {
-
-
-        final Schema prevSchema = record.schema();
-        final SchemaBuilder newSchemaBuilder = SchemaUtils.copySchemaBasics(prevSchema);
-
-        newSchemaBuilder.field(target, source.schema());
-
-        final String sourceName = source.name();
-        for (final Field field : prevSchema.fields()) {
-            if (!sourceName.equals(field.name())) {
-                newSchemaBuilder.field(field.name(), field.schema());
-            }
-        }
-
-        final Struct newStruct = new Struct(newSchemaBuilder);
-
-        for (final Field field : prevSchema.fields()) {
-            final String targetName = sourceName.equals(field.name()) ? target : sourceName;
-            newStruct.put(targetName, record.get(field.name()));
-        }
-
-        return newStruct;
     }
 }

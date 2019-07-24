@@ -18,6 +18,7 @@ package io.streamthoughts.kafka.connect.filepulse.expression.accessor;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import org.apache.kafka.connect.data.Field;
+import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.Struct;
 
@@ -30,7 +31,7 @@ public class StructFieldAccessor implements PropertyAccessor {
      */
     @Override
     public Class<?>[] getSpecificTargetClasses() {
-        return new Class[]{Struct.class};
+        return new Class[]{Struct.class, SchemaAndValue.class};
     }
 
     /**
@@ -40,7 +41,8 @@ public class StructFieldAccessor implements PropertyAccessor {
     public boolean canRead(final EvaluationContext context,
                            final Object target,
                            final String name) throws AccessException {
-        return true;
+
+        return Schema.Type.STRUCT.equals(((SchemaAndValue)target).schema().type());
     }
 
     /**
@@ -53,12 +55,12 @@ public class StructFieldAccessor implements PropertyAccessor {
         Objects.requireNonNull(target, "target cannot be null");
         Objects.requireNonNull(name, "name cannot be null");
 
-        final Struct struct = (Struct) target;
+        final Struct struct = getStructValue(target);
 
         Field field = struct.schema().field(name);
         if (field != null) {
             return new SchemaAndValue(field.schema(), struct.get(field));
-        } else if (isDotPath(name)) {
+        } else if (isDotPropertyAccessPath(name)) {
             String[] split = name.split("\\.", 2);
             Object rootObject = read(context, target, split[0]);
             if (rootObject != null) {
@@ -67,10 +69,38 @@ public class StructFieldAccessor implements PropertyAccessor {
         }
 
         throw new AccessException(
-            "Can't access field '" + name + "' from Struct - field does not exist");
+                "Can't access field '" + name + "' from Struct - field does not exist");
     }
 
-    private boolean isDotPath(final String name) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final EvaluationContext context,
+                      final Object target,
+                      final String name,
+                      final Object newValue) throws AccessException {
+        throw new UnsupportedOperationException("Cannot write to new field into Struct/SchemaAndValue object");
+    }
+
+    private Struct getStructValue(final Object target) {
+        if (target instanceof SchemaAndValue) {
+            return (Struct) ((SchemaAndValue)target).value();
+        }
+        return (Struct) target;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canWrite(final EvaluationContext context,
+                            final Object target,
+                            final String name) throws AccessException {
+        return false;
+    }
+
+    private boolean isDotPropertyAccessPath(final String name) {
         return name.contains(".");
     }
 }

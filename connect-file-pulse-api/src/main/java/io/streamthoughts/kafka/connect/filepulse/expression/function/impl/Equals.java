@@ -17,13 +17,11 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
 
 public class Equals implements ExpressionFunction<SimpleArguments> {
 
@@ -33,32 +31,24 @@ public class Equals implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final SchemaAndValue value) {
-        return value.schema().type().equals(Schema.Type.STRING);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SimpleArguments prepare(final TypeValue[] args) {
+    public SimpleArguments prepare(final TypedValue[] args) {
         if (args.length < 1) {
             return new SimpleArguments(new MissingArgumentValue(VALUE_ARG));
         }
         return new SimpleArguments(
-            new ArgumentValue(VALUE_ARG, args[0].get()));
+            new ArgumentValue(VALUE_ARG, args[0].value()));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue apply(final SchemaAndValue field, final SimpleArguments args) {
+    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
         final Object value = args.valueOf(VALUE_ARG);
 
         // attempt to convert argument value to the field value before applying equality.
-        final Object converted = Type.fromSchemaType(field.schema().type()).convert(value);
+        final Object converted = field.type().convert(value);
         final boolean equals = field.value().equals(converted);
-        return new SchemaAndValue(Schema.BOOLEAN_SCHEMA, equals);
+        return TypedValue.of(equals, Type.BOOLEAN);
     }
 }

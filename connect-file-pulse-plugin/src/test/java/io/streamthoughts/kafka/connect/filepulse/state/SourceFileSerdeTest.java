@@ -48,7 +48,7 @@ public class SourceFileSerdeTest {
                 new SourceOffset(10L, 10L, Instant.now().getEpochSecond()),
                 SourceStatus.STARTED,
                 Collections.singletonMap("hostname", "localhost")
-                //new FileInputOffset(10L, 10L, 10L)
+                //new FileRecordOffset(10L, 10L, 10L)
         );
         byte[] bytes = serde.serialize(state);
         Assert.assertEquals(serde.deserialize(bytes), state);

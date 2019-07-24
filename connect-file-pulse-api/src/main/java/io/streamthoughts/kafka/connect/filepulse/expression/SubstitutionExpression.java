@@ -16,9 +16,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression;
 
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.converter.Converters;
+import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
 
@@ -61,12 +62,20 @@ public class SubstitutionExpression implements Expression {
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue evaluate(final EvaluationContext context) {
+    public String readValue(final EvaluationContext context) {
+        return readValue(context, String.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T readValue(final EvaluationContext context, final Class<T> expectedType) {
         Objects.requireNonNull(context, "context cannot be null");
         if (isSingleSubstitution()) {
             ReplacementExpression expression = replacements.iterator().next();
-            if (  (expression.endIndex() - expression.startIndex()) == original.length()) {
-                return expression.evaluate(context);
+            if ((expression.endIndex() - expression.startIndex()) == original.length()) {
+                return expression.readValue(context, expectedType);
             }
         }
 
@@ -74,11 +83,11 @@ public class SubstitutionExpression implements Expression {
 
         int offset = 0;
         for (ReplacementExpression replacement : replacements) {
-            SchemaAndValue replacementString = replacement.expression().evaluate(context);
+            String replacementString = replacement.expression().readValue(context, String.class);
             if (offset < replacement.startIndex()) {
                 sb.append(original, offset, replacement.startIndex());
             }
-            sb.append(replacementString.value());
+            sb.append(replacementString);
             offset = replacement.endIndex();
         }
 
@@ -86,8 +95,20 @@ public class SubstitutionExpression implements Expression {
         if (offset != original.length()) {
             sb.append(original, offset, original.length());
         }
-        return new SchemaAndValue(Schema.STRING_SCHEMA, sb.toString());
+
+        final String value = sb.toString();
+
+        final List<PropertyConverter> converters = context.getPropertyConverter();
+        return Converters.converts(converters, value, expectedType);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void writeValue(final Object value, final EvaluationContext context) {
+        throw new UnsupportedOperationException();
+    }
+
 
     private boolean isSingleSubstitution() {
         return replacements.size() == 1;
@@ -138,8 +159,24 @@ public class SubstitutionExpression implements Expression {
          * {@inheritDoc}
          */
         @Override
-        public SchemaAndValue evaluate(final EvaluationContext context) {
-            return expression.evaluate(context);
+        public Object readValue(final EvaluationContext context) {
+            return expression.readValue(context);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <T> T readValue(final EvaluationContext context, final Class<T> expectedType) {
+            return expression.readValue(context, expectedType);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void writeValue(final Object value, final EvaluationContext context) {
+            throw new UnsupportedOperationException();
         }
 
         /**

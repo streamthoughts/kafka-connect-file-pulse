@@ -18,17 +18,15 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.GrokFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokMatcher;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPattern;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternCompiler;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternResolver;
 import io.streamthoughts.kafka.connect.filepulse.pattern.GrokSchemaBuilder;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.Struct;
 import org.joni.Matcher;
 import org.joni.NameEntry;
 import org.joni.Option;
@@ -39,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,14 +80,14 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
      * {@inheritDoc}
      */
     @Override
-    protected RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                   final FileInputData record) throws FilterException {
+    protected RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                                 final TypedStruct record) throws FilterException {
 
-        final String value = record.value().getString(configs.source());
+        final String value = record.getString(configs.source());
 
         if (value == null) return null;
 
-        final Struct struct = new Struct(schema);
+        final TypedStruct struct = TypedStruct.struct();
 
         final byte[] bytes = value.getBytes();
         for (GrokMatcher grok : patterns) {
@@ -97,7 +96,7 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
             int result = matcher.search(0, bytes.length, Option.DEFAULT);
             if (result != -1) {
                 extractAndPutFieldsTo(struct, regex, matcher, bytes, grok);
-                return new RecordsIterable<>(new FileInputData(struct));
+                return RecordsIterable.of(struct);
             }
         }
         throw new FilterException("Can not matches grok pattern on value : " + value);
@@ -111,7 +110,7 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
         return configs.overwrite();
     }
 
-    private void extractAndPutFieldsTo(final Struct struct,
+    private void extractAndPutFieldsTo(final TypedStruct struct,
                                        final Regex regex,
                                        final Matcher matcher,
                                        final byte[] bytes,
@@ -123,11 +122,27 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
             final GrokPattern pattern = grok.getGrokPattern(field);
             final Type type = pattern != null ? pattern.type() : Type.STRING;
             List<Object> objects = extractValuesForEntry(region, e, bytes, type);
-            if (SchemaUtils.isTypeOf(schema.field(field), Schema.Type.ARRAY)) {
-                struct.put(field, objects);
-            } else if (objects.size() > 0){
-                struct.put(field, objects.get(0));
+            append(struct, field, objects, type);
+        }
+    }
+
+    private void append(final TypedStruct struct,
+                        final String field,
+                        final List<Object> values,
+                        final Type type) {
+        if (struct.has(field)) {
+            if (struct.field(field).type() == Type.ARRAY) {
+                struct.getArray(field).addAll(values);
+            } else {
+                final List<Object> list = new LinkedList<>();
+                list.add(struct.get(field).value());
+                list.addAll(values);
+                struct.put(field, type, list);
             }
+        } else if (values.size() > 1) {
+            struct.put(field, type, values);
+        } else if (values.size() == 1) {
+            struct.put(field, type, values.get(0));
         }
     }
 

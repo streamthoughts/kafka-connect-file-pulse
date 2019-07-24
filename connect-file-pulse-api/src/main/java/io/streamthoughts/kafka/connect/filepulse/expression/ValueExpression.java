@@ -16,9 +16,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression;
 
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.converter.Converters;
+import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ValueExpression implements Expression {
@@ -38,8 +41,29 @@ public class ValueExpression implements Expression {
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue evaluate(final EvaluationContext context) {
-        return new SchemaAndValue(Schema.STRING_SCHEMA, value);
+    public TypedValue readValue(final EvaluationContext context) {
+        return TypedValue.of(value, Type.STRING);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T readValue(final EvaluationContext context, final Class<T> expectedType) {
+        if (expectedType == String.class) {
+            return (T) value;
+        }
+        final List<PropertyConverter> converters = context.getPropertyConverter();
+        return Converters.converts(converters, value, expectedType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeValue(final Object value, final EvaluationContext context) {
+        throw new UnsupportedOperationException();
     }
 
     /**

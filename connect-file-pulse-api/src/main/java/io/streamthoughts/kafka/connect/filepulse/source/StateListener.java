@@ -24,7 +24,7 @@ interface StateListener {
      *
      * @param context   the file context.
      */
-    void onScheduled(final FileInputContext context);
+    void onScheduled(final FileContext context);
 
     /**
      * This method is invoked when a file can't be scheduled.
@@ -32,7 +32,7 @@ interface StateListener {
      *
      * @param context   the file context.
      */
-    void onInvalid(final FileInputContext context);
+    void onInvalid(final FileContext context);
 
     /**
      * This method is invoked when a source file is starting to be read.
@@ -40,7 +40,7 @@ interface StateListener {
      *
      * @param context   the file context.
      */
-    void onStart(final FileInputContext context);
+    void onStart(final FileContext context);
 
     /**
      * This method is invoked when a source file processing is completed.
@@ -48,7 +48,7 @@ interface StateListener {
      *
      * @param context   the file context.
      */
-    void onCompleted(final FileInputContext context);
+    void onCompleted(final FileContext context);
 
     /**
      * This method is invoked when an error occurred while processing a source file.
@@ -56,5 +56,5 @@ interface StateListener {
      *
      * @param context   the file context.
      */
-    void onFailure(final FileInputContext context, final Throwable t);
+    void onFailure(final FileContext context, final Throwable t);
 }

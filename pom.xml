@@ -42,6 +42,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <checkstyle.config.location>${basedir}</checkstyle.config.location>
     </properties>
 
     <repositories>
@@ -117,6 +118,7 @@
                         <id>validate</id>
                         <phase>validate</phase>
                         <configuration>
+                            <propertyExpansion>basedir=${checkstyle.config.location}</propertyExpansion>
                             <configLocation>checkstyle/checkstyle.xml</configLocation>
                             <encoding>UTF-8</encoding>
                         </configuration>

@@ -17,17 +17,13 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.SplitFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class SplitFilter extends AbstractRecordFilter<SplitFilter> {
@@ -55,43 +51,28 @@ public class SplitFilter extends AbstractRecordFilter<SplitFilter> {
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                final FileInputData record,
-                                                final boolean hasNext) throws FilterException {
-        final Struct struct = record.value();
-
-        final Schema prevSchema = struct.schema();
-        final SchemaBuilder newSchemaBuilder = SchemaUtils.copySchemaBasics(prevSchema);
+    public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                              final TypedStruct record,
+                                              final boolean hasNext) throws FilterException {
 
         for (final String key : configs.split()) {
-            final Field field = prevSchema.field(key);
-            if (field != null) {
-                SchemaBuilder optionalArray = SchemaBuilder.array(SchemaBuilder.string())
-                    .optional()
-                    .defaultValue(null);
-                newSchemaBuilder.field(key, optionalArray);
+
+            if (!record.has(key)) {
+                throw new FilterException("Invalid field name '" + key + "'");
             }
-        }
 
-        for (final Field field : prevSchema.fields()) {
-            if (!configs.split().contains(field.name())) {
-                newSchemaBuilder.field(field.name(), field.schema());
+            TypedValue value = record.get(key);
+            if (value.type() != Type.STRING) {
+                throw new FilterException("Cannot split field '" + key + "' of type '" + value.type() + "'");
             }
-        }
 
-        final Struct newStruct = new Struct(newSchemaBuilder);
-
-        for (final Field field : prevSchema.fields()) {
-            final String sourceName = field.name();
-            if (configs.split().contains(sourceName)) {
-                String value = struct.getString(sourceName);
-                List<String> array = Arrays.asList(value.split(configs.splitSeparator()));
-                newStruct.put(sourceName, array);
+            if (value.isNull()) {
+                record.put(key, new LinkedList<>());
             } else {
-                newStruct.put(sourceName, struct.get(field));
+                final String[] values = value.getString().split(configs.splitSeparator());
+                record.put(key, values);
             }
         }
-
-        return new RecordsIterable<>(new FileInputData(newStruct));
+        return new RecordsIterable<>(record);
     }
 }

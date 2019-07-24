@@ -16,37 +16,36 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.TypedExpressionFunction;
 
 /**
  * Simple function to uppercase a string field.
  */
-public class Uppercase implements ExpressionFunction<Arguments> {
+public class Uppercase extends TypedExpressionFunction<String, Arguments> {
+
+    /**
+     * Creates a new {@link Uppercase} instance.
+     */
+    public Uppercase() {
+        super(Type.STRING);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments prepare(TypeValue[] args) {
+    public Arguments prepare(final TypedValue[] args) {
         return Arguments.empty();
     }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean accept(final SchemaAndValue value) {
-        return value.schema().type().equals(Schema.Type.STRING);
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue apply(final SchemaAndValue field, final Arguments args) {
-        return new SchemaAndValue(Schema.STRING_SCHEMA, ((String)field.value()).toUpperCase());
+    public TypedValue apply(final TypedValue field, final Arguments args) {
+        return TypedValue.string(field.getString().toUpperCase());
     }
 }

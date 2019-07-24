@@ -16,11 +16,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
 
 public class IsNull implements ExpressionFunction<Arguments> {
 
@@ -28,7 +26,7 @@ public class IsNull implements ExpressionFunction<Arguments> {
      * {@inheritDoc}
      */
     @Override
-    public Arguments prepare(final TypeValue[] args) {
+    public Arguments prepare(final TypedValue[] args) {
         return Arguments.empty();
     }
 
@@ -36,7 +34,7 @@ public class IsNull implements ExpressionFunction<Arguments> {
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue apply(final SchemaAndValue field, final Arguments args) {
-        return new SchemaAndValue(Schema.BOOLEAN_SCHEMA, field != null && field.value() != null);
+    public TypedValue apply(final TypedValue field, final Arguments args) {
+        return TypedValue.bool(field == null || field.isNull());
     }
 }

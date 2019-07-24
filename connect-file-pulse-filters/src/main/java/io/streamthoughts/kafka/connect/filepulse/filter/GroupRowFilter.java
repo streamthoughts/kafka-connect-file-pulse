@@ -17,14 +17,12 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.GroupRowFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -42,11 +40,11 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
 
     private int maxBufferedRecords;
 
-    private List<Struct> buffered = new LinkedList<>();
+    private List<TypedStruct> buffered = new LinkedList<>();
 
     private int lastObservedKey = -1;
 
-    private FileInputOffset offset;
+    private FileRecordOffset offset;
 
     /**
      * {@inheritDoc}
@@ -72,11 +70,11 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                final FileInputData record,
-                                                final boolean hasNext) throws FilterException {
+    public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                              final TypedStruct record,
+                                              final boolean hasNext) throws FilterException {
 
-        final List<FileInputData> forward = new LinkedList<>();
+        final List<TypedStruct> forward = new LinkedList<>();
 
         if (buffered.size() >= maxBufferedRecords) {
             forward.add(groupBufferedRecords());
@@ -87,7 +85,7 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
             forward.add(groupBufferedRecords());
         }
         lastObservedKey = key;
-        buffered.add(record.value());
+        buffered.add(record);
 
         if (!hasNext && hasRecordsBuffered()) {
             forward.add(groupBufferedRecords());
@@ -110,11 +108,11 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputRecord> flush() {
+    public RecordsIterable<FileRecord<TypedStruct>> flush() {
         if (buffered.size() == 0) RecordsIterable.empty();
 
-        FileInputData data = groupBufferedRecords();
-        return new RecordsIterable<>(new FileInputRecord(offset, data));
+        TypedStruct data = groupBufferedRecords();
+        return new RecordsIterable<>(new TypedFileRecord(offset, data));
     }
 
     private boolean mayForwardPreviousBufferedRecords(final int key) {
@@ -125,23 +123,17 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
         return buffered.size() > 0;
     }
 
-    private FileInputData groupBufferedRecords() {
-        Struct peek = buffered.get(0);
-        Schema schema = SchemaBuilder
-                .struct()
-                .field(this.target, SchemaBuilder.array(peek.schema()))
-                .build();
-        Struct struct = new Struct(schema);
+    private TypedStruct groupBufferedRecords() {
+        final TypedStruct struct = TypedStruct.struct();
         struct.put(target, new ArrayList<>(buffered));
         buffered.clear();
-        return new FileInputData(struct);
+        return struct;
     }
 
-    static int extractKey(final FileInputData record, final List<String> fields) {
-        final Struct struct = record.value();
+    static int extractKey(final TypedStruct record, final List<String> fields) {
         Object[] keys = new Object[fields.size()];
         for (int i = 0; i < fields.size(); i++) {
-            keys[i] = struct.get(fields.get(i));
+            keys[i] = record.get(fields.get(i));
         }
         return Objects.hash(keys);
     }

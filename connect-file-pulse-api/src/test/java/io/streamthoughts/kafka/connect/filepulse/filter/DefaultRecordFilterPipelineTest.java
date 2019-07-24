@@ -16,12 +16,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputContext;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.Test;
 
@@ -38,13 +39,13 @@ import static org.junit.Assert.fail;
 public class DefaultRecordFilterPipelineTest {
 
     private SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
-    private FileInputContext context = new FileInputContext(metadata);
+    private FileContext context = new FileContext(metadata);
 
     @Test
     public void testGivenIdentityFilter() {
 
-        FileInputOffset offset = FileInputOffset.with(1, 0);
-        final FileInputRecord record1 = createWithOffsetAndValue(offset, "value1");
+        FileRecordOffset offset = FileRecordOffset.with(1, 0);
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(offset, "value1");
 
         final TestFilter filter = new TestFilter()
                 .setFunction(((context, record, hasNext) -> RecordsIterable.of(record)));
@@ -52,7 +53,7 @@ public class DefaultRecordFilterPipelineTest {
         DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.singletonList(filter));
         pipeline.init(context);
 
-        RecordsIterable<FileInputRecord> records = pipeline.apply(new RecordsIterable<>(record1), false);
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(record1), false);
 
         assertNotNull(records);
         assertEquals(1, records.size());
@@ -62,42 +63,42 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldReThrowExceptionGivenFailingFilterNotIgnoringFailure() {
 
-        FileInputOffset offset = FileInputOffset.with(1, 0);
-        final FileInputRecord record1 = createWithOffsetAndValue(offset, "value1");
+        FileRecordOffset offset = FileRecordOffset.with(1, 0);
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(offset, "value1");
 
         final TestFilter filter = new TestFilter()
-            .setException(new RuntimeException("test exception"));
+            .setException(new RuntimeException("test error"));
 
         DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.singletonList(filter));
         pipeline.init(context);
 
         try {
             pipeline.apply(new RecordsIterable<>(record1), false);
-            fail("expecting exception to be thrown");
+            fail("expecting error to be thrown");
         } catch (Exception e) {
-            assertEquals("test exception", e.getMessage());
+            assertEquals("test error", e.getMessage());
         }
     }
 
     @Test
     public void shouldSkipFilterGivenFailingFilterIgnoringFailure() {
 
-        FileInputOffset offset = FileInputOffset.with(1, 0);
-        final FileInputRecord record1 = createWithOffsetAndValue(offset, "value1");
-        final FileInputRecord record2 = createWithOffsetAndValue(offset, "value2");
+        FileRecordOffset offset = FileRecordOffset.with(1, 0);
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(offset, "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(offset, "value2");
 
         final TestFilter filter1 = new TestFilter()
-            .setException(new RuntimeException("test exception"))
+            .setException(new RuntimeException("test error"))
             .setIgnoreFailure(true);
 
         final TestFilter filter2 = new TestFilter()
-                .setFunction((o1, o2, o3) -> RecordsIterable.of(record2.data()));
+                .setFunction((o1, o2, o3) -> RecordsIterable.of(record2.value()));
 
         List<RecordFilter> filters = Arrays.asList(filter1, filter2);
         DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(filters);
         pipeline.init(context);
 
-        RecordsIterable<FileInputRecord> records = pipeline.apply(new RecordsIterable<>(record1), true);
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(record1), true);
 
         assertNotNull(records);
         assertEquals(1, records.size());
@@ -107,18 +108,18 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldFlushBufferedRecordsAndSkipFilterGivenFailingFilter() {
 
-        final FileInputRecord record1 = createWithOffsetAndValue(FileInputOffset.with(1, 0), "value1");
-        final FileInputRecord record2 = createWithOffsetAndValue(FileInputOffset.with(2, 0), "value2");
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.with(2, 0), "value2");
 
         TestFilter filter = new TestFilter()
-                .setException(new RuntimeException("test exception"))
+                .setException(new RuntimeException("test error"))
                 .setIgnoreFailure(true)
                 .setBuffer(Collections.singletonList(record1));
 
         DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.singletonList(filter));
         pipeline.init(context);
 
-        RecordsIterable<FileInputRecord> records = pipeline.apply(new RecordsIterable<>(record2), true);
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(record2), true);
 
         assertNotNull(records);
         assertEquals(2, records.size());
@@ -129,16 +130,16 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldFlushBufferedRecordsAndExecuteErrorPipelineGivenFailingFilter() {
 
-        final FileInputRecord record1 = createWithOffsetAndValue(FileInputOffset.with(1, 0), "value1");
-        FileInputOffset offset = FileInputOffset.with(2, 0);
-        final FileInputRecord record2 = createWithOffsetAndValue(offset, "value2");
-        final FileInputRecord record3 = createWithOffsetAndValue(offset, "value2");
+        final FileRecord<TypedStruct>  record1 = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value1");
+        FileRecordOffset offset = FileRecordOffset.with(2, 0);
+        final FileRecord<TypedStruct>  record2 = createWithOffsetAndValue(offset, "value2");
+        final FileRecord<TypedStruct> record3 = createWithOffsetAndValue(offset, "value2");
 
         TestFilter filter2 = new TestFilter()
-                .setFunction((o1, o2, o3) -> RecordsIterable.of(record3.data()));
+                .setFunction((o1, o2, o3) -> RecordsIterable.of(record3.value()));
 
         TestFilter filter1 = new TestFilter()
-                .setException(new RuntimeException("test exception"))
+                .setException(new RuntimeException("test error"))
                 .setIgnoreFailure(true)
                 .setBuffer(Collections.singletonList(record1))
                 .setOnFailure(new DefaultRecordFilterPipeline(Collections.singletonList(filter2)));
@@ -146,7 +147,7 @@ public class DefaultRecordFilterPipelineTest {
         DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.singletonList(filter1));
         pipeline.init(context);
 
-        RecordsIterable<FileInputRecord> records = pipeline.apply(new RecordsIterable<>(record2), true);
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(record2), true);
 
         assertNotNull(records);
         assertEquals(2, records.size());
@@ -157,20 +158,20 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldFlushBufferedRecordsGivenNoAcceptFilterAndThereIsNoRemainingRecord() {
 
-        final FileInputRecord record1 = createWithOffsetAndValue(FileInputOffset.with(1, 0), "value1");
-        final FileInputRecord record2 = createWithOffsetAndValue(FileInputOffset.with(2, 0), "value2");
-        final FileInputRecord record3 = createWithOffsetAndValue(FileInputOffset.with(2, 0), "foo");
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.with(2, 0), "value2");
+        final FileRecord<TypedStruct> record3 = createWithOffsetAndValue(FileRecordOffset.with(2, 0), "foo");
 
         TestFilter filter1 = new TestFilter()
                 // This function will never be executed
-                .setFunction(((context, record, hasNext) -> RecordsIterable.of(record3.data())))
+                .setFunction(((context, record, hasNext) -> RecordsIterable.of(record3.value())))
                 .setBuffer(Collections.singletonList(record1))
                 .refuse();
 
         DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.singletonList(filter1));
         pipeline.init(context);
 
-        RecordsIterable<FileInputRecord> records = pipeline.apply(new RecordsIterable<>(record2), false);
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(record2), false);
 
         assertNotNull(records);
         assertEquals(2, records.size());
@@ -181,8 +182,8 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldNotFlushBufferedRecordsGivenNoAcceptFilterAndThereIsNoRemainingRecord() {
 
-        final FileInputRecord record1 = createWithOffsetAndValue(FileInputOffset.with(1, 0), "value1");
-        final FileInputRecord record2 = createWithOffsetAndValue(FileInputOffset.with(2, 0), "value2");
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.with(2, 0), "value2");
 
         TestFilter filter1 = new TestFilter()
                 .setBuffer(Collections.singletonList(record1))
@@ -191,34 +192,38 @@ public class DefaultRecordFilterPipelineTest {
         DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.singletonList(filter1));
         pipeline.init(context);
 
-        RecordsIterable<FileInputRecord> records = pipeline.apply(new RecordsIterable<>(record2), true);
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(record2), true);
 
         assertNotNull(records);
         assertEquals(1, records.size());
         assertEquals(record2, records.collect().get(0));
     }
 
-    private static FileInputRecord createWithOffsetAndValue(final FileInputOffset offset, final String value) {
-        return new FileInputRecord(offset, FileInputData.defaultStruct(value));
+    private static FileRecord<TypedStruct> createWithOffsetAndValue(final FileRecordOffset offset, final String value) {
+        return new TypedFileRecord(offset, new TypedStruct().put("message", value));
     }
 
     static class TestFilter implements RecordFilter {
 
         RuntimeException exception;
 
-        RecordFilterPipeline<FileInputRecord> onFailure;
+        RecordFilterPipeline<FileRecord<TypedStruct>> onFailure;
 
         private boolean ignoreFailure = false;
 
         private boolean accept = true;
 
-        List<FileInputRecord> buffered;
+        List<FileRecord<TypedStruct>> buffered;
 
         private FilterFunction function;
 
         TestFilter setException(final RuntimeException exception) {
             this.exception = exception;
             return this;
+        }
+
+        public boolean accept(final FilterContext context, final TypedStruct record) {
+            return accept;
         }
 
         TestFilter setIgnoreFailure(boolean ignoreFailure) {
@@ -231,12 +236,12 @@ public class DefaultRecordFilterPipelineTest {
             return this;
         }
 
-        TestFilter setBuffer(final List<FileInputRecord> buffered) {
+        TestFilter setBuffer(final List<FileRecord<TypedStruct>> buffered) {
             this.buffered = buffered;
             return this;
         }
 
-        TestFilter setOnFailure(final RecordFilterPipeline<FileInputRecord> onFailure) {
+        TestFilter setOnFailure(final RecordFilterPipeline<FileRecord<TypedStruct>> onFailure) {
             this.onFailure = onFailure;
             return this;
         }
@@ -247,8 +252,8 @@ public class DefaultRecordFilterPipelineTest {
         }
 
         @Override
-        public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                    final FileInputData record, boolean hasNext) {
+        public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                                  final TypedStruct record, boolean hasNext) {
             if (exception != null) {
                 throw exception;
             }
@@ -256,7 +261,7 @@ public class DefaultRecordFilterPipelineTest {
         }
 
         @Override
-        public RecordsIterable<FileInputRecord> flush() {
+        public RecordsIterable<FileRecord<TypedStruct>> flush() {
             return buffered == null ? RecordsIterable.empty() : new RecordsIterable<>(buffered);
         }
 
@@ -265,16 +270,12 @@ public class DefaultRecordFilterPipelineTest {
 
         }
 
-        public boolean accept(final FilterContext context, final FileInputData record) {
-            return accept;
-        }
-
         @Override
         public ConfigDef configDef() {
             return null;
         }
 
-        public RecordFilterPipeline<FileInputRecord> onFailure() {
+        public RecordFilterPipeline<FileRecord<TypedStruct>> onFailure() {
             return onFailure;
         }
 

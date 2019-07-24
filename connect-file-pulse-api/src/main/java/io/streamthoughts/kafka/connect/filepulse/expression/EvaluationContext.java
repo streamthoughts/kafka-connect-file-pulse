@@ -16,15 +16,33 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression;
 
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.accessor.PropertyAccessor;
+import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public interface EvaluationContext {
 
     /**
+     * Return the default root context object against which an expression is evaluated.
+     */
+    Object rootObject();
+
+    /**
+     * Return a list of accessors that will be asked in turn to read/write a property.
+     */
+    List<PropertyAccessor> getPropertyAccessors();
+
+    /**
+     * Return a list of converter that will be asked in turn to convert read value into expected type.
+     */
+    List<PropertyConverter> getPropertyConverter();
+
+    /**
      * Checks whether a variable is defined in this context.
+     *
      * @param name  the variable name.
      *
      * @return {@code true} if the variable exists for the given name.
@@ -33,24 +51,31 @@ public interface EvaluationContext {
 
     /**
      * Returns the variable value for the specified name.
+     *
      * @param name  the variable name.
      *
      * @return the variable value or {@code null} of no variable exist for the given name.
      */
-    SchemaAndValue get(final String name);
+    Object get(final String name);
 
     /**
      * Sets a variable in this context with the specified name and value.
+     *
      * @param name  the variable name.
-     * @param value the variable value./
+     * @param value the variable value.
      */
-    void set(final String name, final SchemaAndValue value);
+    void set(final String name, final Object value);
 
     /**
      * Returns the list of variables defined in this context.
+     *
      * @return  a set of variable name.
      */
     Set<String> variables();
 
-    Map<String, SchemaAndValue> values();
+    /**
+     * Returns the values of variables defined in this context.
+     * @return  a map of variables.
+     */
+    Map<String, Object> values();
 }

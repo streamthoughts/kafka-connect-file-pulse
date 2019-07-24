@@ -85,7 +85,7 @@ public class TaskConfig extends CommonConfig {
         LinkedHashSet<?> uniqueFilterAliases = new LinkedHashSet<>((List<?>) filterAliases);
         for (Object o : uniqueFilterAliases) {
             if (!(o instanceof String)) {
-                throw new ConfigException("Item in " + filterAliases + " property is not of type String");
+                throw new ConfigException("Item in " + filterAliases + " property is not of type string");
             }
             String alias = (String) o;
             final String prefix = FILTER_CONFIG + "." + alias + ".";

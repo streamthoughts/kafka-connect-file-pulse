@@ -16,14 +16,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression;
 
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 
 public class SubstitutionExpressionTest {
 
@@ -31,7 +29,7 @@ public class SubstitutionExpressionTest {
     private static final String SUFFIX = "-suffix";
     private static final String PREFIX = "prefix-";
 
-    private static EvaluationContext mockEvaluationContext = Mockito.mock(EvaluationContext.class);
+    private static EvaluationContext context = new StandardEvaluationContext(new Object());
 
     private static final String EVALUATED_VALUE = "value";
 
@@ -39,13 +37,17 @@ public class SubstitutionExpressionTest {
 
     @Test
     public void testGivenSingleExpressionReplacement() {
-        SubstitutionExpression expression = new SubstitutionExpression(DEFAULT_EXPRESSION_STRING, 0, DEFAULT_EXPRESSION_STRING.length(), DEFAULT_EXPRESSION);
+        SubstitutionExpression expression = new SubstitutionExpression(
+            DEFAULT_EXPRESSION_STRING,
+            0,
+            DEFAULT_EXPRESSION_STRING.length(),
+            DEFAULT_EXPRESSION);
 
-        SchemaAndValue evaluated = expression.evaluate(mockEvaluationContext);
+        TypedValue evaluated = expression.readValue(context, TypedValue.class);
 
         assertNotNull(evaluated);
-        assertEquals(Schema.STRING_SCHEMA, evaluated.schema());
-        assertEquals(EVALUATED_VALUE, evaluated.value());
+        assertEquals(Type.STRING, evaluated.type());
+        assertEquals(EVALUATED_VALUE, evaluated.getString());
     }
 
     @Test
@@ -56,11 +58,11 @@ public class SubstitutionExpressionTest {
                 startIndex + DEFAULT_EXPRESSION_STRING.length(),
                 DEFAULT_EXPRESSION);
 
-        SchemaAndValue evaluated = expression.evaluate(mockEvaluationContext);
+        TypedValue evaluated = expression.readValue(context, TypedValue.class);
 
         assertNotNull(evaluated);
-        assertEquals(Schema.STRING_SCHEMA, evaluated.schema());
-        assertEquals(PREFIX + EVALUATED_VALUE, evaluated.value());
+        assertEquals(Type.STRING, evaluated.type());
+        assertEquals(PREFIX + EVALUATED_VALUE, evaluated.getString());
     }
 
     @Test
@@ -69,11 +71,11 @@ public class SubstitutionExpressionTest {
         final int endIndex = DEFAULT_EXPRESSION_STRING.length();
         SubstitutionExpression expression = new SubstitutionExpression(DEFAULT_EXPRESSION_STRING + SUFFIX, startIndex, endIndex, DEFAULT_EXPRESSION);
 
-        SchemaAndValue evaluated = expression.evaluate(mockEvaluationContext);
+        TypedValue evaluated = expression.readValue(context, TypedValue.class);
 
         assertNotNull(evaluated);
-        assertEquals(Schema.STRING_SCHEMA, evaluated.schema());
-        assertEquals(EVALUATED_VALUE + SUFFIX, evaluated.value());
+        assertEquals(Type.STRING, evaluated.type());
+        assertEquals(EVALUATED_VALUE + SUFFIX, evaluated.getString());
     }
 
     @Test
@@ -81,11 +83,11 @@ public class SubstitutionExpressionTest {
         final String original = PREFIX + DEFAULT_EXPRESSION_STRING + SUFFIX;
         SubstitutionExpression expression = new SubstitutionExpression(original, PREFIX.length(), PREFIX.length() + DEFAULT_EXPRESSION_STRING.length(), DEFAULT_EXPRESSION);
 
-        SchemaAndValue evaluated = expression.evaluate(mockEvaluationContext);
+        TypedValue evaluated = expression.readValue(context, TypedValue.class);
 
         assertNotNull(evaluated);
-        assertEquals(Schema.STRING_SCHEMA, evaluated.schema());
-        assertEquals(PREFIX + EVALUATED_VALUE + SUFFIX, evaluated.value());
+        assertEquals(Type.STRING, evaluated.type());
+        assertEquals(PREFIX + EVALUATED_VALUE + SUFFIX, evaluated.getString());
     }
 
     @Test

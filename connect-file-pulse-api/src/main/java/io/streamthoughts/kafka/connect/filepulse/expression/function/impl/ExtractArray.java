@@ -16,15 +16,16 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
+import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public class ExtractArray implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypeValue[] args) {
+    public SimpleArguments prepare(final TypedValue[] args) {
         if (args.length < 1) {
             return new SimpleArguments(new MissingArgumentValue(INDEX_ARG));
         }
@@ -54,8 +55,8 @@ public class ExtractArray implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final SchemaAndValue value) {
-        return value.schema().type().equals(Schema.Type.ARRAY);
+    public boolean accept(final TypedValue value) {
+        return value.type() == Type.ARRAY;
     }
 
     /**
@@ -63,14 +64,9 @@ public class ExtractArray implements ExpressionFunction<SimpleArguments> {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public SchemaAndValue apply(final SchemaAndValue data, final SimpleArguments args) {
-        List<Object> array = (List<Object>) data.value();
-
-        if (array != null) {
-            Integer index = args.valueOf(INDEX_ARG);
-            return new SchemaAndValue(data.schema().valueSchema(), array.get(index));
-        }
-
-        return null;
+    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
+        final Integer index = args.valueOf(INDEX_ARG);
+        List<Object> array = new ArrayList<>(field.getArray());
+        return TypedValue.of(array.get(index), ((ArraySchema) field.schema()).valueSchema());
     }
 }

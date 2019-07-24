@@ -17,6 +17,7 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.state.FileStateBackingStore;
@@ -25,8 +26,6 @@ import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetManager;
 import io.streamthoughts.kafka.connect.filepulse.offset.SimpleOffsetManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
-import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
@@ -36,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * The FilePulseSourceTask.
+ */
 public class FilePulseSourceTask extends SourceTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilePulseSourceTask.class);
@@ -54,7 +56,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private KafkaFileStateReporter reporter;
 
-    private volatile FileInputContext contextToBeCommitted;
+    private volatile FileContext contextToBeCommitted;
 
     /**
      * {@inheritDoc}
@@ -120,7 +122,7 @@ public class FilePulseSourceTask extends SourceTask {
             return null;
         }
 
-        RecordsIterable<FileInputRecord> records = consumer.next();
+        RecordsIterable<FileRecord<TypedStruct>> records = consumer.next();
 
         // If no records attempt to wait for incoming records.
         if (records.isEmpty() && consumer.hasNext()) {
@@ -128,7 +130,7 @@ public class FilePulseSourceTask extends SourceTask {
             records = consumer.next();
         }
 
-        FileInputContext context = consumer.context();
+        FileContext context = consumer.context();
         if (records != null && !records.isEmpty()) {
             return records.stream().map(r -> buildSourceRecord(context, r)).collect(Collectors.toList());
         }
@@ -148,24 +150,20 @@ public class FilePulseSourceTask extends SourceTask {
         }
     }
 
-    private SourceRecord buildSourceRecord(final FileInputContext context,
-                                           final FileInputRecord record) {
+    private SourceRecord buildSourceRecord(final FileContext context,
+                                           final FileRecord<?> record) {
         final SourceMetadata metadata = context.metadata();
 
         final Map<String, ?> sourcePartition = offsetManager.toPartitionMap(metadata);
         final Map<String, ?> sourceOffsets = offsetManager.toOffsetMap(record.offset().toSourceOffset());
 
-        final ConnectHeaders headers = metadata.toConnectHeader();
-        return new SourceRecord(sourcePartition,
-                sourceOffsets,
-                topic,
-                NO_PARTITION,
-                null,
-                null,
-                record.data().schema(),
-                record.data().value(),
-                null,
-                headers);
+        return record.toSourceRecord(
+            sourcePartition,
+            sourceOffsets,
+            context.metadata(),
+            topic,
+            NO_PARTITION
+        );
     }
 
     /**

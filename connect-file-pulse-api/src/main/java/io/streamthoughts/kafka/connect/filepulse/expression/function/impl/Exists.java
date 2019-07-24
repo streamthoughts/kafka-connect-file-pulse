@@ -16,14 +16,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
-import org.apache.kafka.connect.data.Struct;
 
 public class Exists implements ExpressionFunction<SimpleArguments> {
 
@@ -33,15 +32,15 @@ public class Exists implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final SchemaAndValue value) {
-        return value.schema().type().equals(Schema.Type.STRUCT);
+    public boolean accept(final TypedValue value) {
+        return value.type() == Type.STRUCT || value.type() == Type.NULL;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypeValue[] args) {
+    public SimpleArguments prepare(final TypedValue[] args) {
         if (args.length < 1) {
             return new SimpleArguments(new MissingArgumentValue(FIELD_ARG));
         }
@@ -52,10 +51,13 @@ public class Exists implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue apply(final SchemaAndValue field, final SimpleArguments args) {
-        final Struct struct = (Struct)field.value();
+    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
+
+        if (field.type() == Type.NULL) return TypedValue.bool(false);
+
+        final TypedStruct struct = field.getStruct();
         final String arg = args.valueOf(FIELD_ARG);
-        final boolean exists = struct.schema().field(arg) != null;
-        return new SchemaAndValue(Schema.BOOLEAN_SCHEMA, exists);
+        final boolean exists = struct.has(arg);
+        return TypedValue.bool(exists);
     }
 }

@@ -17,16 +17,18 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.FailFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
-import io.streamthoughts.kafka.connect.filepulse.expression.parser.RegexExpressionParser;
+import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.parser.regex.RegexExpressionParser;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.data.SchemaAndValue;
 
 import java.util.Map;
 
 public class FailFilter extends AbstractRecordFilter<FailFilter> {
+
+    private static final String DEFAULT_ROOT_OBJECT = "value";
 
     private FailFilterConfig config;
 
@@ -47,29 +49,37 @@ public class FailFilter extends AbstractRecordFilter<FailFilter> {
     public void configure(final Map<String, ?> props) {
         super.configure(props);
         config = new FailFilterConfig(props);
-        expression = new RegexExpressionParser().parseExpression(config.message());
+        expression = new RegexExpressionParser().parseExpression(config.message(), DEFAULT_ROOT_OBJECT);
     }
-
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                final FileInputData struct,
-                                                final boolean hasNext) throws FilterException {
-        if (condition.apply(context, struct)) {
-            final SchemaAndValue value = expression.evaluate(context);
-            throw new FilterException(value.value().toString());
+    public RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                              final TypedStruct record,
+                                              final boolean hasNext) throws FilterException {
+
+        if (condition.apply(context, record)) {
+
+            InternalFilterContext internalContext = (InternalFilterContext) context;
+            internalContext.setValue(record);
+
+            final StandardEvaluationContext ec = new StandardEvaluationContext(
+                    internalContext,
+                    context.variables());
+
+            final String message = expression.readValue(ec, String.class);
+            throw new FilterException(message);
         }
-        return new RecordsIterable<>(struct);
+        return RecordsIterable.of(record);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final FilterContext context, final FileInputData record) {
+    public boolean accept(final FilterContext context, final TypedStruct record) {
         // We should always accept record to filter into the apply method.
         return true;
     }

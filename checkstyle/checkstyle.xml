@@ -24,7 +24,7 @@
     <property name="localeLanguage" value="en"/>
 
     <module name="Header">
-        <property name="headerFile" value="./checkstyle/apache-header" />
+        <property name="headerFile" value="${basedir}/checkstyle/apache-header" />
     </module>
 
     <module name="TreeWalker">
@@ -72,6 +72,6 @@
     </module>
 
     <module name="SuppressionFilter">
-        <property name="file" value="./checkstyle/suppressions.xml"/>
+        <property name="file" value="${basedir}/checkstyle/suppressions.xml"/>
     </module>
 </module>

@@ -17,19 +17,16 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.AppendFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
-import org.apache.kafka.connect.data.SchemaAndValue;
-import org.apache.kafka.connect.data.SchemaBuilder;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AppendFilterTest {
@@ -44,8 +41,10 @@ public class AppendFilterTest {
     public void setUp() {
         filter = new AppendFilter();
         configs = new HashMap<>();
-        SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
-        context = InternalFilterContext.with(metadata, FileInputOffset.empty());
+        context = FilterContextBuilder.newBuilder()
+                .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
+                .withOffset(FileRecordOffset.empty())
+                .build();
     }
 
     @Test
@@ -54,11 +53,11 @@ public class AppendFilterTest {
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "{{ extract_array(values,0) }}-{{ extract_array(values,1) }}");
         filter.configure(configs);
 
-        List<String> values = Arrays.asList("foo", "bar");
-        context.set("values", new SchemaAndValue(SchemaBuilder.array(SchemaBuilder.string()), values));
-        RecordsIterable<FileInputData> output = filter.apply(context, null);
+        final TypedStruct struct = new TypedStruct();
+        struct.put("values", Arrays.asList("foo", "bar"));
+        RecordsIterable<TypedStruct> output = filter.apply(context, struct);
         Assert.assertNotNull(output);
-        FileInputData data = output.collect().get(0);
-        Assert.assertEquals("foo-bar", data.value().getString("target"));
+        TypedStruct result = output.collect().get(0);
+        Assert.assertEquals("foo-bar", result.getString("target"));
     }
 }

@@ -22,29 +22,29 @@ import java.util.Objects;
 /**
  * Immutable class which is use to wrap contextual information about an input file.
  */
-public class FileInputContext {
+public class FileContext {
 
     private final SourceMetadata metadata;
 
     private final SourceOffset offset;
 
     /**
-     * Creates a new {@link FileInputContext} instance.
+     * Creates a new {@link FileContext} instance.
      *
      * @param metadata  the source metadata.
      */
-    public FileInputContext(final SourceMetadata metadata) {
+    public FileContext(final SourceMetadata metadata) {
         this(metadata, SourceOffset.empty());
     }
 
     /**
-     * Creates a new {@link FileInputContext} instance.
+     * Creates a new {@link FileContext} instance.
      *
      * @param metadata  the source metadata.
      * @param offset    teh source startPosition.
      */
-    public FileInputContext(final SourceMetadata metadata,
-                            final SourceOffset offset) {
+    public FileContext(final SourceMetadata metadata,
+                       final SourceOffset offset) {
         Objects.requireNonNull(metadata, "metadata can't be null");
         Objects.requireNonNull(offset, "startPosition can't be null");
         this.metadata = metadata;
@@ -72,14 +72,14 @@ public class FileInputContext {
     /**
      * Returns the startPosition of the next bytes to read in this file.
      *
-     * @return the {@link FileInputOffset} instance.
+     * @return the {@link FileRecordOffset} instance.
      */
     public SourceOffset offset() {
         return offset;
     }
     
-    public FileInputContext withOffset(final SourceOffset offset) {
-        return new FileInputContext(metadata, offset);
+    public FileContext withOffset(final SourceOffset offset) {
+        return new FileContext(metadata, offset);
     }
 
     /**
@@ -88,8 +88,8 @@ public class FileInputContext {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FileInputContext)) return false;
-        FileInputContext that = (FileInputContext) o;
+        if (!(o instanceof FileContext)) return false;
+        FileContext that = (FileContext) o;
         return Objects.equals(metadata, that.metadata) &&
                 Objects.equals(offset, that.offset);
     }

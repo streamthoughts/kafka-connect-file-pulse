@@ -16,13 +16,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
-
-import java.util.Collection;
 
 /**
  * Simple function to retrieve the size of a array or a string field.
@@ -33,7 +30,7 @@ public class Length implements ExpressionFunction<Arguments> {
      * {@inheritDoc}
      */
     @Override
-    public Arguments prepare(final TypeValue[] args) {
+    public Arguments prepare(final TypedValue[] args) {
         return Arguments.empty();
     }
 
@@ -41,19 +38,17 @@ public class Length implements ExpressionFunction<Arguments> {
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final SchemaAndValue value) {
-        return value.schema().type().equals(Schema.Type.ARRAY)
-               ||  value.schema().type().equals(Schema.Type.STRING);
+    public boolean accept(final TypedValue value) {
+        return value.type() == Type.ARRAY || value.type() == Type.STRING;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue apply(final SchemaAndValue field, final Arguments args) {
-        if (field.schema().type().equals(Schema.Type.ARRAY)) {
-            return new SchemaAndValue(Schema.INT32_SCHEMA, ((Collection) field.value()).size());
-        }
-        return new SchemaAndValue(Schema.INT32_SCHEMA, field.value().toString().length());
+    public TypedValue apply(final TypedValue field, final Arguments args) {
+
+        int size = (field.type() == Type.ARRAY) ? field.getArray().size() : ((String)field.value()).length();
+        return TypedValue.in32(size);
     }
 }

@@ -16,8 +16,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
+import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -65,10 +65,10 @@ public class DelimitedRowFileInputFilterConfigTest {
 
         DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(props);
 
-        Schema schema = config.schema();
+        StructSchema schema = config.schema();
         Assert.assertNotNull(schema);
 
-        List<Field> fields = schema.fields();
+        List<TypedField> fields = schema.fields();
         Assert.assertEquals(3, fields.size());
 
         Assert.assertEquals("field1", fields.get(0).name());

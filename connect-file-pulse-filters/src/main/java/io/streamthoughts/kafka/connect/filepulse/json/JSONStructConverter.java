@@ -16,19 +16,18 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.json;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import org.apache.kafka.connect.data.Struct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 
 /**
- * Default interface to manage conversion from input JSON withMessage to {@link Struct} object.
+ * Default interface to manage conversion from input JSON message to {@link TypedStruct} object.
  */
 public interface JSONStructConverter {
 
     /**
-     * Gets a {@link Struct} instanced for the specified data.
+     * Gets a {@link TypedStruct} instance for the specified value.
      *
-     * @param data  the json withMessage to convert to {@link Struct}.
-     * @return  a new {@link Struct} instance.
+     * @param data  the json message to convert to {@link TypedStruct}.
+     * @return      the new {@link TypedStruct} instance.
      */
-    FileInputData readJson(final String data) throws Exception;
+    TypedStruct readJson(final String data) throws Exception;
 }

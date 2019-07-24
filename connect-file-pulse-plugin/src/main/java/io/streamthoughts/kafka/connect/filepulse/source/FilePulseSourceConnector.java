@@ -107,7 +107,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
         fsMonitorThread = new FileSystemMonitorThread(context, scanner, config.scanInternalMs());
         fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {
-            LOG.info("Uncaught exception from file system monitoring thread [{}]", t.getName(), e);
+            LOG.info("Uncaught error from file system monitoring thread [{}]", t.getName(), e);
             throw new ConnectException(e);
         });
         fsMonitorThread.start();

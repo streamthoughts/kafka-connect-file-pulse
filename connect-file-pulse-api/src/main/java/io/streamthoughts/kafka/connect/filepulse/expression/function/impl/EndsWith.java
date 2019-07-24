@@ -16,31 +16,29 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.TypedExpressionFunction;
 
-public class EndsWith implements ExpressionFunction<SimpleArguments> {
+public class EndsWith extends TypedExpressionFunction<String, SimpleArguments> {
 
     private static final String SUFFIX_ARG = "suffix";
 
     /**
-     * {@inheritDoc}
+     * Creates a new {@link EndsWith} instance.
      */
-    @Override
-    public boolean accept(final SchemaAndValue value) {
-        return value.schema().type().equals(Schema.Type.STRING);
+    public EndsWith() {
+        super(Type.STRING);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypeValue[] args) {
+    public SimpleArguments prepare(final TypedValue[] args) {
         if (args.length < 1) {
             return new SimpleArguments(new MissingArgumentValue(SUFFIX_ARG));
         }
@@ -51,9 +49,10 @@ public class EndsWith implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue apply(final SchemaAndValue field, final SimpleArguments args) {
-        final String suffix = args.valueOf(SUFFIX_ARG);
-        final boolean suffixed = field != null && ((String) field.value()).endsWith(suffix);
-        return new SchemaAndValue(Schema.BOOLEAN_SCHEMA, suffixed);
+    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
+        final String prefix = args.valueOf(SUFFIX_ARG);
+        final String value = field.value();
+        final boolean prefixed = value.endsWith(prefix);
+        return TypedValue.bool(prefixed);
     }
 }

@@ -17,12 +17,9 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.GroupRowFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.data.Struct;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,15 +37,10 @@ public class GroupRowFilterTest {
     private static final String KEY_2 = "key2";
     private static final String VALUE = "value";
 
-    private static Schema SCHEMA =  SchemaBuilder.struct()
-            .field(KEY_1, Schema.STRING_SCHEMA)
-            .field(KEY_2, Schema.STRING_SCHEMA)
-            .field(VALUE, Schema.STRING_SCHEMA)
-            .build();
 
     private FilterContext context;
 
-    private List<FileInputData> inputs;
+    private List<TypedStruct> inputs;
 
     @Before
     public void setUp() {
@@ -58,8 +50,10 @@ public class GroupRowFilterTest {
         inputs.addAll(generate(KEY_2, KEY_1, 2));
         inputs.addAll(generate(KEY_2, KEY_2, 2));
 
-        SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
-        context = InternalFilterContext.with(metadata, FileInputOffset.empty());
+        context = FilterContextBuilder.newBuilder()
+                .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
+                .withOffset(FileRecordOffset.empty())
+                .build();
     }
 
     @Test
@@ -70,8 +64,8 @@ public class GroupRowFilterTest {
             put(GroupRowFilterConfig.MAX_BUFFERED_RECORDS_CONFIG, "10");
         }});
 
-        List<FileInputData> output = new LinkedList<>();
-        Iterator<FileInputData> iterator = inputs.iterator();
+        List<TypedStruct> output = new LinkedList<>();
+        Iterator<TypedStruct> iterator = inputs.iterator();
         while (iterator.hasNext()) {
             output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
@@ -86,8 +80,8 @@ public class GroupRowFilterTest {
             put(GroupRowFilterConfig.MAX_BUFFERED_RECORDS_CONFIG, "10");
         }});
 
-        List<FileInputData> output = new LinkedList<>();
-        Iterator<FileInputData> iterator = inputs.iterator();
+        List<TypedStruct> output = new LinkedList<>();
+        Iterator<TypedStruct> iterator = inputs.iterator();
         while (iterator.hasNext()) {
             output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
@@ -102,8 +96,8 @@ public class GroupRowFilterTest {
             put(GroupRowFilterConfig.MAX_BUFFERED_RECORDS_CONFIG, "1");
         }});
 
-        List<FileInputData> output = new LinkedList<>();
-        Iterator<FileInputData> iterator = inputs.iterator();
+        List<TypedStruct> output = new LinkedList<>();
+        Iterator<TypedStruct> iterator = inputs.iterator();
         while (iterator.hasNext()) {
             output.addAll(filter.apply(context, iterator.next(), iterator.hasNext()).collect());
         }
@@ -111,14 +105,14 @@ public class GroupRowFilterTest {
     }
 
 
-    public List<FileInputData> generate(String key1, String key2, int num) {
-        List<FileInputData> results = new ArrayList<>(num);
+    public List<TypedStruct> generate(String key1, String key2, int num) {
+        List<TypedStruct> results = new ArrayList<>(num);
         for (int i = 0; i < num; i++) {
-            Struct struct = new Struct(SCHEMA)
+            TypedStruct struct = new TypedStruct()
                     .put(KEY_1, key1)
                     .put(KEY_2, key2)
                     .put(VALUE, "val-" + i);
-            results.add(new FileInputData(struct));
+            results.add(struct);
         }
         return results;
     }
@@ -126,15 +120,15 @@ public class GroupRowFilterTest {
     @Test
     public void  shouldGenerateDifferentKeysGivenSymmetricFields() {
 
-        FileInputData struct1 = new FileInputData(new Struct(SCHEMA)
+        TypedStruct struct1 = new TypedStruct()
                 .put(KEY_1, KEY_1)
                 .put(KEY_2, KEY_2)
-                .put(VALUE, "value"));
+                .put(VALUE, "value");
 
-        FileInputData struct2 = new FileInputData(new Struct(SCHEMA)
+        TypedStruct struct2 = new TypedStruct()
                 .put(KEY_1, KEY_2)
                 .put(KEY_2, KEY_1)
-                .put(VALUE, "value"));
+                .put(VALUE, "value");
 
         int hash1 = GroupRowFilter.extractKey(struct1, Arrays.asList(KEY_1, KEY_2));
         int hash2 = GroupRowFilter.extractKey(struct2, Arrays.asList(KEY_1, KEY_2));

@@ -16,7 +16,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputContext;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import org.apache.kafka.common.Configurable;
 
 import java.util.Map;
@@ -42,7 +44,7 @@ public interface FileInputReader extends Configurable, AutoCloseable {
      * @return          a new {@link FileInputIterator} iterator instance.
      *
      */
-    FileInputIterator<FileInputRecord> newIterator(final FileInputContext context);
+    FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context);
 
     /**
      * Close this reader and any remaining un-close iterators.

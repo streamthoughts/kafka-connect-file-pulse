@@ -16,17 +16,21 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter.condition;
 
+import io.streamthoughts.kafka.connect.filepulse.data.DataException;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
-import io.streamthoughts.kafka.connect.filepulse.expression.parser.RegexExpressionParser;
+import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.parser.regex.RegexExpressionParser;
 import io.streamthoughts.kafka.connect.filepulse.filter.FilterContext;
 import io.streamthoughts.kafka.connect.filepulse.filter.FilterException;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.filter.InternalFilterContext;
 
 import java.util.Objects;
 
 public class ExpressionFilterCondition implements FilterCondition {
+
+    private static final String DEFAULT_ROOT_OBJECT = "value";
 
     private final Expression expression;
 
@@ -37,24 +41,37 @@ public class ExpressionFilterCondition implements FilterCondition {
      */
     public ExpressionFilterCondition(final String expression) {
         Objects.requireNonNull(expression, "expression can't be null");
-        this.expression = new RegexExpressionParser().parseExpression(expression);
+        this.expression = new RegexExpressionParser().parseExpression(expression, DEFAULT_ROOT_OBJECT);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean apply(final FilterContext context, final FileInputData record) throws FilterException {
+    public boolean apply(final FilterContext context,
+                         final TypedStruct record) throws FilterException {
         Objects.requireNonNull(context, "context can not be null");
         Objects.requireNonNull(record, "record can not be null");
 
-        final SchemaAndValue result = expression.evaluate(context);
+        InternalFilterContext internalContext = (InternalFilterContext) context;
+        internalContext.setValue(record);
 
-        final Schema.Type type = result.schema().type();
-        if (!type.equals(Schema.Type.BOOLEAN)) {
-            throw new FilterException(
-                "Invalid expression : function should evaluate to boolean - type '" + type.getName() + "' returned");
+        final StandardEvaluationContext ec = new StandardEvaluationContext(
+                internalContext,
+                context.variables());
+
+        Object o = expression.readValue(ec);
+
+        TypedValue value;
+        if (o instanceof TypedValue) {
+            value = (TypedValue)o;
+        } else {
+            value = TypedValue.any(o);
         }
-        return (boolean) result.value();
+        try {
+            return value.getBool();
+        } catch (DataException e) {
+            throw new FilterException("Invalid condition function result type, expecting boolean value - got : " + o);
+        }
     }
 }

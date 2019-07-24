@@ -17,7 +17,6 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.accessor;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
-import org.apache.kafka.connect.data.SchemaAndValue;
 
 public interface PropertyAccessor {
 
@@ -28,7 +27,64 @@ public interface PropertyAccessor {
         return null;
     }
 
-    boolean canRead(final EvaluationContext context, final Object target, final String name) throws AccessException;
+    /**
+     * Checks whether this accessor can read the specified variable name.
+     *
+     * @param context   the {@link EvaluationContext} instance.
+     * @param target    the target object.
+     * @param name      the variable name.
+     *
+     * @return  {@code true} if is readable.
+     *
+     * @throws AccessException if an error occurred while evaluating the variable.
+     */
+    boolean canRead(final EvaluationContext context,
+                    final Object target,
+                    final String name) throws AccessException;
 
-    SchemaAndValue read(final EvaluationContext context, final Object target, final String name) throws AccessException;
+    /**
+     * Reads the specified variable from the target object.
+     *
+     * @param context   the {@link EvaluationContext} instance.
+     * @param target    the target object.
+     * @param name      the variable name to read.
+     *
+     * @return the value.
+     *
+     * @throws AccessException if an error occurred while evaluating the variable.
+     */
+    Object read(final EvaluationContext context,
+                final Object target,
+                final String name) throws AccessException;
+
+    /**
+     * Writes a new value into the specified target object.
+     *
+     * @param context   the {@link EvaluationContext} instance.
+     * @param target    the target object.
+     * @param name      the variable name.
+     * @param newValue  the new value to write.
+     *
+     *
+     * @throws AccessException if an error occurred while evaluating the variable.
+     */
+    void write(final EvaluationContext context,
+               final Object target,
+               final String name,
+               final Object newValue) throws AccessException;
+
+    /**
+     * Checks whether this accessor can write the newValue to the specified target object.
+     *
+     * @param context   the {@link EvaluationContext} instance.
+     * @param target    the target object.
+     * @param name      the variable name.
+     *
+     * @return  {@code true} if is writable.
+     *
+     * @throws AccessException if an error occurred while evaluating the variable.
+     */
+    boolean canWrite(final EvaluationContext context,
+                     final Object target,
+                     final String name) throws AccessException;
 }

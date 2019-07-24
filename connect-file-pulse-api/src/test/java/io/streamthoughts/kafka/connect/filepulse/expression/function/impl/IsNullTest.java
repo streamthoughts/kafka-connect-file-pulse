@@ -16,8 +16,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -28,11 +27,11 @@ public class IsNullTest {
 
     @Test
     public void shouldReturnTrueGivenNull() {
-        assertTrue(isNull.accept(new SchemaAndValue(Schema.STRING_SCHEMA, null)));
+        assertTrue(isNull.accept(TypedValue.string(null)));
     }
 
     @Test
     public void shouldReturnFalseGivenNonNull() {
-        assertTrue(isNull.accept(new SchemaAndValue(Schema.STRING_SCHEMA, "dummy")));
+        assertTrue(isNull.accept(TypedValue.string("dummy")));
     }
 }

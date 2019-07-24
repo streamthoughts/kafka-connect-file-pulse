@@ -16,22 +16,22 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.FilterCondition;
 import io.streamthoughts.kafka.connect.filepulse.filter.config.CommonFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputRecord;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputData;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
 
 public abstract class AbstractRecordFilter<T extends AbstractRecordFilter> implements RecordFilter {
 
-    private RecordFilterPipeline<FileInputRecord> failurePipeline;
+    private RecordFilterPipeline<FileRecord<TypedStruct>> failurePipeline;
 
-    protected FilterCondition condition;
+    FilterCondition condition;
 
-    protected boolean ignoreFailure;
+    private boolean ignoreFailure;
 
     /**
      * {@inheritDoc}
@@ -54,9 +54,9 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter> imple
      * {@inheritDoc}
      */
     @Override
-    public abstract RecordsIterable<FileInputData> apply(final FilterContext context,
-                                                         final FileInputData record,
-                                                         final boolean hasNext) throws FilterException;
+    public abstract RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                                       final TypedStruct record,
+                                                       final boolean hasNext) throws FilterException;
 
     @SuppressWarnings("unchecked")
     public T withOnCondition(final FilterCondition condition) {
@@ -65,7 +65,7 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter> imple
     }
 
     @SuppressWarnings("unchecked")
-    public T withOnFailure(final RecordFilterPipeline<FileInputRecord> failurePipeline) {
+    public T withOnFailure(final RecordFilterPipeline<FileRecord<TypedStruct>> failurePipeline) {
         this.failurePipeline = failurePipeline;
         return (T) this;
     }
@@ -80,7 +80,7 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter> imple
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final FilterContext context, final FileInputData record) {
+    public boolean accept(final FilterContext context, final TypedStruct record) {
         return condition.apply(context, record);
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter> imple
      * {@inheritDoc}
      */
     @Override
-    public RecordFilterPipeline<FileInputRecord> onFailure() {
+    public RecordFilterPipeline<FileRecord<TypedStruct>> onFailure() {
         return failurePipeline;
     }
 

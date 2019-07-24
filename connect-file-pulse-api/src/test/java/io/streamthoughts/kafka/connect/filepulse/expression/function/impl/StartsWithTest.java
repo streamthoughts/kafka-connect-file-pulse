@@ -16,10 +16,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypeValue;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaAndValue;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,26 +26,27 @@ import static org.junit.Assert.*;
 
 public class StartsWithTest {
 
-    private static final SchemaAndValue SCHEMA_AND_VALUE = new SchemaAndValue(Schema.STRING_SCHEMA, "prefix-value");
+    private static final String DEFAULT_TEST_VALUE = "prefix-val";
+
     private final StartsWith startsWith = new StartsWith();
 
     @Test
     public void shouldFailedGivenNoArgument() {
-        SimpleArguments arguments = startsWith.prepare(new TypeValue[]{});
+        SimpleArguments arguments = startsWith.prepare(new TypedValue[]{});
         assertFalse(arguments.valid());
     }
 
     @Test
     public void shouldAcceptGivenStringSchemaAndValue() {
-        Assert.assertTrue(startsWith.accept(SCHEMA_AND_VALUE));
+        Assert.assertTrue(startsWith.accept(TypedValue.string(DEFAULT_TEST_VALUE)));
     }
 
     @Test
     public void shouldApplyGivenValidArgument() {
-        SimpleArguments arguments = startsWith.prepare(new TypeValue[]{TypeValue.of("prefix")});
-        SchemaAndValue output = startsWith.apply(SCHEMA_AND_VALUE, arguments);
-        assertEquals(Schema.BOOLEAN_SCHEMA, output.schema());
-        assertTrue((boolean)output.value());
+        SimpleArguments arguments = startsWith.prepare(new TypedValue[]{TypedValue.any("prefix")});
+        TypedValue output = startsWith.apply(TypedValue.string(DEFAULT_TEST_VALUE), arguments);
+        assertEquals(Type.BOOLEAN, output.type());
+        assertTrue(output.value());
     }
 
 }

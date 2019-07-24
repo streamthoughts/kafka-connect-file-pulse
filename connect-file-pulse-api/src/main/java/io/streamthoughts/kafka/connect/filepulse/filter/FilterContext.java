@@ -16,19 +16,32 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.source.FileInputOffset;
+import org.apache.kafka.connect.header.ConnectHeaders;
+
+import java.util.Map;
 
 /**
  * Default interface to expose contextual information to {@link RecordFilter}.
  */
-public interface FilterContext extends EvaluationContext {
+public interface FilterContext {
 
     SourceMetadata metadata();
 
-    FileInputOffset offset();
+    FileRecordOffset offset();
 
-    ExceptionContext exception();
+    ConnectHeaders headers();
 
+    Long timestamp();
+
+    Integer partition();
+
+    String topic();
+
+    String key();
+
+    FilterError error();
+
+    Map<String, Object> variables();
 }

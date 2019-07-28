@@ -24,8 +24,8 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `field` | The field to append    | string | *-* | high |
-| `value` | The value to be appended    | string | *-* | high |
+| `field` | The field to append    | string ([ScEL supported](accessing-data-and-metadata)) | *-* | high |
+| `value` | The value to be appended    | string ([ScEL supported](accessing-data-and-metadata)) | *-* | high |
 | `overwrite` | Is existing field should be overwrite    | boolean | *false* | high |
 
 ### Example
@@ -82,7 +82,7 @@ The drop filter can be used to prevent some messages (i.n records) to be written
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-|`if` | Condition to apply the filter on the current record. | string |** |  high |
+|`if` | Condition to apply the filter on the current record. | string [ScEL supported](accessing-data-and-metadata)) |*-* |  high |
 |`invert` | Invert the boolean value return from the filter condition. |  boolean | *false* | medium |
 
 For more information about `if` property, see : [Conditional execution](conditional-execution).
@@ -111,7 +111,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 | --------------| --------------|-----------| --------- | ------------- |
 |`if` | Condition to apply the filter on the current record. | string |*-* |  high |
 |`invert` | Invert the boolean value return from the filter condition. |  boolean | *false* | medium |
-|`message` | The error message thrown by the filter. Expression are supported |  string | *-* | high |
+|`message` | The error message thrown by the filter. ([ScEL supported](accessing-data-and-metadata)) |  string | *-* | high |
 
 ### Example
 

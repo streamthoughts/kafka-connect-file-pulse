@@ -31,10 +31,10 @@ The expression language can be used to easily build a new string field that conc
 
 ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.
 
-| Function       | Description   | Example   |
+| Function       | Description   | Syntax   |
 | ---------------| --------------|-----------|
 | `contains`     | Returns `true` if an array field's value contains the specified value  | `{% raw %}{{ contains(array, value) }}{% endraw %}` |
-| `converts`     | Converts a field'value into the specified type | `{% raw %}{{ converts(my_field, INTEGER) }}{% endraw %}` |
+| `converts`     | Converts a field'value into the specified type | `{% raw %}{{ converts(field, INTEGER) }}{% endraw %}` |
 | `ends_with`    | Returns `true` if an a string field's value end with the specified string suffix | `{% raw %}{{ ends_with(field, suffix) }}{% endraw %}` |
 | `equals`       | Returns `true` if an a string or number fields's value equals the specified value | `{% raw %}{{ equals(field, value) }}{% endraw %}` |
 | `exists`       | Returns `true` if an the specified field exists | `{% raw %}{{ ends_with(field, value) }}{% endraw %}` |
@@ -43,7 +43,7 @@ ScEL supports a number of predefined functions that can be used to apply a singl
 | `length`       | Returns the number of elements into an array of the length of an string field | `{% raw %}{{ length(array) }}{% endraw %}` |
 | `lowercase`    | Converts all of the characters in a string field's value to lower case | `{% raw %}{{ lowercase(field) }}{% endraw %}` |
 | `matches`      | Returns `true` if a field's value match the specified regex | `{% raw %}{{ matches(field, regex) }}{% endraw %}` |
-| `nlv`          | Sets a default value if a field's value is null | `{% raw %}{{ length(my_array) }}{% endraw %}` |
+| `nlv`          | Sets a default value if a field's value is null | `{% raw %}{{ length(array) }}{% endraw %}` |
 | `replace_all ` | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string. | `{% raw %}{{ replace_all(field, regex, replacement) }}{% endraw %}` |
 | `starts_with`  | Returns `true` if an a string field's value start with the specified string prefix | `{% raw %}{{ starts_with(field, prefix) }}{% endraw %}` |
 | `trim`         | Trims the spaces from the beginning and end of a string.  | `{% raw %}{{ trim(field) }}{% endraw %}` |
@@ -53,12 +53,12 @@ ScEL supports a number of predefined functions that can be used to apply a singl
 ScEL supports nested functions. For example this expression replace all whitespace characters after transforming our field's value into lowercase.
 
 ```
-{{ replace_all(lowercase(field), \\s, -}}
+{% raw %}{{ replace_all(lowercase(field), \\s, -)}}{% endraw %}
 ```
 
 **Limitations** :
 
-* Current, this is not possible to register user-defined functions (UDFs).
+* Currently, this is not possible to register user-defined functions (UDFs).
 
 ## Scopes
 
@@ -84,13 +84,25 @@ ScEL supports a number of predefined scopes that can be used for example :
 | `{% raw %}{{ $key }}{% endraw %}` | The record key | `string` |
 | `{% raw %}{{ $metadata }}{% endraw %}` | The file metadata  | `struct` |
 | `{% raw %}{{ $offset }}{% endraw %}` | The offset information of this record into the source file  | `struct` |
+| `{% raw %}{{ system }}{% endraw %}` | The system environment variables and runtime properties | `struct` |
 | `{% raw %}{{ $timestamp }}{% endraw %}` | The record timestamp  | `long` |
 | `{% raw %}{{ $topic }}{% endraw %}` | The output topic | `string` |
 | `{% raw %}{{ $value }}{% endraw %}` | The record value| `struct` |
 | `{% raw %}{{ $variables }}{% endraw %}` | The contextual filter-chain variables| `map[string, object]` |
 
+Note, that in case of failures more fields are added to the current filter context (see : [Handling Failures](./handling-failures)
 
-### Metadata
+### Record Headers
+
+The scope `headers` allows to defined the headers of the output record.
+
+### Record key
+
+The scope `key` allows to defined the key of the output record. Only string key is currently supported.
+
+### Source Metadata
+
+The scope `metadata` allows read access to information about the file being processing.
 
 | Predefined Fields (ScEL) | Description | Type |
 |--- | --- |--- |
@@ -102,7 +114,9 @@ ScEL supports a number of predefined scopes that can be used for example :
 | `{% raw %}{{ $metadata.size }}{% endraw %}` | The file size  | `long` |
 | `{% raw %}{{ $metadata.inode }}{% endraw %}` | The file Unix inode  | `long` |
 
-## Offset
+## Record Offset
+
+The scope `offset` allows read access to information about the original position of the record into the source file.
 
 | Predefined Fields (ScEL) | Description | Type |
 |--- | --- |--- |
@@ -112,6 +126,32 @@ ScEL supports a number of predefined scopes that can be used for example :
 | `{% raw %}{{ $offset.size }}{% endraw %}` | The size in bytes  | `long` |
 | `{% raw %}{{ $offset.row }}{% endraw %}` | The row number of the record into the source | `long` |
 
-Note, that in case of failures more fields are added to the current filter context (see : [Handling Failures](./handling-failures)
+## System
+
+The scope `system` allows read access to system environment variables and runtime properties.
+
+| Predefined Fields (ScEL) | Description | Type |
+|--- | --- |--- |
+| `{% raw %}{{ $system.env }}{% endraw %}` | The system environment variables.  | `map[string, string]` |
+| `{% raw %}{{ $system.props }}{% endraw %}` | The system environment properties. | `map[string, string]` |
+
+## Timestamp
+
+The scope `timestamp` allows to defined the timestamp of the output record.
+
+## Topic
+
+The scope `topic` allows to defined the target topic of the output record.
+
+## Value
+
+The scope `value` allows to defined the fields of the output record
+
+## Variables
+
+The scope `variables` allows read/write access to a simple key-value map structure.
+This scope can be used to share user-defined variables between filters.
+
+Note : variables are not cached between records.
 
 {% include_relative plan.md %}

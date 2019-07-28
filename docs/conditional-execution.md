@@ -6,18 +6,23 @@ When a filter is skipped, message flow to the next filter without any modificati
 `if` configuration accepts a Simple Connect Expression that must return to `true` or `false`.
 If the configured expression does not evaluate to a boolean value the filter chain will failed.
 
+The`if` property supports ([simple expression](accessing-data-and-metadata))
+
+The boolean value returned from the filter condition can be inverted by setting the property `invert` to `true`.
+
 For example, the below filter will only be applied on message having a log message containing "BadCredentialsException"
 
 ```
 filters.TagSecurityException.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.TagSecurityException.if={{ contains(data.logmessage, BadCredentialsException) }}
+filters.TagSecurityException.invert=false
 filters.TagSecurityException.field=tags
 filters.TagSecurityException.values=SecurityAlert
 ```
 
 These boolean functions are available for use with `if` configuration :
 
-| Function      | Description   | Example   |
+| Function      | Description   | Syntax   |
 | --------------| --------------|-----------|
 | `contains` | Returns `true` if an array field's value contains the specified value  | `{% raw %}{{ contains(field, value) }}{% endraw %}` |
 | `ends_with`  | Returns `true` if an a string field's value end with the specified string suffix | `{% raw %}{{ ends_with(field, suffix) }}{% endraw %}` |

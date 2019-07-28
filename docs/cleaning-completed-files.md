@@ -6,7 +6,7 @@ The cleanup policy can be configured with the below connect property :
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-|`fs.cleanup.policy.class` | The class used by tasks to read input files | class | *-* | high |
+|`fs.cleanup.policy.class` | The fully qualified name of the class which is used to cleanup files | class | *-* | high |
 
 
 ## Available Cleanup Policies

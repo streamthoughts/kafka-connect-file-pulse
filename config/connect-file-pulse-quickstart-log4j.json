@@ -20,7 +20,8 @@
     "offset.strategy": "name",
     "read.max.wait.ms": "5000",
     "task.reader.class": "io.streamthoughts.kafka.connect.filepulse.reader.RowFileInputReader",
-    "topic": "connect-file-pulse-quickstart-log4j"
+    "topic": "connect-file-pulse-quickstart-log4j",
+    "tasks.max": 1
   },
   "name": "connect-file-pulse-quickstart-log4j"
 }

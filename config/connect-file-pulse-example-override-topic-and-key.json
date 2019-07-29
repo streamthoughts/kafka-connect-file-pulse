@@ -21,7 +21,8 @@
     "offset.strategy": "name+hash",
     "skip.headers": "1",
     "task.reader.class": "io.streamthoughts.kafka.connect.filepulse.reader.RowFileInputReader",
-    "topic": "connect-file-pulse-quickstart-csv"
+    "topic": "connect-file-pulse-quickstart-csv",
+    "tasks.max": 1
   },
   "name": "connect-file-pulse-quickstart-csv"
 }

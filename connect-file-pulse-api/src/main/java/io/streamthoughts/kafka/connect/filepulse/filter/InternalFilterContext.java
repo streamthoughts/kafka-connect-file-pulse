@@ -64,30 +64,26 @@ public class InternalFilterContext extends Environment implements FilterContext 
      * @param exception the record-source target topic (can be {@code null}).
      * @param variables the variables attached to this context.
      */
-    public InternalFilterContext(final SourceMetadata metadata,
-                                 final FileRecordOffset offset,
-                                 final String topic,
-                                 final Integer partition,
-                                 final Long timestamp,
-                                 final String key,
-                                 final ConnectHeaders headers,
-                                 final FilterError exception,
-                                 final Map<String, Object> variables) {
+    InternalFilterContext(final SourceMetadata metadata,
+                          final FileRecordOffset offset,
+                          final String topic,
+                          final Integer partition,
+                          final Long timestamp,
+                          final String key,
+                          final ConnectHeaders headers,
+                          final FilterError exception,
+                          final Map<String, Object> variables) {
         Objects.requireNonNull(metadata, "metadata can't be null");
         Objects.requireNonNull(offset, "offset can't be null");
         this.metadata = metadata;
         this.offset = offset;
-        this.headers = headers;
-        this.exception = exception;
         this.topic = topic;
         this.partition = partition;
         this.timestamp = timestamp;
         this.key = key;
-        if (variables != null) {
-            this.variables = new HashMap<>(variables);
-        } else {
-            this.variables = new HashMap<>();
-        }
+        this.exception = exception;
+        this.headers = headers == null ? new ConnectHeaders() : headers;
+        this.variables = variables == null ? new HashMap<>() : new HashMap<>(variables);
     }
 
     /**

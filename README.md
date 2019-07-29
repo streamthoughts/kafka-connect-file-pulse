@@ -1,4 +1,4 @@
-## Connect File Pulse (BETA)
+## Connect File Pulse
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/LICENSE)
 [![CircleCI](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse.svg?style=svg)](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse)
@@ -7,11 +7,11 @@ Connect File Pulse is a multi-purpose [Kafka Connect](http://kafka.apache.org/do
 
 ## Motivation
 
-Lot of enterprises rely on files to export/import data between their systems either in near real time or daily.
+A lot of enterprises rely on files to export/import data between their systems either in near real time or daily.
 Files can be in different textual formats such as CSV, XML, JSON and so one.
 A common use case is to decouple those systems by streaming those files into Kafka.
 
-Connect File Pulse  attends to be a simple solution to deal with those kind of files.
+Connect File Pulse attends to be a simple solution to deal with those kind of files.
 
 Connect File Pulse is largely inspired from functionality provided by both Elasticsearch and Logstash.
 
@@ -25,6 +25,9 @@ Connect File Pulse is largely inspired from functionality provided by both Elast
 * Plugeable strategies for cleaning completed files
 * At-least-once guarantee
 
+## Documentation
+
+If you want to read about using Connect File Pulse, the documentation can be found on [GitHub Page](https://streamthoughts.github.io/kafka-connect-file-pulse/)
 
 ## Getting Started
 
@@ -51,9 +54,6 @@ Connector will be package into an archive file compatible with [confluent-hub cl
 ```
 ./connect-file-pulse-plugin/target/components/packages/streamthoughts-kafka-connect-file-pulse-plugin-<FILEPULSE_VERSION>.zip
 ```
-
-#### Install Connector Manually
-
 
 ## Demonstrations
 
@@ -164,10 +164,6 @@ docker logs --tail="all" -f connect | grep "Orphan task detected"
 ```bash
 docker exec -it connect kafka-avro-console-consumer --topic connect-file-pulse-quickstart-csv --from-beginning --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081
 ```
-
-## Documentation
-
-If you want to read about using Connect File Pulse, the documentation can be found on [GitHub Page](https://streamthoughts.github.io/kafka-connect-file-pulse/)
 
 ## Contributions
 

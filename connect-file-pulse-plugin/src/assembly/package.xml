@@ -8,7 +8,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}</directory>
+            <directory>${project.basedir}/../</directory>
             <outputDirectory>share/doc/${project.artifactId}/</outputDirectory>
             <includes>
                 <include>README*</include>
@@ -17,7 +17,7 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/config</directory>
+            <directory>${project.basedir}/../config</directory>
             <outputDirectory>etc/${project.artifactId}</outputDirectory>
             <includes>
                 <include>*</include>

@@ -73,7 +73,7 @@ public class PropertyExpression implements Expression {
         if (attribute != null) {
             if (returned == null) {
                 throw new ExpressionException(
-                    "Cannot evaluate attribute expression '" + attribute + "', root object'"
+                    "Cannot evaluate attribute expression '" + attribute + "', root object '"
                     + rootObject + "' returned null."
                 );
             }
@@ -93,13 +93,19 @@ public class PropertyExpression implements Expression {
      */
     @Override
     public void writeValue(final Object value, final EvaluationContext context) {
-        Object target = context.rootObject();
+        final Object target = context.rootObject();
 
         if (attribute == null) {
             setValueForProperty(context, target, rootObject, value);
         } else {
-            target = getValueForProperty(context, target, rootObject);
-            setValueForProperty(context, target, attribute, value);
+            Object returned = getValueForProperty(context, target, rootObject);
+            if (returned == null) {
+                throw new ExpressionException(
+                        "Cannot evaluate attribute expression '" + attribute + "', root object '"
+                                + rootObject + "' returned null."
+                );
+            }
+            setValueForProperty(context, returned, attribute, value);
         }
     }
 

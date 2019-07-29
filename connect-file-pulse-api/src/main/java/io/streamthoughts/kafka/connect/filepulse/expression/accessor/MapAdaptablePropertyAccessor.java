@@ -86,20 +86,22 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
         Class<?> type = target instanceof Class ? (Class<?>) target : target.getClass();
         Method method = findSetterByKeyMethodForProperty(type, name);
 
-        if (method != null) {
-            try {
-                method.invoke(target, name, newValue);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new AccessException(e.getMessage());
-            }
+        if (method == null) {
+            throw new AccessException(
+                String.format(
+                    "Cannot found access method for attribute %s on class %s",
+                    name,
+                    target.getClass().getCanonicalName())
+            );
         }
 
-        throw new AccessException(
-            String.format(
-                "Cannot found access method for attribute %s on class %s",
-                name,
-                target.getClass().getCanonicalName())
-        );
+        try {
+            method.invoke(target, name, newValue);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new AccessException(e.getMessage());
+        }
+
+
     }
 
     /**

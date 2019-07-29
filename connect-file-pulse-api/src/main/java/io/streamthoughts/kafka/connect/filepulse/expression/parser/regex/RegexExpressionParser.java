@@ -55,6 +55,11 @@ public class RegexExpressionParser implements ExpressionParser {
     }
 
     public Expression parseExpression(final String expression,
+                                      final boolean substitution) {
+        return parseExpression(expression, null, substitution);
+    }
+
+    public Expression parseExpression(final String expression,
                                       final String defaultRootObject,
                                       final boolean substitution) {
 

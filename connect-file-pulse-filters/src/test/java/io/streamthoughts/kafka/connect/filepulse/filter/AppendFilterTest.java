@@ -31,6 +31,9 @@ import java.util.Map;
 
 public class AppendFilterTest {
 
+    private final static TypedStruct STRUCT =  new TypedStruct().put("values", Arrays.asList("foo", "bar"));
+    private final static String EXPRESSION = "{{ extract_array(values,0) }}-{{ extract_array(values,1) }}";
+
     private AppendFilter filter;
 
     private FilterContext context;
@@ -48,16 +51,38 @@ public class AppendFilterTest {
     }
 
     @Test
-    public void testGivenSubstitutionExpression() {
+    public void shouldSupportSubstitutionExpressionForValueConfig() {
         configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "target");
-        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "{{ extract_array(values,0) }}-{{ extract_array(values,1) }}");
+        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
         filter.configure(configs);
 
-        final TypedStruct struct = new TypedStruct();
-        struct.put("values", Arrays.asList("foo", "bar"));
-        RecordsIterable<TypedStruct> output = filter.apply(context, struct);
+        RecordsIterable<TypedStruct> output = filter.apply(context, STRUCT);
         Assert.assertNotNull(output);
         TypedStruct result = output.collect().get(0);
         Assert.assertEquals("foo-bar", result.getString("target"));
+    }
+
+    @Test
+    public void shouldSupportPropertyExpressionForFieldConfig() {
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$value.target");
+        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
+        filter.configure(configs);
+
+        RecordsIterable<TypedStruct> output = filter.apply(context, STRUCT);
+        Assert.assertNotNull(output);
+        TypedStruct result = output.collect().get(0);
+        Assert.assertEquals("foo-bar", result.getString("target"));
+    }
+
+    @Test
+    public void shouldSupportSubstitutionExpressionForFieldConfig() {
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "{{ extract_array(values,0) }}");
+        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
+        filter.configure(configs);
+
+        RecordsIterable<TypedStruct> output = filter.apply(context, STRUCT);
+        Assert.assertNotNull(output);
+        TypedStruct result = output.collect().get(0);
+        Assert.assertEquals("foo-bar", result.getString("foo"));
     }
 }

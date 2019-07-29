@@ -20,6 +20,7 @@ import io.streamthoughts.kafka.connect.filepulse.config.AppendFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.regex.RegexExpressionParser;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
@@ -36,9 +37,11 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
     private AppendFilterConfig config;
 
     private List<Expression> values;
-    private Expression target;
+    private Expression fieldExpression;
 
     private RegexExpressionParser parser;
+
+    private boolean mustEvaluateWriteExpression = true;
 
     /**
      * {@inheritDoc}
@@ -50,8 +53,15 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
 
         parser = new RegexExpressionParser();
         // currently, multiple expressions is not supported
-        values = Collections.singletonList(parser.parseExpression(config.value(), DEFAULT_ROOT_OBJECT, true));
-        target = parser.parseExpression(config.field());
+        values = Collections.singletonList(parser.parseExpression(config.value(), DEFAULT_ROOT_OBJECT));
+
+        fieldExpression = parser.parseExpression(config.field(), DEFAULT_ROOT_OBJECT);
+
+        // Check whether the field expression can be pre-evaluated
+        if (fieldExpression instanceof ValueExpression) {
+            fieldExpression = evaluateWriteExpression(new StandardEvaluationContext(new Object()));
+            mustEvaluateWriteExpression = false;
+        }
     }
 
     /**
@@ -70,32 +80,40 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
                                                  final TypedStruct record) throws FilterException {
 
         InternalFilterContext internalContext = (InternalFilterContext) context;
+        internalContext.setValue(record);
 
         StandardEvaluationContext readEvaluationContext = new StandardEvaluationContext(
                 internalContext,
                 internalContext.variables()
         );
 
-        final String evaluatedTarget = target.readValue(readEvaluationContext, String.class);
-        final Expression targetExpression = parser.parseExpression(evaluatedTarget, DEFAULT_ROOT_OBJECT, false);
+        final Expression writeExpression = evaluateWriteExpression(readEvaluationContext);
 
         final TypedStruct target = TypedStruct.struct();
         for (final Expression expression : values) {
 
             internalContext.setValue(record);
-            final Object typed = expression.readValue(readEvaluationContext);
+            final Object value = expression.readValue(readEvaluationContext);
 
-            if (typed != null) {
+            if (value != null) {
                 internalContext.setValue(target);
 
                 final StandardEvaluationContext writeEvaluationContext = new StandardEvaluationContext(
                     internalContext,
                     internalContext.variables()
                 );
-                targetExpression.writeValue(typed, writeEvaluationContext);
+                writeExpression.writeValue(value, writeEvaluationContext);
             }
         }
         return RecordsIterable.of(target);
+    }
+
+    private Expression evaluateWriteExpression(final StandardEvaluationContext evaluationContext) {
+        if (mustEvaluateWriteExpression) {
+            final String evaluated = fieldExpression.readValue(evaluationContext, String.class);
+            return parser.parseExpression(evaluated, DEFAULT_ROOT_OBJECT, false);
+        }
+        return fieldExpression;
     }
 
     /**

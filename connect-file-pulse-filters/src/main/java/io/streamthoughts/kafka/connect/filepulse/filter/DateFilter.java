@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class DateFilter extends AbstractRecordFilter<SplitFilter> {
+public class DateFilter extends AbstractRecordFilter<DateFilter> {
 
     private static final String DEFAULT_ROOT_OBJECT = "value";
 

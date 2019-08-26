@@ -107,8 +107,15 @@ public enum Type {
         public TypedStruct convert(Object o) {
             return TypedValue.any(o).getStruct();
         }
-    };
+    },
 
+    BYTES(Collections.emptyList(), Schema.Type.BYTES) {
+        @Override
+        public byte[] convert(Object o) {
+            return TypedValue.any(o).getBytes();
+        }
+    };
+    
     private final static Map<Class<?>, Type> JAVA_CLASS_TYPES = new HashMap<>();
 
     static {
@@ -172,6 +179,7 @@ public enum Type {
             case LONG:
             case BOOLEAN:
             case STRING:
+            case BYTES:
                 return true;
             default:
         }

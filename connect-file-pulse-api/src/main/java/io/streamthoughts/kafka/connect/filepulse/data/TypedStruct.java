@@ -150,6 +150,14 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
      * {@inheritDoc}
      */
     @Override
+    public TypedStruct put(final String field, final byte[] value) {
+        return put(field, Schema.bytes(), value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public TypedStruct put(final String field, final Type type, final Object value) {
         return put(field, Schema.of(type), value);
     }

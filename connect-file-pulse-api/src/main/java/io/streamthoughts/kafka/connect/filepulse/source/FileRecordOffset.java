@@ -50,7 +50,7 @@ public class FileRecordOffset {
             endPosition,
             0,
             SystemTime.SYSTEM.milliseconds(),
-            -1);
+            endPosition);
     }
 
     /**
@@ -73,6 +73,15 @@ public class FileRecordOffset {
         this.size = size;
     }
 
+    public FileRecordOffset withSize(long size) {
+        return new FileRecordOffset(
+            startPosition,
+            endPosition,
+            rows,
+            timestamp,
+            size
+        );
+    }
     /**
      * Returns the starting position.
      *

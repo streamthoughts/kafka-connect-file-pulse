@@ -112,4 +112,12 @@ public interface GettableByType {
      * @throws DataException if <code>this</code> cannot be convert to {@link TypedStruct}.
      */
     TypedStruct getStruct() throws DataException;
+
+    /**
+     * Returns this content as a struct.
+     *
+     * @return {@code bytes} value.
+     * @throws DataException if <code>this</code> cannot be convert to {@link TypedStruct}.
+     */
+    byte[] getBytes() throws DataException;
 }

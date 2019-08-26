@@ -17,6 +17,7 @@
 package io.streamthoughts.kafka.connect.filepulse.data;
 
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_BOOLEAN;
+import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_BYTES;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_FLOAT_32;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_FLOAT_64;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_INT_16;
@@ -98,6 +99,15 @@ public interface Schema {
      */
     static Schema bool() {
         return SCHEMA_BOOLEAN;
+    }
+
+    /**
+     * Gets a schema for type array of BYTES.
+     *
+     * @return  the {@link Schema} instance.
+     */
+    static Schema bytes() {
+        return SCHEMA_BYTES;
     }
 
     /**

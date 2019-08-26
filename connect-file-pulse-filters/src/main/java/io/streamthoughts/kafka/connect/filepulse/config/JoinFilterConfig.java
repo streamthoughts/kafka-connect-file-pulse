@@ -27,7 +27,8 @@ public class JoinFilterConfig extends CommonFilterConfig {
     public static final String JOIN_FIELD_DOC = "The field get the array from.";
 
     public static final String JOIN_TARGET_CONFIG = "target";
-    public static final String JOIN_TARGET_DOC = "The target field to assign the joined value (by default the field value is used).";
+    public static final String JOIN_TARGET_DOC = "The target field to assign the joined value " +
+            "(by default the field value is used).";
 
     public static final String JOIN_SEPARATOR_CONFIG = "separator";
     public static final String JOIN_SEPARATOR_DOC = "The separator used for joining array values (default=',')";

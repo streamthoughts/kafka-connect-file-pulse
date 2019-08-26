@@ -26,6 +26,7 @@ import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,6 +83,11 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
     public RecordsIterable<FileRecord<TypedStruct>> apply(final RecordsIterable<FileRecord<TypedStruct>> records,
                                                           final boolean hasNext) throws FilterException {
         checkState();
+
+        if (rootNode == null) {
+            return records;
+        }
+
         List<FileRecord<TypedStruct>> results = new LinkedList<>();
         final Iterator<FileRecord<TypedStruct>> iterator = records.iterator();
         while (iterator.hasNext()) {
@@ -96,10 +102,10 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
     private FilterContext getContextFor(final FileRecord<TypedStruct> record,
                                         final SourceMetadata metadata) {
         return FilterContextBuilder
-                .newBuilder()
-                .withMetadata(metadata)
-                .withOffset(record.offset())
-                .build();
+            .newBuilder()
+            .withMetadata(metadata)
+            .withOffset(record.offset())
+            .build();
     }
 
     private void checkState() {
@@ -115,6 +121,11 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
     public List<FileRecord<TypedStruct>> apply(final FilterContext context,
                                                final TypedStruct record,
                                                final boolean hasNext) {
+        if (rootNode == null) {
+            return Collections.singletonList(
+                new TypedFileRecord(context.offset(), record)
+            );
+        }
         return rootNode.apply(context, record, hasNext);
     }
 
@@ -136,8 +147,8 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
         }
 
         public List<FileRecord<TypedStruct>> apply(final FilterContext context,
-                                       final TypedStruct record,
-                                       final boolean hasNext) {
+                                                   final TypedStruct record,
+                                                   final boolean hasNext) {
 
             final List<FileRecord<TypedStruct>> filtered = new LinkedList<>();
 

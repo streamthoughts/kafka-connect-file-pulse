@@ -41,6 +41,7 @@ public class DefaultRecordFilterPipelineTest {
     private SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
     private FileContext context = new FileContext(metadata);
 
+
     @Test
     public void testGivenIdentityFilter() {
 
@@ -197,6 +198,19 @@ public class DefaultRecordFilterPipelineTest {
         assertNotNull(records);
         assertEquals(1, records.size());
         assertEquals(record2, records.collect().get(0));
+    }
+
+    @Test
+    public void shouldReturnRecordUnchangedGivenNoFilter() {
+
+        DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.emptyList());
+        pipeline.init(context);
+
+        final FileRecord<TypedStruct> record = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value");
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(record), true);
+        assertNotNull(records);
+        assertEquals(1, records.size());
+        assertEquals(record, records.collect().get(0));
     }
 
     private static FileRecord<TypedStruct> createWithOffsetAndValue(final FileRecordOffset offset, final String value) {

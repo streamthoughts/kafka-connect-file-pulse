@@ -38,6 +38,8 @@ public class SimpleSchema implements Schema {
 
     static final Schema SCHEMA_FLOAT_32 = new SimpleSchema(Type.DOUBLE);
 
+    static final Schema SCHEMA_BYTES = new SimpleSchema(Type.BYTES);
+
     private final Type type;
 
     private Integer hash;

@@ -21,6 +21,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -156,9 +157,27 @@ public class TypeConverter implements Serializable {
 
     public static String getString(final Object value) {
         if (value instanceof ByteBuffer) {
-            return java.nio.charset.StandardCharsets.UTF_8.decode((ByteBuffer)value).toString();
+            return StandardCharsets.UTF_8.decode((ByteBuffer)value).toString();
         }
         return (value != null) ? value.toString() : null;
+    }
+
+    public static byte[] getBytes(final Object value) {
+        if (value instanceof ByteBuffer) {
+            final ByteBuffer byteBuffer = (ByteBuffer)value;
+            byte[] bytesArray = new byte[byteBuffer.remaining()];
+            byteBuffer.get(bytesArray, 0, bytesArray.length);
+            return bytesArray;
+        }
+
+        if (value instanceof String) {
+            return ((String)value).getBytes(StandardCharsets.UTF_8);
+        }
+
+        if (value.getClass().isArray()) {
+            return (byte[])value;
+        }
+        throw new DataException(String.format("Cannot parse byte[] from \"%s\"", value));
     }
 
     public static BigDecimal getDecimal(final Object value) {

@@ -278,6 +278,14 @@ public class TypedValue implements GettableByType {
      * {@inheritDoc}
      */
     @Override
+    public byte[] getBytes() throws DataException {
+        return TypeConverter.getBytes(value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @SuppressWarnings("unchecked")
     public TypedStruct getStruct() throws DataException {
         return (TypedStruct) value;

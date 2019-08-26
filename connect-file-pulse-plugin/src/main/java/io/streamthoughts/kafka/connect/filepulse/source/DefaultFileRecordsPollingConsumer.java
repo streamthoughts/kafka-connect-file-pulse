@@ -89,7 +89,9 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             .stream()
             .map(toIterable())
             .filter(excludeUnreadableAndNotify())
-            .peek(it -> listener.onScheduled(new FileContext(it.metadata())))
+            .peek(it -> {
+                if (hasListener()) listener.onScheduled(new FileContext(it.metadata()));
+            })
             .collect(Collectors.toList());
         queue.addAll(iterables);
     }

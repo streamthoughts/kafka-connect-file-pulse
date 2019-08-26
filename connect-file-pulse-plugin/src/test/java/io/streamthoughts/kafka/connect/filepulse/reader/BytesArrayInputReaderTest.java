@@ -16,12 +16,15 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,66 +35,47 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.Arrays;
 
-import static org.junit.Assert.*;
+public class BytesArrayInputReaderTest {
 
-public class RowFileInputIteratorTest {
-
-    private static final String LF = "\n";
-
-    private static final int NLINES = 10;
+    private static final String TEST_VALUE = "test values\ntest values\ntest values";
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     private File file;
-
     private FileContext context;
-
-    private RowFileInputIterator iterator;
-
+    private BytesArrayInputReader reader;
 
     @Before
     public void setUp() throws IOException {
         file = testFolder.newFile();
-        try(BufferedWriter writer = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
-            generateLines(writer);
-        }
-        context = new FileContext(SourceMetadata.fromFile(file));
-        iterator = RowFileInputIterator.newBuilder()
-                .withContext(context)
-                .withIteratorManager(new IteratorManager())
-                .build();
+        try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
+             bw.append(TEST_VALUE);
+             bw.flush();
+             context = new FileContext(SourceMetadata.fromFile(file));
+         }
+
+        reader = new BytesArrayInputReader();
     }
 
     @After
     public void tearDown() {
-        iterator.close();
+        reader.close();
     }
 
     @Test
-    public void test() {
-        iterator.seekTo(new SourceOffset(0, 0, System.currentTimeMillis()));
-        while(iterator.hasNext()) {
-            RecordsIterable<FileRecord<TypedStruct>> next = iterator.next();
-            assertNotNull(next);
+    public void shouldReaddAllBytes() {
+        FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
+        Assert.assertTrue(iterator.hasNext());
 
-        }
+        FileRecord<TypedStruct> record = iterator.next().last();
+        TypedStruct typed = record.value();
 
-        FileContext context = iterator.context();
-        assertEquals(file.length(), context.offset().position());
-        assertEquals(NLINES, context.offset().rows());
-    }
-
-    private void generateLines(final BufferedWriter writer) throws IOException {
-
-        for (int i = 0; i < NLINES; i++) {
-            String line = "00000000-" + i;
-            writer.write(line);
-            if (i + 1 < NLINES) {
-                writer.write(LF);
-            }
-        }
-        writer.flush();
+        TypedValue typedValue = typed.get(TypedFileRecord.DEFAULT_MESSAGE_FIELD);
+        Assert.assertEquals(Type.BYTES, typedValue.type());
+        Assert.assertTrue( Arrays.equals(TEST_VALUE.getBytes(), typedValue.getBytes()));
+        Assert.assertFalse(iterator.hasNext());
     }
 }

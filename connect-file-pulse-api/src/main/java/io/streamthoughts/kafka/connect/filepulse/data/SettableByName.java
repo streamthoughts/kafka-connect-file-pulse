@@ -133,4 +133,13 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      */
     T put(final String field, final String object)
             throws DataException;
+
+    /**
+     * Put the content for the specified field name.
+     *
+     * @param field   the name of the field.
+     * @param object  the object to put.
+     */
+    T put(final String field, final byte[] object)
+            throws DataException;
 }

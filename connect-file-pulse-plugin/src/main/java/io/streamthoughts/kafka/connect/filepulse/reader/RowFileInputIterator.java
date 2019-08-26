@@ -26,7 +26,6 @@ import io.streamthoughts.kafka.connect.filepulse.reader.internal.ReversedInputFi
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.apache.kafka.common.utils.Time;
-import org.apache.kafka.connect.data.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,8 +87,6 @@ public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedS
     private long maxWaitMs = 0L;
 
     private AtomicBoolean closed = new AtomicBoolean(false);
-
-    private Schema schema;
 
     private AtomicBoolean initialized = new AtomicBoolean(false);
 

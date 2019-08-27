@@ -177,12 +177,11 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
             struct.put(FOOTERS_RECORD_FIELD, footersStrings);
         }
 
-        final FileRecordOffset offset = new FileRecordOffset(
-                record.startOffset(),
-                record.endOffset(),
-                offsetLines,
-                Time.SYSTEM.milliseconds(),
-                record.size());
+        final FileRecordOffset offset = RowFileRecordOffset
+            .with(record.startOffset(), record.endOffset())
+            .withSize(record.size())
+            .withRowNumber(offsetLines);
+
         return new TypedFileRecord(offset, struct);
     }
 

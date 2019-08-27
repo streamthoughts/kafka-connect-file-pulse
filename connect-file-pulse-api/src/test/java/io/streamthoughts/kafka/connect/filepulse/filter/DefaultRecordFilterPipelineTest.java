@@ -45,7 +45,7 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void testGivenIdentityFilter() {
 
-        FileRecordOffset offset = FileRecordOffset.with(1, 0);
+        FileRecordOffset offset = FileRecordOffset.invalid();
         final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(offset, "value1");
 
         final TestFilter filter = new TestFilter()
@@ -64,7 +64,7 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldReThrowExceptionGivenFailingFilterNotIgnoringFailure() {
 
-        FileRecordOffset offset = FileRecordOffset.with(1, 0);
+        FileRecordOffset offset = FileRecordOffset.invalid();
         final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(offset, "value1");
 
         final TestFilter filter = new TestFilter()
@@ -84,7 +84,7 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldSkipFilterGivenFailingFilterIgnoringFailure() {
 
-        FileRecordOffset offset = FileRecordOffset.with(1, 0);
+        FileRecordOffset offset = FileRecordOffset.invalid();
         final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(offset, "value1");
         final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(offset, "value2");
 
@@ -109,8 +109,8 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldFlushBufferedRecordsAndSkipFilterGivenFailingFilter() {
 
-        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value1");
-        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.with(2, 0), "value2");
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value2");
 
         TestFilter filter = new TestFilter()
                 .setException(new RuntimeException("test error"))
@@ -131,8 +131,8 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldFlushBufferedRecordsAndExecuteErrorPipelineGivenFailingFilter() {
 
-        final FileRecord<TypedStruct>  record1 = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value1");
-        FileRecordOffset offset = FileRecordOffset.with(2, 0);
+        final FileRecord<TypedStruct>  record1 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value1");
+        FileRecordOffset offset = FileRecordOffset.invalid();
         final FileRecord<TypedStruct>  record2 = createWithOffsetAndValue(offset, "value2");
         final FileRecord<TypedStruct> record3 = createWithOffsetAndValue(offset, "value2");
 
@@ -159,9 +159,9 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldFlushBufferedRecordsGivenNoAcceptFilterAndThereIsNoRemainingRecord() {
 
-        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value1");
-        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.with(2, 0), "value2");
-        final FileRecord<TypedStruct> record3 = createWithOffsetAndValue(FileRecordOffset.with(2, 0), "foo");
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value2");
+        final FileRecord<TypedStruct> record3 = createWithOffsetAndValue(FileRecordOffset.invalid(), "foo");
 
         TestFilter filter1 = new TestFilter()
                 // This function will never be executed
@@ -183,8 +183,8 @@ public class DefaultRecordFilterPipelineTest {
     @Test
     public void shouldNotFlushBufferedRecordsGivenNoAcceptFilterAndThereIsNoRemainingRecord() {
 
-        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value1");
-        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.with(2, 0), "value2");
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value2");
 
         TestFilter filter1 = new TestFilter()
                 .setBuffer(Collections.singletonList(record1))
@@ -206,7 +206,7 @@ public class DefaultRecordFilterPipelineTest {
         DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.emptyList());
         pipeline.init(context);
 
-        final FileRecord<TypedStruct> record = createWithOffsetAndValue(FileRecordOffset.with(1, 0), "value");
+        final FileRecord<TypedStruct> record = createWithOffsetAndValue(FileRecordOffset.invalid(), "value");
         RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(record), true);
         assertNotNull(records);
         assertEquals(1, records.size());

@@ -43,7 +43,7 @@ public class InternalFilterContext extends Environment implements FilterContext 
 
     private Integer partition;
 
-    private long timestamp;
+    private Long timestamp;
 
     private TypedStruct value;
 

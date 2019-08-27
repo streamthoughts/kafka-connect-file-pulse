@@ -18,6 +18,7 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.TimestampedRecordOffset;
 import org.apache.kafka.connect.header.ConnectHeaders;
 
 import java.util.Map;
@@ -111,12 +112,15 @@ public class FilterContextBuilder {
     }
 
     public FilterContext build() {
+        if (timestamp == null && offset instanceof TimestampedRecordOffset) {
+            timestamp = ((TimestampedRecordOffset)offset).timestamp();
+        }
         return new InternalFilterContext(
                 metadata,
                 offset,
                 topic,
                 partition,
-                timestamp == null ? offset.timestamp() : timestamp,
+                timestamp,
                 key,
                 headers,
                 exception,

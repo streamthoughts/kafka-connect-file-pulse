@@ -44,7 +44,7 @@ public class JoinFilterTest {
         configs = new HashMap<>();
         context = FilterContextBuilder.newBuilder()
                 .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
-                .withOffset(FileRecordOffset.empty())
+                .withOffset(FileRecordOffset.invalid())
                 .build();
     }
 

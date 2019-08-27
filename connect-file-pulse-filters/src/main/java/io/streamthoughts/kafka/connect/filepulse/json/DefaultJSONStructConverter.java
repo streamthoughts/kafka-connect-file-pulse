@@ -95,7 +95,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
                 return TypedValue.int64(any.toLong());
 
             } else if (object instanceof Integer) {
-                return TypedValue.in32(any.toInt());
+                return TypedValue.int32(any.toInt());
 
             } else if (object instanceof Double) {
                 return TypedValue.float64(any.toDouble());

@@ -26,17 +26,17 @@ public class SimpleSchema implements Schema {
 
     static final Schema SCHEMA_STRING = new SimpleSchema(Type.STRING);
 
+    static final Schema SCHEMA_INT_16 = new SimpleSchema(Type.SHORT);
+
+    static final Schema SCHEMA_INT_32 = new SimpleSchema(Type.INTEGER);
+
     static final Schema SCHEMA_INT_64 = new SimpleSchema(Type.LONG);
 
-    static final Schema SCHEMA_INT_16 = new SimpleSchema(Type.SHORT);
+    static final Schema SCHEMA_FLOAT_32 = new SimpleSchema(Type.FLOAT);
 
     static final Schema SCHEMA_FLOAT_64 = new SimpleSchema(Type.DOUBLE);
 
     static final Schema SCHEMA_BOOLEAN = new SimpleSchema(Type.BOOLEAN);
-
-    static final Schema SCHEMA_INT_32 = new SimpleSchema(Type.INTEGER);
-
-    static final Schema SCHEMA_FLOAT_32 = new SimpleSchema(Type.DOUBLE);
 
     static final Schema SCHEMA_BYTES = new SimpleSchema(Type.BYTES);
 

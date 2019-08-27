@@ -49,6 +49,6 @@ public class Length implements ExpressionFunction<Arguments> {
     public TypedValue apply(final TypedValue field, final Arguments args) {
 
         int size = (field.type() == Type.ARRAY) ? field.getArray().size() : ((String)field.value()).length();
-        return TypedValue.in32(size);
+        return TypedValue.int32(size);
     }
 }

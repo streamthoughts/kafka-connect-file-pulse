@@ -18,13 +18,15 @@ package io.streamthoughts.kafka.connect.filepulse.data;
 
 import io.streamthoughts.kafka.connect.filepulse.data.internal.TypeConverter;
 
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * Cass which is used to pair an object with its corresponding {@link Schema}.
+ * Class which is used to pair an object with its corresponding {@link Schema}.
+ *
  * TypeValue supports dynamic type conversion.
  */
 public class TypedValue implements GettableByType {
@@ -80,7 +82,7 @@ public class TypedValue implements GettableByType {
      * @param value the integer value.
      * @return      the new {@link TypedValue} instance.
      */
-    public static TypedValue in32(final Integer value) {
+    public static TypedValue int32(final Integer value) {
         return new TypedValue(Schema.int32(), value);
     }
 
@@ -146,7 +148,6 @@ public class TypedValue implements GettableByType {
         return new TypedValue(Schema.array(valueSchema), value);
     }
 
-
     /**
      * Creates a new {@link TypedValue} of array.
      *
@@ -157,6 +158,27 @@ public class TypedValue implements GettableByType {
     public static TypedValue array(final Collection<?> value, final Type valueType) {
         return array(value, Schema.of(valueType));
     }
+
+    /**
+     * Creates a new {@link TypedValue} of bytes.
+     *
+     * @param value     the bytes array.
+     * @return          the new {@link TypedValue} instance.
+     */
+    public static TypedValue bytes(final byte[] value) {
+        return new TypedValue(Schema.bytes(), value);
+    }
+
+    /**
+     * Creates a new {@link TypedValue} of bytes.
+     *
+     * @param value     the bytes array.
+     * @return          the new {@link TypedValue} instance.
+     */
+    public static TypedValue bytes(final ByteBuffer value) {
+        return new TypedValue(Schema.bytes(), value.array());
+    }
+
 
     /**
      * Creates a new {@link TypedValue}

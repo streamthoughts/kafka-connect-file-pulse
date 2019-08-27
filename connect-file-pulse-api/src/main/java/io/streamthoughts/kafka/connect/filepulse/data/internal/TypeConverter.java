@@ -164,10 +164,7 @@ public class TypeConverter implements Serializable {
 
     public static byte[] getBytes(final Object value) {
         if (value instanceof ByteBuffer) {
-            final ByteBuffer byteBuffer = (ByteBuffer)value;
-            byte[] bytesArray = new byte[byteBuffer.remaining()];
-            byteBuffer.get(bytesArray, 0, bytesArray.length);
-            return bytesArray;
+            return ((ByteBuffer)value).array();
         }
 
         if (value instanceof String) {

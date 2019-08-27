@@ -181,7 +181,6 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
             this.schema.set(field, schema); // handle case where field's schema is changed.
             values.set(index, object);
         }
-
         return this;
     }
 

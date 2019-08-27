@@ -94,7 +94,7 @@ public class BytesArrayInputReader extends AbstractFileInputReader {
                 TypedStruct struct = new TypedStruct();
                 struct.put(TypedFileRecord.DEFAULT_MESSAGE_FIELD, bytes);
 
-                final FileRecordOffset offset = FileRecordOffset.with(0, bytes.length);
+                final FileRecordOffset offset = BytesRecordOffset.with(0, bytes.length);
                 
                 return RecordsIterable.of(new TypedFileRecord(offset, struct));
             } catch (IOException e) {

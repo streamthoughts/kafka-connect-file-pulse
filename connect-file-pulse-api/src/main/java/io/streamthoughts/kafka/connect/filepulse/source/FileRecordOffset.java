@@ -16,144 +16,18 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import org.apache.kafka.common.utils.SystemTime;
-
-import java.util.Objects;
-
 /**
  *
  */
-public class FileRecordOffset {
+public interface FileRecordOffset {
 
-    private final long startPosition;
-
-    private final long endPosition;
-
-    private final long rows;
-
-    private final long timestamp;
-
-    private final long size;
-
-    public static FileRecordOffset empty() {
-        return new FileRecordOffset(
-            -1,
-            -1,
-            0,
-            SystemTime.SYSTEM.milliseconds(),
-            -1);
+    /** only for testing **/
+    static FileRecordOffset invalid() {
+        return () -> {
+            throw new UnsupportedOperationException();
+        };
     }
 
-    public static FileRecordOffset with(long startPosition, long endPosition) {
-        return new FileRecordOffset(
-            startPosition,
-            endPosition,
-            0,
-            SystemTime.SYSTEM.milliseconds(),
-            endPosition);
-    }
+    SourceOffset toSourceOffset();
 
-    /**
-     * Creates a new {@link FileRecordOffset} instance.
-     *
-     * @param startPosition the starting position.
-     * @param endPosition   the ending position.
-     * @param rows          the number of rows already read from the input source.
-     * @param timestamp     the current timestamp.
-     */
-    public FileRecordOffset(long startPosition,
-                            long endPosition,
-                            long rows,
-                            long timestamp,
-                            long size) {
-        this.startPosition = startPosition;
-        this.endPosition = endPosition;
-        this.rows = rows;
-        this.timestamp = timestamp;
-        this.size = size;
-    }
-
-    public FileRecordOffset withSize(long size) {
-        return new FileRecordOffset(
-            startPosition,
-            endPosition,
-            rows,
-            timestamp,
-            size
-        );
-    }
-    /**
-     * Returns the starting position.
-     *
-     * @return the long position.
-     */
-    public long startPosition() {
-        return this.startPosition;
-    }
-
-
-    /**
-     * Returns the ending position.
-     *
-     * @return the long position.
-     */
-    public long endPosition() {
-        return this.endPosition;
-    }
-
-    /**
-     * Returns the number of rows already read from the input source.
-     *
-     * @return the number of rows.
-     */
-    public long rows() {
-        return this.rows;
-    }
-
-    /**
-     * Returns the creation time for this.
-     *
-     * @return a unix-timestamp in millisecond.
-     */
-    public long timestamp() {
-        return this.timestamp;
-    }
-
-    public SourceOffset toSourceOffset() {
-        return new SourceOffset(endPosition, rows, timestamp);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FileRecordOffset)) return false;
-        FileRecordOffset that = (FileRecordOffset) o;
-        return startPosition == that.startPosition &&
-                endPosition == that.endPosition &&
-                rows == that.rows &&
-                timestamp == that.timestamp &&
-                size == that.size;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(startPosition, endPosition, rows, timestamp, size);
-    }
-
-    @Override
-    public String toString() {
-        return "[" +
-                "startPosition=" + startPosition +
-                ", endPosition=" + endPosition +
-                ", rows=" + rows +
-                ", timestamp=" + timestamp +
-                ", size=" + size +
-                ']';
-    }
 }

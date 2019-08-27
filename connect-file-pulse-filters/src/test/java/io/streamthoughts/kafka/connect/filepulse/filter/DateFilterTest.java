@@ -18,23 +18,16 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.DateFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.internal.LocaleUtils;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
-
-import static org.junit.Assert.*;
 
 public class DateFilterTest {
 
@@ -48,7 +41,7 @@ public class DateFilterTest {
         configs = new HashMap<>();
         context = FilterContextBuilder.newBuilder()
                 .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
-                .withOffset(FileRecordOffset.empty())
+                .withOffset(FileRecordOffset.invalid())
                 .build();
     }
 

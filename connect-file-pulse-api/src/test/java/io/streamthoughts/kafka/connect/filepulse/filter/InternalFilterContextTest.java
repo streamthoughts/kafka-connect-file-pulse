@@ -39,7 +39,7 @@ public class InternalFilterContextTest {
         context = (InternalFilterContext) FilterContextBuilder
                 .newBuilder()
                 .withMetadata(new SourceMetadata("fileName", "fileName", 0L, 1234L, 1L, 1L))
-                .withOffset(FileRecordOffset.empty())
+                .withOffset(FileRecordOffset.invalid())
                 .build();
 
         evaluationContext = new StandardEvaluationContext(context);

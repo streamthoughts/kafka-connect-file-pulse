@@ -23,6 +23,10 @@ import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseExceptio
  */
 public class ReaderException extends ConnectFilePulseException {
 
+    public ReaderException(final Throwable cause) {
+        super(cause);
+    }
+
     public ReaderException(final String message) {
         super(message);
     }

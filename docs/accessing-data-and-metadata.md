@@ -84,7 +84,7 @@ ScEL supports a number of predefined scopes that can be used for example :
 | `{% raw %}{{ $key }}{% endraw %}` | The record key | `string` |
 | `{% raw %}{{ $metadata }}{% endraw %}` | The file metadata  | `struct` |
 | `{% raw %}{{ $offset }}{% endraw %}` | The offset information of this record into the source file  | `struct` |
-| `{% raw %}{{ system }}{% endraw %}` | The system environment variables and runtime properties | `struct` |
+| `{% raw %}{{ $system }}{% endraw %}` | The system environment variables and runtime properties | `struct` |
 | `{% raw %}{{ $timestamp }}{% endraw %}` | The record timestamp  | `long` |
 | `{% raw %}{{ $topic }}{% endraw %}` | The output topic | `string` |
 | `{% raw %}{{ $value }}{% endraw %}` | The record value| `struct` |
@@ -117,14 +117,35 @@ The scope `metadata` allows read access to information about the file being proc
 ## Record Offset
 
 The scope `offset` allows read access to information about the original position of the record into the source file.
+The available fields depend of the configured FilteInputRecord.
+
+| Predefined Fields (ScEL) | Description | Type |
+|--- | --- |--- |
+| `{% raw %}{{ $offset.timestamp }}{% endraw %}` | The creation time of the record (millisecond)  | `long` |
+
+Information only available if `RowFilterReader` is configured.
 
 | Predefined Fields (ScEL) | Description | Type |
 |--- | --- |--- |
 | `{% raw %}{{ $offset.startPosition }}{% endraw %}` | The start position of the record into the source file  | `long` |
 | `{% raw %}{{ $offset.endPosition }}{% endraw %}` | The end position of the record into the source file  | `long` |
-| `{% raw %}{{ $offset.timestamp }}{% endraw %}` | The creation time of the record (millisecond)  | `long` |
 | `{% raw %}{{ $offset.size }}{% endraw %}` | The size in bytes  | `long` |
 | `{% raw %}{{ $offset.row }}{% endraw %}` | The row number of the record into the source | `long` |
+
+Information only available if `BytesArrayInputReader` is configured.
+
+| Predefined Fields (ScEL) | Description | Type |
+|--- | --- |--- |
+| `{% raw %}{{ $offset.startPosition }}{% endraw %}` | The start position of the record into the source file (always equals to 0)  | `long` |
+| `{% raw %}{{ $offset.endPosition }}{% endraw %}` | The end position of the record into the source file (equals to the file size)  | `long` |
+
+Information only available if `AvroFilterInputReader` is configured.
+
+| Predefined Fields (ScEL) | Description | Type |
+|--- | --- |--- |
+| `{% raw %}{{ $offset.blockStart }}{% endraw %}` | The start position of the current block  | `long` |
+| `{% raw %}{{ $offset.position }}{% endraw %}` | The position into the current block.  | `long` |
+| `{% raw %}{{ $offset.records }}{% endraw %}` | The number of record read into the current block.  | `long` |
 
 ## System
 

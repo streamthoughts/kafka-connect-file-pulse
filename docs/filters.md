@@ -6,11 +6,13 @@ These filters are available for use with Kafka Connect File Pulse:
 |---     | --- |
 | [AppendFilter](#appendfilter) | Appends one or more values to an existing or non-existing array field  |
 | [ConvertFilter](#convertfilter)  | Converts a message field's value to a specific type |
+| [DateFilter](#datefilter)  | Converts a field's value containing a date to a unix epoch time |
 | [DelimitedRowFilter](#delimitedrowfilter)  | Parses a message field's value containing columns delimited by a separator into a struct |
 | [DropFilter](#dropfilter)  | Drops messages satisfying a specific condition without throwing exception |
 | [FailFilter](#failfilter)  | Throws an exception when a message satisfy a specific condition |
 | [GrokFilter](#grokfilter)  | Parses an unstructured message field's value to a struct by combining Grok patterns |
 | [GroupRowFilter](#grouprowfilter)  | Regroups multiple following messages into a single message by composing a grouping key|
+| [JoinFilter](#joinfilter)  | Joins values of an array field with a specified separator |
 | [JSONFilter](#jsonfilter)  | Unmarshallings a JSON message field's value to a complex struct |
 | [MultiRowFilter](#multirowfilter)  | Combines following message lines into single one by combining patterns |
 | [RenameFilter](#renamefilter)  | Renames a message field |
@@ -44,6 +46,25 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | `field` | The field to convert    | string | *-* | high |
 | `type` | The type field must be converted to  | string | *,* | high |
 | `ignoreMissing` | If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified. | boolean | *true* | high |
+
+### Example
+
+```
+```
+
+## DateFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.DateFilter`
+
+### Configuration
+
+| Configuration |   Description |   Type    |   Default |   Importance  |
+| --------------| --------------|-----------| --------- | ------------- |
+| `field` | The field to get the date from .   | string([ScEL supported](accessing-data-and-metadata)) | *-* | high |
+| `target` | The target field.    | string([ScEL supported](accessing-data-and-metadata)) | *-* | high |
+| `timezone` | The timezone to use for parsing date.  | string | *UTC* | high |
+| `locale` | The locale to use for parsing date. | string | *en_EN* | high |
+| `format` | List of the expected date formats. | list | *-* | high |
 
 ### Example
 
@@ -165,6 +186,20 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 
 ```
 ```
+
+## JoinFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter`
+
+### Configuration
+
+| Configuration |   Description |   Type    |   Default |   Importance  |
+| --------------| --------------|-----------| --------- | ------------- |
+| `field` | The field to get the date from .   | string([ScEL supported](accessing-data-and-metadata)) | *-* | high |
+| `target` | The target field.    | string([ScEL supported](accessing-data-and-metadata)) | *-* | high |
+| `separator` | The separator used for joining array values.   | string | *,* | high |
+
+### Example
 
 ## JSONFilter
 

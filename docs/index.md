@@ -16,6 +16,7 @@ Connect File Pulse is largely inspired from functionality provided by both Elast
 
 * Recursively scan local directories
 * Reading and writing files into Kafka line by line
+* Support for reading Avro files
 * Parsing and transforming data using built-in or custom filters
 * Error handler definition
 * Monitoring files while they are being written into Kafka

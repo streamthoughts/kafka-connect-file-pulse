@@ -27,61 +27,34 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Reads all bytes from an input files.
  */
-public class BytesArrayInputReader implements FileInputReader {
-
-    private final AtomicBoolean isClosed;
-
-    private final IteratorManager openIterators;
+public class BytesArrayInputReader extends AbstractFileInputReader {
 
     /**
      * Creates a new {@link BytesArrayInputReader} instance.
      */
     public BytesArrayInputReader() {
-        this.isClosed = new AtomicBoolean(false);
-        this.openIterators = new IteratorManager();
+        super();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void configure(final Map<String, ?> configs) {
-        /**/
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context) {
+    protected FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context,
+                                                                     final IteratorManager iteratorManager) {
         return new BytesArrayInputIterator(
                 context,
-                openIterators
+                iteratorManager
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() {
-        if (!isClosed.get()) {
-            openIterators.closeAll();
-        }
-    }
+    public static class BytesArrayInputIterator extends AbstractFileInputIterator<TypedStruct> {
 
-    public static class BytesArrayInputIterator implements FileInputIterator<FileRecord<TypedStruct>> {
-
-        private final AtomicBoolean closed = new AtomicBoolean(false);
-        private final IteratorManager iteratorManager;
-        private final FileContext context;
 
         private boolean hasNext = true;
 
@@ -93,16 +66,7 @@ public class BytesArrayInputReader implements FileInputReader {
          */
         BytesArrayInputIterator(final FileContext context,
                                 final IteratorManager iteratorManager) {
-            this.iteratorManager = iteratorManager;
-            this.context = context;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileContext context() {
-            return context;
+            super(iteratorManager, context);
         }
 
         /**
@@ -123,7 +87,7 @@ public class BytesArrayInputReader implements FileInputReader {
             }
 
             try {
-                final File file = context.file();
+                final File file = context().file();
                 final Path path = file.toPath();
                 byte[] bytes = Files.readAllBytes(path);
 
@@ -134,7 +98,7 @@ public class BytesArrayInputReader implements FileInputReader {
                 
                 return RecordsIterable.of(new TypedFileRecord(offset, struct));
             } catch (IOException e) {
-                throw new ReaderException("Error while reading file :  " + context.metadata(), e);
+                throw new ReaderException("Error while reading file :  " + context().metadata(), e);
             } finally {
                 hasNext = false;
             }
@@ -146,25 +110,6 @@ public class BytesArrayInputReader implements FileInputReader {
         @Override
         public boolean hasNext() {
             return !isClose() && hasNext;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void close() {
-            if (!closed.get()) {
-                iteratorManager.removeIterator(this);
-                closed.set(true);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean isClose() {
-            return closed.get();
         }
     }
 }

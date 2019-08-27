@@ -21,19 +21,20 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Default reader to read flat files row by row
- */
-public class RowFileInputReader extends AbstractFileInputReader  {
+public abstract class AbstractFileInputReader implements FileInputReader {
 
-    private RowFileInputReaderConfig configs;
+    private final AtomicBoolean isClosed;
+
+    private final IteratorManager openIterators;
 
     /**
-     * Creates a new {@link RowFileInputReader} instance.
+     * Creates a new {@link AbstractFileInputReader} instance.
      */
-    public RowFileInputReader() {
-        super();
+    AbstractFileInputReader() {
+        this.isClosed = new AtomicBoolean(false);
+        this.openIterators = new IteratorManager();
     }
 
     /**
@@ -41,28 +42,29 @@ public class RowFileInputReader extends AbstractFileInputReader  {
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        this.configs = new RowFileInputReaderConfig(configs);
-    }
 
-    public RowFileInputReaderConfig config() {
-        return configs;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context,
-                                                                     final IteratorManager iteratorManager) {
-        return RowFileInputIterator.newBuilder()
-                .withContext(context)
-                .withCharset(configs.charset())
-                .withInitialBufferSize(configs.bufferInitialBytesSize())
-                .withMinNumReadRecords(configs.minReadRecords())
-                .withSkipHeaders(configs.skipHeaders())
-                .withSkipFooters(configs.skipFooters())
-                .withMaxWaitMs(configs.maxWaitMs())
-                .withIteratorManager(iteratorManager)
-                .build();
+    public FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context) {
+        final FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(context, openIterators);
+        openIterators.addOpenIterator(iterator);
+        return iterator;
+    }
+
+    protected abstract FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context,
+                                                                              final IteratorManager iteratorManager);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        if (!isClosed.get()) {
+            openIterators.closeAll();
+        }
     }
 }

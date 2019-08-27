@@ -40,17 +40,12 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedStruct>> {
+public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RowFileInputIterator.class);
 
     private static final String HEADERS_RECORD_FIELD = "headers";
     private static final String FOOTERS_RECORD_FIELD = "footers";
-
-    /**
-     * The input-source context.
-     */
-    private FileContext context;
 
     /**
      * The buffer reader.
@@ -72,8 +67,6 @@ public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedS
      */
     private int skipFooters = 0;
 
-    private final IteratorManager iteratorManager;
-
     private List<TextBlock> headers;
     private List<String> headerStrings;
 
@@ -85,8 +78,6 @@ public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedS
     private final Charset charset;
 
     private long maxWaitMs = 0L;
-
-    private AtomicBoolean closed = new AtomicBoolean(false);
 
     private AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -102,13 +93,11 @@ public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedS
                                  final NonBlockingBufferReader reader,
                                  final IteratorManager iteratorManager,
                                  final Charset charset) {
-        Objects.requireNonNull(context, "context can't be null");
+        super(iteratorManager, context);
         Objects.requireNonNull(reader, "reader can't be null");
         Objects.requireNonNull(iteratorManager, "iteratorManager can't be null");
         Objects.requireNonNull(charset, "charset can't be null");
-        this.context = context;
         this.reader = reader;
-        this.iteratorManager = iteratorManager;
         this.charset = charset;
     }
 
@@ -139,14 +128,6 @@ public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedS
             reader.seekTo(offset.position());
         }
         updateContext();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FileContext context() {
-        return context;
     }
 
     /**
@@ -247,21 +228,12 @@ public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedS
      */
     @Override
     public void close() {
-        if (!closed.get()) {
+        if (!isClose()) {
             if (this.reader != null) {
                 this.reader.close();
             }
-            iteratorManager.removeIterator(this);
-            closed.set(true);
+            super.close();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isClose() {
-        return closed.get();
     }
 
     private void mayReadFooters() {
@@ -403,7 +375,6 @@ public class RowFileInputIterator implements FileInputIterator<FileRecord<TypedS
                     "Error while building new RowFileInputIterator. The property " + property +" is null.");
             }
         }
-
     }
 
     /**

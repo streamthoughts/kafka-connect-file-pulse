@@ -1,0 +1,18 @@
+{
+  "config": {
+    "connector.class": "io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector",
+    "fs.cleanup.policy.class": "io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy",
+    "fs.scanner.class": "io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker",
+    "fs.scan.directory.path": "/tmp/kafka-connect/examples/",
+    "fs.scan.interval.ms": "10000",
+    "internal.kafka.reporter.bootstrap.servers": "broker:29092",
+    "internal.kafka.reporter.id": "connect-file-pulse-avro-quickstart",
+    "internal.kafka.reporter.topic": "connect-file-pulse-status",
+    "offset.strategy": "name",
+    "read.max.wait.ms": "5000",
+    "task.reader.class": "io.streamthoughts.kafka.connect.filepulse.reader.AvroFileInputReader",
+    "topic": "connect-file-pulse-quickstart-avro",
+    "tasks.max": 1
+  },
+  "name": "connect-file-pulse-quickstart-avro"
+}

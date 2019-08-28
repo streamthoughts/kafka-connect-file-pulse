@@ -7,13 +7,14 @@ Connect File Pulse is a multi-purpose [Kafka Connect](http://kafka.apache.org/do
 
 ## Motivation
 
-A lot of enterprises rely on files to export/import data between their systems either in near real time or daily.
-Files can be in different textual formats such as CSV, XML, JSON and so one.
-A common use case is to decouple those systems by streaming those files into Kafka.
+Data is frequently exported, shared and integrated between legacy systems, either in near-real time or daily through the use of files. These files can be in a wide variety of formats such as CSV, XML, JSON, Avro, etc.
+A modern approach is to decouple these systems by distributing these files in Kafka.
 
-Connect File Pulse attends to be a simple solution to deal with those kind of files.
 
-Connect File Pulse is largely inspired from functionality provided by both Elasticsearch and Logstash.
+Connect File Pulse is a simple solution to easily integrate any type of data into a centralized Apache Kafka platform and distribute it across your organization.
+
+
+Connect File Pulse is inspired by the features provided by Elasticsearch and Logstash.
 
 ## Key-Features
 
@@ -72,7 +73,7 @@ docker-compose up -d
 docker logs --tail="all" -f connect"
 ```
 
-**3 ) Verify that Connect File Pulse plugins correctly loaded**
+**3 ) Verify that Connect File Pulse plugin is correctly loaded**
 ```bash
 curl -sX GET http://localhost:8083/connector-plugins | grep FilePulseSourceConnector
 ```

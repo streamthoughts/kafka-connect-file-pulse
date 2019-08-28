@@ -1,8 +1,8 @@
 # Accessing Data and Metadata
 
-Some filter properties (like : [AppendFilter](#appendfilter)) can be configured using *Simple Connect Expression Language*.
+Some filters (e.g : [AppendFilter](#appendfilter)) can be configured using *Simple Connect Expression Language*.
 
-*Simple Connect Expression Language* (ScEL for short) is an expression language based on regex that allow quick access and manipulating record fields and metadata.
+*Simple Connect Expression Language* (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.
 
 The syntax to define an expression is of the form : "`{% raw %}{{ <expression string> }}{% endraw %}`".
 

@@ -1,4 +1,6 @@
 /*
+ * Copyright 2019 StreamThoughts.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -45,29 +47,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-/**
- *
- * <p>
- *     KafkaBasedLog provides a generic implementation of a shared, compacted log of records stored in Kafka that all
- *     clients need to consume and, at times, agree on their startPosition / that they have read to the end of the log.
- * </p>
- * <p>
- *     This functionality is useful for storing different types of value that all clients may need to agree on --
- *     offsets or configDef for example. This class runs a consumer in a background thread to continuously tail the target
- *     topic, accepts write requests which it writes to the topic using an internal producer, and provides some helpful
- *     utilities like checking the current log end startPosition and waiting until the current end of the log is reached.
- * </p>
- * <p>
- *     To support different use cases, this class works with either single- or multi-partition topics.
- * </p>
- * <p>
- *     Since this class is generic, it delegates the details of value storage via a callback that is invoked for each
- *     value that is consumed from the topic. The invocation of callbacks is guaranteed to be serialized -- if the
- *     calling class keeps track of state based on the log and only writes to it when consume callbacks are invoked
- *     and only reads it in {@link #readToEnd(Callback)} callbacks then no additional synchronization will be required.
- * </p>
- *
- */
 public class KafkaBasedLog<K, V> {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaBasedLog.class);

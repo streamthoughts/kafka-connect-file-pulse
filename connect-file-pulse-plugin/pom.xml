@@ -224,6 +224,12 @@
             <artifactId>commons-io</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.9.1-5</version>
+        </dependency>
+
         <!-- START test dependencies-->
         <dependency>
             <groupId>junit</groupId>

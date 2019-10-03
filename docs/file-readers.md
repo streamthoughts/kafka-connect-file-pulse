@@ -22,4 +22,10 @@ The `AvroFileInputReader` is used to read Avro files.
 
 The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.AvroFileInputReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/AvroFileInputReader.java))
 
+## XMLFileInputReader
+
+The `XMLFileInputReader` is used to read XML files.
+
+The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/XMLFileInputReader.java))
+
 {% include_relative plan.md %}

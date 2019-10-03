@@ -21,6 +21,7 @@ Connect File Pulse is inspired by the features provided by Elasticsearch and Log
 * Recursively scan local directories
 * Reading and writing files into Kafka line by line
 * Support for reading Avro files
+* Support for reading XML files
 * Parsing and transforming data using built-in or custom filters
 * Error handler definition
 * Monitoring files while they are being written into Kafka

@@ -42,7 +42,7 @@ public class AvroRecordOffset extends TimestampedRecordOffset {
     private final long records;
 
      /**
-     * Creates a new {@link TimestampedRecordOffset} instance.
+     * Creates a new {@link AvroRecordOffset} instance.
       *
      * @param blockStart
      * @param position

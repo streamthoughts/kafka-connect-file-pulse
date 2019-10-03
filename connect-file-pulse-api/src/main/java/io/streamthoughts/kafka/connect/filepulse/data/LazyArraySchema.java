@@ -27,7 +27,9 @@ public class LazyArraySchema extends ArraySchema implements Schema {
     private Schema valueSchema;
 
     /**
-     * Creates a new LazyArraySchema for the specified type.
+     * Creates a new {@link LazyArraySchema} for the specified type.
+     *
+     * @param list the {@link List} instance.
      */
     LazyArraySchema(final List list) {
         super(null);
@@ -35,6 +37,9 @@ public class LazyArraySchema extends ArraySchema implements Schema {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Schema valueSchema() {
         if (valueSchema == null) {

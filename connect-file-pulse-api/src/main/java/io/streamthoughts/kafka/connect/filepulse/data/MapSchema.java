@@ -33,6 +33,8 @@ public class MapSchema implements Schema {
 
     /**
      * Creates a new MapSchema for the specified type.
+     *
+     * @param valueSchema the {@link Schema} instance.
      */
     MapSchema(final Schema valueSchema) {
         this.type = Type.MAP;

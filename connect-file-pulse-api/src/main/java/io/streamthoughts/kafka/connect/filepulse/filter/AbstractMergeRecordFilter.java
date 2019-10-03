@@ -60,8 +60,10 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> 
     /**
      * Apply the filter logic for the specified value.
      *
-     * @param record  a value.
-     * @return  a new RecordsIterable<TypedStruct> instance.
+     * @param context the {@link FilterContext} instance.
+     * @param record  the {@link TypedStruct} instance to filter.
+     *
+     * @return  a new {@link RecordsIterable} instance.
      */
     abstract protected RecordsIterable<TypedStruct> apply(final FilterContext context,
                                                           final TypedStruct record) throws FilterException ;

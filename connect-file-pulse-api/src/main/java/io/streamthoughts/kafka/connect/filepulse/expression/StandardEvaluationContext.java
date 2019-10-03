@@ -45,6 +45,8 @@ public class StandardEvaluationContext implements EvaluationContext {
 
     /**
      * Creates a new {@link StandardEvaluationContext} instance.
+     *
+     * @param rootObject the root object.
      */
     public StandardEvaluationContext(final Object rootObject) {
         this(rootObject, new HashMap<>(), new LinkedList<>(), new LinkedList<>());
@@ -52,6 +54,9 @@ public class StandardEvaluationContext implements EvaluationContext {
 
     /**
      * Creates a new {@link StandardEvaluationContext} instance.
+     *
+     * @param rootObject the root object.
+     * @param variables  the variables.
      */
     public StandardEvaluationContext(final Object rootObject,
                                      final Map<String, Object> variables) {
@@ -60,6 +65,9 @@ public class StandardEvaluationContext implements EvaluationContext {
 
     /**
      * Creates a new {@link StandardEvaluationContext} instance.
+     *
+     * @param rootObject the root object.
+     * @param variables  the variables.
      */
     private StandardEvaluationContext(final Object rootObject,
                                       final Map<String, Object> variables,

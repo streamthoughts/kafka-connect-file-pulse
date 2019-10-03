@@ -36,6 +36,7 @@ public interface SourceRecordSupplier {
      * @param metadata          the {@link SourceMetadata} to be used.
      * @param defaultTopic      the default topic to be used.
      * @param defaultPartition  the default partition to be used.
+     * @param headers           the {@link ConnectHeaders} to be used.
      *
      * @return                  the new {@link SourceRecord} instance.
      */

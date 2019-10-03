@@ -24,6 +24,8 @@ public interface PropertyAccessor {
 
     /**
      * Returns {@code null} which means this is a general purpose accessor.
+     *
+     * @return the array of {@link Class} supported type.
      */
     default Class<?>[] getSpecificTargetClasses() {
         return null;

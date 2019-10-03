@@ -29,16 +29,22 @@ public interface EvaluationContext {
 
     /**
      * Return the default root context object against which an expression is evaluated.
+     *
+     * @return the root {@link Object}.
      */
     Object rootObject();
 
     /**
      * Return a list of accessors that will be asked in turn to read/write a property.
+     *
+     * @return the list of {@link PropertyAccessor} instance.
      */
     List<PropertyAccessor> getPropertyAccessors();
 
     /**
      * Return a list of converter that will be asked in turn to convert read value into expected type.
+     *
+     * @return the list of {@link PropertyConverter} instance.
      */
     List<PropertyConverter> getPropertyConverter();
 

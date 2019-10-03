@@ -30,6 +30,8 @@ public class ArraySchema implements Schema {
 
     /**
      * Creates a new MapSchema for the specified type.
+     *
+     * @param valueSchema the {@link Schema} instance.
      */
     ArraySchema(final Schema valueSchema) {
         this.type = Type.ARRAY;

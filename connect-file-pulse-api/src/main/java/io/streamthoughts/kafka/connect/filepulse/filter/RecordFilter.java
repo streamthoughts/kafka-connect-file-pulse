@@ -30,12 +30,15 @@ public interface RecordFilter extends Configurable {
 
     /**
      * Configure this class with the given key-value pairs
+     *
+     * @param configs the configuration.
      */
     @Override
     void configure(final Map<String, ?> configs);
 
     /**
      * Configuration specification for this filter.
+     *
      * @return a new {@link ConfigDef} instance.
      */
     ConfigDef configDef();
@@ -74,7 +77,7 @@ public interface RecordFilter extends Configurable {
     /**
      * Flushes any remaining buffered input records.
      *
-     * @return an iterable of {@link FileRecord<TypedStruct>} to be flushed.
+     * @return an iterable of {@link FileRecord} to be flushed.
      */
     default RecordsIterable<FileRecord<TypedStruct>> flush() {
         return RecordsIterable.empty();
@@ -82,6 +85,10 @@ public interface RecordFilter extends Configurable {
 
     /**
      * Checks whether this filter should be apply on the input {@link TypedStruct}.
+     *
+     * @param context   the {@link FilterContext} instance.
+     * @param record    the {@link TypedStruct} instance.
+     *
      * @return {@code true} if the filter must be applied.
      */
     default boolean accept(final FilterContext context,

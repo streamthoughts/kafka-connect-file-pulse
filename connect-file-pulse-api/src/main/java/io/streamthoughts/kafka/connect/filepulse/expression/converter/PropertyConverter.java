@@ -22,6 +22,8 @@ public interface PropertyConverter {
 
     /**
      * Returns {@code null} which means this is a general purpose converter.
+     *
+     * @return the array of {@link Class}?
      */
     default Class<?>[] getSpecificTargetClasses() {
         return null;

@@ -31,8 +31,10 @@ public interface Expression {
     /**
      * Evaluates the variables defined into the given context.
      *
-     * @param context   the expression context.
-     * @return          the object resulting from the expression evaluation.
+     * @param context       the expression context.
+     * @param expectedType  the class of the expected type to return.
+     * @param <T>           the expected type to return.
+     * @return              the object resulting from the expression evaluation.
      */
     <T> T readValue(final EvaluationContext context, final Class<T> expectedType);
 

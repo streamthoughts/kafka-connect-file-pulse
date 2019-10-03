@@ -24,6 +24,8 @@ import java.util.Map;
 
 /**
  * Collection of (typed) values that can be retrieved by name.
+ *
+ * @param <T>   the {@link SettableByName} type.
  */
 public interface SettableByName<T extends SettableByName> extends Serializable {
 
@@ -33,6 +35,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      * @param field the name of the field.
      * @param object the object to put.
      * @param type the object type.
+     *
+     * @return        this instance.
      */
     T put(final String field, final Type type, final Object object)
             throws DataException;
@@ -42,7 +46,9 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param value   the object to put.
+     * @return        this instance.
      */
+
     T put(final String field, final TypedStruct value)
             throws DataException;
 
@@ -51,6 +57,9 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param value   the object to put.
+     * @param <E>     the element type.
+     *
+     * @return        this instance.
      */
     <E> T put(final String field, final List<E> value)
             throws DataException;
@@ -60,6 +69,9 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param value   the object to put.
+     * @param <E>     the element type.
+     *
+     * @return        this instance.
      */
     <E> T put(final String field, final E[] value)
             throws DataException;
@@ -69,6 +81,10 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     * @param <K>     the key type.
+     * @param <V>     the value type.
+     *
+     * @return        this instance.
      */
     <K, V> T put(final String field, final Map<K, V> object)
             throws DataException;
@@ -78,6 +94,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     *
+     * @return        this instance.
      */
     T put(final String field, final Boolean object)
             throws DataException;
@@ -87,6 +105,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     *
+     * @return        this instance.
      */
     T put(final String field, final Short object)
             throws DataException;
@@ -96,6 +116,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     *
+     * @return        this instance.
      */
     T put(final String field, final Integer object)
             throws DataException;
@@ -105,6 +127,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     *
+     * @return        this instance.
      */
     T put(final String field, final Long object)
             throws DataException;
@@ -114,6 +138,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     *
+     * @return        this instance.
      */
     T put(final String field, final Double object)
             throws DataException;
@@ -123,6 +149,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     *
+     * @return        this instance.
      */
     T put(final String field, final Float object)
             throws DataException;
@@ -132,6 +160,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     *
+     * @return        this instance.
      */
     T put(final String field, final String object)
             throws DataException;
@@ -141,6 +171,8 @@ public interface SettableByName<T extends SettableByName> extends Serializable {
      *
      * @param field   the name of the field.
      * @param object  the object to put.
+     *
+     * @return        this instance.
      */
     T put(final String field, final byte[] object)
             throws DataException;

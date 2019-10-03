@@ -124,6 +124,8 @@ public interface Schema {
     /**
      * Gets the schema for type MAP.
      *
+     * @param valueSchema the {@link Schema} instance.
+     *
      * @return  the {@link Schema} instance.
      */
     static MapSchema map(final Schema valueSchema) {
@@ -132,6 +134,8 @@ public interface Schema {
 
     /**
      * Gets the schema for type ARRAY.
+     *
+     * @param valueSchema the {@link Schema} instance.
      *
      * @return  the {@link Schema} instance.
      */

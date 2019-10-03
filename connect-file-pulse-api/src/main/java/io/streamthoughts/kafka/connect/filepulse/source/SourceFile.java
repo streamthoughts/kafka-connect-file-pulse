@@ -41,6 +41,8 @@ public class SourceFile {
      *
      * @param metadata  the source file metadata.
      * @param offset    the source file offset.
+     * @param status    the source status.
+     * @param props     the source properties.
      */
     @JsonCreator
     public SourceFile(@JsonProperty("metadata") final SourceMetadata metadata,

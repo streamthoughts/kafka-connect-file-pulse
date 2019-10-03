@@ -44,6 +44,8 @@ public class StructSchema implements Schema, Iterable<TypedField> {
 
     /**
      * Creates a new {@link StructSchema} instance.
+     *
+     * @param fields    the collection {@link TypedField} instances.
      */
     public StructSchema(final Collection<TypedField> fields) {
         this.type = Type.STRUCT;

@@ -23,7 +23,10 @@ package io.streamthoughts.kafka.connect.filepulse.source;
  */
 public interface FileRecordOffset {
 
-    /** only for testing **/
+    /**
+     * Only for testing
+     * @return  a {@link FileRecordOffset} throwing {@link UnsupportedOperationException}.
+     */
     static FileRecordOffset invalid() {
         return () -> {
             throw new UnsupportedOperationException();

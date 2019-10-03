@@ -57,6 +57,7 @@ public class CommonFilterConfig extends AbstractConfig {
 
     /**
      * Creates a new {@link CommonFilterConfig} instance.
+     *
      * @param originals the originals configuration.
      */
     public CommonFilterConfig(final Map<?, ?> originals) {
@@ -65,6 +66,8 @@ public class CommonFilterConfig extends AbstractConfig {
 
     /**
      * Creates a new {@link CommonFilterConfig} instance.
+     *
+     * @param def       the {@link ConfigDef} instance.
      * @param originals the originals configuration.
      */
     public CommonFilterConfig(final ConfigDef def, final Map<?, ?> originals) {

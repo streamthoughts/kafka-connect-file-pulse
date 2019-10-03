@@ -7,7 +7,7 @@
     <groupId>io.streamthoughts</groupId>
     <artifactId>kafka-connect-file-pulse-reactor</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.0</version>
+    <version>1.3.0-SNAPSHOT</version>
 
     <name>Kafka Connect Source File Pulse Reactor</name>
     <description>Connect File Pulse is a multi-purpose source connector for streaming files from a local filesystem to Kafka.</description>
@@ -17,6 +17,14 @@
         <module>connect-file-pulse-filters</module>
         <module>connect-file-pulse-plugin</module>
     </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub StreamThoughts Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/streamthoughts/kafka-connect-file-pulse</url>
+        </repository>
+    </distributionManagement>
 
     <organization>
         <name>streamthoughts</name>

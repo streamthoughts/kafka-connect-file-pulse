@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.streamthoughts</groupId>
         <artifactId>kafka-connect-file-pulse-reactor</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.2.0</version>
     </parent>
 
     <artifactId>kafka-connect-file-pulse-api</artifactId>
@@ -19,6 +19,14 @@
         <name>streamthoughts</name>
         <url>http://streamthoughts.io</url>
     </organization>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub StreamThoughts Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/streamthoughts/kafka-connect-file-pulse-api</url>
+        </repository>
+    </distributionManagement>
 
     <licenses>
         <license>

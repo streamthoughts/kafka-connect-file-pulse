@@ -56,8 +56,10 @@
                                 Connect File Pulse is a multi-purpose open-source Kafka Connect(source) plugin for ingesting and transforming data from local files before sending it to a Kafka Apache cluster.
                             </description>
                             <supportProviderName>StreamThoughts</supportProviderName>
-                            <supportSummary>This connector is supported by the open source community and Streamthoughts as part of its open source subscription.</supportSummary>
+                            <supportSummary>This connector is supported by the open source community and StreamThoughts as part of its open source offering.</supportSummary>
                             <supportUrl>https://streamthoughts.io/open-source</supportUrl>
+
+                            <logo>${project.basedir}/../assets/streamthoughts_logo.png</logo>
 
                             <ownerUsername>streamthoughts</ownerUsername>
                             <ownerType>organization</ownerType>

@@ -18,9 +18,23 @@
         <module>connect-file-pulse-plugin</module>
     </modules>
 
+    <scm>
+        <url>https://github.com/streamthoughts/kafka-connect-file-pulse</url>
+        <connection>scm:git:git://github.com:streamthoughts/kafka-connect-file-pulse.git</connection>
+        <developerConnection>scm:git:git@github.com:streamthoughts/kafka-connect-file-pulse.git</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub StreamThoughts Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/streamthoughts/kafka-connect-file-pulse</url>
+        </repository>
+    </distributionManagement>
+
     <organization>
         <name>streamthoughts</name>
-        <url>http://streamthoughts.io</url>
+        <url>https://www.streamthoughts.io</url>
     </organization>
 
     <licenses>

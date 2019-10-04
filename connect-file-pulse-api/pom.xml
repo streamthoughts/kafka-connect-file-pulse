@@ -20,14 +20,6 @@
         <url>http://streamthoughts.io</url>
     </organization>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub StreamThoughts Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/streamthoughts/kafka-connect-file-pulse-api</url>
-        </repository>
-    </distributionManagement>
-
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>

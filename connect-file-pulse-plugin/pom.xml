@@ -50,6 +50,7 @@
                             <goal>kafka-connect</goal>
                         </goals>
                         <configuration>
+                            <name>kafka-connect-file-pulse</name>
                             <title>Kafka Connect File Pulse</title>
                             <documentationUrl>https://github/streamthoughts/</documentationUrl>
                             <description>

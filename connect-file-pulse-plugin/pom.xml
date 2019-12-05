@@ -52,7 +52,8 @@
                         <configuration>
                             <name>kafka-connect-file-pulse</name>
                             <title>Kafka Connect File Pulse</title>
-                            <documentationUrl>https://github/streamthoughts/</documentationUrl>
+                            <documentationUrl>https://github.com/streamthoughts/kafka-connect-file-pulse</documentationUrl>
+                            <sourceUrl>https://github.com/streamthoughts/kafka-connect-file-pulse</sourceUrl>
                             <description>
                                 Connect File Pulse is a multi-purpose open-source Kafka Connect(source) plugin for ingesting and transforming data from local files before sending it to a Kafka Apache cluster.
                             </description>

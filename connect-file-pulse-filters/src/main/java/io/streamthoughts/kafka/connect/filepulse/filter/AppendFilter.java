@@ -91,7 +91,7 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
 
         final Expression writeExpression = evaluateWriteExpression(readEvaluationContext);
 
-        final TypedStruct target = TypedStruct.struct();
+        final TypedStruct target = TypedStruct.create();
         for (final Expression expression : values) {
 
             internalContext.setValue(record);

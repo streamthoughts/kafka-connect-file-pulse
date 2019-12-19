@@ -125,7 +125,10 @@ public class TypedValue implements GettableByType {
      * @return      the new {@link TypedValue} instance.
      */
     public static TypedValue struct(final TypedStruct value) {
-        return new TypedValue(value.schema(), value);
+        return new TypedValue(
+            new StructSchema(value.schema().fields(), value.schema().name()),
+            value
+        );
     }
 
     /**

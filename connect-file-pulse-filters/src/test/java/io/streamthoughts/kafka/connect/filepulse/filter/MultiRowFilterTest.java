@@ -63,7 +63,7 @@ public class MultiRowFilterTest {
     private RecordsIterable<TypedStruct> generates() {
         List<TypedStruct> records  = INPUTS.stream()
                 .flatMap(Collection::stream)
-                .map(m -> TypedStruct.struct().put("message", m))
+                .map(m -> TypedStruct.create().put("message", m))
                 .collect(Collectors.toList());
         return new RecordsIterable<>(records);
     }

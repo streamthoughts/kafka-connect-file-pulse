@@ -42,14 +42,14 @@ public class ExistsTest {
 
     @Test
     public void shouldAcceptGivenStringSchemaAndValue() {
-        Assert.assertTrue(exists.accept(TypedValue.struct(new TypedStruct())));
+        Assert.assertTrue(exists.accept(TypedValue.struct(TypedStruct.create())));
     }
 
     @Test
     public void shouldReturnFalseGivenEmptyStruct() {
         SimpleArguments arguments = exists.prepare(new TypedValue[]{DEFAULT_ARGUMENT});
 
-        TypedValue output = exists.apply(TypedValue.struct(new TypedStruct()), arguments);
+        TypedValue output = exists.apply(TypedValue.struct(TypedStruct.create()), arguments);
         assertEquals(Type.BOOLEAN, output.type());
         assertFalse(output.value());
     }
@@ -58,7 +58,7 @@ public class ExistsTest {
     public void shouldReturnTrueGivenStructWithExpectedField() {
         SimpleArguments arguments = exists.prepare(new TypedValue[]{DEFAULT_ARGUMENT});
 
-        TypedStruct struct = new TypedStruct()
+        TypedStruct struct = TypedStruct.create()
                 .put("field", TypedValue.any(null));
 
         TypedValue output = exists.apply(TypedValue.struct(struct), arguments);

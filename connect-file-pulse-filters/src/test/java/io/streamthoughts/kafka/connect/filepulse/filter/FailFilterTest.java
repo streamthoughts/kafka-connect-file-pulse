@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class FailFilterTest {
 
-    private static final TypedStruct DEFAULT_DATA = new TypedStruct()
+    private static final TypedStruct DEFAULT_DATA = TypedStruct.create()
             .put("message", "simple record");
 
     private FilterContext context;

@@ -35,6 +35,7 @@ import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,9 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
         SchemaBuilder sb = SchemaBuilder.struct();
         for(final TypedField field : schema) {
             sb.field(field.name(), field.schema().map(this)).optional();
+        }
+        if (schema.name() != null) {
+            sb.name(schema.name());
         }
         return sb.build();
     }
@@ -126,13 +130,38 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
     private static Struct toConnectStruct(final Schema connectSchema, final TypedStruct struct) {
         final Struct connectStruct = new Struct(connectSchema);
         for (Field field : connectSchema.fields()) {
-            final TypedValue typed = struct.get(field.name());
-            final Schema fieldSchema = field.schema();
 
-            if (fieldSchema.type() != typed.type().schemaType()) {
-                throw new DataException("types do not match " + fieldSchema.type() + "<>" + typed.type());
+            final String fieldName = connectSchema.name();
+            final boolean isOptional = field.schema().isOptional();
+            if (!struct.has(field.name())) {
+                if (!isOptional) {
+                    throw new DataException(
+                        "Failed to convert record to connect data. " +
+                        "Missing required field '" + field.name() + "' for record '" + fieldName + "'"
+                    );
+                }
+                continue;
             }
 
+            TypedValue typed = struct.get(field.name());
+            final Schema fieldSchema = field.schema();
+
+            final Schema.Type dataSchemaType = typed.type().schemaType();
+
+            if (fieldSchema.type() != dataSchemaType) {
+
+                if (!fieldSchema.type().equals(Schema.Type.ARRAY)) {
+                    throw new DataException("Failed to convert record field '" + fieldName + "' to connect data. " +
+                        "Types do not match " + fieldSchema.type() + "<>" + typed.type());
+                }
+
+                Schema.Type arrayValueType = fieldSchema.valueSchema().type();
+                if (!arrayValueType.equals(dataSchemaType)) {
+                    throw new DataException("Failed to convert record field '" + fieldName + "' to connect data. " +
+                        "Types do not match Array[" + arrayValueType + "]<>Array[" + typed.type() + "]");
+                }
+                typed = TypedValue.array(Collections.singleton(typed.value()), typed.schema());
+            }
             connectStruct.put(field, toConnectObject(fieldSchema, typed));
         }
         return connectStruct;

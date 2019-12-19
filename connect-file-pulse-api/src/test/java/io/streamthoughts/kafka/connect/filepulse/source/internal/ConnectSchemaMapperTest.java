@@ -33,7 +33,7 @@ public class ConnectSchemaMapperTest {
     @Test
     public void shouldMapGivenSimpleTypedStruct() {
 
-        TypedStruct struct = new TypedStruct()
+        TypedStruct struct = TypedStruct.create()
                 .put("field1", "value1")
                 .put("field2", "value2");
 
@@ -47,8 +47,8 @@ public class ConnectSchemaMapperTest {
 
     @Test
     public void shouldMapGivenNestedTypedStruct() {
-        TypedStruct struct = new TypedStruct()
-                .put("field1", new TypedStruct().put("field2", "value2"));
+        TypedStruct struct = TypedStruct.create()
+                .put("field1", TypedStruct.create().put("field2", "value2"));
 
         SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
         Assert.assertNotNull(schemaAndValue);
@@ -63,7 +63,7 @@ public class ConnectSchemaMapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldMapGivenTypeStructWithArrayField() {
-        TypedStruct struct = new TypedStruct()
+        TypedStruct struct = TypedStruct.create()
                 .put("field1", Collections.singletonList("value"));
 
         SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
@@ -78,8 +78,8 @@ public class ConnectSchemaMapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldMapGivenTypeStructWithArrayOfStruct() {
-        TypedStruct struct = new TypedStruct()
-                .put("field1", Collections.singletonList(new TypedStruct().put("field2", "value")));
+        TypedStruct struct = TypedStruct.create()
+                .put("field1", Collections.singletonList(TypedStruct.create().put("field2", "value")));
 
         SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
         Assert.assertNotNull(schemaAndValue);
@@ -93,7 +93,7 @@ public class ConnectSchemaMapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldMapGivenTypeStructWithMapField() {
-        TypedStruct struct = new TypedStruct()
+        TypedStruct struct = TypedStruct.create()
                 .put("field1", Collections.singletonMap("field2", "value"));
 
         SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
@@ -108,11 +108,11 @@ public class ConnectSchemaMapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldMapGivenTypeStructWithMapWithStructValue() {
-        TypedStruct struct = new TypedStruct()
+        TypedStruct struct = TypedStruct.create()
             .put("field1",
                 Collections.singletonMap(
                     "field2",
-                     new TypedStruct().put("field3", "value")
+                    TypedStruct.create().put("field3", "value")
                 ));
 
         SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);

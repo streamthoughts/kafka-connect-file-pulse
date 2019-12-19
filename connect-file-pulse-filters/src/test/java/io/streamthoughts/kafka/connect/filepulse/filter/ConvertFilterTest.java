@@ -54,7 +54,7 @@ public class ConvertFilterTest {
         configs.put(ConvertFilterConfig.CONVERT_TYPE_CONFIG, "boolean");
         filter.configure(configs);
 
-        TypedStruct struct = new TypedStruct().put("foo", "yes");
+        TypedStruct struct = TypedStruct.create().put("foo", "yes");
         List<TypedStruct> results = filter.apply(context, struct, false).collect();
 
         Assert.assertNotNull(results);

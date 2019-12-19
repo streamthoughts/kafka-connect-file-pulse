@@ -34,13 +34,13 @@ public class TypedStructTest {
 
     @Test(expected = DataException.class)
     public void shouldThrowExceptionGivenInvalidFieldName() {
-        TypedStruct struct = new TypedStruct();
+        TypedStruct struct = TypedStruct.create();
         struct.get(STRING_FIELD_1);
     }
 
     @Test
     public void shouldReturnFieldPreviouslyAdded() {
-        TypedStruct struct = new TypedStruct()
+        TypedStruct struct = TypedStruct.create()
                 .put(STRING_FIELD_1, STRING_VALUE_1);
 
         TypedValue typed = struct.get(STRING_FIELD_1);
@@ -51,7 +51,7 @@ public class TypedStructTest {
 
     @Test
     public void shouldIncrementIndexWhilePuttingNewFields() {
-        TypedStruct struct = new TypedStruct()
+        TypedStruct struct = TypedStruct.create()
                 .put(STRING_FIELD_1, STRING_VALUE_1)
                 .put(STRING_FIELD_2, STRING_VALUE_2);
 
@@ -61,7 +61,7 @@ public class TypedStructTest {
 
     @Test
     public void shouldRemoveAndReIndexFieldsGivenValidFieldName() {
-        final TypedStruct struct = new TypedStruct()
+        final TypedStruct struct = TypedStruct.create()
                 .put(STRING_FIELD_1, STRING_VALUE_1)
                 .put(STRING_FIELD_2, STRING_FIELD_2)
                 .put(STRING_FIELD_3, STRING_VALUE_3);
@@ -75,7 +75,7 @@ public class TypedStructTest {
 
     @Test
     public void shouldRenameGivenValidFieldName() {
-        final TypedStruct struct = new TypedStruct()
+        final TypedStruct struct = TypedStruct.create()
                 .put(STRING_FIELD_1, STRING_VALUE_1);
 
         struct.rename(STRING_FIELD_1, STRING_FIELD_2);

@@ -39,7 +39,7 @@ public class DelimitedRowFileInputFilterTest {
     private DelimitedRowFilter filter;
 
 
-    private static final TypedStruct DEFAULT_STRUCT = new TypedStruct()
+    private static final TypedStruct DEFAULT_STRUCT = TypedStruct.create()
         .put("message", "value1;value2;value3")
         .put("headers", Collections.singletonList("col1;col2;col3"));
 

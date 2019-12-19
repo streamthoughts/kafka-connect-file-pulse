@@ -216,7 +216,7 @@ public class DefaultRecordFilterPipelineTest {
     }
 
     private static FileRecord<TypedStruct> createWithOffsetAndValue(final FileRecordOffset offset, final String value) {
-        return new TypedFileRecord(offset, new TypedStruct().put("message", value));
+        return new TypedFileRecord(offset, TypedStruct.create().put("message", value));
     }
 
     static class TestFilter implements RecordFilter {

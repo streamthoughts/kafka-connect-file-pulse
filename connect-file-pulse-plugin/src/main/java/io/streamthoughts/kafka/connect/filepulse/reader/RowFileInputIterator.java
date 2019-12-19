@@ -169,7 +169,7 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
 
     private FileRecord<TypedStruct> createOutputRecord(final TextBlock record) {
 
-        TypedStruct struct = new TypedStruct();
+        TypedStruct struct = TypedStruct.create();
         struct.put(TypedFileRecord.DEFAULT_MESSAGE_FIELD, record.data());
         if (skipHeaders > 0) {
             struct.put(HEADERS_RECORD_FIELD, headerStrings);

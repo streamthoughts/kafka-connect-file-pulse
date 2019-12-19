@@ -118,7 +118,10 @@ public class XMLFileInputReader extends AbstractFileInputReader {
          */
         @Override
         public void seekTo(final SourceOffset offset) {
-            position = (int)offset.position();
+            Objects.requireNonNull(offset, "offset can't be null");
+            if (offset.position() != -1) {
+                this.position = (int)offset.position();
+            }
         }
 
         /**
@@ -150,7 +153,8 @@ public class XMLFileInputReader extends AbstractFileInputReader {
 
         private static TypedStruct convertNodeObjectTree(final Node node) throws DOMException {
             Objects.requireNonNull(node, "node cannot be null");
-            TypedStruct container = TypedStruct.struct();
+
+            TypedStruct container = TypedStruct.create(determineNodeName(node));
             readAllNodeAttributes(node, container);
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
                 Optional<?> optional = readNodeObject(child);

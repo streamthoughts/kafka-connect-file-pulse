@@ -30,7 +30,7 @@ public class JSONFilterTest {
 
     private static final String JSON = "    {\"firstName\" : \"foo\", \"lastName\" : \"bar\"}";
 
-    private static final TypedStruct DATA = TypedStruct.struct().put("message", JSON);
+    private static final TypedStruct DATA = TypedStruct.create().put("message", JSON);
 
     private JSONFilter filter;
 

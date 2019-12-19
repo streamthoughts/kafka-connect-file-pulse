@@ -133,7 +133,8 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
             throw new FilterException(
                 "Error while reading delimited input row. Too large number of fields (" + fieldValues.length + ")");
         }
-        TypedStruct struct = new TypedStruct();
+
+        TypedStruct struct = TypedStruct.create();
         for (int i = 0; i < fieldValues.length; i++) {
             String fieldValue = fieldValues[i];
             if (configs.isTrimColumn()) {

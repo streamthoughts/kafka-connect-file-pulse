@@ -110,7 +110,7 @@ public class GroupRowFilterTest {
     public List<TypedStruct> generate(String key1, String key2, int num) {
         List<TypedStruct> results = new ArrayList<>(num);
         for (int i = 0; i < num; i++) {
-            TypedStruct struct = new TypedStruct()
+            TypedStruct struct = TypedStruct.create()
                     .put(KEY_1, key1)
                     .put(KEY_2, key2)
                     .put(VALUE, "val-" + i);
@@ -122,12 +122,12 @@ public class GroupRowFilterTest {
     @Test
     public void  shouldGenerateDifferentKeysGivenSymmetricFields() {
 
-        TypedStruct struct1 = new TypedStruct()
+        TypedStruct struct1 = TypedStruct.create()
                 .put(KEY_1, KEY_1)
                 .put(KEY_2, KEY_2)
                 .put(VALUE, "value");
 
-        TypedStruct struct2 = new TypedStruct()
+        TypedStruct struct2 = TypedStruct.create()
                 .put(KEY_1, KEY_2)
                 .put(KEY_2, KEY_1)
                 .put(VALUE, "value");

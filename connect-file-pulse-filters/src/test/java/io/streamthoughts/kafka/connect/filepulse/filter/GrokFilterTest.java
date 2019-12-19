@@ -39,7 +39,7 @@ public class GrokFilterTest {
 
     private static final String INPUT = "1970-01-01 00:00:00,000 INFO a dummy log message\n";
 
-    private static final TypedStruct DATA = new TypedStruct().put("message", INPUT);
+    private static final TypedStruct DATA = TypedStruct.create().put("message", INPUT);
 
     @Before
     public void setUp() {
@@ -81,7 +81,7 @@ public class GrokFilterTest {
         configs.put(GrokFilterConfig.GROK_ROW_PATTERN_CONFIG, GROK_NAMED_CAPTURED_PATTERN);
         configs.put(CommonFilterConfig.FILTER_OVERWRITE_CONFIG, "message");
         filter.configure(configs);
-        filter.apply(null,  new TypedStruct().put("message", "BAD INPUT"), false);
+        filter.apply(null, TypedStruct.create().put("message", "BAD INPUT"), false);
     }
 
     @Test

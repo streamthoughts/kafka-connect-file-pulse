@@ -43,8 +43,7 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                            final TypedStruct struct) {
         super(offset, struct);
         this.internalSourceRecordBuilder = new InternalSourceRecordBuilder(
-                () -> struct.schema()
-                            .map(ConnectSchemaMapper.INSTANCE, struct)
+            () -> struct.schema().map(ConnectSchemaMapper.INSTANCE, struct)
         );
     }
 

@@ -147,7 +147,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
         @Override
         public TypedValue read(final JsonIterator it) throws IOException {
 
-            TypedStruct struct = TypedStruct.struct();
+            TypedStruct struct = TypedStruct.create();
 
             for (String field = it.readObject(); field != null; field = it.readObject()) {
                 ValueType valueType = it.whatIsNext();

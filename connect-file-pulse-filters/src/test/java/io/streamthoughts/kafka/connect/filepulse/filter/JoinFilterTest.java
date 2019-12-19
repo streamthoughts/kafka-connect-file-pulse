@@ -56,7 +56,7 @@ public class JoinFilterTest {
         configs.put(JoinFilterConfig.JOIN_SEPARATOR_CONFIG, "|");
 
         filter.configure(configs);
-        final TypedStruct struct = new TypedStruct().put("array", Arrays.asList("one", "two", "three", "four"));
+        final TypedStruct struct = TypedStruct.create().put("array", Arrays.asList("one", "two", "three", "four"));
 
         RecordsIterable<TypedStruct> filtered = filter.apply(context, struct, false);
         assertFalse(filtered.isEmpty());
@@ -74,7 +74,7 @@ public class JoinFilterTest {
         configs.put(JoinFilterConfig.JOIN_SEPARATOR_CONFIG, "|");
 
         filter.configure(configs);
-        final TypedStruct struct = new TypedStruct().put("array", Arrays.asList("one", "two", "three", "four"));
+        final TypedStruct struct = TypedStruct.create().put("array", Arrays.asList("one", "two", "three", "four"));
 
         RecordsIterable<TypedStruct> filtered = filter.apply(context, struct, false);
         assertFalse(filtered.isEmpty());
@@ -89,7 +89,7 @@ public class JoinFilterTest {
     public void shouldThrowDataExceptionGivenNonArrayField() {
         configs.put(JoinFilterConfig.JOIN_FIELD_CONFIG, "array");
         filter.configure(configs);
-        filter.apply(context, new TypedStruct().put("array","dummy"), false);
+        filter.apply(context, TypedStruct.create().put("array","dummy"), false);
     }
 
 }

@@ -80,15 +80,13 @@
                                 <tag>log</tag>
                             </tags>
 
-                            <requirements>
-                                <requirement>N/A</requirement>
-                            </requirements>
+                            <requirements/>
 
                             <deliveryGuarantee>
                                 <deliveryGuarantee>atLeastOnce</deliveryGuarantee>
                             </deliveryGuarantee>
 
-                            <confluentControlCenterIntegration>false</confluentControlCenterIntegration>
+                            <confluentControlCenterIntegration>true</confluentControlCenterIntegration>
                         </configuration>
                     </execution>
                 </executions>

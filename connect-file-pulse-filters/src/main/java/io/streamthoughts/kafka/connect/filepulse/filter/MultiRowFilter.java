@@ -108,8 +108,7 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
     }
 
     private TypedStruct buildOutputStruct() {
-        return new TypedStruct()
-                .put(DEFAULT_SOURCE_FIELD, mergeMultiLines(latest));
+        return TypedStruct.create().put(DEFAULT_SOURCE_FIELD, mergeMultiLines(latest));
     }
 
     /**

@@ -126,7 +126,7 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
     }
 
     private TypedStruct groupBufferedRecords() {
-        final TypedStruct struct = TypedStruct.struct();
+        final TypedStruct struct = TypedStruct.create();
         struct.put(target, new ArrayList<>(buffered));
         buffered.clear();
         return struct;

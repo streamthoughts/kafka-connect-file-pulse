@@ -34,18 +34,44 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
     private List<Object> values;
 
     /**
-     * Creates a new {@link TypedStruct} instance.
+     * Static helper that can be used to create a new {@link TypedStruct} instance.
+     *
      * @return  the type-struct instance.
      */
-    public static TypedStruct struct() {
+    public static TypedStruct create() {
         return new TypedStruct();
+    }
+
+    /**
+     * Static helper that can be used to create a new {@link TypedStruct} instance with the given name.
+     *
+     * @return  the type-struct instance.
+     */
+    public static TypedStruct create(final String name) {
+        return create(Schema.struct().name(name));
+    }
+
+    /**
+     * Static helper that can be used to create a new {@link TypedStruct} instance with the given schema.
+     *
+     * @return  the type-struct instance.
+     */
+    public static TypedStruct create(final StructSchema schema) {
+        return new TypedStruct(schema);
     }
 
     /**
      * Creates a new {@link TypedStruct} instance.
      */
-    public TypedStruct() {
-        this.schema = Schema.struct();
+    private TypedStruct() {
+        this(Schema.struct());
+    }
+
+    /**
+     * Creates a new {@link TypedStruct} instance.
+     */
+    private TypedStruct(final StructSchema schema) {
+        this.schema = Objects.requireNonNull(schema, "schema cannot be null");
         this.values = new LinkedList<>();
     }
 
@@ -301,11 +327,10 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
         }
 
         return get(fieldName);
-
     }
 
     public StructSchema schema() {
-        return new StructSchema(schema.fields());
+        return schema;
     }
 
     public TypedField field(final String name) {

@@ -99,7 +99,7 @@ public class TypedStructAccessor implements PropertyAccessor {
             if (struct.has(field)) {
                 child = struct.getStruct(field);
             } else {
-                child = new TypedStruct();
+                child = TypedStruct.create();
             }
             write(context, child, remaining, newValue);
 

@@ -52,7 +52,7 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
         if (left == null) return right;
         if (right == null) return left;
 
-        TypedStruct struct = new TypedStruct();
+        final TypedStruct struct = TypedStruct.create();
 
         for (TypedField leftField : left) {
             final String leftFieldName = leftField.name();

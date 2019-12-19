@@ -35,11 +35,13 @@ public class StructSchema implements Schema, Iterable<TypedField> {
 
     private Integer hash;
 
+    private String name;
+
     /**
      * Creates a new {@link StructSchema} instance.
      */
     public StructSchema() {
-        this(Collections.emptyList());
+        this(Collections.emptyList(), null);
     }
 
     /**
@@ -47,11 +49,11 @@ public class StructSchema implements Schema, Iterable<TypedField> {
      *
      * @param fields    the collection {@link TypedField} instances.
      */
-    public StructSchema(final Collection<TypedField> fields) {
+    public StructSchema(final Collection<TypedField> fields, final String name) {
         this.type = Type.STRUCT;
         this.fields = new LinkedHashMap<>();
+        this.name = name;
         fields.forEach(field -> this.fields.put(field.name(), field));
-
     }
 
     public StructSchema field(final String fieldName, final Schema fieldSchema) {
@@ -136,6 +138,15 @@ public class StructSchema implements Schema, Iterable<TypedField> {
     @Override
     public Type type() {
         return this.type;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public StructSchema name(final String name) {
+        this.name = name;
+        return this;
     }
 
     /**

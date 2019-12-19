@@ -89,7 +89,7 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
 
         if (value == null) return null;
 
-        final TypedStruct struct = TypedStruct.struct();
+        final TypedStruct struct = TypedStruct.create();
 
         final byte[] bytes = value.getBytes();
         for (GrokMatcher grok : patterns) {

@@ -47,7 +47,7 @@ public class RenameFilterTest {
         configs.put(RenameFilterConfig.RENAME_TARGET_CONFIG, "bar");
         filter.configure(configs);
 
-        TypedStruct record = new TypedStruct().put("foo", "dummy-value");
+        TypedStruct record = TypedStruct.create().put("foo", "dummy-value");
         List<TypedStruct> results = this.filter.apply(null, record, false).collect();
 
         Assert.assertNotNull(results);

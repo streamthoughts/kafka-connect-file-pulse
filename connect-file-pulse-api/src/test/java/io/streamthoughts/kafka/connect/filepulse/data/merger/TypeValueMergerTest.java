@@ -37,10 +37,10 @@ public class TypeValueMergerTest {
 
     @Test
     public void shouldMergeStructGivenTwoFieldsWithDifferentName() {
-        final TypedStruct structLeft = new TypedStruct()
+        final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_A);
 
-        final TypedStruct structRight = new TypedStruct()
+        final TypedStruct structRight = TypedStruct.create()
                 .put(FIELD_VALUE_B, VALUE_B);
 
         final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
@@ -53,10 +53,10 @@ public class TypeValueMergerTest {
 
     @Test
     public void shouldMergeStructGivenTwoFieldsWithDifferentTypeGivenOverride() {
-        final TypedStruct structLeft = new TypedStruct()
+        final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_A);
 
-        final TypedStruct structRight = new TypedStruct()
+        final TypedStruct structRight = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_B);
 
         final TypedStruct merged = merger.merge(structLeft, structRight, Collections.singleton(FIELD_VALUE_A));
@@ -67,10 +67,10 @@ public class TypeValueMergerTest {
 
     @Test
     public void shouldMergeStructGivenTwoFieldsWithSameNameIntoArray() {
-        final TypedStruct structLeft = new TypedStruct()
+        final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_A);
 
-        final TypedStruct structRight = new TypedStruct()
+        final TypedStruct structRight = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_B);
 
         final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
@@ -84,10 +84,10 @@ public class TypeValueMergerTest {
 
     @Test
     public void shouldMergeStructGivenLeftFieldWithArrayTypeEqualToRightField() {
-        final TypedStruct structLeft = new TypedStruct()
+        final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_A));
 
-        final TypedStruct structRight = new TypedStruct()
+        final TypedStruct structRight = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_B);
 
         final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
@@ -101,10 +101,10 @@ public class TypeValueMergerTest {
 
     @Test
     public void shouldMergeStructGivenRightFieldWithArrayTypeEqualToLeftField() {
-        final TypedStruct structLeft = new TypedStruct()
+        final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_A);
 
-        final TypedStruct structRight = new TypedStruct()
+        final TypedStruct structRight = TypedStruct.create()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_B));
 
         final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
@@ -118,10 +118,10 @@ public class TypeValueMergerTest {
 
     @Test
     public void shouldMergeStructGivenTwoArrayFieldsWithEqualsValueType() {
-        final TypedStruct structLeft =  new TypedStruct()
+        final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_A));
 
-        final TypedStruct structRight = new TypedStruct()
+        final TypedStruct structRight = TypedStruct.create()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_B));
 
         final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());

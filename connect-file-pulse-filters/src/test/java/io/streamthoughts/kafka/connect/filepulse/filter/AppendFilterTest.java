@@ -33,7 +33,7 @@ import java.util.Map;
 
 public class AppendFilterTest {
 
-    private final static TypedStruct STRUCT =  new TypedStruct().put("values", Arrays.asList("foo", "bar"));
+    private final static TypedStruct STRUCT = TypedStruct.create().put("values", Arrays.asList("foo", "bar"));
     private final static String EXPRESSION = "{{ extract_array(values,0) }}-{{ extract_array(values,1) }}";
 
     private AppendFilter filter;

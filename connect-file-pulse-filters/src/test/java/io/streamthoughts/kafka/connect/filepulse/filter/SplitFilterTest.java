@@ -46,7 +46,7 @@ public class SplitFilterTest {
         configs.put(SplitFilterConfig.MUTATE_SPLIT_CONFIG, "foo");
         filter.configure(configs);
 
-        TypedStruct record = new TypedStruct().put("foo", "val0,val1,val2");
+        TypedStruct record = TypedStruct.create().put("foo", "val0,val1,val2");
         List<TypedStruct> results = this.filter.apply(null, record, false).collect();
 
         Assert.assertNotNull(results);

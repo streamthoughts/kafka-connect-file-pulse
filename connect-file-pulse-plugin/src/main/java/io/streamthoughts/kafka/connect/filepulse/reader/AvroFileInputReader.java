@@ -227,7 +227,7 @@ public class AvroFileInputReader extends AbstractFileInputReader {
          * @return          a new {@link TypedStruct} instance.
          */
         static TypedStruct fromGenericRecord(final GenericRecord record) {
-            TypedStruct struct = new TypedStruct();
+            TypedStruct struct = TypedStruct.create();
             final Schema schema = record.getSchema();
             for (Schema.Field field : schema.getFields()) {
                 final String name = field.name();

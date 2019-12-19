@@ -45,9 +45,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 
   connect-file-pulse:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: streamthoughts/kafka-connect-file-pulse:latest
     container_name: connect
     depends_on:
       - cp-schema-registry

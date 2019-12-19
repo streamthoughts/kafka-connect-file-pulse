@@ -37,11 +37,24 @@ public class StructSchema implements Schema, Iterable<TypedField> {
 
     private String name;
 
+    private String namespace;
+
+    private String doc;
+
     /**
      * Creates a new {@link StructSchema} instance.
      */
     public StructSchema() {
         this(Collections.emptyList(), null);
+    }
+
+    /**
+     * Creates a new {@link StructSchema} instance.
+     */
+    public StructSchema(final StructSchema schema) {
+        this(schema.fields(), schema.name);
+        this.namespace = schema.namespace;
+        this.doc = schema.doc;
     }
 
     /**
@@ -140,12 +153,64 @@ public class StructSchema implements Schema, Iterable<TypedField> {
         return this.type;
     }
 
+    /**
+     * Gets the name for this schema.
+     *
+     * @return  the schema name.
+     */
     public String name() {
         return this.name;
     }
 
+    /**
+     * Sets the name for this schema.
+     * @param name  the schema name.
+     *
+     * @return  {@code this}
+     */
     public StructSchema name(final String name) {
         this.name = name;
+        return this;
+    }
+
+    /**
+     * Gets the namespace for this schema.
+     *
+     * @return  the schema namespace.
+     */
+    public String namespace() {
+        return namespace;
+    }
+
+    /**
+     * Sets the namespace for this schema.
+     *
+     * @param namespace the namespace.
+     *
+     * @return  {@code this}
+     */
+    public StructSchema namespace(final String namespace) {
+        this.namespace = namespace;
+        return this;
+    }
+
+    /**
+     * Gets the doc for this schema.
+     *
+     * @return  the doc.
+     */
+    public String doc() {
+        return this.doc;
+    }
+
+    /**
+     * Sets the doc for this schema.
+     * @param doc   the schema doc.
+     *
+     * @return  {@code this}
+     */
+    public StructSchema doc(final String doc) {
+        this.doc = doc;
         return this;
     }
 

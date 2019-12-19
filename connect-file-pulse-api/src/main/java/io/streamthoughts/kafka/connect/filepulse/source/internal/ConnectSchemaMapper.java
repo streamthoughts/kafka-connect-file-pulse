@@ -70,12 +70,23 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
     @Override
     public Schema map(final StructSchema schema) {
         SchemaBuilder sb = SchemaBuilder.struct();
+
+        String schemaName = schema.name();
+        if (schemaName != null) {
+            if (schema.namespace() != null) {
+                schemaName = schema.namespace() + "." + schemaName;
+            }
+            sb.name(schemaName);
+        }
+
+        if (schema.doc() != null) {
+            sb.doc(schema.doc());
+        }
+
         for(final TypedField field : schema) {
             sb.field(field.name(), field.schema().map(this)).optional();
         }
-        if (schema.name() != null) {
-            sb.name(schema.name());
-        }
+
         return sb.build();
     }
 

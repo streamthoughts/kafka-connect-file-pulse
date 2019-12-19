@@ -126,7 +126,7 @@ public class TypedValue implements GettableByType {
      */
     public static TypedValue struct(final TypedStruct value) {
         return new TypedValue(
-            new StructSchema(value.schema().fields(), value.schema().name()),
+            new StructSchema(value.schema()),
             value
         );
     }

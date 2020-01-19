@@ -45,7 +45,9 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
     /**
      * Static helper that can be used to create a new {@link TypedStruct} instance with the given name.
      *
-     * @return  the type-struct instance.
+     * @param name the name of {@link Schema} for this struct.
+     *
+     * @return     the type-struct instance.
      */
     public static TypedStruct create(final String name) {
         return create(Schema.struct().name(name));
@@ -54,7 +56,8 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
     /**
      * Static helper that can be used to create a new {@link TypedStruct} instance with the given schema.
      *
-     * @return  the type-struct instance.
+     * @param schema    the {@link StructSchema} instance.
+     * @return          the type-struct instance.
      */
     public static TypedStruct create(final StructSchema schema) {
         return new TypedStruct(schema);

@@ -50,7 +50,7 @@ public class IOUtils {
     }
 
     public static boolean isAbsolute(final String to) {
-        return to.startsWith(File.separator);
+        return to.startsWith(File.separator) || new File(to).isAbsolute();
     }
 
     public static String getRelativePathFrom(final String basePath, final File file) {

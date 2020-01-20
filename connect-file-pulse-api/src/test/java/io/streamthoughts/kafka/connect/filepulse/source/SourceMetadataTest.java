@@ -51,7 +51,11 @@ public class SourceMetadataTest {
     public void shouldCreateSourceMetadataGivenFile() {
         final SourceMetadata metadata = SourceMetadata.fromFile(file);
 
-        Assert.assertNotNull(metadata.inode());
+        String os = System.getProperty("os.name").toLowerCase();
+        // only check if inode is non-empty on unix system.
+        if (!os.startsWith("win") && !os.startsWith("mac")) {
+            Assert.assertNotNull(metadata.inode());
+        }
         Assert.assertNotEquals(-1, metadata.hash());
     }
 }

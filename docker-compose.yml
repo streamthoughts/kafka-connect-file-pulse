@@ -48,7 +48,8 @@ services:
     image: streamthoughts/kafka-connect-file-pulse:latest
     container_name: connect
     depends_on:
-      - cp-schema-registry
+    - cp-broker
+    - cp-schema-registry
     ports:
     - "8083:8083"
     - "8000:8000"

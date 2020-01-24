@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/LICENSE)
 [![CircleCI](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse.svg?style=svg)](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse)
 
-Connect File Pulse is a multi-purpose [Kafka Connect](http://kafka.apache.org/documentation.html#connect) (source) for streaming files from a local filesystem to Kafka.
+Connect File Pulse is a multi-purpose [Kafka Connector](http://kafka.apache.org/documentation.html#connect) (source) for streaming files from a local filesystem to Kafka.
 
 ## Motivation
 
@@ -44,7 +44,7 @@ $ confluent-hub install streamthoughts/kafka-connect-file-pulse:1.2.1
 
 ### Start Docker Environment
 
-**1 ) Download `docker-compose example**
+**1 ) Download `docker-compose` example**
 
 ```bash
 $ wget https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/docker-compose.yml

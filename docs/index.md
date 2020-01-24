@@ -1,6 +1,6 @@
-## Connect File Pulse (BETA)
+## Connect File Pulse
 
-Connect File Pulse is a multi-purpose [Kafka Connect](http://kafka.apache.org/documentation.html#connect) (source) for streaming files from a local filesystem to Kafka.
+Connect File Pulse is a multi-purpose [Kafka Connector](http://kafka.apache.org/documentation.html#connect) (source) for streaming files from a local filesystem to Kafka.
 
 ## Motivation
 

@@ -7,7 +7,8 @@ description: >
   The commons configuration for Connect File Pulse.
 ---
 
-The connector can be configured with a specific [FSDirectoryWalker](src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/FSDirectoryWalker) implementation that will be responsible to scan an input directory looking for files to stream into Kafka.
+The connector can be configured with a specific [FSDirectoryWalker](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java) 
+implementation that will be responsible to scan an input directory looking for files to stream into Kafka.
 
 The default `FSDirectoryWalker` implementation is :
 
@@ -26,7 +27,8 @@ The SourceConnector will run a background-thread to periodically trigger a file 
 
 ## Filter files
 
-Files can be filtered to determine if they need to be scheduled or ignored. Files which are filtered are simply skipped and  keep untouch on the file system until next scan. On the next scan, previously filtered files will be evaluate again to determine if there are now eligible to be processing.
+Files can be filtered to determine if they need to be scheduled or ignored. Files which are filtered are simply skipped and 
+keep untouched on the file system until next scan. On the next scan, previously filtered files will be evaluate again to determine if there are now eligible to be processing.
 
 These filters are available for use with Kafka Connect File Pulse:
 

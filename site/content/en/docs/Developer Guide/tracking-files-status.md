@@ -1,19 +1,16 @@
 ---
-date: 2020-05-21
+date: 2020-05-22
 title: "Tracking File Status"
 linkTitle: "Tracking File Status"
 weight: 90
 description: >
-  The commons configuration for Connect File Pulse.
+  Learn how Connect FilePulse tracks the processing of each input file.
 ---
 
-
-## Tracking file status
-
-Connect File Pulse use an internal topic (*default:connect-file-pulse-status*) to track the current state of files being processed.
+Connect File Pulse use an internal topic (*default:`connect-file-pulse-status`*) to track the current state of files being processed.
 This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.
 
-### The message format
+## The message format
 Status event are publish into JSON with the following schema :
 
 ```
@@ -68,7 +65,7 @@ Status event are publish into JSON with the following schema :
 }
 ```
 
-### Status
+## List of File Status
 
 Source file can be in the following states :
 
@@ -80,10 +77,18 @@ Source file can be in the following states :
 * \[4\] **COMPLETED** : The file processing is completed.
 * \[5\] **CLEANED** :  The file has been successfully clean up (depending of the configured strategy).
 
-### Configuration
+## Configure Kafka reporter
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
 |`internal.kafka.reporter.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | high |
 |`internal.kafka.reporter.id` | Group id the internal topic used by tasks and connector to report and monitor file progression | string | *-* | high |
-|`internal.kafka.reporter.cluster.bootstrap.servers` | Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector). | string | *-* | high |
+|`internal.kafka.reporter.bootstrap.servers` | Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector). | string | *-* | high |
+
+## Override Internal Consumer/Producer Configuration
+
+To override the default configuration for the internal consumer and producer clients used for reporting states, 
+you can used one of the following override prefixes :
+
+* `internal.kafka.reporter.consumer.<consumer_property>`
+* `internal.kafka.reporter.producer.<producer_property>`

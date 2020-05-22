@@ -22,7 +22,7 @@ Those configuration are described in detail in subsequent chapters.
 |`filters` | List of filters aliases to apply on each data (order is important) | list | *-* | medium |
 |`internal.kafka.reporter.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | high |
 |`internal.kafka.reporter.id` | The reporter identifier which is used as a group.id (must be unique for each connect instance) | string | *-* | high |
-|`internal.kafka.reporter.cluster.bootstrap.servers` |A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster. | string | *-* | high |
+|`internal.kafka.reporter.bootstrap.servers` |A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster. | string | *-* | high |
 |`task.reader.class` | The fully qualified name of the class which is used by tasks to read input files | class | *io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader* | high |
 |`offset.strategy` | The strategy to use for building source offset from an input file; must be one of [name, path, name+hash] | string | *name+hash* | high |
 |`topic` | The default output topic to write | string | *-* | high |

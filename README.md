@@ -3,6 +3,11 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/LICENSE)
 [![CircleCI](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse.svg?style=svg)](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse)
 
+
+<p align="center">
+  <img width="490" height="490" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/site/static/images/streamthoughts-connect-file-pule-logo.png">
+</p>
+
 Connect File Pulse is a multi-purpose [Kafka Connector](http://kafka.apache.org/documentation.html#connect) (source) for streaming files from a local filesystem to Kafka.
 
 ## Motivation

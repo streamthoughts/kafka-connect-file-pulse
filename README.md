@@ -3,186 +3,55 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/LICENSE)
 [![CircleCI](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse.svg?style=svg)](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse)
 
-
 <p align="center">
-  <img width="490" height="490" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/site/static/images/streamthoughts-connect-file-pule-logo.png">
+  <img width="400" height="400" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/site/static/images/streamthoughts-connect-file-pule-logo.png">
 </p>
 
-Connect File Pulse is a multi-purpose [Kafka Connector](http://kafka.apache.org/documentation.html#connect) (source) for streaming files from a local filesystem to Kafka.
+**Connect FilePulse** is a polyvalent, scalable and reliable, 
+[Kafka Connector](http://kafka.apache.org/documentation.html#connect) that makes it easy to parse, transform and stream any file, in any format, into Apache Kafka™.
+Connect FilePulse*
 
 ## Motivation
 
-Data is frequently exported, shared and integrated between legacy systems, either in near-real time or daily through the use of files. These files can be in a wide variety of formats such as CSV, XML, JSON, Avro, etc.
-A modern approach is to decouple these systems by distributing these files in Kafka.
+In organizations, data is frequently exported, shared and integrated from legacy systems through the use of
+files in a wide variety of formats (e.g. CSV, XML, JSON, Avro, etc.). Dealing with all of these formats can
+quickly become a real challenge for enterprise that usually end up with a complex and hard
+to maintain data integration mess.
+	
+	
+A modern approach consists in building a scalable data streaming platform as a central nervous
+system to decouple applications from each other. **Apache Kafka™** is one of the most widely
+used technologies to build such a system. The Apache Kafka project packs with Kafka Connect a distributed,
+fault tolerant and scalable framework for connecting Kafka with external systems.
+
+The **Connect File Pulse** project aims to provide an easy-to-use solution, based on Kafka Connect,
+for streaming any type of data file with the Apache Kafka™ platform.
 
 
-Connect File Pulse is a simple solution to easily integrate any type of data into a centralized Apache Kafka platform and distribute it across your organization.
+Connect File Pulse is inspired by the features provided by **Elasticsearch** and **Logstash**.
 
+## Key Features Overview
 
-Connect File Pulse is inspired by the features provided by Elasticsearch and Logstash.
+Connect FilePulse provides a set of built-in features for streaming local files into Kafka. This includes, among other things:
 
-## Key-Features
-
-* Recursively scan local directories
-* Reading and writing files into Kafka line by line
-* Support for reading Avro files
-* Support for reading XML files
-* Parsing and transforming data using built-in or custom filters
+* Support for recursive scanning of local directories.
+* Reading and writing files into Kafka line by line.
+* Support multiple input file formats (e.g: CSV, Avro, XML).
+* Parsing and transforming data using built-in or custom processing filters.
 * Error handler definition
 * Monitoring files while they are being written into Kafka
-* Pluggable strategies for cleaning completed files
-* At-least-once guarantee
+* Support plugeable strategies to cleanup up completed files
+* Etc.
 
-## Documentation
+## How to get started ?
 
-If you want to read about using Connect File Pulse, the documentation can be found on [GitHub Page](https://streamthoughts.github.io/kafka-connect-file-pulse/)
+The best way to learn Connect File Pulse is to follow the step by step [Getting Started](https://streamthoughts.github.io/kafka-connect-file-pulse/docs/getting-started/).
 
-## Installing Connect File Pulse
+If you want to read about using Connect File Pulse, the full documentation can be found [here](https://streamthoughts.github.io/kafka-connect-file-pulse/)
 
-Kafka Connect File Pulse can be download and installed directly from [Confluent Hub](https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse): 
+## Show your support
 
-```bash
-$ confluent-hub install streamthoughts/kafka-connect-file-pulse:1.2.1
-```
-
-## Getting Started
-
-### Start Docker Environment
-
-**1 ) Download `docker-compose` example**
-
-```bash
-$ wget https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/docker-compose.yml
-```
-
-**2 ) Run Confluent Platforms with Connect File Pulse**
-
-```bash
-$ docker-compose up -d
-```
-
-**3 ) Check for Kafka Connect**
-```
-$ docker logs --tail="all" -f connect
-```
-
-**4 ) Verify that Connect File Pulse plugin is correctly loaded**
-```bash
-$ curl -sX GET http://localhost:8083/connector-plugins | grep FilePulseSourceConnector
-```
-
-### Example : Logs Parsing (Log4j)
-
-This example starts a new connector instance to parse the Kafka Connect container log4j logs before writing them into a configured topic.
-
-
-**1 ) Start a new connector instance**
-
-```bash
-$ wget https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/config/connect-file-pulse-quickstart-log4j.json
-$ curl -sX POST http://localhost:8083/connectors \
--d @connect-file-pulse-quickstart-log4j.json \
---header "Content-Type: application/json" | jq
-```
-
-**2 ) Check connector status**
-```bash
-$ curl -sX GET http://localhost:8083/connectors/connect-file-pulse-quickstart-log4j | jq
-```
-
-**3 ) Consume output topics**
-```bash
-$ docker exec -it -e KAFKA_OPTS="" connect kafka-avro-console-consumer --topic connect-file-pulse-quickstart-log4j --from-beginning --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081
-```
-
-(output)
-```json
-...
-{"loglevel":{"string":"INFO"},"logdate":{"string":"2019-06-16 20:41:15,247"},"message":{"string":"[main] Scanning for plugin classes. This might take a moment ... (org.apache.kafka.connect.cli.ConnectDistributed)"}}
-{"loglevel":{"string":"INFO"},"logdate":{"string":"2019-06-16 20:41:15,270"},"message":{"string":"[main] Loading plugin from: /usr/share/java/schema-registry (org.apache.kafka.connect.runtime.isolation.DelegatingClassLoader)"}}
-{"loglevel":{"string":"INFO"},"logdate":{"string":"2019-06-16 20:41:16,115"},"message":{"string":"[main] Registered loader: PluginClassLoader{pluginLocation=file:/usr/share/java/schema-registry/} (org.apache.kafka.connect.runtime.isolation.DelegatingClassLoader)"}}
-{"loglevel":{"string":"INFO"},"logdate":{"string":"2019-06-16 20:41:16,115"},"message":{"string":"[main] Added plugin 'org.apache.kafka.common.config.provider.FileConfigProvider' (org.apache.kafka.connect.runtime.isolation.DelegatingClassLoader)"}}
-...
-```
-
-**4) Observe Connect status**
-
-Connect File Pulse use an internal topic to track the current state of files being processing.
-
-```bash
-$ docker exec -it -e KAFKA_OPTS="" connect kafka-console-consumer --topic connect-file-pulse-status --from-beginning --bootstrap-server broker:29092
-```
-
-(output)
-```json
-{"hostname":"f51d45f96ed5","status":"SCHEDULED","metadata":{"name":"kafka-connect.log","path":"/var/log/kafka","size":172559,"lastModified":1560772525000,"inode":1705406,"hash":661976312},"offset":{"position":-1,"rows":0,"timestamp":1560772525527}}
-{"hostname":"f51d45f96ed5","status":"STARTED","metadata":{"name":"kafka-connect.log","path":"/var/log/kafka","size":172559,"lastModified":1560772525000,"inode":1705406,"hash":661976312},"offset":{"position":-1,"rows":0,"timestamp":1560772525719}}
-{"hostname":"f51d45f96ed5","status":"READING","metadata":{"name":"kafka-connect.log","path":"/var/log/kafka","size":172559,"lastModified":1560772525000,"inode":1705406,"hash":661976312},"offset":{"position":174780,"rows":1911,"timestamp":1560772535322}}
-...
-```
-
-**5 ) Stop all containers**
-```bash
-$ docker-compose down
-```
-
-### Example : CSV File Parsing
-
-This example starts a new connector instance that parse a CSV file and filter rows based on column's values before writing record into Kafka.
-
-**1 ) Start a new connector instance**
-
-```bash
-$ wget https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/config/connect-file-pulse-quickstart-csv.json
-$ curl -sX POST http://localhost:8083/connectors \
--d @connect-file-pulse-quickstart-csv.json \
---header "Content-Type: application/json" | jq
-```
-
-**2 ) Copy example csv file into container**
-
-```bash
-$ docker exec -it connect mkdir -p /tmp/kafka-connect/examples
-$ wget https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/examples/quickstart-musics-dataset.csv
-$ docker cp quickstart-musics-dataset.csv connect://tmp/kafka-connect/examples/quickstart-musics-dataset.csv
-```
-
-**3 ) Check connector status**
-```bash
-$ curl -sX GET http://localhost:8083/connectors/connect-file-pulse-quickstart-csv | jq
-```
-
-**4 ) Check for task completion**
-```
-$ docker logs --tail="all" -f connect | grep "Orphan task detected"
-```
-
-**5 ) Consume output topics**
-```bash
-$ docker exec -it connect kafka-avro-console-consumer --topic connect-file-pulse-quickstart-csv --from-beginning --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081
-```
-
-## Building Connect File Pulse
-
-**Prerequisites for building Connect File Pulse:**
-
-* Git
-* Maven (we recommend version 3.5.3)
-* Java 8 and later
-
-Build kafka-connect-file-pulse with Maven using standard lifecycle:
-
-```bash
-$ git clone https://github.com/streamthoughts/kafka-connect-file-pulse.git
-$ cd kafka-connect-file-pulse
-$ mvn clean package -DskipTests
-```
-
-Note: Connector will be package into an archive file compatible with [confluent-hub client](https://docs.confluent.io/current/connect/managing/confluent-hub/client.html) :
-
-```
-./connect-file-pulse-plugin/target/components/packages/streamthoughts-kafka-connect-file-pulse-plugin-<FILEPULSE_VERSION>.zip
-```
+Please ⭐ this repository if this project helped you!
 
 ## Contributions
 

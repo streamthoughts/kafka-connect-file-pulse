@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -38,20 +38,24 @@ public class LocalFSDirectoryWalkerTest {
 
     private static final String DEFAULT_ENTRY_FILE_NAME = "file-entry-0.txt";
     private static final String DEFAULT_ARCHIVE_NAME    = "archive";
+    private static final String TEST_SCAN_DIRECTORY = "test-scan";
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
     private File inputDirectory;
-    private File archiveFile;
 
     private FSDirectoryWalker scanner;
 
     @Before
     public void setUp() throws IOException {
-        inputDirectory = folder.newFolder("test-compressed");
+        inputDirectory = folder.newFolder(TEST_SCAN_DIRECTORY);
+        scanner = new LocalFSDirectoryWalker(Collections.emptyList());
+    }
 
-        archiveFile = new File(inputDirectory, DEFAULT_ARCHIVE_NAME + ".zip");
+    @Test
+    public void shouldExtractXZGipCompressedFilesPathWhileScanningGivenRecursiveScanDisable() throws IOException {
+        File archiveFile = new File(inputDirectory, DEFAULT_ARCHIVE_NAME + ".zip");
 
         try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(archiveFile))) {
             zos.putNextEntry(new ZipEntry(DEFAULT_ENTRY_FILE_NAME));
@@ -59,15 +63,56 @@ public class LocalFSDirectoryWalkerTest {
             zos.write(data, 0, data.length);
             zos.closeEntry();
         }
-        scanner = new LocalFSDirectoryWalker(Collections.emptyList());
-        scanner.configure(new HashMap<>());
-    }
 
-    @Test
-    public void shouldExtractXZGipCompressedFilesPathWhileScanningGivenNoConfig() throws IOException {
+        scanner.configure(Collections.singletonMap(LocalFSDirectoryWalkerConfig.FS_RECURSIVE_SCAN_ENABLE_CONFIG, false));
         final Collection<File> scanned = scanner.listFiles(inputDirectory);
         Assert.assertEquals(1, scanned.size());
         String expected = String.join(File.separator, Arrays.asList(inputDirectory.getCanonicalPath(), DEFAULT_ARCHIVE_NAME, DEFAULT_ENTRY_FILE_NAME));
         Assert.assertEquals(expected, scanned.iterator().next().getCanonicalPath());
+    }
+
+    @Test
+    public void shouldListFilesGivenRecursiveScanEnable() throws IOException {
+        folder.newFolder(TEST_SCAN_DIRECTORY , "sub-directory");
+        final File file1 = folder.newFile(TEST_SCAN_DIRECTORY + "/test-file1.txt");
+        final File file2 = folder.newFile(TEST_SCAN_DIRECTORY + "/sub-directory/test-file2.txt");
+
+        scanner.configure(Collections.singletonMap(LocalFSDirectoryWalkerConfig.FS_RECURSIVE_SCAN_ENABLE_CONFIG, true));
+
+        final Collection<String> scanned = scanner
+                .listFiles(inputDirectory)
+                .stream()
+                .map(this::toCanonicalPath)
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(2, scanned.size());
+        Assert.assertTrue(scanned.contains(file1.getCanonicalPath()));
+        Assert.assertTrue(scanned.contains(file2.getCanonicalPath()));
+    }
+
+    @Test
+    public void shouldListFilesGivenRecursiveScanDisable() throws IOException {
+        folder.newFolder(TEST_SCAN_DIRECTORY , "sub-directory");
+        final File file1 = folder.newFile(TEST_SCAN_DIRECTORY + "/test-file1.txt");
+        folder.newFile(TEST_SCAN_DIRECTORY + "/sub-directory/test-file2.txt"); // will not be scanned
+
+        scanner.configure(Collections.singletonMap(LocalFSDirectoryWalkerConfig.FS_RECURSIVE_SCAN_ENABLE_CONFIG, false));
+
+        final Collection<String> scanned = scanner
+                .listFiles(inputDirectory)
+                .stream()
+                .map(this::toCanonicalPath)
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(1, scanned.size());
+        Assert.assertTrue(scanned.contains(file1.getCanonicalPath()));
+    }
+
+    private String toCanonicalPath(final File f) {
+        try {
+            return f.getCanonicalPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

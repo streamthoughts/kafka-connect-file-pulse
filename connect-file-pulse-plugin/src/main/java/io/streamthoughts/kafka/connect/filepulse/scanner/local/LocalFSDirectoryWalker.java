@@ -49,6 +49,8 @@ public class LocalFSDirectoryWalker implements FSDirectoryWalker {
 
     private CodecManager codecs;
 
+    private LocalFSDirectoryWalkerConfig config;
+
     /**
      * Creates a new {@link LocalFSDirectoryWalker} instance.
      */
@@ -71,8 +73,8 @@ public class LocalFSDirectoryWalker implements FSDirectoryWalker {
      * {@inheritDoc}
      */
     @Override
-    public void configure(final Map<String, ?> originals) {
-
+    public void configure(final Map<String, ?> configs) {
+        config = new LocalFSDirectoryWalkerConfig(configs);
     }
 
     /**
@@ -129,13 +131,16 @@ public class LocalFSDirectoryWalker implements FSDirectoryWalker {
                 }
             });
         } catch (IOException e) {
-            LOG.warn("Error while listing directory {}", input.getAbsolutePath(), e.getMessage());
+            LOG.warn("Error while listing directory {}: {}", input.getAbsolutePath(), e.getLocalizedMessage());
             throw new ConnectException(e);
         }
-        listingLocalFiles.addAll(directories.stream()
-                .filter(f -> ! decompressedDirs.contains(f))
+
+        if (config.isRecursiveScanEnable()) {
+            listingLocalFiles.addAll(directories.stream()
+                .filter(f -> !decompressedDirs.contains(f))
                 .flatMap(f -> listEligibleFiles(f).stream())
                 .collect(Collectors.toList()));
+        }
         return listingLocalFiles;
     }
 

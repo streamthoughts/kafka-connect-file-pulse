@@ -12,81 +12,61 @@ In this tutorial we will explore how to deploy a basic Connect File Pulse connec
 The prerequisites for this tutorial are :
 
 * IDE or Text editor.
-* Java 11
 * Maven 3+
 * Docker (for running a Kafka Cluster 2.x).
 
-	
-## Getting Started
+## Start Docker Environment
 
-### Installation
-
-#### Download, Build & Package Connector
+Set the following environment variable to execute next commands.
 
 ```bash
-git clone https://github.com/streamthoughts/kafka-connect-file-pulse.git
-cd kafka-connect-file-pulse
+$ export GITHUB_REPO_MASTER=https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/
 ```
-
-You can build kafka-connect-file-pulse with Maven using standard lifecycle.
-
-```bash
-mvn clean install -DskipTests
-```
-
-
-#### Install Connector Using Confluent Hub
-
-Connector will be package into an archive file compatible with [confluent-hub client](https://docs.confluent.io/current/connect/managing/confluent-hub/client.html) :
-
-```
-./connect-file-pulse-plugin/target/components/packages/streamthoughts-kafka-connect-file-pulse-plugin-<FILEPULSE_VERSION>.zip
-```
-
-
-## Demonstrations
-
-### Start Docker Environment
 
 **1 ) Run Confluent Platforms with Connect File Pulse**
 
 ```bash
-docker-compose build
-docker-compose up -d
+
+$ curl -sSL $GITHUB_REPO_MASTER/docker-compose.yml -o docker-commose.yml
+$ docker-compose up -d
 ```
 
-**2 ) Check for Kafka Connect**
+**2 ) Verify that Connect Worker is running (optional)**
 ```
-docker logs --tail="all" -f connect"
+$ docker-compose logs connect-file-pulse"
 ```
 
-**3 ) Verify that Connect File Pulse plugin is correctly loaded**
+**3 ) Check that Connect File Pulse plugin is correctly loaded (optional)**
 ```bash
 curl -sX GET http://localhost:8083/connector-plugins | grep FilePulseSourceConnector
 ```
 
-
-### Example : Logs Parsing (Log4j)
+## Example : Logs Parsing (Log4j)
 
 This example starts a new connector instance to parse the Kafka Connect container log4j logs before writing them into a configured topic.
-
 
 **1 ) Start a new connector instance**
 
 ```bash
-curl -sX POST http://localhost:8083/connectors \
--d @config/connect-file-pulse-quickstart-log4j.json \
+$ curl -sSL $GITHUB_REPO_MASTER/config/connect-file-pulse-quickstart-log4j.json -o connect-file-pulse-quickstart-log4j.json
+ 
+$ curl -sX POST http://localhost:8083/connectors \
+-d @connect-file-pulse-quickstart-log4j.json \
 --header "Content-Type: application/json" | jq
 ```
 
 **2 ) Check connector status**
 ```bash
-curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-log4j | jq
+$ curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-log4j | jq
 ```
 
 **3 ) Consume output topics**
 ```bash
-docker exec -it -e KAFKA_OPTS="" connect kafka-avro-console-consumer --topic connect-file-pulse-quickstart-log4j --from-beginning --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081
+$ docker exec -it -e KAFKA_OPTS="" connect kafka-avro-console-consumer \
+--topic connect-file-pulse-quickstart-log4j \
+--from-beginning \
+--bootstrap-server broker:29092 \
+--property schema.registry.url=http://schema-registry:8081
 ```
 
 (output)
@@ -104,7 +84,10 @@ docker exec -it -e KAFKA_OPTS="" connect kafka-avro-console-consumer --topic con
 Connect File Pulse use an internal topic to track the current state of files being processing.
 
 ```bash
-docker exec -it -e KAFKA_OPTS="" connect kafka-console-consumer --topic connect-file-pulse-status --from-beginning --bootstrap-server broker:29092
+$ docker exec -it -e KAFKA_OPTS="" connect kafka-console-consumer \
+--topic connect-file-pulse-status \
+--from-beginning \
+--bootstrap-server broker:29092
 ```
 
 (output)
@@ -127,29 +110,36 @@ This example starts a new connector instance that parse a CSV file and filter ro
 **1 ) Start a new connector instance**
 
 ```bash
-curl -sX POST http://localhost:8083/connectors \
--d @config/connect-file-pulse-quickstart-csv.json \
+$ curl -sSL $GITHUB_REPO_MASTER/config/connect-file-pulse-quickstart-csv.json -o connect-file-pulse-quickstart-csv.json
+
+$ curl -sX POST http://localhost:8083/connectors \
+-d @connect-file-pulse-quickstart-csv.json \
 --header "Content-Type: application/json" | jq
 ```
 
 **2 ) Copy example csv file into container**
 
 ```bash
-docker exec -it connect mkdir -p /tmp/kafka-connect/examples
-docker cp examples/quickstart-musics-dataset.csv connect://tmp/kafka-connect/examples/quickstart-musics-dataset.csv
+$ curl -sSL $GITHUB_REPO_MASTER/examples/quickstart-musics-dataset.csv -o quickstart-musics-dataset.csv
+$ docker exec -it connect mkdir -p /tmp/kafka-connect/examples
+$ docker cp quickstart-musics-dataset.csv connect://tmp/kafka-connect/examples/quickstart-musics-dataset.csv
 ```
 
 **3 ) Check connector status**
 ```bash
-curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-csv | jq
+$ curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-csv | jq
 ```
 
 **4 ) Check for task completion**
 ```
-docker logs --tail="all" -f connect | grep "Orphan task detected"
+$ docker logs --tail="all" -f connect | grep "Orphan task detected"
 ```
 
 **5 ) Consume output topics**
 ```bash
-docker exec -it connect kafka-avro-console-consumer --topic connect-file-pulse-quickstart-csv --from-beginning --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081
+$ docker exec -it connect kafka-avro-console-consumer \
+--topic connect-file-pulse-quickstart-csv \
+--from-beginning \
+--bootstrap-server broker:29092 \
+--property schema.registry.url=http://schema-registry:8081
 ```

@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.60.1" />
+
+<META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
+
+<link rel="alternate" type="application/rss&#43;xml" href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/index.xml">
+
+
+<link rel="shortcut icon" href="/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/kafka-connect-file-pulse/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-36x36.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-48x48.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-72x72.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-144x144.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-192x192.png" sizes="192x192">
+
+<title>Documentation | Kafka Connect File Pulse</title><meta property="og:title" content="Documentation" />
+<meta property="og:description" content="All of Azkarra Streams documentation
+" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/" />
+<meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta itemprop="name" content="Documentation">
+<meta itemprop="description" content="All of Azkarra Streams documentation
+"><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Documentation"/>
+<meta name="twitter:description" content="All of Azkarra Streams documentation
+"/>
+
+
+
+
+
+
+
+<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.ea620e098ed7beb0752320f33718cf63ca739a144445937472319a8a1435fd55.css" as="style">
+<link href="/kafka-connect-file-pulse/scss/main.min.ea620e098ed7beb0752320f33718cf63ca739a144445937472319a8a1435fd55.css" rel="stylesheet" integrity="">
+
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+
+  </head>
+  <body class="td-section">
+    <header>
+      
+
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+        <a class="navbar-brand" href="/kafka-connect-file-pulse/">
+		<span class="navbar-logo"><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg8" viewBox="0 0 129.64582 129.64584" height="490" width="490"><defs id="defs2"><linearGradient id="linearGradient971"><stop id="stop967" offset="0" style="stop-color:#369;stop-opacity:1" /><stop id="stop969" offset="1" style="stop-color:#86bbd8;stop-opacity:1" /></linearGradient><linearGradient gradientTransform="matrix(1,0,0,0.67443834,-149.54544,-409.07612)" gradientUnits="userSpaceOnUse" y2="242.13673" x2="87.609833" y1="242.13673" x1="53.426937" id="linearGradient973" xlink:href="#linearGradient971" /><linearGradient gradientTransform="matrix(1,0,0,0.67443834,-46.452947,74.017372)" gradientUnits="userSpaceOnUse" y2="246.54016" x2="111.39651" y1="246.54016" x1="77.213615" id="linearGradient981" xlink:href="#linearGradient971" /><linearGradient gradientTransform="matrix(0.99999998,0,0,0.67443831,-17.558615,63.089267)" gradientUnits="userSpaceOnUse" y2="246.54016" x2="111.39651" y1="246.54016" x1="77.213615" id="linearGradient981-8-4" xlink:href="#linearGradient971" /><linearGradient gradientTransform="matrix(0.70884744,0,0,0.67443835,49.129394,77.926771)" gradientUnits="userSpaceOnUse" y2="242.09894" x2="118.8227" y1="242.09894" x1="96.812714" id="linearGradient983-4" xlink:href="#linearGradient971" /><linearGradient gradientTransform="matrix(0.60397916,0,0,0.67443827,41.21351,69.237866)" gradientUnits="userSpaceOnUse" y2="246.54016" x2="111.39651" y1="246.54016" x1="77.213615" id="linearGradient981-8-4-5" xlink:href="#linearGradient971" /><linearGradient y2="242.09894" x2="118.8227" y1="242.09894" x1="96.812714" gradientTransform="matrix(0.70884744,0,0,0.67443835,3.4697344,59.267485)" gradientUnits="userSpaceOnUse" id="linearGradient2195" xlink:href="#linearGradient971" /><linearGradient y2="242.09894" x2="118.8227" y1="242.09894" x1="96.812714" gradientTransform="matrix(0.70884743,0,0,0.67443835,6.1781922,79.049737)" gradientUnits="userSpaceOnUse" id="linearGradient2195-8" xlink:href="#linearGradient971" /></defs><g transform="translate(-2.1603744,-80.365843)" id="layer1"><path style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#2f4858;stroke-width:5.29166651;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" d="m109.38487 170.51562c.88189-4.20347 2.96376-26.15438-.0405-34.39116-56.902067 88.167-49.360014-1.08871-68.446866-10.60424-7.143851-3.56149-16.529519 40.22093-16.529519 35.09818v-56.59151c0-5.122713 6.426265-9.246789 14.40867-9.246789l-5e-6-35e-5v0h61.69874v22.132479l17.47429-.15229" id="path1812" /><text id="text819" y="196.35945" x="-.50318635" style="font-style:normal;font-weight:400;font-size:27.19729614px;line-height:1.25;font-family:sans-serif;letter-spacing:0;word-spacing:0;fill:#000;fill-opacity:1;stroke:none;stroke-width:.50994933"><tspan style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-family:Montserrat;-inkscape-font-specification:'Montserrat Medium';stroke-width:.50994933" y="196.35945" x="-.50318635" id="tspan817"><tspan id="tspan821" style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-family:Montserrat;-inkscape-font-specification:'Montserrat Medium';fill:#028090;fill-opacity:1;stroke-width:.50994933">File</tspan><tspan style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-family:Montserrat;-inkscape-font-specification:'Montserrat Bold';fill:#2f4858;fill-opacity:1;stroke-width:.50994933" id="tspan949">Pulse</tspan><tspan id="tspan1011" style="fill:#028090;fill-opacity:1;stroke-width:.50994933">.</tspan></tspan></text><flowRoot id="flowRoot951" style="font-style:normal;font-weight:400;font-size:13.33333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0;word-spacing:0;fill:#000;fill-opacity:1;stroke:none" transform="matrix(1.0365925,0,0,1.0365925,-7.9808483,-9.8476431)"><flowRegion id="flowRegion953"><rect id="rect955" width="5.5246053" height="66.847725" x="208.83009" y="239.79108" /></flowRegion><flowPara id="flowPara957" /></flowRoot><g transform="translate(-0.33458929,-3.2120031)" id="text2090" style="font-style:normal;font-weight:400;font-size:51.27112579px;line-height:9.25;font-family:sans-serif;letter-spacing:0;word-spacing:0;fill:#000;fill-opacity:1;stroke:none;stroke-width:.53407419" aria-label="P" /><g transform="matrix(1.7233587,0,0,1.7233587,-69.962662,-278.89085)" id="g1161"><rect style="opacity:1;fill:url(#linearGradient2195);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:.28676561;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" id="rect884-6-3-7" width="15.601724" height="2.1435549" x="72.095192" y="221.47653" rx="1.1006565" ry="1.0717776" transform="rotate(0.16132081)" /><rect style="opacity:1;fill:url(#linearGradient981-8-4);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:.42446819;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" id="rect884-6-1-6" width="34.182896" height="2.1435549" x="59.65501" y="228.29367" rx="1.3737928" ry="1.0717776" transform="rotate(-0.02245919)" /><rect style="opacity:1;fill:url(#linearGradient981-8-4-5);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:.32988012;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" id="rect884-6-1-6-9" width="20.645758" height="2.1435549" x="87.848877" y="234.44225" rx=".82974225" ry="1.0717776" transform="matrix(0.99999979,-6.49008e-4,2.3675217e-4,0.99999997,0,0)" /><rect style="opacity:1;fill:url(#linearGradient2195-8);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:.28676561;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" id="rect884-6-3-7-8" width="15.601723" height="2.1435549" x="74.803619" y="241.25876" rx="1.1006565" ry="1.0717776" transform="rotate(0.16132081)" /><rect style="opacity:1;fill:#85bad7;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:.12863915;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" id="rect884-6-1-6-8-8" width="3.9877217" height="2.1471746" x="89.932365" y="222.12851" rx="1.1652765" ry="1.0696054" transform="matrix(0.99999089,-0.00426791,3.6001639e-5,1,0,0)" /><rect style="opacity:1;fill:#34679a;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:.12863915;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" id="rect884-6-1-6-8-8-8" width="3.9877214" height="2.1471746" x="80.04644" y="234.78802" rx="1.1652765" ry="1.0696054" transform="matrix(0.99999089,-0.00426791,3.6001639e-5,1,0,0)" /><rect style="opacity:1;fill:#85bad7;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:.12862051;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" id="rect884-6-1-6-8-8-8-6" width="3.9877214" height="2.1465526" x="92.424858" y="241.89348" rx="1.1652765" ry="1.0692954" transform="matrix(0.9999909,-0.00426668,3.6012074e-5,1,0,0)" /></g></g></svg></span>
+	</a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				<a class="nav-link" href="/kafka-connect-file-pulse/docs/overview/filepulse/" ><span>Overview</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link active" href="/kafka-connect-file-pulse/docs/" ><span class="active">Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kafka-connect-file-pulse/community/" ><span>Community</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/streamthoughts/kafka-connect-file-pulse" target="_blank" ><span>GitHub</span></a>
+			</li>
+			
+			
+			<li class="nav-item dropdown d-none d-lg-block">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	Releases
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+	
+	<a class="dropdown-item" href="./docs">master</a>
+	
+</div>
+
+			</li>
+			
+			
+		</ul>
+	</div>
+	<div class="navbar-nav d-none d-lg-block">
+</div>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav pt-2 pl-4" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="kafka-connect-file-pulse-docs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Overview</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kafka-connect-file-pulse-docs-overview">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/overview/contribution-guidelines/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Contribution Guidelines</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kafka-connect-file-pulse-docs-overview-contribution-guidelines">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/overview/filepulse/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Connect FilePulse</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kafka-connect-file-pulse-docs-overview-filepulse">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kafka-connect-file-pulse-docs-getting-started">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/developer-guide/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Developer Guide</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kafka-connect-file-pulse-docs-developer-guide">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-installation" href="/kafka-connect-file-pulse/docs/developer-guide/installation/">Installation</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-configuration" href="/kafka-connect-file-pulse/docs/developer-guide/configuration/">Basic Configuration</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-scanning-files" href="/kafka-connect-file-pulse/docs/developer-guide/scanning-files/">Scanning Files</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-file-readers" href="/kafka-connect-file-pulse/docs/developer-guide/file-readers/">File Readers</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-filters-chain-definition" href="/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/">Filter Chain Definition</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-accessing-data-and-metadata" href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">Accessing Data and Metadata</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-conditional-execution" href="/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/">Conditional Execution</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-handling-failures" href="/kafka-connect-file-pulse/docs/developer-guide/handling-failures/">Handling Failures</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-filters" href="/kafka-connect-file-pulse/docs/developer-guide/filters/">Filters</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-tracking-files-status" href="/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/">Tracking File Status</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-cleaning-completed-files" href="/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/">File Cleanup Policies</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/examples/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Tutorials and Shared Resources</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kafka-connect-file-pulse-docs-examples">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/faq/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">FAQ</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kafka-connect-file-pulse-docs-faq">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/kafka-connect-file-pulse/docs/project-info/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Project Info</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kafka-connect-file-pulse-docs-project-info">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-project-info-getting-the-code" href="/kafka-connect-file-pulse/docs/project-info/getting_the_code/">Getting the code</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+
+
+
+
+
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/edit/master/site/content/en/docs/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new?title=Documentation" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+
+
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
+
+</div>
+
+
+
+
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            
+  
+
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/">Documentation</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+<div class="td-content">
+	<h1>Documentation</h1>
+        <div class="lead">All of Azkarra Streams documentation</div>
+	
+	<p>This section is where the user documentation for Connect File Pulse lives - all the information that users need to understand and successfully use Connect File Pulse.</p>
+
+        <div class="section-index">
+    
+    
+    
+    
+    <hr class="panel-line">
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/kafka-connect-file-pulse/docs/overview/">Overview</a>
+                    </h5>
+                    <p>Information about Connect File Pulse software, community, docs, and events.</p>
+                </div>
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/kafka-connect-file-pulse/docs/getting-started/">Getting Started</a>
+                    </h5>
+                    <p>Get started with Connect Fie Pulse through a step by step tutorial.</p>
+                </div>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/kafka-connect-file-pulse/docs/developer-guide/">Developer Guide</a>
+                    </h5>
+                    <p>Learn about the concepts and the functionalities of the Connect File Pulse Plugin.</p>
+                </div>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/kafka-connect-file-pulse/docs/examples/">Tutorials and Shared Resources</a>
+                    </h5>
+                    <p>A summary of recommended walk-throughs, blog posts, examples and shared resources about Connect File Pulse</p>
+                </div>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/kafka-connect-file-pulse/docs/faq/">FAQ</a>
+                    </h5>
+                    <p>The most frequently asked questions ?</p>
+                </div>
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/kafka-connect-file-pulse/docs/project-info/">Project Info</a>
+                    </h5>
+                    <p>Various information about the project for developers</p>
+                </div>
+            
+        
+    
+</div>
+
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+</div>
+</div>
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+        
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="GitHub" aria-label="GitHub">
+    <a class="text-white" target="_blank" href="https://github.com/streamthoughts/kafka-connect-file-pulse">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2020 The Kafka Connect File Pulse Authors All Rights Reserved</small>
+        
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+<script src="/kafka-connect-file-pulse/js/main.min.d9d43ec6d1a4252aff807552eeae03bcfe2e9bf5193b82a0a347da8d4cb6ab17.js" integrity="sha256-2dQ&#43;xtGkJSr/gHVS7q4DvP4um/UZO4Kgo0fajUy2qxc=" crossorigin="anonymous"></script>
+
+
+
+  </body>
+</html>

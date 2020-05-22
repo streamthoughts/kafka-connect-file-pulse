@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/overview/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/overview/contribution-guidelines/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/getting-started/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/overview/filepulse/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/project-info/getting_the_code/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/examples/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/faq/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/project-info/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/index.json</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/community/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/search/</loc>
+    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
+  </url>
+  
+</urlset>

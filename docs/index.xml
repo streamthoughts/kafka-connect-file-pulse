@@ -1,0 +1,16 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kafka Connect File Pulse – Connect File Pulse | Source connector for Apache Kafka</title>
+    <link>https://streamthoughts.github.io/kafka-connect-file-pulse/</link>
+    <description>Recent content in Connect File Pulse | Source connector for Apache Kafka on Kafka Connect File Pulse</description>
+    <generator>Hugo -- gohugo.io</generator>
+    
+	  <atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+      
+    
+    
+  </channel>
+</rss>

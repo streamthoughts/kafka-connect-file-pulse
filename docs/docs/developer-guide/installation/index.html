@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/" />
 <meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T02:07:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-05-22T21:14:26+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Installation">
 <meta itemprop="description" content="How to install Connect File Pulse
 ">
 <meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T02:07:07&#43;02:00" />
-<meta itemprop="wordCount" content="234">
+<meta itemprop="dateModified" content="2020-05-22T21:14:26&#43;02:00" />
+<meta itemprop="wordCount" content="106">
 
 
 
@@ -503,110 +503,34 @@
 	<h1>Installation</h1>
     <div class="lead">How to install Connect File Pulse</div>
 	       
-	<h2 id="commons-configuration">Commons configuration</h2>
-<p>Whatever the kind of files you are processing a connector should always be configured with the below properties.
-Those configuration are described in detail in subsequent chapters.</p>
-<table>
-<thead>
-<tr>
-<th>Configuration</th>
-<th>Description</th>
-<th>Type</th>
-<th>Default</th>
-<th>Importance</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>fs.scanner.class</code></td>
-<td>The fully qualified name of the class which is used to scan file system</td>
-<td>class</td>
-<td><em>io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker</em></td>
-<td>medium</td>
-</tr>
-<tr>
-<td><code>fs.cleanup.policy.class</code></td>
-<td>The fully qualified name of the class which is used to cleanup files</td>
-<td>class</td>
-<td><em>-</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>fs.scan.directory.path</code></td>
-<td>The input directory to scan</td>
-<td>string</td>
-<td><em>-</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>fs.scan.interval.ms</code></td>
-<td>Time interval (in milliseconds) at wish to scan input directory</td>
-<td>long</td>
-<td><em>10000</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>fs.scan.filters</code></td>
-<td>Filters use to list eligible input files</td>
-<td>list</td>
-<td><em>-</em></td>
-<td>medium</td>
-</tr>
-<tr>
-<td><code>filters</code></td>
-<td>List of filters aliases to apply on each data (order is important)</td>
-<td>list</td>
-<td><em>-</em></td>
-<td>medium</td>
-</tr>
-<tr>
-<td><code>internal.kafka.reporter.topic</code></td>
-<td>Name of the internal topic used by tasks and connector to report and monitor file progression.</td>
-<td>class</td>
-<td><em>connect-file-pulse-status</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>internal.kafka.reporter.id</code></td>
-<td>The reporter identifier which is used as a group.id (must be unique for each connect instance)</td>
-<td>string</td>
-<td><em>-</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>internal.kafka.reporter.cluster.bootstrap.servers</code></td>
-<td>A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.</td>
-<td>string</td>
-<td><em>-</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>task.reader.class</code></td>
-<td>The fully qualified name of the class which is used by tasks to read input files</td>
-<td>class</td>
-<td><em>io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>offset.strategy</code></td>
-<td>The strategy to use for building source offset from an input file; must be one of [name, path, name+hash]</td>
-<td>string</td>
-<td><em>name+hash</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>topic</code></td>
-<td>The default output topic to write</td>
-<td>string</td>
-<td><em>-</em></td>
-<td>high</td>
-</tr>
-</tbody>
-</table>
+	<p><strong>Connect FilePulse</strong> can be installed either the <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases">Releases Page</a> Github repository or from the <a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse">Confluent Hub</a>.</p>
+
+
+<div class="alert alert-warn" role="alert">
+<h4 class="alert-heading">Caution</h4>
+You should note that connector downloaded on Confluent Hub may not reflect the latest available version.
+</div>
+
+<p><strong>Confluent Hub CLI installation</strong></p>
+<p>Use the <a href="https://docs.confluent.io/current/confluent-hub/client.html">Confluent Hub client</a> to install this connector with:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">confluent-hub install streamthoughts/kafka-connect-file-pulse:1.2.1
+</code></pre></div><p><strong>Download Installation</strong></p>
+<p>Download the distribution ZIP file for the latest available version.</p>
+<p><strong>Example :</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#204a87">export</span> <span style="color:#000">VERSION</span><span style="color:#ce5c00;font-weight:bold">=</span>1.2.2
+curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v<span style="color:#000">$VERSION</span>/streamthoughts-kafka-connect-file-pulse-<span style="color:#000">$VERSION</span>.zip
+</code></pre></div><p>Extract it into one of the directories that is listed on the <code>plugin.path</code> worker configuration property.</p>
+
+
+<div class="alert alert-info" role="alert">
+<h4 class="alert-heading">Important</h4>
+When you run Connect workers in <strong>distributed mode</strong>, the connector-plugin must be installed <strong>on each of machines</strong> running Kafka Connect.
+</div>
+
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8e53a270d83e437d87d2924e8cf388d35bd1d67c">update(site): update site docs (8e53a27)</a>
 </div>
 </div>
 

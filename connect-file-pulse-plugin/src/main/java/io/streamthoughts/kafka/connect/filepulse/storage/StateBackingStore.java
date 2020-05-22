@@ -34,6 +34,11 @@ public interface StateBackingStore<T> {
     void stop();
 
     /**
+     * Checks if the store is started.
+     */
+    boolean isStarted();
+
+    /**
      * Get a snapshot of the current state including.
      * configurations.
      *

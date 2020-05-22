@@ -18,25 +18,18 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import static io.streamthoughts.kafka.connect.filepulse.config.TaskConfig.FILE_INPUT_PATHS_CONFIG;
-
 import io.streamthoughts.kafka.connect.filepulse.Version;
+import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
+import io.streamthoughts.kafka.connect.filepulse.offset.OffsetStrategy;
 import io.streamthoughts.kafka.connect.filepulse.offset.SimpleOffsetManager;
-import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreRegistry;
-import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.scanner.FileSystemScanner;
 import io.streamthoughts.kafka.connect.filepulse.scanner.LocalFileSystemScanner;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.FSDirectoryWalker;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.CompositeFileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.state.FileStateBackingStore;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreRegistry;
+import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.connector.Task;
@@ -44,6 +37,14 @@ import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static io.streamthoughts.kafka.connect.filepulse.config.TaskConfig.FILE_INPUT_PATHS_CONFIG;
 
 /**
  * The FilePulseSourceConnector.
@@ -95,24 +96,40 @@ public class FilePulseSourceConnector extends SourceConnector {
                     groupId, configs);
         });
 
-        final StateBackingStore<SourceFile> store = StateBackingStoreRegistry.instance().get(groupId);
-
         final FSDirectoryWalker directoryScanner = this.config.directoryScanner();
         directoryScanner.setFilter(new CompositeFileListFilter(config.filters()));
 
-        scanner = new LocalFileSystemScanner(
+        final FileCleanupPolicy cleaner = config.cleanupPolicy();
+        final OffsetStrategy strategy = config.offsetStrategy();
+
+        final StateBackingStore<SourceFile> store = StateBackingStoreRegistry.instance().get(groupId);
+        if (store.isStarted()) {
+            throw new ConnectException(
+                "Fail to start new FilePulseSourceConnector instance. " +
+                "A Connector already exists for property internal.kafka.reporter.id=" + groupId
+            );
+        }
+        try {
+            scanner = new LocalFileSystemScanner(
                 config.scanDirectoryPath(),
                 directoryScanner,
-                config.cleanupPolicy(),
-                new SimpleOffsetManager(config.offsetStrategy()),
+                cleaner,
+                new SimpleOffsetManager(strategy),
                 store);
 
-        fsMonitorThread = new FileSystemMonitorThread(context, scanner, config.scanInternalMs());
-        fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {
-            LOG.info("Uncaught error from file system monitoring thread [{}]", t.getName(), e);
-            throw new ConnectException(e);
-        });
-        fsMonitorThread.start();
+            fsMonitorThread = new FileSystemMonitorThread(context, scanner, config.scanInternalMs());
+            fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {
+                LOG.info("Uncaught error from file system monitoring thread [{}]", t.getName(), e);
+                throw new ConnectException(e);
+            });
+            fsMonitorThread.start();
+        } catch (Exception e) {
+            StateBackingStoreRegistry.instance().release(groupId);
+            if( fsMonitorThread != null) {
+                fsMonitorThread.shutdown(0L);
+            }
+            throw e;
+        }
     }
 
     /**

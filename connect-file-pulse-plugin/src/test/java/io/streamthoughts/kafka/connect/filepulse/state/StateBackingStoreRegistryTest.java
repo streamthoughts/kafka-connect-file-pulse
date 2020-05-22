@@ -65,6 +65,11 @@ public class StateBackingStoreRegistryTest {
         }
 
         @Override
+        public boolean isStarted() {
+            return true;
+        }
+
+        @Override
         public StateSnapshot<T> snapshot() {
             return null;
         }

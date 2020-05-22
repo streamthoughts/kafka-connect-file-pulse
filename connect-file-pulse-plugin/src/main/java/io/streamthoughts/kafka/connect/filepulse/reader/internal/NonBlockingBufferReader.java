@@ -173,7 +173,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
         try {
             return (nread > 0 || nread == -1) && reader.ready();
         } catch (IOException e) {
-            LOG.error("Error while checking for remaining bytes to read", e.getLocalizedMessage());
+            LOG.error("Error while checking for remaining bytes to read: {}", e.getLocalizedMessage());
             return false;
         }
     }

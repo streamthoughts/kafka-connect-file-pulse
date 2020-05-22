@@ -244,7 +244,6 @@ public class AvroFileInputReader extends AbstractFileInputReader {
          * @param value     the record value.
          * @return          a new {@link TypedValue} instance.
          */
-        @SuppressWarnings("unchecked")
         private static TypedValue fromSchemaAndValue(final Schema schema, final Object value) {
             final Schema.Type fieldType = schema.getType();
 

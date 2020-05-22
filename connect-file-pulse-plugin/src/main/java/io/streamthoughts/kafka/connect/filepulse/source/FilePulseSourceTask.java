@@ -111,7 +111,6 @@ public class FilePulseSourceTask extends SourceTask {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public List<SourceRecord> poll() throws InterruptedException {
         contextToBeCommitted = consumer.context();
 

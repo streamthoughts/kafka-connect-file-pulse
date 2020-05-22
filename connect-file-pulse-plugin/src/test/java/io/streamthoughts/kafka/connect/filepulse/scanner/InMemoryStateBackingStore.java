@@ -49,6 +49,11 @@ public class InMemoryStateBackingStore<V> implements StateBackingStore<V> {
     }
 
     @Override
+    public boolean isStarted() {
+        return true;
+    }
+
+    @Override
     public StateSnapshot<V> snapshot() {
         return state;
     }

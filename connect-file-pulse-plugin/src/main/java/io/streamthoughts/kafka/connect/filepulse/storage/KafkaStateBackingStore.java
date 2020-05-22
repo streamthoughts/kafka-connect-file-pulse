@@ -83,16 +83,23 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
      */
     @Override
     public void start() {
-        if (!getState().equals(States.STARTED)) {
-            LOG.info("Starting {}", getBackingStoreName());
-            // Before startup, callbacks are *not* invoked. You can grab a snapshot after starting -- just take care that
-            // updates can continue to occur in the background
-            configLog.start();
-            setState(States.STARTED);
-            LOG.info("Started {}", getBackingStoreName());
-        } else {
+        if (isStarted()) {
             throw new IllegalStateException("Cannot init again.");
         }
+        LOG.info("Starting {}", getBackingStoreName());
+        // Before startup, callbacks are *not* invoked. You can grab a snapshot after starting -- just take care that
+        // updates can continue to occur in the background
+        configLog.start();
+        setState(States.STARTED);
+        LOG.info("Started {}", getBackingStoreName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isStarted() {
+        return getState().equals(States.STARTED);
     }
 
     /**
@@ -262,7 +269,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
                             try {
                                 newState = serde.deserialize(value);
                             } catch (Exception e) {
-                                LOG.error("Failed to read state : {}", e);
+                                LOG.error("Failed to read state : {}", stateName, e);
                                 return;
                             }
                             LOG.debug("Updating state for name {} : {}", stateName, newState);

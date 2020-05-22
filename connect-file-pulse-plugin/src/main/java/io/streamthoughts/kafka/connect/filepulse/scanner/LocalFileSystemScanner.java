@@ -116,10 +116,10 @@ public class LocalFileSystemScanner implements FileSystemScanner {
         } else if (cleaner instanceof BatchFileCleanupPolicy) {
             this.cleaner = (BatchFileCleanupPolicy) cleaner;
         } else {
-                throw new IllegalArgumentException("Cleaner must be one of 'FileCleanupPolicy', "
-                        + "'BatchFileCleanupPolicy', or the variants that are consumer aware and/or "
-                        + "Acknowledging"
-                        + " not " + cleaner.getClass().getName());
+            throw new IllegalArgumentException("Cleaner must be one of 'FileCleanupPolicy', "
+                    + "'BatchFileCleanupPolicy', or the variants that are consumer aware and/or "
+                    + "Acknowledging"
+                    + " not " + cleaner.getClass().getName());
         }
         this.offsetManager = offsetManager;
         this.store = store;
@@ -281,9 +281,9 @@ public class LocalFileSystemScanner implements FileSystemScanner {
             sources.sort(BY_LAST_MODIFIED);
 
             final List<String> paths = sources
-                    .stream()
-                    .map(SourceMetadata::absolutePath)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(SourceMetadata::absolutePath)
+                .collect(Collectors.toList());
            partitions = ConnectorUtils.groupPartitions(paths, numGroups);
         }
 

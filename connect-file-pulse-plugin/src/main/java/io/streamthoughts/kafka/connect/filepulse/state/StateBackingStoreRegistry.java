@@ -80,13 +80,13 @@ public class StateBackingStoreRegistry {
         LOG.info("Releasing access on {} instance for group {}", store.getClass().getSimpleName(), name);
         final Integer ref = refs.compute(name, (k, v) -> v == null ? null : (v - 1 == 0) ? null : v -1);
         if (ref == null) {
-            LOG.info("Stopping instance registered for group {}", store.getClass().getSimpleName(), name);
+            LOG.info("Stopping instance registered instance {} for group {}", store.getClass().getSimpleName(), name);
             store.stop();
             stores.remove(name);
         }
     }
 
-    public boolean has(final String name) {
+    boolean has(final String name) {
         return stores.containsKey(name);
     }
 

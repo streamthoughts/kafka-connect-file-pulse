@@ -34,7 +34,8 @@ import java.util.concurrent.TimeUnit;
 public class FileSystemMonitorThread extends Thread {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemMonitorThread.class);
-    private static final long SHUTDOWN_TIMEOUT = 5L;
+
+    private static final long SHUTDOWN_TIMEOUT_MS = 5000L;
 
     private final ConnectorContext context;
     private final CountDownLatch shutdownLatch;
@@ -98,10 +99,14 @@ public class FileSystemMonitorThread extends Thread {
     }
 
     void shutdown() {
+        shutdown(SHUTDOWN_TIMEOUT_MS);
+    }
+
+    void shutdown(final long timeoutMs) {
         LOG.info("Shutting down thread monitoring filesystem.");
         this.shutdownLatch.countDown();
         try {
-            this.waitingLatch.await(SHUTDOWN_TIMEOUT, TimeUnit.SECONDS);
+            this.waitingLatch.await(timeoutMs, TimeUnit.MILLISECONDS);
         } catch (InterruptedException ignore) {
             LOG.error("Timeout : scan loop is not terminated yet.");
         }

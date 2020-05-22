@@ -99,6 +99,7 @@ public class KafkaFileStateReporter implements StateListener {
         notify(context.metadata(), context.offset(), SourceStatus.STARTED);
     }
 
+
     /**
      * {@inheritDoc}
      */

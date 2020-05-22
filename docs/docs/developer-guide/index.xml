@@ -131,7 +131,7 @@ Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;internal.kafka.reporter.cluster.bootstrap.servers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;internal.kafka.reporter.bootstrap.servers&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
@@ -173,7 +173,8 @@ Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
       <description>
         
         
-        &lt;p&gt;The connector can be configured with a specific &lt;a href=&#34;src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/FSDirectoryWalker&#34;&gt;FSDirectoryWalker&lt;/a&gt; implementation that will be responsible to scan an input directory looking for files to stream into Kafka.&lt;/p&gt;
+        &lt;p&gt;The connector can be configured with a specific &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java&#34;&gt;FSDirectoryWalker&lt;/a&gt;
+implementation that will be responsible to scan an input directory looking for files to stream into Kafka.&lt;/p&gt;
 &lt;p&gt;The default &lt;code&gt;FSDirectoryWalker&lt;/code&gt; implementation is :&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;When scheduled, the  &lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt; will recursively scan the input directory configured via  &lt;code&gt;input.directory.path&lt;/code&gt;.
@@ -214,7 +215,8 @@ The SourceConnector will run a background-thread to periodically trigger a file 
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id=&#34;filter-files&#34;&gt;Filter files&lt;/h2&gt;
-&lt;p&gt;Files can be filtered to determine if they need to be scheduled or ignored. Files which are filtered are simply skipped and  keep untouch on the file system until next scan. On the next scan, previously filtered files will be evaluate again to determine if there are now eligible to be processing.&lt;/p&gt;
+&lt;p&gt;Files can be filtered to determine if they need to be scheduled or ignored. Files which are filtered are simply skipped and
+keep untouched on the file system until next scan. On the next scan, previously filtered files will be evaluate again to determine if there are now eligible to be processing.&lt;/p&gt;
 &lt;p&gt;These filters are available for use with Kafka Connect File Pulse:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -1593,16 +1595,15 @@ filters.StackTraceMultiRowFilter.pattern=^[\t]
     <item>
       <title>Docs: Tracking File Status</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</link>
-      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</guid>
       <description>
         
         
-        &lt;h2 id=&#34;tracking-file-status&#34;&gt;Tracking file status&lt;/h2&gt;
-&lt;p&gt;Connect File Pulse use an internal topic (&lt;em&gt;default:connect-file-pulse-status&lt;/em&gt;) to track the current state of files being processed.
+        &lt;p&gt;Connect File Pulse use an internal topic (&lt;em&gt;default:&lt;code&gt;connect-file-pulse-status&lt;/code&gt;&lt;/em&gt;) to track the current state of files being processed.
 This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.&lt;/p&gt;
-&lt;h3 id=&#34;the-message-format&#34;&gt;The message format&lt;/h3&gt;
+&lt;h2 id=&#34;the-message-format&#34;&gt;The message format&lt;/h2&gt;
 &lt;p&gt;Status event are publish into JSON with the following schema :&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;{
 &amp;quot;hostname&amp;quot;: {
@@ -1653,7 +1654,7 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
         &amp;quot;description: &amp;quot;The offset timestamp&amp;quot;
     }
 }
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;status&#34;&gt;Status&lt;/h3&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;list-of-file-status&#34;&gt;List of File Status&lt;/h2&gt;
 &lt;p&gt;Source file can be in the following states :&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;[1] &lt;strong&gt;SCHEDULED&lt;/strong&gt; :  The file has been scheduled by the connector monitoring thread.&lt;/li&gt;
@@ -1664,7 +1665,7 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 &lt;li&gt;[4] &lt;strong&gt;COMPLETED&lt;/strong&gt; : The file processing is completed.&lt;/li&gt;
 &lt;li&gt;[5] &lt;strong&gt;CLEANED&lt;/strong&gt; :  The file has been successfully clean up (depending of the configured strategy).&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;h2 id=&#34;configure-kafka-reporter&#34;&gt;Configure Kafka reporter&lt;/h2&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -1691,7 +1692,7 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;internal.kafka.reporter.cluster.bootstrap.servers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;internal.kafka.reporter.bootstrap.servers&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector).&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
@@ -1699,6 +1700,13 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;h2 id=&#34;override-internal-consumerproducer-configuration&#34;&gt;Override Internal Consumer/Producer Configuration&lt;/h2&gt;
+&lt;p&gt;To override the default configuration for the internal consumer and producer clients used for reporting states,
+you can used one of the following override prefixes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;internal.kafka.reporter.consumer.&amp;lt;consumer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;internal.kafka.reporter.producer.&amp;lt;producer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
       </description>
     </item>

@@ -21,24 +21,24 @@
 <link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-192x192.png" sizes="192x192">
 
 <title>Tracking File Status | Kafka Connect File Pulse</title><meta property="og:title" content="Tracking File Status" />
-<meta property="og:description" content="The commons configuration for Connect File Pulse.
+<meta property="og:description" content="Learn how Connect FilePulse tracks the processing of each input file.
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/" />
-<meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T02:07:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-05-22T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-05-22T23:53:16+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Tracking File Status">
-<meta itemprop="description" content="The commons configuration for Connect File Pulse.
+<meta itemprop="description" content="Learn how Connect FilePulse tracks the processing of each input file.
 ">
-<meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T02:07:07&#43;02:00" />
-<meta itemprop="wordCount" content="353">
+<meta itemprop="datePublished" content="2020-05-22T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-05-22T23:53:16&#43;02:00" />
+<meta itemprop="wordCount" content="387">
 
 
 
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Tracking File Status"/>
-<meta name="twitter:description" content="The commons configuration for Connect File Pulse.
+<meta name="twitter:description" content="Learn how Connect FilePulse tracks the processing of each input file.
 "/>
 
 
@@ -459,13 +459,10 @@
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#tracking-file-status">Tracking file status</a>
-      <ul>
-        <li><a href="#the-message-format">The message format</a></li>
-        <li><a href="#status">Status</a></li>
-        <li><a href="#configuration">Configuration</a></li>
-      </ul>
-    </li>
+    <li><a href="#the-message-format">The message format</a></li>
+    <li><a href="#list-of-file-status">List of File Status</a></li>
+    <li><a href="#configure-kafka-reporter">Configure Kafka reporter</a></li>
+    <li><a href="#override-internal-consumerproducer-configuration">Override Internal Consumer/Producer Configuration</a></li>
   </ul>
 </nav>
 
@@ -513,12 +510,11 @@
             
 <div class="td-content">
 	<h1>Tracking File Status</h1>
-    <div class="lead">The commons configuration for Connect File Pulse.</div>
+    <div class="lead">Learn how Connect FilePulse tracks the processing of each input file.</div>
 	       
-	<h2 id="tracking-file-status">Tracking file status</h2>
-<p>Connect File Pulse use an internal topic (<em>default:connect-file-pulse-status</em>) to track the current state of files being processed.
+	<p>Connect File Pulse use an internal topic (<em>default:<code>connect-file-pulse-status</code></em>) to track the current state of files being processed.
 This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.</p>
-<h3 id="the-message-format">The message format</h3>
+<h2 id="the-message-format">The message format</h2>
 <p>Status event are publish into JSON with the following schema :</p>
 <pre><code>{
 &quot;hostname&quot;: {
@@ -569,7 +565,7 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
         &quot;description: &quot;The offset timestamp&quot;
     }
 }
-</code></pre><h3 id="status">Status</h3>
+</code></pre><h2 id="list-of-file-status">List of File Status</h2>
 <p>Source file can be in the following states :</p>
 <ul>
 <li>[1] <strong>SCHEDULED</strong> :  The file has been scheduled by the connector monitoring thread.</li>
@@ -580,7 +576,7 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 <li>[4] <strong>COMPLETED</strong> : The file processing is completed.</li>
 <li>[5] <strong>CLEANED</strong> :  The file has been successfully clean up (depending of the configured strategy).</li>
 </ul>
-<h3 id="configuration">Configuration</h3>
+<h2 id="configure-kafka-reporter">Configure Kafka reporter</h2>
 <table>
 <thead>
 <tr>
@@ -607,7 +603,7 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 <td>high</td>
 </tr>
 <tr>
-<td><code>internal.kafka.reporter.cluster.bootstrap.servers</code></td>
+<td><code>internal.kafka.reporter.bootstrap.servers</code></td>
 <td>Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector).</td>
 <td>string</td>
 <td><em>-</em></td>
@@ -615,10 +611,17 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 </tr>
 </tbody>
 </table>
+<h2 id="override-internal-consumerproducer-configuration">Override Internal Consumer/Producer Configuration</h2>
+<p>To override the default configuration for the internal consumer and producer clients used for reporting states,
+you can used one of the following override prefixes :</p>
+<ul>
+<li><code>internal.kafka.reporter.consumer.&lt;consumer_property&gt;</code></li>
+<li><code>internal.kafka.reporter.producer.&lt;producer_property&gt;</code></li>
+</ul>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/107726955d237dc23a2248075564fdcb0732cfd0">fix(site): fix typo and bad config property (1077269)</a>
 </div>
 </div>
 

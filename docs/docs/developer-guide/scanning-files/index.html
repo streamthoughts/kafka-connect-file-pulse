@@ -26,12 +26,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/" />
 <meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T02:07:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-05-22T23:53:16+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Scanning Files">
 <meta itemprop="description" content="The commons configuration for Connect File Pulse.
 ">
 <meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T02:07:07&#43;02:00" />
+<meta itemprop="dateModified" content="2020-05-22T23:53:16&#43;02:00" />
 <meta itemprop="wordCount" content="249">
 
 
@@ -511,7 +511,8 @@
 	<h1>Scanning Files</h1>
     <div class="lead">The commons configuration for Connect File Pulse.</div>
 	       
-	<p>The connector can be configured with a specific <a href="src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/FSDirectoryWalker">FSDirectoryWalker</a> implementation that will be responsible to scan an input directory looking for files to stream into Kafka.</p>
+	<p>The connector can be configured with a specific <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java">FSDirectoryWalker</a>
+implementation that will be responsible to scan an input directory looking for files to stream into Kafka.</p>
 <p>The default <code>FSDirectoryWalker</code> implementation is :</p>
 <p><code>io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker</code>.</p>
 <p>When scheduled, the  <code>LocalFSDirectoryWalker</code> will recursively scan the input directory configured via  <code>input.directory.path</code>.
@@ -552,7 +553,8 @@ The SourceConnector will run a background-thread to periodically trigger a file 
 </tbody>
 </table>
 <h2 id="filter-files">Filter files</h2>
-<p>Files can be filtered to determine if they need to be scheduled or ignored. Files which are filtered are simply skipped and  keep untouch on the file system until next scan. On the next scan, previously filtered files will be evaluate again to determine if there are now eligible to be processing.</p>
+<p>Files can be filtered to determine if they need to be scheduled or ignored. Files which are filtered are simply skipped and
+keep untouched on the file system until next scan. On the next scan, previously filtered files will be evaluate again to determine if there are now eligible to be processing.</p>
 <p>These filters are available for use with Kafka Connect File Pulse:</p>
 <table>
 <thead>
@@ -587,7 +589,7 @@ The SourceConnector will run a background-thread to periodically trigger a file 
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/107726955d237dc23a2248075564fdcb0732cfd0">fix(site): fix typo and bad config property (1077269)</a>
 </div>
 </div>
 

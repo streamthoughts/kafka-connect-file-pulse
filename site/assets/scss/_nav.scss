@@ -1,0 +1,122 @@
+//
+// Copy from Doscy Theme (commit 5d5e6402c901492f325af4117adbd151bf869c52)
+//
+
+.td-navbar-cover {
+    background: $primary;
+
+    @include media-breakpoint-up(md) {
+        background: transparent !important;
+
+        .nav-link {
+            text-shadow: 1px 1px 2px $dark;
+        }
+
+    }
+
+    &.navbar-bg-onscroll .nav-link {
+        text-shadow: none;
+        color: $primary!important;
+
+        &:hover {
+           color:$color2!important;
+        }
+    }
+}
+
+.navbar-bg-onscroll {
+    background: $white !important;
+    opacity: inherit;
+}
+
+.td-navbar {
+    background: $color1;
+    min-height: 4rem;
+    margin: 0;
+    z-index: 32;
+
+    @include media-breakpoint-up(md) {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+
+    .navbar-brand {
+        text-transform: none;
+        text-align: middle;
+        margin: 0;
+        padding: 0;
+
+        .nav-link {
+            display: inline-block;
+            margin-right: -30px;
+        }
+
+        .navbar-logo {
+            svg {
+                display: inline-block;
+                position: absolute;
+                top: 0;
+                left: 26px;
+                z-index: 33;
+                padding: 4px;
+                height: 96px;
+                width: 96px;
+                background: white;
+                border: 2px solid #2880c1;
+                border-top: none;
+
+                @include media-breakpoint-down(md) {
+                    left: 16px;
+                    width: 80px;
+                    height: auto;
+                    padding: 6px;
+                }
+            }
+        }
+    }
+
+    .nav-link {
+        text-transform: none;
+        font-weight: $font-weight-bold;
+    }
+
+    .td-search-input {
+        border: none;
+
+        @include placeholder {
+            color: $navbar-dark-color;
+        }
+    }
+
+    .dropdown {
+        min-width: 100px;
+    }
+
+    @include media-breakpoint-down(md) {
+        padding-right: .5rem;
+        padding-left: .75rem;
+
+        .td-navbar-nav-scroll {
+            max-width: 100%;
+            height: 2.5rem;
+            margin-top: .25rem;
+            overflow: hidden;
+            font-size: .875rem;
+
+            .nav-link {
+                padding-right: .25rem;
+                padding-left: 0;
+            }
+
+            .navbar-nav {
+                padding-bottom: 2rem;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+
+            }
+        }
+    }
+}

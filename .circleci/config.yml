@@ -2,16 +2,19 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: 2
-# Use dedicated machine for testcontainer
-# https://www.testcontainers.org/supported_docker_environment/continuous_integration/circle_ci/
-executorType: machine
+version: 2.1
+executors:
+  default-executor:
+    machine:
+      image: ubuntu-1604:201903-01
+  node-executor:
+    docker:
+      - image: circleci/node:latest
 jobs:
   build:
-#   docker:
-#      # specify the version you desire here
-#     - image: circleci/openjdk:8-jdk
-
+    # Use dedicated machine for testcontainer
+    # https://www.testcontainers.org/supported_docker_environment/continuous_integration/circle_ci
+    executor: default-executor
     working_directory: ~/repo
 
     environment:
@@ -40,3 +43,24 @@ jobs:
 
       - store_test_results:
           path: target/surefire-reports
+  build-site:
+    executor: node-executor
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - run:
+          name: Build and Deploy Site
+          command: ./build-deploy-site.sh
+workflows:
+  version: 2
+  ci_build:
+    jobs:
+      - build
+      - build-site:
+          filters:
+            branches:
+              only: master
+          requires:
+            - build

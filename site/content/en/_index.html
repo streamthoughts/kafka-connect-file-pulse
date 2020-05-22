@@ -1,0 +1,120 @@
+---
+title: "Connect File Pulse | Source connector for Apache Kafka"
+---
+
+{{% blocks/cover title="Connect File Pulse" image_anchor="top" height="full" color="lapis-lazuli" %}}
+<div class="mx-auto">
+    <p class="lead mt-5">A polyvalent, open source Apache Kafka Connect plugin that makes it easy <br />
+		to parse, transform and stream any file, in any format, into Apache Kafka™.</p>
+	<a class="btn btn-lg btn-secondary mr-3 mb-4" 
+	   href="docs/getting-started/">
+		Get Started  <i class="fas fa-arrow-alt-circle-right ml-2"></i>
+	</a>
+    <a class="btn btn-lg btn-github mr-3 mb-4" 
+       href="https://github.com/streamthoughts/kafka-connect-file-pulse">
+	    Get the code <i class="fab fa-github ml-2 "> </i>
+    </a>
+    <div class="mx-auto mt-5">{{% blocks/link-down color="light" %}}</div>
+</div>
+{{% /blocks/cover %}}
+
+
+<!-- Welcome to Connect File Pulse -->
+{{< blocks/lead color="white">}}
+<div>
+    <h2 class="section-head">Motivation</h2>
+    <p>
+		In organizations, data is frequently exported, shared and integrated from legacy systems through the use of
+		files in a wide variety of formats (e.g. CSV, XML, JSON, Avro, etc.). Dealing with all of these formats can
+		quickly become a real challenge for enterprise that usually end up with a complex and hard
+		to maintain data integration mess.
+	</p>
+	<p>
+		A modern approach consists in building a scalable data streaming platform as a central nervous
+		system to decouple applications from each other. <strong>Apache Kafka™</strong> is one of the most widely
+		used technologies to build such a system. The Apache Kafka project packs with Kafka Connect a distributed,
+		fault tolerant and scalable framework for connecting Kafka with external systems.
+	</p>
+	<p>
+		The <strong>Connect File Pulse</strong> project aims to provide an easy-to-use solution, based on Kafka Connect,
+		for streaming any type of data file with the Apache Kafka™ platform.
+		<br /><br />
+		Connect File Pulse is inspired by the features provided by <strong>Elasticsearch</strong> and <strong>Logstash</strong>.
+	</p>
+</div>
+{{< /blocks/lead >}}
+
+<section id="main-features" class="container">
+	<h2 class="section-head">Connect FilePulse Features Overview</h2>
+	<div class="features-list">
+		<div class="feature-item br-radius br-top-4 br-top-color2 box-shadow p-y-35 p-x-25">
+			<div class="feature-item-icon-box"><i class="fas fa-code"></i></div>
+			<div class="feature-item-content-box">
+				<h5 class="feature-item-title-box">Easy to use</h5>
+				<div class="feature-item-text-box">
+					Connect FilePulse is based on the Apache Kafka Connect
+					framework and packaged as standard connector source plugin that you can easily installed using
+					the tool such as <a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse" target="_blank">Confluent Hub CLI</a>.
+				</div>
+			</div>
+		</div>
+		<div class="feature-item br-radius br-top-4 br-top-color2 box-shadow p-y-35 p-x-25">
+			<div class="feature-item-icon-box"><i class="fas fa-folder"></i></div>
+			<div class="feature-item-content-box">
+				<h5 class="feature-item-title-box">Polyvalent</h5>
+				<div class="feature-item-text-box">
+					Connect FilePulse allows you to streams file in various formats into Apache Kafka (e.g : CSV, JSON, Avro, XML, etc).
+				</div>
+			</div>
+		</div>
+		<div class="feature-item br-radius br-top-4 br-top-color2 box-shadow p-y-35 p-x-25">
+			<div class="feature-item-icon-box"><i class="fas fa-cogs"></i></div>
+			<div class="feature-item-content-box">
+				<h5 class="feature-item-title-box">Powerful Processing Filters</h5>
+				<div class="feature-item-text-box">
+					Connect FilePulse packs with a rich collection of processing filters
+					that you can leverage to define complex transformation pipelines
+					for transforming and structuring your data.
+				</div>
+			</div>
+		</div>
+		<div class="feature-item br-radius br-top-4 br-top-color2 box-shadow p-y-35 p-x-25">
+			<div class="feature-item-icon-box"><i class="fas fa-plug"></i></div>
+			<div class="feature-item-content-box">
+				<h5 class="feature-item-title-box">Extensible</h5>
+				<div class="feature-item-text-box">
+					Since the first release, Connect FilePulse was designed to be extensible
+					so that you can easily develop new capabilities to match your project needs.
+				</div>
+			</div>
+		</div>
+		<div class="feature-item br-radius br-top-4 br-top-color2 box-shadow p-y-35 p-x-25">
+			<div class="feature-item-icon-box"><i class="fas fa-users"></i></div>
+			<div class="feature-item-content-box">
+				<h5 class="feature-item-title-box">Open source</h5>
+				<div class="feature-item-text-box">
+					The project is released under the <strong>Apache License 2.0</strong>. Anyone can contribute to the Connect File Pulse project by opening an issue or a pull request.
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{< blocks/section color="charcoal" >}}
+{{% blocks/feature icon="fab fa-github" title="Contributions welcome" %}}
+Want to join the fun on Github? New users are always welcome!
+
+  <a class="text-white" href="docs/contribution-guidelines/">
+    <button type="button" class="btn btn-github" style="width:150px; margin-top: 12px;">Contribute</button>
+  </a>
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon="fas fa-star" title="Support Connect File Pulse Team" %}}
+Add a star to the GitHub project, it only takes 5 seconds!
+
+ <a class="text-white" href="https://github.com/streamthoughts/kafka-connect-file-pulse">
+    <button type="button" class="btn btn-github" style="width:150px; margin-top: 12px;">Star</button>
+ </a>
+{{% /blocks/feature %}}
+
+{{< /blocks/section >}}

@@ -47,7 +47,8 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
     public static final boolean READER_AUTO_GENERATE_COLUMN_NAME_DEFAULT  = true;
 
     public static final String READER_FIELD_COLUMNS_CONFIG                = "columns";
-    public static final String READER_FIELD_COLUMNS_DOC                   = "Define the list of column names in order they appear in each row. columns must be in the form of TYPE:NAME";
+    public static final String READER_FIELD_COLUMNS_DOC                   = "The list of comma-separated column names in order they appear in each row. columns must be in the form of NAME:TYPE";
+    private static final String READER_FIELD_COLUMNS_SEPARATOR            = ";";
 
     /**
      * Creates a new {@link DelimitedRowFilterConfig} instance.
@@ -77,7 +78,7 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
         if (columns == null) return null;
 
         StructSchema schema = Schema.struct();
-        for (String column : columns.split(delimiter())) {
+        for (String column : columns.split(READER_FIELD_COLUMNS_SEPARATOR)) {
             if (!column.contains(":")) {
                 throw new ConfigException(
                     "Invalid schema field definition, expecting input as NAME:TYPE, but got '" + column + "'");

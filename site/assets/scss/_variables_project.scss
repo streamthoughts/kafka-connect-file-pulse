@@ -36,6 +36,10 @@ $danger: #ED6A5A !default;
 $white: #fff !default;
 $light: $white !default;
 
+table{
+    width:100% !important;
+    display: table!important;
+}
 
 .td-box, .td-content {
     a {

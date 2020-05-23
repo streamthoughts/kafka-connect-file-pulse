@@ -47,6 +47,13 @@ public class ConnectorConfig extends CommonConfig {
     public static final String FS_SCAN_FILTERS_CONFIG         = "fs.scan.filters";
     private static final String FS_SCAN_FILTERS_DOC           = "Filters classes which are used to apply list input files.";
 
+    @Deprecated
+    public static final String INTERNAL_REPORTER_GROUP_ID       = "internal.kafka.reporter.id";
+    @Deprecated
+    private static final String INTERNAL_REPORTER_GROUP_ID_DOC  =
+            "(Deprecated) The reporter identifier to be used by tasks and connector to report and monitor file progression (default null)." +
+            "This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility.";
+
     /**
      * Creates a new {@link ConnectorConfig} instance.
      * @param originals the originals configuration.
@@ -70,7 +77,15 @@ public class ConnectorConfig extends CommonConfig {
                         ConfigDef.Importance.HIGH, FS_SCAN_INTERVAL_MS_DOC)
 
                 .define(FILE_CLEANER_CLASS_CONFIG,
-                        ConfigDef.Type.CLASS, ConfigDef.Importance.HIGH, FILE_CLEANER_CLASS_DOC);
+                        ConfigDef.Type.CLASS, ConfigDef.Importance.HIGH, FILE_CLEANER_CLASS_DOC)
+
+                .define(INTERNAL_REPORTER_GROUP_ID, ConfigDef.Type.STRING, null,
+                        ConfigDef.Importance.MEDIUM, INTERNAL_REPORTER_GROUP_ID_DOC);
+
+    }
+
+    public String getTasksReporterGroupId() {
+        return this.getString(INTERNAL_REPORTER_GROUP_ID);
     }
 
     public FileCleanupPolicy cleanupPolicy() {

@@ -52,8 +52,7 @@ class KafkaBasedLogFactory {
     }
 
     private Map<String, Object> newConsumerConfigs() {
-        Map<String, Object> consumerProps = new HashMap<>();
-        consumerProps.putAll(configs);
+        final Map<String, Object> consumerProps = new HashMap<>(configs);
         consumerProps
                 .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         consumerProps
@@ -62,8 +61,7 @@ class KafkaBasedLogFactory {
     }
 
     private Map<String, Object> newProducerConfigs() {
-        Map<String, Object> producerProps = new HashMap<>();
-        producerProps.putAll(configs);
+        final Map<String, Object> producerProps = new HashMap<>(configs);
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         producerProps
                 .put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());

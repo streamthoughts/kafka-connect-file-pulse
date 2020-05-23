@@ -52,18 +52,17 @@ public class CommonConfig extends AbstractConfig {
     private static final String TASKS_REPORTER_TOPIC_DOC        = "Topic name which is used to report file states.";
     private static final String TASKS_REPORTER_TOPIC_DEFAULT    = "connect-file-pulse-status";
 
-    public static final String INTERNAL_REPORTER_GROUP_ID       = "internal.kafka.reporter.id";
-    private static final String INTERNAL_REPORTER_GROUP_ID_DOC  = "Reporter identifier to be used by tasks and connector to report and monitor file progression.";
 
     public static final String INTERNAL_REPORTER_CLUSTER_BOOTSTRAP_SERVER = "internal.kafka.reporter.bootstrap.servers";
 
     /**
      * Creates a new {@link CommonConfig} instance.
+     *
      * @param definition
      * @param originals
      */
     CommonConfig(final ConfigDef definition, final Map<?, ?> originals) {
-        super(definition, originals);
+        super(definition, originals, false);
     }
 
     static ConfigDef getConf() {
@@ -83,9 +82,6 @@ public class CommonConfig extends AbstractConfig {
                 .define(TASKS_REPORTER_TOPIC, ConfigDef.Type.STRING, TASKS_REPORTER_TOPIC_DEFAULT,
                         ConfigDef.Importance.HIGH, TASKS_REPORTER_TOPIC_DOC)
 
-                .define(INTERNAL_REPORTER_GROUP_ID, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, INTERNAL_REPORTER_GROUP_ID_DOC)
-
                 .define(INTERNAL_REPORTER_CLUSTER_BOOTSTRAP_SERVER, ConfigDef.Type.STRING,
                         ConfigDef.Importance.HIGH, CommonClientConfigs.BOOTSTRAP_SERVERS_DOC);
     }
@@ -96,10 +92,6 @@ public class CommonConfig extends AbstractConfig {
 
     public String getTaskReporterTopic() {
         return this.getString(TASKS_REPORTER_TOPIC);
-    }
-
-    public String getTasksReporterGroupId() {
-        return this.getString(INTERNAL_REPORTER_GROUP_ID);
     }
 
     public String getInternalBootstrapServers() {

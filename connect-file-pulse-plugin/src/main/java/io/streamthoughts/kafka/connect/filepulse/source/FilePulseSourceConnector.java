@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 import io.streamthoughts.kafka.connect.filepulse.Version;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
+import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetStrategy;
 import io.streamthoughts.kafka.connect.filepulse.offset.SimpleOffsetManager;
 import io.streamthoughts.kafka.connect.filepulse.scanner.FileSystemScanner;
@@ -44,8 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.streamthoughts.kafka.connect.filepulse.config.TaskConfig.FILE_INPUT_PATHS_CONFIG;
-
 /**
  * The FilePulseSourceConnector.
  */
@@ -54,6 +53,8 @@ public class FilePulseSourceConnector extends SourceConnector {
     private static final Logger LOG = LoggerFactory.getLogger(FilePulseSourceConnector.class);
 
     private static final long MAX_TIMEOUT = 5000;
+
+    private static final String CONNECT_NAME_CONFIG = "name";
 
     private Map<String, String> configProperties;
 
@@ -65,7 +66,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private FileSystemScanner scanner;
 
-    private String groupId;
+    private String connectorGroupName;
 
     /**
      * {@inheritDoc}
@@ -80,7 +81,8 @@ public class FilePulseSourceConnector extends SourceConnector {
      */
     @Override
     public void start(final Map<String, String> props) {
-        LOG.info("Configuring connector");
+        final String connectName = props.get(CONNECT_NAME_CONFIG);
+        LOG.info("Configuring connector : {}", connectName);
         try {
             configProperties = props;
             config = new ConnectorConfig(props);
@@ -88,12 +90,17 @@ public class FilePulseSourceConnector extends SourceConnector {
             throw new ConnectException("Couldn't init FilePulseSourceConnector due to configuration error", e);
         }
 
-        groupId = config.getTasksReporterGroupId();
-        StateBackingStoreRegistry.instance().register(groupId, () -> {
+        // FilePulse connectors deployed before 1.3.x used the 'internal.kafka.reporter.id'
+        // property for tracking file processing. Newer version directly use the connector 'name' property.
+        // To guarantee backward-compatibility with prior version, we need to use the
+        // 'internal.kafka.reporter.id' property if provided.
+        final String tasksReporterGroupId = config.getTasksReporterGroupId();
+        connectorGroupName = tasksReporterGroupId != null ? tasksReporterGroupId : connectName;
+        StateBackingStoreRegistry.instance().register(connectorGroupName, () -> {
             final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
             return new FileStateBackingStore(
                     config.getTaskReporterTopic(),
-                    groupId, configs);
+                    connectorGroupName, configs);
         });
 
         final FSDirectoryWalker directoryScanner = this.config.directoryScanner();
@@ -102,13 +109,7 @@ public class FilePulseSourceConnector extends SourceConnector {
         final FileCleanupPolicy cleaner = config.cleanupPolicy();
         final OffsetStrategy strategy = config.offsetStrategy();
 
-        final StateBackingStore<SourceFile> store = StateBackingStoreRegistry.instance().get(groupId);
-        if (store.isStarted()) {
-            throw new ConnectException(
-                "Fail to start new FilePulseSourceConnector instance. " +
-                "A Connector already exists for property internal.kafka.reporter.id=" + groupId
-            );
-        }
+        final StateBackingStore<SourceFile> store = StateBackingStoreRegistry.instance().get(connectorGroupName);
         try {
             scanner = new LocalFileSystemScanner(
                 config.scanDirectoryPath(),
@@ -124,7 +125,7 @@ public class FilePulseSourceConnector extends SourceConnector {
             });
             fsMonitorThread.start();
         } catch (Exception e) {
-            StateBackingStoreRegistry.instance().release(groupId);
+            StateBackingStoreRegistry.instance().release(connectorGroupName);
             if( fsMonitorThread != null) {
                 fsMonitorThread.shutdown(0L);
             }
@@ -153,7 +154,8 @@ public class FilePulseSourceConnector extends SourceConnector {
             final long taskConfigsGen = taskConfigsGeneration.getAndIncrement();
             for (List<String> group : groupFiles) {
                 final Map<String, String> taskProps = new HashMap<>(configProperties);
-                taskProps.put(FILE_INPUT_PATHS_CONFIG, String.join(",", group));
+                taskProps.put(TaskConfig.INTERNAL_REPORTER_GROUP_ID, connectorGroupName);
+                taskProps.put(TaskConfig.FILE_INPUT_PATHS_CONFIG, String.join(",", group));
                 taskConfigs.add(taskProps);
             }
             for(int i = 0; i < groupFiles.size(); i++) {
@@ -177,7 +179,7 @@ public class FilePulseSourceConnector extends SourceConnector {
         LOG.info("Stopping connector");
         fsMonitorThread.shutdown();
         try {
-            StateBackingStoreRegistry.instance().release(groupId);
+            StateBackingStoreRegistry.instance().release(connectorGroupName);
             fsMonitorThread.join(MAX_TIMEOUT);
         } catch (InterruptedException ignore) {
         }

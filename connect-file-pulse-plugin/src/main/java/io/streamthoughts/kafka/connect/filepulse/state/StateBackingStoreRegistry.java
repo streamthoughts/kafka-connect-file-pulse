@@ -77,10 +77,11 @@ public class StateBackingStoreRegistry {
     public synchronized void release(final String name) {
         checkIfExists(name);
         StateBackingStore<?> store = stores.get(name);
-        LOG.info("Releasing access on {} instance for group {}", store.getClass().getSimpleName(), name);
         final Integer ref = refs.compute(name, (k, v) -> v == null ? null : (v - 1 == 0) ? null : v -1);
+        final String storeClassName = store.getClass().getSimpleName();
+        LOG.info("Releasing access on {} instance for group {} (remaining = {})", storeClassName, name, ref);
         if (ref == null) {
-            LOG.info("Stopping instance registered instance {} for group {}", store.getClass().getSimpleName(), name);
+            LOG.info("Stopping instance registered instance {} for group {}", storeClassName, name);
             store.stop();
             stores.remove(name);
         }

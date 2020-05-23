@@ -27,12 +27,17 @@ import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResultSe
 import io.streamthoughts.kafka.connect.filepulse.clean.GenericFileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetManager;
+import io.streamthoughts.kafka.connect.filepulse.scanner.local.FSDirectoryWalker;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceStatus;
-import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
-import io.streamthoughts.kafka.connect.filepulse.scanner.local.FSDirectoryWalker;
+import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
+import org.apache.kafka.common.utils.Time;
+import org.apache.kafka.connect.connector.ConnectorContext;
+import org.apache.kafka.connect.util.ConnectorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,12 +52,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-
-import org.apache.kafka.common.utils.Time;
-import org.apache.kafka.connect.connector.ConnectorContext;
-import org.apache.kafka.connect.util.ConnectorUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *  Default {@link FileSystemScanner} used to scan local file system.
@@ -149,7 +148,13 @@ public class LocalFileSystemScanner implements FileSystemScanner {
                 }
             }
         });
-        this.store.start();
+        if (!this.store.isStarted()) {
+            this.store.start();
+        } else {
+            LOG.warn("The StateBackingStore used to synchronize this connector " +
+                "with tasks processing files is already started. You can ignore that warning if the connector " +
+                " is recovering from a crash or resuming after being paused.");
+        }
         readStatesToEnd(READ_CONFIG_ON_START_TIMEOUT_MS);
         recoverPreviouslyCompletedSources();
         this.status = ScanStatus.READY;

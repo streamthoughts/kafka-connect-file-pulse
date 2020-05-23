@@ -936,7 +936,7 @@ filters.AppendError.value=&amp;quot;{% raw %}{{ $error.message }}{% endraw %}&am
     </item>
     
     <item>
-      <title>Docs: Filters</title>
+      <title>Docs: Processing Filters</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link>
       <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
       
@@ -1024,14 +1024,14 @@ filters.AppendError.value=&amp;quot;{% raw %}{{ $error.message }}{% endraw %}&am
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;field&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;The field to append&lt;/td&gt;
-&lt;td&gt;string (&lt;a href=&#34;accessing-data-and-metadata&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;string (&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;value&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;The value to be appended&lt;/td&gt;
-&lt;td&gt;string (&lt;a href=&#34;accessing-data-and-metadata&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;string (&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
@@ -1045,7 +1045,7 @@ filters.AppendError.value=&amp;quot;{% raw %}{{ $error.message }}{% endraw %}&am
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;convertfilter&#34;&gt;ConvertFilter&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;convertfilter&#34;&gt;ConvertFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.ConvertFilter&lt;/code&gt;&lt;/p&gt;
 &lt;h3 id=&#34;configuration1&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
@@ -1083,7 +1083,7 @@ filters.AppendError.value=&amp;quot;{% raw %}{{ $error.message }}{% endraw %}&am
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example1&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;datefilter&#34;&gt;DateFilter&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;datefilter&#34;&gt;DateFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.DateFilter&lt;/code&gt;&lt;/p&gt;
 &lt;h3 id=&#34;configuration2&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
@@ -1100,14 +1100,14 @@ filters.AppendError.value=&amp;quot;{% raw %}{{ $error.message }}{% endraw %}&am
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;field&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;The field to get the date from .&lt;/td&gt;
-&lt;td&gt;string(&lt;a href=&#34;accessing-data-and-metadata&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;string(&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;target&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;The target field.&lt;/td&gt;
-&lt;td&gt;string(&lt;a href=&#34;accessing-data-and-metadata&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;string(&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
@@ -1135,7 +1135,7 @@ filters.AppendError.value=&amp;quot;{% raw %}{{ $error.message }}{% endraw %}&am
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example2&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;delimitedrowfilter&#34;&gt;DelimitedRowFilter&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;delimitedrowfilter&#34;&gt;DelimitedRowFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;The delimited-row filter can be used to parse and stream delimited row files (i.e CSV) into Kafka.
 Each row is parsed and published into a configured topic as a single Kafka data.&lt;/p&gt;
@@ -1181,7 +1181,7 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;columns&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Define the list of column names in order they appear in each row. columns must be in the form of TYPE:NAME&lt;/td&gt;
+&lt;td&gt;The list of comma-separated column names in order they appear in each row. columns must be in the form of NAME:TYPE&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
@@ -1189,7 +1189,21 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example3&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;dropfilter&#34;&gt;DropFilter&lt;/h2&gt;
+&lt;p&gt;The following example shows the use of the &lt;code&gt;DelimitedRowFilter&lt;/code&gt; to split the &lt;code&gt;message&lt;/code&gt; field using &lt;code&gt;|&lt;/code&gt; as a separator character.
+The name of each column is extracted from the fields &lt;code&gt;headers&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.ParseDelimitedRow.extractColumnNam=&amp;quot;headers&amp;quot;
+filters.ParseDelimitedRow.separator=&amp;quot;\\|&amp;quot;
+filters.ParseDelimitedRow.trimColumn=&amp;quot;true&amp;quot;
+filters.ParseDelimitedRow.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Important&lt;/h4&gt;
+Under the hood, the &lt;code&gt;DelimitedRowFilter&lt;/code&gt; will use the &lt;a href=&#34;https://docs.oracle.com/javase/9/docs/api/java/lang/String.html#split-java.lang.String-&#34;&gt;&lt;code&gt;String#split&lt;/code&gt;&lt;/a&gt; method to parse the input line. This
+method accepts a regex as argument then any special character must be escaped.
+&lt;/div&gt;
+
+&lt;h2 id=&#34;dropfilter&#34;&gt;DropFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.DropFilter&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;The drop filter can be used to prevent some messages (i.n records) to be written into Kafka.&lt;/p&gt;
 &lt;h3 id=&#34;configuration4&#34;&gt;Configuration&lt;/h3&gt;
@@ -1207,7 +1221,7 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;if&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;Condition to apply the filter on the current record.&lt;/td&gt;
-&lt;td&gt;string &lt;a href=&#34;accessing-data-and-metadata&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;string &lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
 &lt;td&gt;*-*&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
@@ -1222,12 +1236,11 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 &lt;/table&gt;
 &lt;p&gt;For more information about &lt;code&gt;if&lt;/code&gt; property, see : &lt;a href=&#34;conditional-execution&#34;&gt;Conditional execution&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;example4&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;filters=Drop
-
+&lt;p&gt;The following example shows the usage of &lt;strong&gt;DropFilter&lt;/strong&gt; to only keep records with a field &lt;code&gt;level&lt;/code&gt; containing to &lt;code&gt;ERROR&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters=Drop
 filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
 filters.Drop.if={{ equals(level, ERROR) }}
 filters.Drop.invert=true
-
 &lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;failfilter&#34;&gt;FailFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.FailFilter&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;The fail filter can be used to throw an exception with a provided error message.
@@ -1260,7 +1273,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;message&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The error message thrown by the filter. (&lt;a href=&#34;accessing-data-and-metadata&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;The error message thrown by the filter. (&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
@@ -1268,8 +1281,8 @@ For example, this can be useful to stop processing a file when a non-conform rec
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example5&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;filters=Fail
-
+&lt;p&gt;The following example shows the usage of &lt;strong&gt;FailFilter&lt;/strong&gt; to stop processing a file when a field is equals to &lt;code&gt;null&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters=Fail
 filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
 filters.Fail.if={{ is_null(user_id) }}
 filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
@@ -1277,8 +1290,9 @@ filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;The grok filter allows you to parse unstructured data like applications logs to extract structured and meaningful data fields.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Regular Expressions&lt;/strong&gt;
-Grok are built on top of on regular expressions, so you can use any regular expressions as well to define your own patterns.
-The regular expression library is &lt;a href=&#34;https://github.com/jruby/joni&#34;&gt;Joni&lt;/a&gt;, a Java port of Oniguruma regexp library&lt;/p&gt;
+Grok are built on top of on regular expressions, so you can use any regular expressions as well to define your own patterns.&lt;/p&gt;
+&lt;p&gt;Internally, FilePulse uses the regular expression library is &lt;a href=&#34;https://github.com/jruby/joni&#34;&gt;Joni&lt;/a&gt;
+, a Java port of &lt;a href=&#34;https://github.com/kkos/oniguruma&#34;&gt;Oniguruma&lt;/a&gt; regexp library.&lt;/p&gt;
 &lt;h3 id=&#34;configuration6&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -1336,7 +1350,13 @@ The regular expression library is &lt;a href=&#34;https://github.com/jruby/joni&
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example6&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;grouprowfilter&#34;&gt;GroupRowFilter&lt;/h2&gt;
+&lt;p&gt;The following example shows the usage of &lt;strong&gt;GrokFilter&lt;/strong&gt; to parse and extract fields from application log message.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.ParseLog4jLog.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+filters.ParseLog4jLog.overwrite=&amp;quot;message&amp;quot;
+filters.ParseLog4jLog.source=&amp;quot;message&amp;quot;
+filters.ParseLog4jLog.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&amp;quot;
+filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;grouprowfilter&#34;&gt;GroupRowFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.GroupRowFilter&lt;/code&gt;&lt;/p&gt;
 &lt;h3 id=&#34;configuration7&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
@@ -1374,7 +1394,7 @@ The regular expression library is &lt;a href=&#34;https://github.com/jruby/joni&
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example7&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;joinfilter&#34;&gt;JoinFilter&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;joinfilter&#34;&gt;JoinFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter&lt;/code&gt;&lt;/p&gt;
 &lt;h3 id=&#34;configuration8&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
@@ -1391,14 +1411,14 @@ The regular expression library is &lt;a href=&#34;https://github.com/jruby/joni&
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;field&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;The field to get the date from .&lt;/td&gt;
-&lt;td&gt;string(&lt;a href=&#34;accessing-data-and-metadata&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;string(&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;target&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;The target field.&lt;/td&gt;
-&lt;td&gt;string(&lt;a href=&#34;accessing-data-and-metadata&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
+&lt;td&gt;string(&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/&#34;&gt;ScEL supported&lt;/a&gt;)&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
@@ -1451,14 +1471,13 @@ The regular expression library is &lt;a href=&#34;https://github.com/jruby/joni&
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example9&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;filters=MyJsonFilter
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters=MyJsonFilter
 filters.MyJsonFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter
 filters.MyJsonFilter.source=message
 filters.MyJsonFilter.target=payload
 &lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;multirowfilter&#34;&gt;MultiRowFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The multirow filter joins multiple lines into a single defaultStruct using a regex pattern.
-For example, this filter can be used for joining Java exception and stacktrace messages&lt;/p&gt;
+&lt;p&gt;The multirow filter joins multiple lines into a single Struct using a regex pattern.&lt;/p&gt;
 &lt;h3 id=&#34;configuration10&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -1509,7 +1528,8 @@ For example, this filter can be used for joining Java exception and stacktrace m
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example10&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;filters=StackTraceMultiRowFilter
+&lt;p&gt;The following example shows the usage of the &lt;code&gt;MultiRowFilter&lt;/code&gt; to join Java exception message with its stacktrace.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters=StackTraceMultiRowFilter
 filters.StackTraceMultiRowFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
 filters.StackTraceMultiRowFilter.negate=false
 filters.StackTraceMultiRowFilter.pattern=^[\t]
@@ -1551,7 +1571,7 @@ filters.StackTraceMultiRowFilter.pattern=^[\t]
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;example11&#34;&gt;Example&lt;/h3&gt;
-&lt;pre&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;splitfilter&#34;&gt;SplitFilter&lt;/h2&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;splitfilter&#34;&gt;SplitFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter&lt;/code&gt;&lt;/p&gt;
 &lt;h3 id=&#34;configuration12&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;

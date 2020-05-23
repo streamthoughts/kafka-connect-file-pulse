@@ -20,24 +20,24 @@
 <link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-192x192.png" sizes="192x192">
 
-<title>Filters | Kafka Connect File Pulse</title><meta property="og:title" content="Filters" />
+<title>Processing Filters | Kafka Connect File Pulse</title><meta property="og:title" content="Processing Filters" />
 <meta property="og:description" content="The list of available transformation filters.
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/" />
 <meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T02:07:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
-<meta itemprop="name" content="Filters">
+<meta property="article:modified_time" content="2020-05-24T01:15:18+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
 <meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T02:07:07&#43;02:00" />
-<meta itemprop="wordCount" content="1162">
+<meta itemprop="dateModified" content="2020-05-24T01:15:18&#43;02:00" />
+<meta itemprop="wordCount" content="1297">
 
 
 
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Filters"/>
+<meta name="twitter:title" content="Processing Filters"/>
 <meta name="twitter:description" content="The list of available transformation filters.
 "/>
 
@@ -47,8 +47,8 @@
 
 
 
-<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.ea620e098ed7beb0752320f33718cf63ca739a144445937472319a8a1435fd55.css" as="style">
-<link href="/kafka-connect-file-pulse/scss/main.min.ea620e098ed7beb0752320f33718cf63ca739a144445937472319a8a1435fd55.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.773364cdfc79c10f64fe42e411b206830c0787d901a1eb8decd8a234dbbc9476.css" as="style">
+<link href="/kafka-connect-file-pulse/scss/main.min.773364cdfc79c10f64fe42e411b206830c0787d901a1eb8decd8a234dbbc9476.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -323,7 +323,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kafka-connect-file-pulse-docs-developer-guide-filters" href="/kafka-connect-file-pulse/docs/developer-guide/filters/">Filters</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kafka-connect-file-pulse-docs-developer-guide-filters" href="/kafka-connect-file-pulse/docs/developer-guide/filters/">Processing Filters</a>
       
       
       
@@ -445,7 +445,7 @@
 
 
 <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/edit/master/site/content/en/docs/Developer%20Guide/filters.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new?title=Filters" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new?title=Processing%20Filters" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 
 <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -574,7 +574,7 @@
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/">Filters</a>
+	<a href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/">Processing Filters</a>
 </li>
 
 	</ol>
@@ -582,7 +582,7 @@
 
             
 <div class="td-content">
-	<h1>Filters</h1>
+	<h1>Processing Filters</h1>
     <div class="lead">The list of available transformation filters.</div>
 	       
 	<p>These filters are available for use with Kafka Connect File Pulse:</p>
@@ -665,14 +665,14 @@
 <tr>
 <td><code>field</code></td>
 <td>The field to append</td>
-<td>string (<a href="accessing-data-and-metadata">ScEL supported</a>)</td>
+<td>string (<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td><em>-</em></td>
 <td>high</td>
 </tr>
 <tr>
 <td><code>value</code></td>
 <td>The value to be appended</td>
-<td>string (<a href="accessing-data-and-metadata">ScEL supported</a>)</td>
+<td>string (<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td><em>-</em></td>
 <td>high</td>
 </tr>
@@ -686,7 +686,7 @@
 </tbody>
 </table>
 <h3 id="example">Example</h3>
-<pre><code></code></pre><h2 id="convertfilter">ConvertFilter</h2>
+<pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="convertfilter">ConvertFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.ConvertFilter</code></p>
 <h3 id="configuration1">Configuration</h3>
 <table>
@@ -724,7 +724,7 @@
 </tbody>
 </table>
 <h3 id="example1">Example</h3>
-<pre><code></code></pre><h2 id="datefilter">DateFilter</h2>
+<pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="datefilter">DateFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.DateFilter</code></p>
 <h3 id="configuration2">Configuration</h3>
 <table>
@@ -741,14 +741,14 @@
 <tr>
 <td><code>field</code></td>
 <td>The field to get the date from .</td>
-<td>string(<a href="accessing-data-and-metadata">ScEL supported</a>)</td>
+<td>string(<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td><em>-</em></td>
 <td>high</td>
 </tr>
 <tr>
 <td><code>target</code></td>
 <td>The target field.</td>
-<td>string(<a href="accessing-data-and-metadata">ScEL supported</a>)</td>
+<td>string(<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td><em>-</em></td>
 <td>high</td>
 </tr>
@@ -776,7 +776,7 @@
 </tbody>
 </table>
 <h3 id="example2">Example</h3>
-<pre><code></code></pre><h2 id="delimitedrowfilter">DelimitedRowFilter</h2>
+<pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="delimitedrowfilter">DelimitedRowFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter</code></p>
 <p>The delimited-row filter can be used to parse and stream delimited row files (i.e CSV) into Kafka.
 Each row is parsed and published into a configured topic as a single Kafka data.</p>
@@ -822,7 +822,7 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 </tr>
 <tr>
 <td><code>columns</code></td>
-<td>Define the list of column names in order they appear in each row. columns must be in the form of TYPE:NAME</td>
+<td>The list of comma-separated column names in order they appear in each row. columns must be in the form of NAME:TYPE</td>
 <td>string</td>
 <td></td>
 <td>high</td>
@@ -830,7 +830,21 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 </tbody>
 </table>
 <h3 id="example3">Example</h3>
-<pre><code></code></pre><h2 id="dropfilter">DropFilter</h2>
+<p>The following example shows the use of the <code>DelimitedRowFilter</code> to split the <code>message</code> field using <code>|</code> as a separator character.
+The name of each column is extracted from the fields <code>headers</code>.</p>
+<pre><code class="language-properties" data-lang="properties">filters.ParseDelimitedRow.extractColumnNam=&quot;headers&quot;
+filters.ParseDelimitedRow.separator=&quot;\\|&quot;
+filters.ParseDelimitedRow.trimColumn=&quot;true&quot;
+filters.ParseDelimitedRow.type=&quot;io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&quot;
+</code></pre>
+
+<div class="alert alert-info" role="alert">
+<h4 class="alert-heading">Important</h4>
+Under the hood, the <code>DelimitedRowFilter</code> will use the <a href="https://docs.oracle.com/javase/9/docs/api/java/lang/String.html#split-java.lang.String-"><code>String#split</code></a> method to parse the input line. This
+method accepts a regex as argument then any special character must be escaped.
+</div>
+
+<h2 id="dropfilter">DropFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.DropFilter</code></p>
 <p>The drop filter can be used to prevent some messages (i.n records) to be written into Kafka.</p>
 <h3 id="configuration4">Configuration</h3>
@@ -848,7 +862,7 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 <tr>
 <td><code>if</code></td>
 <td>Condition to apply the filter on the current record.</td>
-<td>string <a href="accessing-data-and-metadata">ScEL supported</a>)</td>
+<td>string <a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td>*-*</td>
 <td>high</td>
 </tr>
@@ -863,12 +877,11 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 </table>
 <p>For more information about <code>if</code> property, see : <a href="conditional-execution">Conditional execution</a>.</p>
 <h3 id="example4">Example</h3>
-<pre><code>filters=Drop
-
+<p>The following example shows the usage of <strong>DropFilter</strong> to only keep records with a field <code>level</code> containing to <code>ERROR</code>.</p>
+<pre><code class="language-properties" data-lang="properties">filters=Drop
 filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
 filters.Drop.if={{ equals(level, ERROR) }}
 filters.Drop.invert=true
-
 </code></pre><h2 id="failfilter">FailFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.FailFilter</code></p>
 <p>The fail filter can be used to throw an exception with a provided error message.
@@ -901,7 +914,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 </tr>
 <tr>
 <td><code>message</code></td>
-<td>The error message thrown by the filter. (<a href="accessing-data-and-metadata">ScEL supported</a>)</td>
+<td>The error message thrown by the filter. (<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td>string</td>
 <td><em>-</em></td>
 <td>high</td>
@@ -909,8 +922,8 @@ For example, this can be useful to stop processing a file when a non-conform rec
 </tbody>
 </table>
 <h3 id="example5">Example</h3>
-<pre><code>filters=Fail
-
+<p>The following example shows the usage of <strong>FailFilter</strong> to stop processing a file when a field is equals to <code>null</code>.</p>
+<pre><code class="language-properties" data-lang="properties">filters=Fail
 filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
 filters.Fail.if={{ is_null(user_id) }}
 filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
@@ -918,8 +931,9 @@ filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter</code></p>
 <p>The grok filter allows you to parse unstructured data like applications logs to extract structured and meaningful data fields.</p>
 <p><strong>Regular Expressions</strong>
-Grok are built on top of on regular expressions, so you can use any regular expressions as well to define your own patterns.
-The regular expression library is <a href="https://github.com/jruby/joni">Joni</a>, a Java port of Oniguruma regexp library</p>
+Grok are built on top of on regular expressions, so you can use any regular expressions as well to define your own patterns.</p>
+<p>Internally, FilePulse uses the regular expression library is <a href="https://github.com/jruby/joni">Joni</a>
+, a Java port of <a href="https://github.com/kkos/oniguruma">Oniguruma</a> regexp library.</p>
 <h3 id="configuration6">Configuration</h3>
 <table>
 <thead>
@@ -977,7 +991,13 @@ The regular expression library is <a href="https://github.com/jruby/joni">Joni</
 </tbody>
 </table>
 <h3 id="example6">Example</h3>
-<pre><code></code></pre><h2 id="grouprowfilter">GroupRowFilter</h2>
+<p>The following example shows the usage of <strong>GrokFilter</strong> to parse and extract fields from application log message.</p>
+<pre><code class="language-properties" data-lang="properties">filters.ParseLog4jLog.match=&quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&quot;
+filters.ParseLog4jLog.overwrite=&quot;message&quot;
+filters.ParseLog4jLog.source=&quot;message&quot;
+filters.ParseLog4jLog.type=&quot;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&quot;
+filters.ParseLog4jLog.ignoreFailure=&quot;true&quot;
+</code></pre><h2 id="grouprowfilter">GroupRowFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.GroupRowFilter</code></p>
 <h3 id="configuration7">Configuration</h3>
 <table>
@@ -1015,7 +1035,7 @@ The regular expression library is <a href="https://github.com/jruby/joni">Joni</
 </tbody>
 </table>
 <h3 id="example7">Example</h3>
-<pre><code></code></pre><h2 id="joinfilter">JoinFilter</h2>
+<pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="joinfilter">JoinFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter</code></p>
 <h3 id="configuration8">Configuration</h3>
 <table>
@@ -1032,14 +1052,14 @@ The regular expression library is <a href="https://github.com/jruby/joni">Joni</
 <tr>
 <td><code>field</code></td>
 <td>The field to get the date from .</td>
-<td>string(<a href="accessing-data-and-metadata">ScEL supported</a>)</td>
+<td>string(<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td><em>-</em></td>
 <td>high</td>
 </tr>
 <tr>
 <td><code>target</code></td>
 <td>The target field.</td>
-<td>string(<a href="accessing-data-and-metadata">ScEL supported</a>)</td>
+<td>string(<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td><em>-</em></td>
 <td>high</td>
 </tr>
@@ -1092,14 +1112,13 @@ The regular expression library is <a href="https://github.com/jruby/joni">Joni</
 </tbody>
 </table>
 <h3 id="example9">Example</h3>
-<pre><code>filters=MyJsonFilter
+<pre><code class="language-properties" data-lang="properties">filters=MyJsonFilter
 filters.MyJsonFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter
 filters.MyJsonFilter.source=message
 filters.MyJsonFilter.target=payload
 </code></pre><h2 id="multirowfilter">MultiRowFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter</code></p>
-<p>The multirow filter joins multiple lines into a single defaultStruct using a regex pattern.
-For example, this filter can be used for joining Java exception and stacktrace messages</p>
+<p>The multirow filter joins multiple lines into a single Struct using a regex pattern.</p>
 <h3 id="configuration10">Configuration</h3>
 <table>
 <thead>
@@ -1150,7 +1169,8 @@ For example, this filter can be used for joining Java exception and stacktrace m
 </tbody>
 </table>
 <h3 id="example10">Example</h3>
-<pre><code>filters=StackTraceMultiRowFilter
+<p>The following example shows the usage of the <code>MultiRowFilter</code> to join Java exception message with its stacktrace.</p>
+<pre><code class="language-properties" data-lang="properties">filters=StackTraceMultiRowFilter
 filters.StackTraceMultiRowFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
 filters.StackTraceMultiRowFilter.negate=false
 filters.StackTraceMultiRowFilter.pattern=^[\t]
@@ -1192,7 +1212,7 @@ filters.StackTraceMultiRowFilter.pattern=^[\t]
 </tbody>
 </table>
 <h3 id="example11">Example</h3>
-<pre><code></code></pre><h2 id="splitfilter">SplitFilter</h2>
+<pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="splitfilter">SplitFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter</code></p>
 <h3 id="configuration12">Configuration</h3>
 <table>
@@ -1232,7 +1252,7 @@ filters.StackTraceMultiRowFilter.pattern=^[\t]
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 24, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/62a037241560d3dfb8a2358034119450e987ac69">fix(filter): fix DelimitedRowFilterConfig to use a comma to split colmuns def (62a0372)</a>
 </div>
 </div>
 

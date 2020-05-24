@@ -26,12 +26,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/" />
 <meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T02:07:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-05-24T23:01:03+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Filter Chain Definition">
 <meta itemprop="description" content="Learn how to define complex pipelines to transform and structure your data before integration into Kafka.
 ">
 <meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T02:07:07&#43;02:00" />
+<meta itemprop="dateModified" content="2020-05-24T23:01:03&#43;02:00" />
 <meta itemprop="wordCount" content="316">
 
 
@@ -545,55 +545,55 @@ filters.ParseLog4jLog.overwrite=logmessage
 </thead>
 <tbody>
 <tr>
-<td><a href="./filters#appendfilter">AppendFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#appendfilter">AppendFilter</a></td>
 <td>Appends one or more values to an existing or non-existing array field</td>
 </tr>
 <tr>
-<td><a href="./filters#convertfilter">ConvertFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#convertfilter">ConvertFilter</a></td>
 <td>Converts a message field's value to a specific type</td>
 </tr>
 <tr>
-<td><a href="./filters#datefilter">DateFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#datefilter">DateFilter</a></td>
 <td>Converts a field's value containing a date to a unix epoch time</td>
 </tr>
 <tr>
-<td><a href="./filters#delimitedrowfilter">DelimitedRowFilter</a></td>
+<td><a href="./kafka-connect-file-pulse/docs/developer-guide/filters#delimitedrowfilter">DelimitedRowFilter</a></td>
 <td>Parses a message field's value containing columns delimited by a separator into a struct</td>
 </tr>
 <tr>
-<td><a href="./filters#dropfilter">DropFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#dropfilter">DropFilter</a></td>
 <td>Drops messages satisfying a specific condition without throwing exception</td>
 </tr>
 <tr>
-<td><a href="./filters#failfilter">FailFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#failfilter">FailFilter</a></td>
 <td>Throws an exception when a message satisfy a specific condition</td>
 </tr>
 <tr>
-<td><a href="./filters#grokfilter">GrokFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#grokfilter">GrokFilter</a></td>
 <td>Parses an unstructured message field's value to a struct by combining Grok patterns</td>
 </tr>
 <tr>
-<td><a href="./filters#grouprowfilter">GroupRowFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#grouprowfilter">GroupRowFilter</a></td>
 <td>Regroups multiple following messages into a single message by composing a grouping key</td>
 </tr>
 <tr>
-<td><a href="./filters#joinfilter">JoinFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#joinfilter">JoinFilter</a></td>
 <td>Joins values of an array field with a specified separator</td>
 </tr>
 <tr>
-<td><a href="./filters#jsonfilter">JSONFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#jsonfilter">JSONFilter</a></td>
 <td>Unmarshallings a JSON message field's value to a complex struct</td>
 </tr>
 <tr>
-<td><a href="./filters#multirowfilter">MultiRowFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#multirowfilter">MultiRowFilter</a></td>
 <td>Combines following message lines into single one by combining patterns</td>
 </tr>
 <tr>
-<td><a href="./filters#renamefilter">RenameFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#renamefilter">RenameFilter</a></td>
 <td>Renames a message field</td>
 </tr>
 <tr>
-<td><a href="./filters#splitfilter">SplitFilter</a></td>
+<td><a href="/kafka-connect-file-pulse/docs/developer-guide/filters#splitfilter">SplitFilter</a></td>
 <td>Splits a message field's value to array</td>
 </tr>
 </tbody>
@@ -605,7 +605,7 @@ For example, they can be used to split one input message to multiple messages or
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 24, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bf7368ef65248466d63aa7b0f6ea1b2adc8b4aad">update(site): add examples processing filters (bf7368e)</a>
 </div>
 </div>
 

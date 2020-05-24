@@ -43,19 +43,19 @@ These filters are available for use with Kafka Connect File Pulse:
 
 | Filter | Description |
 |---     | --- |
-| [AppendFilter](./filters#appendfilter) | Appends one or more values to an existing or non-existing array field  |
-| [ConvertFilter](./filters#convertfilter)  | Converts a message field's value to a specific type |
-| [DateFilter](./filters#datefilter)  | Converts a field's value containing a date to a unix epoch time  |
-| [DelimitedRowFilter](./filters#delimitedrowfilter)  | Parses a message field's value containing columns delimited by a separator into a struct |
-| [DropFilter](./filters#dropfilter)  | Drops messages satisfying a specific condition without throwing exception |
-| [FailFilter](./filters#failfilter)  | Throws an exception when a message satisfy a specific condition |
-| [GrokFilter](./filters#grokfilter)  | Parses an unstructured message field's value to a struct by combining Grok patterns |
-| [GroupRowFilter](./filters#grouprowfilter)  | Regroups multiple following messages into a single message by composing a grouping key|
-| [JoinFilter](./filters#joinfilter)  | Joins values of an array field with a specified separator |
-| [JSONFilter](./filters#jsonfilter)  | Unmarshallings a JSON message field's value to a complex struct |
-| [MultiRowFilter](./filters#multirowfilter)  | Combines following message lines into single one by combining patterns |
-| [RenameFilter](./filters#renamefilter)  | Renames a message field |
-| [SplitFilter](./filters#splitfilter)  | Splits a message field's value to array |
+| [AppendFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#appendfilter) | Appends one or more values to an existing or non-existing array field  |
+| [ConvertFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#convertfilter)  | Converts a message field's value to a specific type |
+| [DateFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#datefilter)  | Converts a field's value containing a date to a unix epoch time  |
+| [DelimitedRowFilter](./kafka-connect-file-pulse/docs/developer-guide/filters#delimitedrowfilter)  | Parses a message field's value containing columns delimited by a separator into a struct |
+| [DropFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#dropfilter)  | Drops messages satisfying a specific condition without throwing exception |
+| [FailFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#failfilter)  | Throws an exception when a message satisfy a specific condition |
+| [GrokFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#grokfilter)  | Parses an unstructured message field's value to a struct by combining Grok patterns |
+| [GroupRowFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#grouprowfilter)  | Regroups multiple following messages into a single message by composing a grouping key|
+| [JoinFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#joinfilter)  | Joins values of an array field with a specified separator |
+| [JSONFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#jsonfilter)  | Unmarshallings a JSON message field's value to a complex struct |
+| [MultiRowFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#multirowfilter)  | Combines following message lines into single one by combining patterns |
+| [RenameFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#renamefilter)  | Renames a message field |
+| [SplitFilter](/kafka-connect-file-pulse/docs/developer-guide/filters#splitfilter)  | Splits a message field's value to array |
 
 
 ## Difference between Kafka Connect Single Message Transforms (SMT) functionality

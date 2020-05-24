@@ -29,11 +29,11 @@ These filters are available for use with Kafka Connect File Pulse:
 
 The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter`
 
-### Configuration
-
-The 'Append' filter is probably one of the most important processing filters to know. 
+The `AppendFilter` is probably one of the most important processing filters to know. 
 It allows you to manipulate a source record by easily adding or replacing a field with a constant 
 value or a value extracted from another existing field using  [ScEL](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/).
+
+### Configuration
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
@@ -139,6 +139,8 @@ filters.SubstituteFilter.value="{{ extract_array(values,0) }}-{{ extract_array(v
 
 The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.ConvertFilter`
 
+The `ConvertFilter` can be used to convert a field's value into a specific type. 
+
 ### Configuration
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
@@ -147,18 +149,51 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | `type` | The type field must be converted to  | string | *,* | high |
 | `ignoreMissing` | If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified. | boolean | *true* | high |
 
+Supported types are : 
+
+* `SHORT`
+* `INTEGER`
+* `LONG`
+* `FLOAT`
+* `DOUBLE`
+* `BOOLEAN`
+* `STRING`
+* `ARRAY`
+* `BYTES`
+    
 ### Examples
 
+The following example shows how to convert a a field's value containing the string `yes` into a boolean.
+
+**Configuration**
+
 ```properties
-filters.SubstituteFilter.extractColumnNam="headers"
-filters.SubstituteFilter.separator="\\|"
-filters.SubstituteFilter.trimColumn="true"
+filters.BooleanConverter.field="target"
+filters.BooleanConverter.type="BOOLEAN"
 ```
 
+**Input**
+```json
+{
+  "record" : {
+    "target": "yes"
+  }
+}
+```
+
+**Output**
+```json
+{
+  "record" : {
+    "target": true
+  }
+}
+```
 ## DateFilter
 
 The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.DateFilter`
 
+The `DateFilter` converts a field's value containing a date to a unix epoch time.
 ### Configuration
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
@@ -170,15 +205,37 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | `format` | List of the expected date formats. | list | *-* | high |
 
 ### Examples
-
+        
 ```properties
+filters.MyDateFilter.field="date"
+filters.MyDateFilter.target="timestamp"
+filters.MyDateFilter.format="yyyy-MM-dd'T'HH:mm:ss"
+```
+
+**Input**
+```json
+{
+  "record" : {
+    "date": "2001-07-04T12:08:56"
+  }
+}
+```
+
+**Output**
+```json
+{
+  "record" : {
+    "date": "2001-07-04T12:08:56",
+    "timestamp": 994248536000
+  }
+}
 ```
 
 ## DelimitedRowFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter`.
 
-The delimited-row filter can be used to parse and stream delimited row files (i.e CSV) into Kafka.
+The `DelimitedRowFilter` can be used to parse and stream delimited row files (i.e CSV) into Kafka.
 Each row is parsed and published into a configured topic as a single Kafka data.
 
 ### Configuration
@@ -211,9 +268,9 @@ method accepts a regex as argument then any special character must be escaped.
 
 ## DropFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.DropFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.DropFilter`.
 
-The drop filter can be used to prevent some messages (i.n records) to be written into Kafka.
+The `DropFilter` can be used to prevent some messages (i.e records) to be written into Kafka.
 
 ### Configuration
 
@@ -237,7 +294,7 @@ filters.Drop.invert=true
 
 ## FailFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.FailFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.FailFilter`.
 
 The fail filter can be used to throw an exception with a provided error message.
 For example, this can be useful to stop processing a file when a non-conform record is read.
@@ -263,9 +320,9 @@ filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 
 ## GrokFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter`.
 
-The grok filter allows you to parse unstructured data like applications logs to extract structured and meaningful data fields.
+The `GrokFilter` allows you to parse unstructured data like applications logs to extract structured and meaningful data fields.
 
 **Regular Expressions**
 Grok are built on top of on regular expressions, so you can use any regular expressions as well to define your own patterns.
@@ -298,7 +355,7 @@ filters.ParseLog4jLog.ignoreFailure="true"
 
 ## GroupRowFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.GroupRowFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.GroupRowFilter`.
 
 ### Configuration
 
@@ -315,7 +372,7 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 
 ## JoinFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter`.
 
 ### Configuration
 
@@ -329,10 +386,9 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 
 ## JSONFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter`.
 
-
-The JSON filter parses an input json field.
+The `JSONFilter` parses an input json field.
 
 ### Configuration
 
@@ -353,10 +409,9 @@ filters.MyJsonFilter.target=payload
 
 ## MultiRowFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter`.
 
-
-The multirow filter joins multiple lines into a single Struct using a regex pattern.
+The `MultiRowFilter` joins multiple lines into a single Struct using a regex pattern.
 
 ### Configuration
 
@@ -381,7 +436,9 @@ filters.StackTraceMultiRowFilter.pattern=^[\t]
 
 ## RenameFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter`.
+
+The `RenameFilter` is used to rename a specified field.
 
 ### Configuration
 
@@ -394,11 +451,33 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 ### Examples
 
 ```properties
+filters.MyJsonFilter.field=input
+filters.MyJsonFilter.target=renamed
+```
+
+**Input**
+```json
+{
+  "record" : {
+    "input": "foo"
+  }
+}
+```
+
+**Output**
+```json
+{
+  "record" : {
+    "renamed": "foo"
+  }
+}
 ```
 
 ## SplitFilter
 
-The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter`
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter`.
+
+The `SplitFilter` splits a field's value of type string into an array by using a specific separator.
 
 ### Configuration
 
@@ -406,4 +485,34 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | --------------| --------------|-----------| --------- | ------------- |
 | `split` | Split a message field's value to array    | string | *-* | high |
 | `separator` | The separator used for splitting a message field's value to array  | string | *,* | high |
-| `target` | he target field to put the parsed JSON data  | string | *-* | high |
+| `target` | The target field to put the parsed JSON data  | string | *-* | high |
+
+
+### Example
+
+**Configuration**
+
+```properties
+filters.MySplitterFilter.split=input
+filters.MySplitterFilter.separator=,
+filters.MySplitterFilter.target=output
+```
+
+**Input**
+```json
+{
+  "record" : {
+    "input": "val0,val1,val2"
+  }
+}
+```
+
+**Output**
+```json
+{
+  "record" : {
+    "input": "val0,val1,val2",
+    "output": [ "val0", "val1", "val2"]
+  }
+}
+```

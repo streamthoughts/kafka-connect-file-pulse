@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/" />
-<meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-24T01:15:18+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-05-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-05-24T15:06:19+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
-<meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-24T01:15:18&#43;02:00" />
-<meta itemprop="wordCount" content="1297">
+<meta itemprop="datePublished" content="2020-05-24T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-05-24T15:06:19&#43;02:00" />
+<meta itemprop="wordCount" content="1625">
 
 
 
@@ -462,73 +462,73 @@
     <li><a href="#appendfilter">AppendFilter</a>
       <ul>
         <li><a href="#configuration">Configuration</a></li>
-        <li><a href="#example">Example</a></li>
+        <li><a href="#examples">Examples</a></li>
       </ul>
     </li>
     <li><a href="#convertfilter">ConvertFilter</a>
       <ul>
         <li><a href="#configuration1">Configuration</a></li>
-        <li><a href="#example1">Example</a></li>
+        <li><a href="#examples1">Examples</a></li>
       </ul>
     </li>
     <li><a href="#datefilter">DateFilter</a>
       <ul>
         <li><a href="#configuration2">Configuration</a></li>
-        <li><a href="#example2">Example</a></li>
+        <li><a href="#examples2">Examples</a></li>
       </ul>
     </li>
     <li><a href="#delimitedrowfilter">DelimitedRowFilter</a>
       <ul>
         <li><a href="#configuration3">Configuration</a></li>
-        <li><a href="#example3">Example</a></li>
+        <li><a href="#examples3">Examples</a></li>
       </ul>
     </li>
     <li><a href="#dropfilter">DropFilter</a>
       <ul>
         <li><a href="#configuration4">Configuration</a></li>
-        <li><a href="#example4">Example</a></li>
+        <li><a href="#examples4">Examples</a></li>
       </ul>
     </li>
     <li><a href="#failfilter">FailFilter</a>
       <ul>
         <li><a href="#configuration5">Configuration</a></li>
-        <li><a href="#example5">Example</a></li>
+        <li><a href="#examples5">Examples</a></li>
       </ul>
     </li>
     <li><a href="#grokfilter">GrokFilter</a>
       <ul>
         <li><a href="#configuration6">Configuration</a></li>
-        <li><a href="#example6">Example</a></li>
+        <li><a href="#examples6">Examples</a></li>
       </ul>
     </li>
     <li><a href="#grouprowfilter">GroupRowFilter</a>
       <ul>
         <li><a href="#configuration7">Configuration</a></li>
-        <li><a href="#example7">Example</a></li>
+        <li><a href="#examples7">Examples</a></li>
       </ul>
     </li>
     <li><a href="#joinfilter">JoinFilter</a>
       <ul>
         <li><a href="#configuration8">Configuration</a></li>
-        <li><a href="#example8">Example</a></li>
+        <li><a href="#examples8">Examples</a></li>
       </ul>
     </li>
     <li><a href="#jsonfilter">JSONFilter</a>
       <ul>
         <li><a href="#configuration9">Configuration</a></li>
-        <li><a href="#example9">Example</a></li>
+        <li><a href="#examples9">Examples</a></li>
       </ul>
     </li>
     <li><a href="#multirowfilter">MultiRowFilter</a>
       <ul>
         <li><a href="#configuration10">Configuration</a></li>
-        <li><a href="#example10">Example</a></li>
+        <li><a href="#examples10">Examples</a></li>
       </ul>
     </li>
     <li><a href="#renamefilter">RenameFilter</a>
       <ul>
         <li><a href="#configuration11">Configuration</a></li>
-        <li><a href="#example11">Example</a></li>
+        <li><a href="#examples11">Examples</a></li>
       </ul>
     </li>
     <li><a href="#splitfilter">SplitFilter</a>
@@ -651,6 +651,9 @@
 <h2 id="appendfilter">AppendFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter</code></p>
 <h3 id="configuration">Configuration</h3>
+<p>The &lsquo;Append&rsquo; filter is probably one of the most important processing filters to know.
+It allows you to manipulate a source record by easily adding or replacing a field with a constant
+value or a value extracted from another existing field using  <a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL</a>.</p>
 <table>
 <thead>
 <tr>
@@ -664,14 +667,14 @@
 <tbody>
 <tr>
 <td><code>field</code></td>
-<td>The field to append</td>
+<td>The name of the field to be added</td>
 <td>string (<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td><em>-</em></td>
 <td>high</td>
 </tr>
 <tr>
 <td><code>value</code></td>
-<td>The value to be appended</td>
+<td>The value of the field to be added</td>
 <td>string (<a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported</a>)</td>
 <td><em>-</em></td>
 <td>high</td>
@@ -685,8 +688,69 @@
 </tr>
 </tbody>
 </table>
-<h3 id="example">Example</h3>
-<pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="convertfilter">ConvertFilter</h2>
+<h3 id="examples">Examples</h3>
+<p>The following examples shows how to use the <code>AppendFilter</code> to concat two values from the array field named <code>values</code>
+using a <a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#string-substitution">substitution expression</a>.
+The concat value is then added to the a field named <code>result</code>.</p>
+<p><strong>Configuration</strong></p>
+<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;result&quot;
+filters.SubstituteFilter.value=&quot;{{ extract_array(values,0) }}-{{ extract_array(values,1) }}&quot;
+</code></pre><p><strong>Input</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#204a87;font-weight:bold">&#34;value&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;World&#34;</span><span style="color:#000;font-weight:bold">]</span>
+    <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span> 
+</code></pre></div><p><strong>Output</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#204a87;font-weight:bold">&#34;value&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;World&#34;</span><span style="color:#000;font-weight:bold">]</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;result&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Hello-World&#34;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></div><p>In the previous example, we used the simple property expression <code>result</code> to indicate the target field to which our value is added.
+We have actually omitted the <a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#scopes">expression scope</a> <code>$value</code>.
+By default, if no scope is defined in an expression, the scope <code>$value</code> is implicitly applied.
+Hence, we could have used the fully expression <code>$value.result</code> which is similar to the simplified expression <code>result</code>.</p>
+<p>But, you can perfectly used another expression scope. For example, you can leverage the <code>AppendFilter</code> to dynamically
+resolve the record-key or the output topic based on the record data.</p>
+<p>The following configuration show how to use the <code>$topic</code> scope :</p>
+<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;$topic&quot;
+filters.SubstituteFilter.value=&quot;my-topic-{{ lowercase(extract_array(values,0) }}&quot;
+</code></pre><p><strong>Input</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;value&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;World&#34;</span><span style="color:#000;font-weight:bold">]</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span> 
+</code></pre></div><p><strong>Output</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">&#34;context&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;topic&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;my-topic-hello&#34;</span> <span style="color:#000;font-weight:bold">}</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;value&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;World&#34;</span><span style="color:#000;font-weight:bold">]</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span> 
+</code></pre></div><p>Finally the <code>AppendFilter</code> can also accept an substitution expression for the property field.
+This allows to dynamically determine the name of the field to be added.</p>
+<p>The following examples show how to use a property expression to get the named of the field from a</p>
+<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;{{ target }}&quot;
+filters.SubstituteFilter.value=&quot;{{ extract_array(values,0) }}-{{ extract_array(values,1) }}&quot;
+</code></pre><p><strong>Input</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;target&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;result&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;value&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;World&#34;</span><span style="color:#000;font-weight:bold">]</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></div><p><strong>Output</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;target&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;result&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;value&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;World&#34;</span><span style="color:#000;font-weight:bold">]</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;result&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Hello-World&#34;</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></div><h2 id="convertfilter">ConvertFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.ConvertFilter</code></p>
 <h3 id="configuration1">Configuration</h3>
 <table>
@@ -723,8 +787,11 @@
 </tr>
 </tbody>
 </table>
-<h3 id="example1">Example</h3>
-<pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="datefilter">DateFilter</h2>
+<h3 id="examples1">Examples</h3>
+<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.extractColumnNam=&quot;headers&quot;
+filters.SubstituteFilter.separator=&quot;\\|&quot;
+filters.SubstituteFilter.trimColumn=&quot;true&quot;
+</code></pre><h2 id="datefilter">DateFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.DateFilter</code></p>
 <h3 id="configuration2">Configuration</h3>
 <table>
@@ -775,7 +842,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="example2">Example</h3>
+<h3 id="examples2">Examples</h3>
 <pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="delimitedrowfilter">DelimitedRowFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter</code></p>
 <p>The delimited-row filter can be used to parse and stream delimited row files (i.e CSV) into Kafka.
@@ -829,7 +896,7 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 </tr>
 </tbody>
 </table>
-<h3 id="example3">Example</h3>
+<h3 id="examples3">Examples</h3>
 <p>The following example shows the use of the <code>DelimitedRowFilter</code> to split the <code>message</code> field using <code>|</code> as a separator character.
 The name of each column is extracted from the fields <code>headers</code>.</p>
 <pre><code class="language-properties" data-lang="properties">filters.ParseDelimitedRow.extractColumnNam=&quot;headers&quot;
@@ -876,7 +943,7 @@ method accepts a regex as argument then any special character must be escaped.
 </tbody>
 </table>
 <p>For more information about <code>if</code> property, see : <a href="conditional-execution">Conditional execution</a>.</p>
-<h3 id="example4">Example</h3>
+<h3 id="examples4">Examples</h3>
 <p>The following example shows the usage of <strong>DropFilter</strong> to only keep records with a field <code>level</code> containing to <code>ERROR</code>.</p>
 <pre><code class="language-properties" data-lang="properties">filters=Drop
 filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
@@ -921,7 +988,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 </tr>
 </tbody>
 </table>
-<h3 id="example5">Example</h3>
+<h3 id="examples5">Examples</h3>
 <p>The following example shows the usage of <strong>FailFilter</strong> to stop processing a file when a field is equals to <code>null</code>.</p>
 <pre><code class="language-properties" data-lang="properties">filters=Fail
 filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
@@ -990,7 +1057,7 @@ Grok are built on top of on regular expressions, so you can use any regular expr
 </tr>
 </tbody>
 </table>
-<h3 id="example6">Example</h3>
+<h3 id="examples6">Examples</h3>
 <p>The following example shows the usage of <strong>GrokFilter</strong> to parse and extract fields from application log message.</p>
 <pre><code class="language-properties" data-lang="properties">filters.ParseLog4jLog.match=&quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&quot;
 filters.ParseLog4jLog.overwrite=&quot;message&quot;
@@ -1034,7 +1101,7 @@ filters.ParseLog4jLog.ignoreFailure=&quot;true&quot;
 </tr>
 </tbody>
 </table>
-<h3 id="example7">Example</h3>
+<h3 id="examples7">Examples</h3>
 <pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="joinfilter">JoinFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter</code></p>
 <h3 id="configuration8">Configuration</h3>
@@ -1072,7 +1139,7 @@ filters.ParseLog4jLog.ignoreFailure=&quot;true&quot;
 </tr>
 </tbody>
 </table>
-<h3 id="example8">Example</h3>
+<h3 id="examples8">Examples</h3>
 <h2 id="jsonfilter">JSONFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter</code></p>
 <p>The JSON filter parses an input json field.</p>
@@ -1111,7 +1178,7 @@ filters.ParseLog4jLog.ignoreFailure=&quot;true&quot;
 </tr>
 </tbody>
 </table>
-<h3 id="example9">Example</h3>
+<h3 id="examples9">Examples</h3>
 <pre><code class="language-properties" data-lang="properties">filters=MyJsonFilter
 filters.MyJsonFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter
 filters.MyJsonFilter.source=message
@@ -1168,7 +1235,7 @@ filters.MyJsonFilter.target=payload
 </tr>
 </tbody>
 </table>
-<h3 id="example10">Example</h3>
+<h3 id="examples10">Examples</h3>
 <p>The following example shows the usage of the <code>MultiRowFilter</code> to join Java exception message with its stacktrace.</p>
 <pre><code class="language-properties" data-lang="properties">filters=StackTraceMultiRowFilter
 filters.StackTraceMultiRowFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
@@ -1211,7 +1278,7 @@ filters.StackTraceMultiRowFilter.pattern=^[\t]
 </tr>
 </tbody>
 </table>
-<h3 id="example11">Example</h3>
+<h3 id="examples11">Examples</h3>
 <pre><code class="language-properties" data-lang="properties"></code></pre><h2 id="splitfilter">SplitFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter</code></p>
 <h3 id="configuration12">Configuration</h3>
@@ -1252,7 +1319,7 @@ filters.StackTraceMultiRowFilter.pattern=^[\t]
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 24, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/62a037241560d3dfb8a2358034119450e987ac69">fix(filter): fix DelimitedRowFilterConfig to use a comma to split colmuns def (62a0372)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 24, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/eac35f6000be2dc0832fcc7273429416adadb613">update(site): fix typo and add processing filter examples (eac35f6)</a>
 </div>
 </div>
 

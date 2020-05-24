@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/" />
 <meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T02:07:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-05-24T15:06:19+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Accessing Data and Metadata">
 <meta itemprop="description" content="The commons configuration for Connect File Pulse.
 ">
 <meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T02:07:07&#43;02:00" />
-<meta itemprop="wordCount" content="1303">
+<meta itemprop="dateModified" content="2020-05-24T15:06:19&#43;02:00" />
+<meta itemprop="wordCount" content="1122">
 
 
 
@@ -462,7 +462,7 @@
     <li><a href="#field-selector">Field Selector</a></li>
     <li><a href="#nested-navigation">Nested Navigation</a></li>
     <li><a href="#string-substitution">String substitution</a></li>
-    <li><a href="#functions">Functions</a></li>
+    <li><a href="#builtin-functions">Built-in Functions</a></li>
     <li><a href="#scopes">Scopes</a>
       <ul>
         <li><a href="#record-headers">Record Headers</a></li>
@@ -527,22 +527,31 @@
 	       
 	<p>Some filters (e.g : <a href="#appendfilter">AppendFilter</a>) can be configured using <em>Simple Connect Expression Language</em>.</p>
 <p><em>Simple Connect Expression Language</em> (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.</p>
-<p>The syntax to define an expression is of the form : &ldquo;<code>{% raw %}{{ &lt;expression string&gt; }}{% endraw %}</code>&rdquo;.</p>
-<p>Note : In some situation double brackets can be omitted if the expression is used to write a value into a target field.</p>
-<p>ScEL supports the following functionality :</p>
+<p>The syntax to define an expression is of the form : &ldquo;<code>{{ &lt;expression string&gt; }}</code>&rdquo;.</p>
+
+
+<div class="alert alert-info" role="alert">
+<h4 class="alert-heading">Note</h4>
+In some situation double brackets can be omitted if the expression is used to write a value into a target field.
+</div>
+
+<p>ScEL supports the following capabilities :</p>
 <ul>
-<li>Field Selector</li>
-<li>Nested Navigation</li>
-<li>String substitution</li>
-<li>Functions</li>
+<li><strong>Field Selector</strong></li>
+<li><strong>Nested Navigation</strong></li>
+<li><strong>String substitution</strong></li>
+<li><strong>Functions</strong></li>
 </ul>
 <h2 id="field-selector">Field Selector</h2>
-<p>The expression language can be used to easily select one field from the input record : &ldquo;<code>{% raw %}{{ username }}{% endraw %}</code>.&rdquo;</p>
+<p>The expression language can be used to easily select one field from the input record :</p>
+<p>&ldquo;<code>{{ username }}</code>&rdquo;</p>
 <h2 id="nested-navigation">Nested Navigation</h2>
-<p>To navigate down a struct value, just use a period to indicate a nested field value : &ldquo;<code>{% raw %}{{ address.city }}{% endraw %}</code>.&rdquo;</p>
+<p>To navigate down a struct value, just use a period to indicate a nested field value :</p>
+<p>&ldquo;<code>{{ address.city }}</code>&rdquo;</p>
 <h2 id="string-substitution">String substitution</h2>
-<p>The expression language can be used to easily build a new string field that concatenate multiple ones : &ldquo;<code>{% raw %}{{ &lt;expression one&gt; }}-{{ &lt;expression two&gt;}}{% endraw %}</code>.&rdquo;</p>
-<h2 id="functions">Functions</h2>
+<p>The expression language can be used to easily build a new string field that concatenate multiple ones :</p>
+<p>&ldquo;<code>{{ &lt;expression one&gt; }}-{{ &lt;expression two&gt;}}</code>&rdquo;</p>
+<h2 id="builtin-functions">Built-in Functions</h2>
 <p>ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.</p>
 <table>
 <thead>
@@ -556,96 +565,102 @@
 <tr>
 <td><code>contains</code></td>
 <td>Returns <code>true</code> if an array field's value contains the specified value</td>
-<td><code>{% raw %}{{ contains(array, value) }}{% endraw %}</code></td>
+<td><code>{{ contains(array, value) }}</code></td>
 </tr>
 <tr>
 <td><code>converts</code></td>
 <td>Converts a field'value into the specified type</td>
-<td><code>{% raw %}{{ converts(field, INTEGER) }}{% endraw %}</code></td>
+<td><code>{{ converts(field, INTEGER) }}</code></td>
 </tr>
 <tr>
 <td><code>ends_with</code></td>
 <td>Returns <code>true</code> if an a string field's value end with the specified string suffix</td>
-<td><code>{% raw %}{{ ends_with(field, suffix) }}{% endraw %}</code></td>
+<td><code>{{ ends_with(field, suffix) }}</code></td>
 </tr>
 <tr>
 <td><code>equals</code></td>
 <td>Returns <code>true</code> if an a string or number fields's value equals the specified value</td>
-<td><code>{% raw %}{{ equals(field, value) }}{% endraw %}</code></td>
+<td><code>{{ equals(field, value) }}</code></td>
 </tr>
 <tr>
 <td><code>exists</code></td>
 <td>Returns <code>true</code> if an the specified field exists</td>
-<td><code>{% raw %}{{ ends_with(field, value) }}{% endraw %}</code></td>
+<td><code>{{ ends_with(field, value) }}</code></td>
 </tr>
 <tr>
 <td><code>extract_array</code>| Returns the element at the specified position of the specified array</td>
-<td><code>{% raw %}{{extract_array(array, 0) }}{% endraw %}</code></td>
+<td><code>{{extract_array(array, 0) }}</code></td>
 <td></td>
 </tr>
 <tr>
 <td><code>is_null</code></td>
 <td>Returns <code>true</code> if a field's value is null</td>
-<td><code>{% raw %}{{ is_null(field) }}{% endraw %}</code></td>
+<td><code>{{ is_null(field) }}</code></td>
 </tr>
 <tr>
 <td><code>length</code></td>
 <td>Returns the number of elements into an array of the length of an string field</td>
-<td><code>{% raw %}{{ length(array) }}{% endraw %}</code></td>
+<td><code>{{ length(array) }}</code></td>
 </tr>
 <tr>
 <td><code>lowercase</code></td>
 <td>Converts all of the characters in a string field's value to lower case</td>
-<td><code>{% raw %}{{ lowercase(field) }}{% endraw %}</code></td>
+<td><code>{{ lowercase(field) }}</code></td>
 </tr>
 <tr>
 <td><code>matches</code></td>
 <td>Returns <code>true</code> if a field's value match the specified regex</td>
-<td><code>{% raw %}{{ matches(field, regex) }}{% endraw %}</code></td>
+<td><code>{{ matches(field, regex) }}</code></td>
 </tr>
 <tr>
 <td><code>nlv</code></td>
 <td>Sets a default value if a field's value is null</td>
-<td><code>{% raw %}{{ length(array) }}{% endraw %}</code></td>
+<td><code>{{ length(array) }}</code></td>
 </tr>
 <tr>
 <td><code>replace_all </code></td>
 <td>Replaces every subsequence of the field's value that matches the given pattern with the given replacement string.</td>
-<td><code>{% raw %}{{ replace_all(field, regex, replacement) }}{% endraw %}</code></td>
+<td><code>{{ replace_all(field, regex, replacement) }}</code></td>
 </tr>
 <tr>
 <td><code>starts_with</code></td>
 <td>Returns <code>true</code> if an a string field's value start with the specified string prefix</td>
-<td><code>{% raw %}{{ starts_with(field, prefix) }}{% endraw %}</code></td>
+<td><code>{{ starts_with(field, prefix) }}</code></td>
 </tr>
 <tr>
 <td><code>trim</code></td>
 <td>Trims the spaces from the beginning and end of a string.</td>
-<td><code>{% raw %}{{ trim(field) }}{% endraw %}</code></td>
+<td><code>{{ trim(field) }}</code></td>
 </tr>
 <tr>
 <td><code>uppercase</code></td>
 <td>Converts all of the characters in a string field's value to upper case</td>
-<td><code>{% raw %}{{ uppercase(field) }}{% endraw %}</code></td>
+<td><code>{{ uppercase(field) }}</code></td>
 </tr>
 </tbody>
 </table>
-<p>ScEL supports nested functions. For example this expression replace all whitespace characters after transforming our field's value into lowercase.</p>
-<pre><code>{% raw %}{{ replace_all(lowercase(field), \\s, -)}}{% endraw %}
-</code></pre><p><strong>Limitations</strong> :</p>
-<ul>
-<li>Currently, this is not possible to register user-defined functions (UDFs).</li>
-</ul>
+<p>In addition, ScEL supports nested functions.</p>
+<p>For example, the following expression is used to replace all whitespace characters after transforming our field's value into lowercase.</p>
+<pre><code>{{ replace_all(lowercase(field), \\s, -)}}
+</code></pre>
+
+<div class="alert alert-warning" role="alert">
+<h4 class="alert-heading">Limitation</h4>
+Currently, FilePulse does not support user-defined functions (UDFs). So you cannot register your own functions to enrich the expression language.
+</div>
+
 <h2 id="scopes">Scopes</h2>
-<p>In previous section, we have demonstrated how to use the expression language to select a specific field. The selected field was part of our the current record being processed.</p>
-<p>Actually, ScEL allows you to get access to additional fields through the used of scopes. Basically, a scope defined the root object on  which a selector expression must evaluated.</p>
-<p>The syntax to define an expression  with a scope is of the form : &ldquo;<code>{% raw %}{{ $scope.&lt;selector expression string&gt; }}{% endraw %}</code>&rdquo;.</p>
+<p>In previous section, we have shown how to use the expression language to select a specific field.
+The selected field was part of our the current record being processed.</p>
+<p>Actually, ScEL allows you to get access to additional fields through the used of scopes.
+Basically, a scope defined the root object on which a selector expression must evaluated.</p>
+<p>The syntax to define an expression with a scope is of the form : &ldquo;<code>{{ $&lt;scope&gt;.&lt;selector expression string&gt; }}</code>&rdquo;.</p>
 <p>By default, if no scope is defined in the expression, the scope <code>$value</code> is implicitly used.</p>
 <p>ScEL supports a number of predefined scopes that can be used for example :</p>
 <ul>
-<li>To override the output topic.</li>
-<li>To define record the key to be used.</li>
-<li>To get access to the source file metadata.</li>
+<li><strong>To override the output topic.</strong></li>
+<li><strong>To define record the key to be used.</strong></li>
+<li><strong>To get access to the source file metadata.</strong></li>
 <li>Etc.</li>
 </ul>
 <table>
@@ -658,47 +673,47 @@
 </thead>
 <tbody>
 <tr>
-<td><code>{% raw %}{{ $headers }}{% endraw %}</code></td>
+<td><code>{{ $headers }}</code></td>
 <td>The record headers</td>
 <td>-</td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $key }}{% endraw %}</code></td>
+<td><code>{{ $key }}</code></td>
 <td>The record key</td>
 <td><code>string</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $metadata }}{% endraw %}</code></td>
+<td><code>{{ $metadata }}</code></td>
 <td>The file metadata</td>
 <td><code>struct</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $offset }}{% endraw %}</code></td>
+<td><code>{{ $offset }}</code></td>
 <td>The offset information of this record into the source file</td>
 <td><code>struct</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $system }}{% endraw %}</code></td>
+<td><code>{{ $system }}</code></td>
 <td>The system environment variables and runtime properties</td>
 <td><code>struct</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $timestamp }}{% endraw %}</code></td>
+<td><code>{{ $timestamp }}</code></td>
 <td>The record timestamp</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $topic }}{% endraw %}</code></td>
+<td><code>{{ $topic }}</code></td>
 <td>The output topic</td>
 <td><code>string</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $value }}{% endraw %}</code></td>
+<td><code>{{ $value }}</code></td>
 <td>The record value</td>
 <td><code>struct</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $variables }}{% endraw %}</code></td>
+<td><code>{{ $variables }}</code></td>
 <td>The contextual filter-chain variables</td>
 <td><code>map[string, object]</code></td>
 </tr>
@@ -721,37 +736,37 @@
 </thead>
 <tbody>
 <tr>
-<td><code>{% raw %}{{ $metadata.name }}{% endraw %}</code></td>
+<td><code>{{ $metadata.name }}</code></td>
 <td>The file name</td>
 <td><code>string</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $metadata.path }}{% endraw %}</code></td>
+<td><code>{{ $metadata.path }}</code></td>
 <td>The file directory path</td>
 <td><code>string</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $metadata.absolutePath }}{% endraw %}</code></td>
+<td><code>{{ $metadata.absolutePath }}</code></td>
 <td>The file absolute path</td>
 <td><code>string</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $metadata.hash }}{% endraw %}</code></td>
+<td><code>{{ $metadata.hash }}</code></td>
 <td>The file CRC32 hash</td>
 <td><code>int</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $metadata.lastModified }}{% endraw %}</code></td>
+<td><code>{{ $metadata.lastModified }}</code></td>
 <td>The file last modified time.</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $metadata.size }}{% endraw %}</code></td>
+<td><code>{{ $metadata.size }}</code></td>
 <td>The file size</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $metadata.inode }}{% endraw %}</code></td>
+<td><code>{{ $metadata.inode }}</code></td>
 <td>The file Unix inode</td>
 <td><code>long</code></td>
 </tr>
@@ -759,7 +774,7 @@
 </table>
 <h2 id="record-offset">Record Offset</h2>
 <p>The scope <code>offset</code> allows read access to information about the original position of the record into the source file.
-The available fields depend of the configured FilteInputRecord.</p>
+The available fields depend of the configured FileInputRecord.</p>
 <table>
 <thead>
 <tr>
@@ -770,7 +785,7 @@ The available fields depend of the configured FilteInputRecord.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>{% raw %}{{ $offset.timestamp }}{% endraw %}</code></td>
+<td><code>{{ $offset.timestamp }}</code></td>
 <td>The creation time of the record (millisecond)</td>
 <td><code>long</code></td>
 </tr>
@@ -787,22 +802,22 @@ The available fields depend of the configured FilteInputRecord.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>{% raw %}{{ $offset.startPosition }}{% endraw %}</code></td>
+<td><code>{{ $offset.startPosition }}</code></td>
 <td>The start position of the record into the source file</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $offset.endPosition }}{% endraw %}</code></td>
+<td><code>{{ $offset.endPosition }}</code></td>
 <td>The end position of the record into the source file</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $offset.size }}{% endraw %}</code></td>
+<td><code>{{ $offset.size }}</code></td>
 <td>The size in bytes</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $offset.row }}{% endraw %}</code></td>
+<td><code>{{ $offset.row }}</code></td>
 <td>The row number of the record into the source</td>
 <td><code>long</code></td>
 </tr>
@@ -819,12 +834,12 @@ The available fields depend of the configured FilteInputRecord.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>{% raw %}{{ $offset.startPosition }}{% endraw %}</code></td>
+<td><code>{{ $offset.startPosition }}</code></td>
 <td>The start position of the record into the source file (always equals to 0)</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $offset.endPosition }}{% endraw %}</code></td>
+<td><code>{{ $offset.endPosition }}</code></td>
 <td>The end position of the record into the source file (equals to the file size)</td>
 <td><code>long</code></td>
 </tr>
@@ -841,17 +856,17 @@ The available fields depend of the configured FilteInputRecord.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>{% raw %}{{ $offset.blockStart }}{% endraw %}</code></td>
+<td><code>{{ $offset.blockStart }}</code></td>
 <td>The start position of the current block</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $offset.position }}{% endraw %}</code></td>
+<td><code>{{ $offset.position }}</code></td>
 <td>The position into the current block.</td>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $offset.records }}{% endraw %}</code></td>
+<td><code>{{ $offset.records }}</code></td>
 <td>The number of record read into the current block.</td>
 <td><code>long</code></td>
 </tr>
@@ -869,12 +884,12 @@ The available fields depend of the configured FilteInputRecord.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>{% raw %}{{ $system.env }}{% endraw %}</code></td>
+<td><code>{{ $system.env }}</code></td>
 <td>The system environment variables.</td>
 <td><code>map[string, string]</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $system.props }}{% endraw %}</code></td>
+<td><code>{{ $system.props }}</code></td>
 <td>The system environment properties.</td>
 <td><code>map[string, string]</code></td>
 </tr>
@@ -893,7 +908,7 @@ This scope can be used to share user-defined variables between filters.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 24, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/eac35f6000be2dc0832fcc7273429416adadb613">update(site): fix typo and add processing filter examples (eac35f6)</a>
 </div>
 </div>
 

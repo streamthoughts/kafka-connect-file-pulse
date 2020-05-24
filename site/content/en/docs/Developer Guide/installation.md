@@ -8,10 +8,10 @@ description: >
 ---
 
 
-**Connect FilePulse** can be installed either the [Releases Page](https://github.com/streamthoughts/kafka-connect-file-pulse/releases) Github repository or from the [Confluent Hub](https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse).
+**Connect FilePulse** can be installed either from [GitHub Releases Page](https://github.com/streamthoughts/kafka-connect-file-pulse/releases) or from [Confluent Hub](https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse).
 
-{{% alert title="Caution" color="warn" %}}
-You should note that connector downloaded on Confluent Hub may not reflect the latest available version.
+{{% alert title="Caution" color="warning" %}}
+You should note that the connector downloaded from Confluent Hub may not reflect the latest available version.
 {{% /alert %}}
 
 **Confluent Hub CLI installation**

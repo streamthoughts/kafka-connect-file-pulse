@@ -1,5 +1,5 @@
 ---
-date: 2020-05-21
+date: 2020-05-24
 title: "Processing Filters"
 linkTitle: "Processing Filters"
 weight: 80
@@ -31,15 +31,108 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 
 ### Configuration
 
+The 'Append' filter is probably one of the most important processing filters to know. 
+It allows you to manipulate a source record by easily adding or replacing a field with a constant 
+value or a value extracted from another existing field using  [ScEL](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/).
+
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `field` | The field to append    | string ([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
-| `value` | The value to be appended    | string ([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
+| `field` | The name of the field to be added    | string ([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
+| `value` | The value of the field to be added    | string ([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
 | `overwrite` | Is existing field should be overwrite    | boolean | *false* | high |
 
-### Example
+### Examples
+
+The following examples shows how to use the `AppendFilter` to concat two values from the array field named `values`
+using a [substitution expression](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#string-substitution). 
+The concat value is then added to the a field named `result`.
+
+**Configuration**
+```properties
+filters.SubstituteFilter.field="result"
+filters.SubstituteFilter.value="{{ extract_array(values,0) }}-{{ extract_array(values,1) }}"
+```
+
+**Input**
+```json
+{
+    "record" :{
+      "value": ["Hello", "World"]
+    }
+} 
+```
+**Output**
+```json
+{
+    "record" :{
+      "value": ["Hello", "World"],
+      "result" : "Hello-World"
+    }
+}
+```
+
+In the previous example, we used the simple property expression `result` to indicate the target field to which our value is added. 
+We have actually omitted the [expression scope](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#scopes) `$value`.
+By default, if no scope is defined in an expression, the scope `$value` is implicitly applied.
+Hence, we could have used the fully expression `$value.result` which is similar to the simplified expression `result`.
+
+But, you can perfectly used another expression scope. For example, you can leverage the `AppendFilter` to dynamically
+resolve the record-key or the output topic based on the record data.
+
+The following configuration show how to use the `$topic` scope : 
 
 ```properties
+filters.SubstituteFilter.field="$topic"
+filters.SubstituteFilter.value="my-topic-{{ lowercase(extract_array(values,0) }}"
+```
+**Input**
+```json
+{
+  "record" : {
+    "value": ["Hello", "World"]
+  }
+} 
+```
+
+**Output**
+```json
+{
+  "context": { "topic" : "my-topic-hello" },
+  "record" :{
+    "value": ["Hello", "World"]
+  }
+} 
+```
+
+Finally the `AppendFilter` can also accept an substitution expression for the property field. 
+This allows to dynamically determine the name of the field to be added.
+
+The following examples show how to use a property expression to get the named of the field from a
+
+```properties
+filters.SubstituteFilter.field="{{ target }}"
+filters.SubstituteFilter.value="{{ extract_array(values,0) }}-{{ extract_array(values,1) }}"
+```
+
+**Input**
+```json
+{
+  "record" : {
+    "target": "result",
+    "value": ["Hello", "World"]
+  }
+}
+```
+
+**Output**
+```json
+{
+  "record" : {
+    "target": "result",
+    "value": ["Hello", "World"],
+    "result" : "Hello-World"
+  }
+}
 ```
 
 ## ConvertFilter
@@ -54,9 +147,12 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | `type` | The type field must be converted to  | string | *,* | high |
 | `ignoreMissing` | If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified. | boolean | *true* | high |
 
-### Example
+### Examples
 
 ```properties
+filters.SubstituteFilter.extractColumnNam="headers"
+filters.SubstituteFilter.separator="\\|"
+filters.SubstituteFilter.trimColumn="true"
 ```
 
 ## DateFilter
@@ -73,7 +169,7 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | `locale` | The locale to use for parsing date. | string | *en_EN* | high |
 | `format` | List of the expected date formats. | list | *-* | high |
 
-### Example
+### Examples
 
 ```properties
 ```
@@ -95,7 +191,7 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 |`autoGenerateColumnNames` | Define whether column names should autogenerated or not (column names will of the form 'column1, column2') | *true* | boolean | high |
 |`columns` | The list of comma-separated column names in order they appear in each row. columns must be in the form of NAME:TYPE | string | | high |
 
-### Example
+### Examples
 
 The following example shows the use of the `DelimitedRowFilter` to split the `message` field using `|` as a separator character.
 The name of each column is extracted from the fields `headers`.
@@ -128,7 +224,7 @@ The drop filter can be used to prevent some messages (i.n records) to be written
 
 For more information about `if` property, see : [Conditional execution](conditional-execution).
 
-### Example
+### Examples
 
 The following example shows the usage of **DropFilter** to only keep records with a field `level` containing to `ERROR`.
 
@@ -154,7 +250,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 |`invert` | Invert the boolean value return from the filter condition. |  boolean | *false* | medium |
 |`message` | The error message thrown by the filter. ([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) |  string | *-* | high |
 
-### Example
+### Examples
 
 The following example shows the usage of **FailFilter** to stop processing a file when a field is equals to `null`.
 
@@ -188,7 +284,7 @@ Internally, FilePulse uses the regular expression library is [Joni](https://gith
 | `patternsDir` | List of user-defined pattern directories | string | *-* | low |
 | `source` | The input field on which to apply the filter  | string | *message* | medium |
 
-### Example
+### Examples
 
 The following example shows the usage of **GrokFilter** to parse and extract fields from application log message.
 
@@ -212,7 +308,7 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | `max.buffered.records` | The maximum number of records to group (default : -1).| integer | *-1* | high |
 | `target` | The target array field to put the grouped field | integer | *records* | high |
 
-### Example
+### Examples
 
 ```properties
 ```
@@ -229,7 +325,7 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | `target` | The target field.    | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
 | `separator` | The separator used for joining array values.   | string | *,* | high |
 
-### Example
+### Examples
 
 ## JSONFilter
 
@@ -246,7 +342,7 @@ The JSON filter parses an input json field.
 | `source` | The input field on which to apply the filter  | string | *message* | medium |
 | `target` | he target field to put the parsed JSON data  | string | *-* | high |
 
-### Example
+### Examples
 
 ```properties
 filters=MyJsonFilter
@@ -272,7 +368,7 @@ The multirow filter joins multiple lines into a single Struct using a regex patt
 | `patternsDir` | List of user-defined pattern directories | string | *-* | low |
 | `separator` | The character to be used to concat multi lines  | string | "\\n" | high |
 
-### Example
+### Examples
 
 The following example shows the usage of the `MultiRowFilter` to join Java exception message with its stacktrace. 
 
@@ -295,7 +391,7 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 | `target` | The target name | string | *-* | high |
 | `ignoreMissing` | If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified. | boolean | *true* | high |
 
-### Example
+### Examples
 
 ```properties
 ```

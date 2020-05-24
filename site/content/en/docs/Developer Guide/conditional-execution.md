@@ -21,7 +21,7 @@ For example, the below filter will only be applied on message having a log messa
 
 ```
 filters.TagSecurityException.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
-filters.TagSecurityException.if={% raw %}{{ contains(data.logmessage, BadCredentialsException) }}{% endraw %}
+filters.TagSecurityException.if={{ contains(data.logmessage, BadCredentialsException) }}
 filters.TagSecurityException.invert=false
 filters.TagSecurityException.field=tags
 filters.TagSecurityException.values=SecurityAlert

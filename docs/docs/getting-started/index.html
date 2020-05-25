@@ -509,12 +509,12 @@
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ <span style="color:#204a87">export</span> <span style="color:#000">GITHUB_REPO_MASTER</span><span style="color:#ce5c00;font-weight:bold">=</span>https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/
 </code></pre></div><p><strong>1 ) Run Confluent Platforms with Connect File Pulse</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
-$ curl -sSL <span style="color:#000">$GITHUB_REPO_MASTER</span>/docker-compose.yml -o docker-commose.yml
+$ curl -sSL <span style="color:#000">$GITHUB_REPO_MASTER</span>/docker-compose.yml -o docker-compose.yml
 $ docker-compose up -d
 </code></pre></div><p><strong>2 ) Verify that Connect Worker is running (optional)</strong></p>
-<pre><code>$ docker-compose logs connect-file-pulse&quot;
+<pre><code>$ docker-compose logs &quot;connect-file-pulse&quot;
 </code></pre><p><strong>3 ) Check that Connect File Pulse plugin is correctly loaded (optional)</strong></p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -sX GET http://localhost:8083/connector-plugins <span style="color:#000;font-weight:bold">|</span> grep FilePulseSourceConnector
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl -sX GET http://localhost:8083/connector-plugins <span style="color:#000;font-weight:bold">|</span> grep FilePulseSourceConnector
 </code></pre></div><h2 id="example--logs-parsing-log4j">Example : Logs Parsing (Log4j)</h2>
 <p>This example starts a new connector instance to parse the Kafka Connect container log4j logs before writing them into a configured topic.</p>
 <p><strong>1 ) Start a new connector instance</strong></p>
@@ -628,7 +628,7 @@ $ docker cp quickstart-musics-dataset.csv connect://tmp/kafka-connect/examples/q
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8e53a270d83e437d87d2924e8cf388d35bd1d67c">update(site): update site docs (8e53a27)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 25, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0dc32170d09ee246efc839f012591630c0102223">fix(site): fix getting started commands (0dc3217)</a>
 </div>
 </div>
 

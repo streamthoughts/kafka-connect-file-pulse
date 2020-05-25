@@ -54,7 +54,7 @@ When you run Connect workers in &lt;strong&gt;distributed mode&lt;/strong&gt;, t
     <item>
       <title>Docs: Basic Configuration</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</link>
-      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</guid>
       <description>
@@ -124,13 +124,6 @@ Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;internal.kafka.reporter.id&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The reporter identifier which is used as a group.id (must be unique for each connect instance)&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
 &lt;td&gt;&lt;code&gt;internal.kafka.reporter.bootstrap.servers&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
@@ -160,6 +153,27 @@ Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;h3 id=&#34;prior-to-connect-filepulse-13x-deprecated&#34;&gt;Prior to Connect FilePulse 1.3.x (deprecated)&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;internal.kafka.reporter.id&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The reporter identifier to be used by tasks and connector to report and monitor file progression (default null). This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility (when set, must be unique for each connect instance).&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;high&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
       </description>
     </item>
@@ -167,19 +181,19 @@ Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
     <item>
       <title>Docs: Scanning Files</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/</link>
-      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/</guid>
       <description>
         
         
-        &lt;p&gt;The connector can be configured with a specific &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java&#34;&gt;FSDirectoryWalker&lt;/a&gt;
-implementation that will be responsible to scan an input directory looking for files to stream into Kafka.&lt;/p&gt;
+        &lt;p&gt;The connector must be configured with a specific &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java&#34;&gt;FSDirectoryWalker&lt;/a&gt;&lt;br&gt;
+that will be responsible for scanning an input directory to find files eligible to be streamed in Kafka.&lt;/p&gt;
 &lt;p&gt;The default &lt;code&gt;FSDirectoryWalker&lt;/code&gt; implementation is :&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;When scheduled, the  &lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt; will recursively scan the input directory configured via  &lt;code&gt;input.directory.path&lt;/code&gt;.
-The SourceConnector will run a background-thread to periodically trigger a file system scan using the configured FSDirectoryWalker.&lt;/p&gt;
-&lt;h2 id=&#34;connector-configuration&#34;&gt;Connector Configuration&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;FilePulseSourceConnector&lt;/code&gt; periodically triggers a file system scan of the directory specified in the &lt;code&gt;input.directory.path&lt;/code&gt;
+connector property. Scan is executed in a background-thread invoking the configured &lt;code&gt;FSDirectoryWalker&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;configuring-directory-scan-using-localfsdirectorywalker&#34;&gt;Configuring Directory Scan (using &lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt;)&lt;/h2&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -212,36 +226,43 @@ The SourceConnector will run a background-thread to periodically trigger a file 
 &lt;td&gt;&lt;em&gt;10000&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;filter-files&#34;&gt;Filter files&lt;/h2&gt;
-&lt;p&gt;Files can be filtered to determine if they need to be scheduled or ignored. Files which are filtered are simply skipped and
-keep untouched on the file system until next scan. On the next scan, previously filtered files will be evaluate again to determine if there are now eligible to be processing.&lt;/p&gt;
-&lt;p&gt;These filters are available for use with Kafka Connect File Pulse:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;Filter&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;IgnoreHiddenFileFilter&lt;/td&gt;
-&lt;td&gt;Filters hidden files from being read.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;fs.scan.filters&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The comma-separated list of fully qualified class names of the filter-filters to be uses to list eligible input files&lt;/td&gt;
+&lt;td&gt;list&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;medium&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;LastModifiedFileFilter&lt;/td&gt;
-&lt;td&gt;Filters files that been modified to recently based on their last modified date property&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;RegexFileFilter&lt;/td&gt;
-&lt;td&gt;Filter file that do not match the specified regex&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;fs.recursive.scan.enable&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Boolean indicating whether local directory should be recursively scanned&lt;/td&gt;
+&lt;td&gt;boolean&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;true&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;medium&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt; will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path&#34;&gt;Files#probeContentType&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;filtering-input-files&#34;&gt;Filtering input files&lt;/h2&gt;
+&lt;p&gt;You can configure one or more &lt;code&gt;FileFilter&lt;/code&gt; that will be used to determine if a file should be scheduled for processing or ignored.
+All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
+At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p&gt;
+&lt;p&gt;FilePulse packs with the following built-in filters :&lt;/p&gt;
+&lt;h3 id=&#34;ignorehiddenfilefilter&#34;&gt;IgnoreHiddenFileFilter&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;IgnoreHiddenFileFilter&lt;/code&gt; can be used to filter hidden files from being read.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Configuration example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;lastmodifiedfilefilter&#34;&gt;LastModifiedFileFilter&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;LastModifiedFileFilter&lt;/code&gt; can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
+# The last modified time for a file can be accepted (default: 5000)
+file.filter.minimum.age.ms=10000
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;regexfilefilter&#34;&gt;RegexFileFilter&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;RegexFileFilter&lt;/code&gt; can be used to filter files that do not match the specified regex.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileFilter
+# The regex pattern used to matches input files
+file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt; will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path&#34;&gt;Files#probeContentType&lt;/a&gt;)&lt;/p&gt;
 &lt;p&gt;The connector supports the following content types :&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;GIZ&lt;/strong&gt; : &lt;code&gt;application/x-gzip&lt;/code&gt;&lt;/li&gt;

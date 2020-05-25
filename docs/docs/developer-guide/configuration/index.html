@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/" />
-<meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T23:53:16+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-05-25T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-05-25T09:45:47+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Basic Configuration">
 <meta itemprop="description" content="The commons configuration for deploying a File Pulse connector.
 ">
-<meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T23:53:16&#43;02:00" />
-<meta itemprop="wordCount" content="234">
+<meta itemprop="datePublished" content="2020-05-25T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-05-25T09:45:47&#43;02:00" />
+<meta itemprop="wordCount" content="277">
 
 
 
@@ -47,8 +47,8 @@
 
 
 
-<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.773364cdfc79c10f64fe42e411b206830c0787d901a1eb8decd8a234dbbc9476.css" as="style">
-<link href="/kafka-connect-file-pulse/scss/main.min.773364cdfc79c10f64fe42e411b206830c0787d901a1eb8decd8a234dbbc9476.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.869b6c4539c54a4f00973a4e8871e11b904935560f012455b9e74f63e807ecd2.css" as="style">
+<link href="/kafka-connect-file-pulse/scss/main.min.869b6c4539c54a4f00973a4e8871e11b904935560f012455b9e74f63e807ecd2.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -457,6 +457,16 @@
 
 
 
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#commons-configuration">Commons configuration</a>
+      <ul>
+        <li><a href="#prior-to-connect-filepulse-13x-deprecated">Prior to Connect FilePulse 1.3.x (deprecated)</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
 
 
           </div>
@@ -567,13 +577,6 @@ Those configuration are described in detail in subsequent chapters.</p>
 <td>high</td>
 </tr>
 <tr>
-<td><code>internal.kafka.reporter.id</code></td>
-<td>The reporter identifier which is used as a group.id (must be unique for each connect instance)</td>
-<td>string</td>
-<td><em>-</em></td>
-<td>high</td>
-</tr>
-<tr>
 <td><code>internal.kafka.reporter.bootstrap.servers</code></td>
 <td>A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.</td>
 <td>string</td>
@@ -603,10 +606,31 @@ Those configuration are described in detail in subsequent chapters.</p>
 </tr>
 </tbody>
 </table>
+<h3 id="prior-to-connect-filepulse-13x-deprecated">Prior to Connect FilePulse 1.3.x (deprecated)</h3>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>internal.kafka.reporter.id</code></td>
+<td>The reporter identifier to be used by tasks and connector to report and monitor file progression (default null). This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility (when set, must be unique for each connect instance).</td>
+<td>string</td>
+<td><em>-</em></td>
+<td>high</td>
+</tr>
+</tbody>
+</table>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/107726955d237dc23a2248075564fdcb0732cfd0">fix(site): fix typo and bad config property (1077269)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 25, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f11bd9e95b73107259c8282b3f0d150c23a8c166">update(site): update docs for version 1.3 (f11bd9e)</a>
 </div>
 </div>
 

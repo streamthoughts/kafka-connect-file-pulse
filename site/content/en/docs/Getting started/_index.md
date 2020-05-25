@@ -27,18 +27,18 @@ $ export GITHUB_REPO_MASTER=https://raw.githubusercontent.com/streamthoughts/kaf
 
 ```bash
 
-$ curl -sSL $GITHUB_REPO_MASTER/docker-compose.yml -o docker-commose.yml
+$ curl -sSL $GITHUB_REPO_MASTER/docker-compose.yml -o docker-compose.yml
 $ docker-compose up -d
 ```
 
 **2 ) Verify that Connect Worker is running (optional)**
 ```
-$ docker-compose logs connect-file-pulse"
+$ docker-compose logs "connect-file-pulse"
 ```
 
 **3 ) Check that Connect File Pulse plugin is correctly loaded (optional)**
 ```bash
-curl -sX GET http://localhost:8083/connector-plugins | grep FilePulseSourceConnector
+$ curl -sX GET http://localhost:8083/connector-plugins | grep FilePulseSourceConnector
 ```
 
 ## Example : Logs Parsing (Log4j)

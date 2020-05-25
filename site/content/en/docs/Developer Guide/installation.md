@@ -19,7 +19,7 @@ You should note that the connector downloaded from Confluent Hub may not reflect
 Use the [Confluent Hub client](https://docs.confluent.io/current/confluent-hub/client.html) to install this connector with:
 
 ```bash
-confluent-hub install streamthoughts/kafka-connect-file-pulse:1.2.1
+confluent-hub install streamthoughts/kafka-connect-file-pulse:latest
 ```
 
 **Download Installation**
@@ -28,7 +28,7 @@ Download the distribution ZIP file for the latest available version.
 
 **Example :**
 ```bash
-export VERSION=1.2.2
+export VERSION=1.3.0
 curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v$VERSION/streamthoughts-kafka-connect-file-pulse-$VERSION.zip
 ```
 

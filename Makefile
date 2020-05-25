@@ -1,6 +1,8 @@
 # Makefile used to build docker images for Connect File Pulse
 
 CONNECT_VERSION := $(shell mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+GIT_COMMIT := $(shell git rev-parse --short HEAD)
+GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 REPOSITORY = streamthoughts
 IMAGE = kafka-connect-file-pulse
@@ -26,9 +28,14 @@ clean-build:
 build-images:
 	echo "Building image \n========================================== ";
 	echo "CONNECT_VERSION="$(CONNECT_VERSION)
+	echo "GIT_COMMIT="$(GIT_COMMIT)
+	echo "GIT_BRANCH="$(GIT_BRANCH)
 	echo "==========================================\n "
-	mvn clean package && \
+	mvn clean package -q && \
 	docker build \
+    --build-arg connectFilePulseVersion=${CONNECT_VERSION} \
+    --build-arg connectFilePulseCommit=${GIT_COMMIT} \
+    --build-arg connectFilePulseBranch=${GIT_BRANCH} \
 	-t ${REPOSITORY}/${IMAGE}:latest . || exit 1 ;
 	docker tag ${REPOSITORY}/${IMAGE}:latest ${REPOSITORY}/${IMAGE}:${CONNECT_VERSION} || exit 1 ;
 

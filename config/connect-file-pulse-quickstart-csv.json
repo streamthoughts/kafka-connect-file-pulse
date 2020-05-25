@@ -13,7 +13,6 @@
     "fs.scan.directory.path": "/tmp/kafka-connect/examples/",
     "fs.scan.interval.ms": "10000",
     "internal.kafka.reporter.bootstrap.servers": "broker:29092",
-    "internal.kafka.reporter.id": "connect-file-pulse-quickstart-csv",
     "internal.kafka.reporter.topic": "connect-file-pulse-status",
     "offset.strategy": "name+hash",
     "skip.headers": "1",

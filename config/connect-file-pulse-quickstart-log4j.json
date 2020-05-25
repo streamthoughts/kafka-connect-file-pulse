@@ -15,7 +15,6 @@
     "fs.scan.directory.path": "/var/log/kafka/",
     "fs.scan.interval.ms": "10000",
     "internal.kafka.reporter.bootstrap.servers": "broker:29092",
-    "internal.kafka.reporter.id": "connect-file-pulse-log4j-quickstart",
     "internal.kafka.reporter.topic": "connect-file-pulse-status",
     "offset.strategy": "name",
     "read.max.wait.ms": "5000",

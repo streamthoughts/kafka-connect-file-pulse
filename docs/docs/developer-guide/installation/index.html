@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/" />
 <meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-25T10:09:12+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-05-26T11:59:45+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Installation">
 <meta itemprop="description" content="How to install Connect File Pulse
 ">
 <meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-25T10:09:12&#43;02:00" />
-<meta itemprop="wordCount" content="105">
+<meta itemprop="dateModified" content="2020-05-26T11:59:45&#43;02:00" />
+<meta itemprop="wordCount" content="121">
 
 
 
@@ -520,7 +520,9 @@ You should note that the connector downloaded from Confluent Hub may not reflect
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#204a87">export</span> <span style="color:#000">VERSION</span><span style="color:#ce5c00;font-weight:bold">=</span>1.3.0
 curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v<span style="color:#000">$VERSION</span>/streamthoughts-kafka-connect-file-pulse-<span style="color:#000">$VERSION</span>.zip
 </code></pre></div><p>Extract it into one of the directories that is listed on the <code>plugin.path</code> worker configuration property.</p>
-
+<p>You can also use the Confluent Hub CLI for installing it.</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-<span style="color:#000">$VERSION</span>.zip
+</code></pre></div>
 
 <div class="alert alert-info" role="alert">
 <h4 class="alert-heading">Important</h4>
@@ -530,7 +532,7 @@ When you run Connect workers in <strong>distributed mode</strong>, the connector
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 25, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e760e4ef4e81ba890a1f42fca6e0e90f51e59259">bump maven version for next release (e760e4e)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 26, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9b5c2650f0dcdb065bd70a265fd5c9779cb9c411">update(site): add entries into FAQ (9b5c265)</a>
 </div>
 </div>
 

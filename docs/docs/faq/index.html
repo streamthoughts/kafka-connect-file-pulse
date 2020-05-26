@@ -26,7 +26,7 @@
 " />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/faq/" />
-<meta property="og:updated_time" content="2020-05-20T00:00:00+00:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="og:updated_time" content="2020-05-25T00:00:00+00:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="FAQ">
 <meta itemprop="description" content="The most frequently asked questions ?
 "><meta name="twitter:card" content="summary"/>
@@ -452,9 +452,11 @@
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#could-we-deployed-kafkaconnectfilepulse-in-distributed-mode-">Could we deployed kafka-connect-file-pulse in distributed mode ?</a></li>
-    <li><a href="#is-kafkaconnectfilepulse-faulttolerant-">Is kafka-connect-file-pulse fault-tolerant ?</a></li>
-    <li><a href="#is-kafkaconnectfilepulse-could-be-used-in-place-of-other-solutions-like-logstash-">Is kafka-connect-file-pulse could be used in place of other solutions like Logstash ?</a></li>
+    <li><a href="#could-we-deployed-filepulse-connector-in-distributed-mode-">Could we deployed FilePulse connector in distributed mode ?</a></li>
+    <li><a href="#is-filepulse-connector-faulttolerant-">Is FilePulse connector fault-tolerant ?</a></li>
+    <li><a href="#is-filepulse-connector-could-be-used-in-place-of-other-solutions-like-logstash-">Is FilePulse connector could be used in place of other solutions like Logstash ?</a></li>
+    <li><a href="#is-filepulse-connector-support-saslssl-authentication-mechanisms-and-can-be-deployed-on-confluent-cloud-">Is FilePulse connector support SASL/SSL authentication mechanisms and can be deployed on Confluent Cloud ?</a></li>
+    <li><a href="#what-are-the-differences-between-filepulse-connector-and-others-kafka-connectors-for-streaming-files-">What are the differences between FilePulse connector and others Kafka connectors for streaming files ?</a></li>
   </ul>
 </nav>
 
@@ -494,15 +496,129 @@
 	<h1>FAQ</h1>
         <div class="lead">The most frequently asked questions ?</div>
 	
-	<h2 id="could-we-deployed-kafkaconnectfilepulse-in-distributed-mode-">Could we deployed kafka-connect-file-pulse in distributed mode ?</h2>
+	<h2 id="could-we-deployed-filepulse-connector-in-distributed-mode-">Could we deployed FilePulse connector in distributed mode ?</h2>
 <p>Connect File Pulse must be running locally to the machine hosting files to be ingested. It is recommend to deploy your connector in distributed mode. Multiple Kafka Connect workers can be deployed on the same machine and participating in the same cluster. The configured input directory will be scanned by the JVM running the SourceConnector. Then, all detected files will be scheduled amongs the tasks spread on your local cluster.</p>
-<h2 id="is-kafkaconnectfilepulse-faulttolerant-">Is kafka-connect-file-pulse fault-tolerant ?</h2>
+<h2 id="is-filepulse-connector-faulttolerant-">Is FilePulse connector fault-tolerant ?</h2>
 <p>Connect File Pulse guarantees no data loss by leveraging Kafka Connect fault-tolerance capabilities.
 Each task keeps a trace of the file offset of the last record written into Kafka. In case of a restart, tasks will continue where they stopped before crash.
 Note, that some duplicates maybe written into Kafka.</p>
-<h2 id="is-kafkaconnectfilepulse-could-be-used-in-place-of-other-solutions-like-logstash-">Is kafka-connect-file-pulse could be used in place of other solutions like Logstash ?</h2>
+<h2 id="is-filepulse-connector-could-be-used-in-place-of-other-solutions-like-logstash-">Is FilePulse connector could be used in place of other solutions like Logstash ?</h2>
 <p>Connect File Pulse has some features which are similar to the ones provided by Logstash <a href="https://www.elastic.co/guide/en/logstash/current/codec-plugins.html">codecs</a>/<a href="https://www.elastic.co/guide/en/logstash/current/filter-plugins.html">filters</a>. Filters like GrokFilter are actually strongly inspired from Logstash. For example you can use it to parse non-structured data like application logs.</p>
 <p>However, Connect File Pulse has not be originally designed to collect dynamic application log files.</p>
+<h2 id="is-filepulse-connector-support-saslssl-authentication-mechanisms-and-can-be-deployed-on-confluent-cloud-">Is FilePulse connector support SASL/SSL authentication mechanisms and can be deployed on Confluent Cloud ?</h2>
+<p>Yes, FilePulse connector can be deployed on any Kafka Cluster. However, the connector currently requires the use of an internal topic
+to synchronize the Connector instance and the Tasks that process files. For doing this, the connector
+will create both a producer and consumer clients that you must configured when running the connector with a secured Kafka Cluster.</p>
+<p>To override the default configuration for the internal consumer and producer clients,
+you can used one of the following override prefixes :</p>
+<ul>
+<li><code>internal.kafka.reporter.consumer.&lt;consumer_property&gt;</code></li>
+<li><code>internal.kafka.reporter.producer.&lt;producer_property&gt;</code></li>
+</ul>
+<h2 id="what-are-the-differences-between-filepulse-connector-and-others-kafka-connectors-for-streaming-files-">What are the differences between FilePulse connector and others Kafka connectors for streaming files ?</h2>
+<p>The following table shows a simple comparison between Connect File Pulse and other solutions : <a href="https://github.com/jcustenborder/kafka-connect-spooldir">Connect Spooldir</a> and Connect <a href="https://github.com/apache/kafka/tree/trunk/connect/file">FileStreams</a></p>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">Connect FilePulse</th>
+<th align="center">Connect Spooldir</th>
+<th align="center">Connect FileStreams</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>Connector Type</strong></td>
+<td align="center">source</td>
+<td align="center">source</td>
+<td align="center">source / sink</td>
+</tr>
+<tr>
+<td align="left"><strong>License</strong></td>
+<td align="center">Apache License 2.0</td>
+<td align="center">Apache License 2.0</td>
+<td align="center">Apache License 2.0</td>
+</tr>
+<tr>
+<td align="left"><strong>Available on Confluent Hub</strong></td>
+<td align="center">YES</td>
+<td align="center">YES</td>
+<td align="center">YES</td>
+</tr>
+<tr>
+<td align="left"><strong>Docker image</strong></td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+<td align="center">NO</td>
+</tr>
+<tr>
+<td align="left"><strong>Delivery semantics</strong></td>
+<td align="center">At-least-once</td>
+<td align="center">At-least-once</td>
+<td align="center">At-most-once</td>
+</tr>
+<tr>
+<td align="left"><strong>Usable in production</strong></td>
+<td align="center">YES</td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+</tr>
+<tr>
+<td align="left"><strong>Supported file formats(out-of-the box)</strong></td>
+<td align="center">Delimited, Binary, JSON, Avro, XML (limited)</td>
+<td align="center">Delimited, JSON</td>
+<td align="center">Text file</td>
+</tr>
+<tr>
+<td align="left"><strong>Support recursive directory scan</strong></td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+<td align="center">NO</td>
+</tr>
+<tr>
+<td align="left"><strong>Support Archive and Compressed files</strong></td>
+<td align="center">YES (<code>GZIP</code>, <code>TAR</code>, <code>ZIP</code>)</td>
+<td align="center">NO</td>
+<td align="center">NO</td>
+</tr>
+<tr>
+<td align="left"><strong>Source partitions</strong></td>
+<td align="center">Configurable (filename, path, filename+hash)</td>
+<td align="center">filename</td>
+<td align="center">filename</td>
+</tr>
+<tr>
+<td align="left"><strong>Support for multi-tasks</strong></td>
+<td align="center">YES</td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+</tr>
+<tr>
+<td align="left"><strong>Support for worker distributed mode</strong></td>
+<td align="center">YES (requires a shared volume)</td>
+<td align="center">NO</td>
+<td align="center">NO</td>
+</tr>
+<tr>
+<td align="left"><strong>Support for streaming log files</strong></td>
+<td align="center">YES</td>
+<td align="center">NO</td>
+<td align="center">YES</td>
+</tr>
+<tr>
+<td align="left"><strong>Support for transformation</strong></td>
+<td align="center">Single Message Transforms <br /> Processing Filters (Grok, Append, JSON, etc)</td>
+<td align="center">Single Message Transforms</td>
+<td align="center">* Single Message Transforms</td>
+</tr>
+<tr>
+<td align="left"><strong>Support for tracking processing progress of files</strong></td>
+<td align="center">YES (using an internal topic)</td>
+<td align="center">NO</td>
+<td align="center">NO</td>
+</tr>
+</tbody>
+</table>
 
         <div class="section-index">
     
@@ -558,7 +674,7 @@ Note, that some duplicates maybe written into Kafka.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 26, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9b5c2650f0dcdb065bd70a265fd5c9779cb9c411">update(site): add entries into FAQ (9b5c265)</a>
 </div>
 </div>
 

@@ -40,7 +40,9 @@ You should note that the connector downloaded from Confluent Hub may not reflect
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;VERSION&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;1.3.0
 curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v&lt;span style=&#34;color:#000&#34;&gt;$VERSION&lt;/span&gt;/streamthoughts-kafka-connect-file-pulse-&lt;span style=&#34;color:#000&#34;&gt;$VERSION&lt;/span&gt;.zip
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Extract it into one of the directories that is listed on the &lt;code&gt;plugin.path&lt;/code&gt; worker configuration property.&lt;/p&gt;
-
+&lt;p&gt;You can also use the Confluent Hub CLI for installing it.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-&lt;span style=&#34;color:#000&#34;&gt;$VERSION&lt;/span&gt;.zip
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
 &lt;h4 class=&#34;alert-heading&#34;&gt;Important&lt;/h4&gt;
@@ -265,7 +267,7 @@ file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
 &lt;p&gt;&lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt; will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path&#34;&gt;Files#probeContentType&lt;/a&gt;)&lt;/p&gt;
 &lt;p&gt;The connector supports the following content types :&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;GIZ&lt;/strong&gt; : &lt;code&gt;application/x-gzip&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;GZIP&lt;/strong&gt; : &lt;code&gt;application/x-gzip&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;TAR&lt;/strong&gt; : &lt;code&gt;application/x-tar&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;ZIP&lt;/strong&gt; : &lt;code&gt;application/x-zip-compressed&lt;/code&gt; or &lt;code&gt;application/zip&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;

@@ -34,6 +34,12 @@ curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/do
 
 Extract it into one of the directories that is listed on the `plugin.path` worker configuration property.
 
+You can also use the Confluent Hub CLI for installing it.
+
+```bash
+$ confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-$VERSION.zip
+```
+
 {{% alert title="Important" color="info" %}}
 When you run Connect workers in **distributed mode**, the connector-plugin must be installed **on each of machines** running Kafka Connect.
 {{% /alert %}}

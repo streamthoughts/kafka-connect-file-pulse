@@ -71,6 +71,6 @@ file.filter.regex.pattern="\\.log$"
 
 The connector supports the following content types :
 
-* **GIZ** : `application/x-gzip`
+* **GZIP** : `application/x-gzip`
 * **TAR** : `application/x-tar`
 * **ZIP** : `application/x-zip-compressed` or `application/zip`

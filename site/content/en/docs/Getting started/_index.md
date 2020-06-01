@@ -4,7 +4,7 @@ title: "Getting Started"
 linkTitle: "Getting Started"
 weight: 10
 description: >
-  Get started with Connect Fie Pulse through a step by step tutorial.
+  Get started with Connect File Pulse through a step by step tutorial.
 ---
 
 In this tutorial we will explore how to deploy a basic Connect File Pulse connector step by step.

@@ -81,6 +81,8 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
 
     private long maxWaitMs = 0L;
 
+    private long lastObservedRecords = -1L;
+
     private AtomicBoolean initialized = new AtomicBoolean(false);
 
     /**
@@ -139,6 +141,7 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
     public RecordsIterable<FileRecord<TypedStruct>> next() {
         try {
             initializeIfNeeded();
+            mayWaitForLinesToBeAvailable();
             List<FileRecord<TypedStruct>> records = new LinkedList<>();
             List<TextBlock> lines = reader.readLines(minNumReadRecords);
             if (lines != null) {
@@ -148,6 +151,11 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
                         records.add(createOutputRecord(line));
                     }
                 }
+            }
+            if (!records.isEmpty() && canWaitForMoreRecords()) {
+                // Only update lastObservedRecords if no more record is expected to be read,
+                // otherwise the next iteration will be performed.
+                lastObservedRecords = Time.SYSTEM.milliseconds();
             }
             return new RecordsIterable<>(records);
         } catch (IOException e) {
@@ -159,11 +167,33 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
         return null;
     }
 
+    private void mayWaitForLinesToBeAvailable() {
+        if (!reader.hasNext()) {
+            LOG.debug("Waiting for more bytes from file {} (timeout={}ms)", context.metadata(), maxWaitMs);
+            final long timeout = lastObservedRecords + maxWaitMs;
+            while (!reader.hasNext() && canWaitForMoreRecords()) {
+                Time.SYSTEM.sleep(Math.min(100, Math.abs(timeout - Time.SYSTEM.milliseconds())));
+            }
+        }
+
+        if (!reader.hasNext() && !canWaitForMoreRecords()) {
+            LOG.info(
+                "Timeout after waiting for more bytes from file {} after '{}ms'.",
+                context.metadata(),
+                maxWaitMs
+            );
+            if (reader.remaining()) {
+                LOG.info("Remaining buffered bytes detected");
+                reader.enableAutoFlush();
+            }
+        }
+    }
+
     private void updateContext() {
         final SourceOffset offset = new SourceOffset(
-                reader.position(),
-                offsetLines,
-                Time.SYSTEM.milliseconds());
+            reader.position(),
+            offsetLines,
+            Time.SYSTEM.milliseconds());
         context = context.withOffset(offset);
     }
 
@@ -191,6 +221,7 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
         if (!initialized.get()) {
             mayReadHeaders();
             mayReadFooters();
+            lastObservedRecords = Time.SYSTEM.milliseconds();
             initialized.set(true);
         }
     }
@@ -200,28 +231,13 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
      */
     @Override
     public boolean hasNext() {
-        boolean hasNext = reader.hasNext();
-        if (hasNext) return true;
+        return reader.hasNext() ||
+               reader.remaining() ||
+               canWaitForMoreRecords();
+    }
 
-        LOG.debug("Waiting for more bytes from file {} (timeout={}ms)", context.metadata(), maxWaitMs);
-        long timeout = Time.SYSTEM.milliseconds() + maxWaitMs;
-        do {
-            Time.SYSTEM.sleep(Math.min(100, Math.abs(timeout - Time.SYSTEM.milliseconds())));
-            hasNext = reader.hasNext();
-        } while (!hasNext && Time.SYSTEM.milliseconds() < timeout );
-
-        if (!hasNext) {
-            LOG.info(
-                "Timeout after waiting for more bytes from file {} after '{}ms'.",
-                context.metadata(),
-                maxWaitMs);
-            if (reader.remaining()) {
-                LOG.info("Remaining buffered bytes detected");
-                reader.enableAutoFlush();
-                hasNext = true;
-            }
-        }
-        return hasNext;
+    private boolean canWaitForMoreRecords() {
+        return lastObservedRecords + maxWaitMs > Time.SYSTEM.milliseconds();
     }
 
     /**

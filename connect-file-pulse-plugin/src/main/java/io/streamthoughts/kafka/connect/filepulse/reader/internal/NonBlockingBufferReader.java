@@ -64,7 +64,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
     // Number of bytes read during last iteration.
     private int nread = -1;
 
-    private boolean autoFlush = true;
+    private boolean isAutoFlushOnEOF = true;
 
     /**
      * Creates a new {@link NonBlockingBufferReader} instance.
@@ -113,7 +113,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
      * flush all remaining buffered bytes as a single line when EOF is reached.
      */
     public void enableAutoFlush() {
-        this.autoFlush = true;
+        this.isAutoFlushOnEOF = true;
     }
 
     /**
@@ -121,27 +121,22 @@ public class NonBlockingBufferReader implements AutoCloseable {
      * flush all remaining buffered bytes when EOF is reached.
      */
     public void disableAutoFlush() {
-        this.autoFlush = false;
+        this.isAutoFlushOnEOF = false;
     }
 
-    public List<TextBlock> readLines(int minRecords) throws IOException {
+    public List<TextBlock> readLines(final int minRecords, final boolean strict) throws IOException {
         // Unfortunately we can't just use readLine() because it blocks in an uninterruptible way.
         // Instead we have to manage splitting lines ourselves, using simple backoff when no new value
         // is available.
         final List<TextBlock> records = new LinkedList<>();
         nread = 0;
+
+        boolean maxNumRecordsNotReached = true;
         while (reader.ready() && (records.isEmpty() || records.size() < minRecords)) {
             nread = reader.read(buffer, bufferOffset, buffer.length - bufferOffset);
             if (nread > 0) {
                 bufferOffset += nread;
-                TextBlock line;
-                do {
-                    line = tryToExtractLine();
-                    if (line != null) {
-                        records.add(line);
-                    }
-                } while (line != null);
-
+                maxNumRecordsNotReached = fillWithBufferedLinesUntil(records, minRecords, strict);
                 if (records.isEmpty() && bufferOffset == buffer.length) {
                     char[] newbuf = new char[buffer.length * 2];
                     System.arraycopy(buffer, 0, newbuf, 0, buffer.length);
@@ -150,14 +145,50 @@ public class NonBlockingBufferReader implements AutoCloseable {
             }
         }
 
-        if (!reader.ready() && remaining() && autoFlush) {
-            LOG.info("End of file reached - flushing remaining bytes from reader buffer.");
-            final String line = new String(buffer, 0, bufferOffset);
-            records.add(new TextBlock(line, charset, offset, offset + bufferOffset, bufferOffset));
-            offset+=bufferOffset;
-            bufferOffset = 0;
+        final boolean isEOF = !reader.ready();
+
+        // When strict is true, we may reach end of file and still have valid lines in buffer.
+        if (isEOF && maxNumRecordsNotReached && strict) {
+            maxNumRecordsNotReached = fillWithBufferedLinesUntil(records, minRecords, true);
+        }
+
+        // If EOF and maximum number of records is not reached then
+        // attempt to flush remaining bytes as a single line.
+        if (isEOF && maxNumRecordsNotReached && remaining()) {
+            LOG.info("End of file reached - flushing remaining bytes from reader buffer ({}).", isAutoFlushOnEOF);
+            if (isAutoFlushOnEOF) {
+                final String line = new String(buffer, 0, bufferOffset);
+                records.add(new TextBlock(line, charset, offset, offset + bufferOffset, bufferOffset));
+                offset += bufferOffset;
+                bufferOffset = 0;
+            }
         }
         return records;
+    }
+
+    /**
+     * Fills the given list of records with the lines already present into the read-buffer.
+     *
+     * @param records       the list of records to fill.
+     * @param minRecords    the minimum records to try to read from buffer.
+     * @param strict        is no more than {@literal minRecords} lines should be read.
+     * @return              {@code true} if the maximum number of records is reached
+     *                      and {@literal string} is {@code true}, otherwise {@code false}.
+     */
+    private boolean fillWithBufferedLinesUntil(final List<TextBlock> records,
+                                               int minRecords,
+                                               boolean strict) {
+        boolean maxNumRecordsNotReached;
+        TextBlock line;
+        do {
+            line = tryToExtractLine();
+            if (line != null) {
+                records.add(line);
+            }
+            // when strict is true we should not try to extract more lines than the minimum requested.
+            maxNumRecordsNotReached = !strict || records.size() < minRecords;
+        } while (line != null && maxNumRecordsNotReached);
+        return maxNumRecordsNotReached;
     }
 
     /**

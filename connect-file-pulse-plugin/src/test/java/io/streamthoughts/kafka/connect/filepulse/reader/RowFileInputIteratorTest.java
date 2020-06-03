@@ -19,10 +19,10 @@
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,7 +35,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class RowFileInputIteratorTest {
 
@@ -77,12 +78,11 @@ public class RowFileInputIteratorTest {
         while(iterator.hasNext()) {
             RecordsIterable<FileRecord<TypedStruct>> next = iterator.next();
             assertNotNull(next);
-
         }
 
         FileContext context = iterator.context();
-        assertEquals(file.length(), context.offset().position());
         assertEquals(NLINES, context.offset().rows());
+        assertEquals(file.length(), context.offset().position());
     }
 
     private void generateLines(final BufferedWriter writer) throws IOException {

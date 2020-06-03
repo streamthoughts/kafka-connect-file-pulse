@@ -18,6 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader.internal;
 
+import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
+import org.apache.kafka.connect.errors.ConnectException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,11 +34,6 @@ import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-
-import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
-import org.apache.kafka.connect.errors.ConnectException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A BufferedReader wrapper to read lines in non-blocking way.
@@ -130,7 +130,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
         // is available.
         final List<TextBlock> records = new LinkedList<>();
         nread = 0;
-        while (reader.ready() && (records.isEmpty()|| records.size() < minRecords)) {
+        while (reader.ready() && (records.isEmpty() || records.size() < minRecords)) {
             nread = reader.read(buffer, bufferOffset, buffer.length - bufferOffset);
             if (nread > 0) {
                 bufferOffset += nread;
@@ -150,7 +150,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
             }
         }
 
-        if (!hasNext() && remaining() && autoFlush) {
+        if (!reader.ready() && remaining() && autoFlush) {
             LOG.info("End of file reached - flushing remaining bytes from reader buffer.");
             final String line = new String(buffer, 0, bufferOffset);
             records.add(new TextBlock(line, charset, offset, offset + bufferOffset, bufferOffset));
@@ -171,7 +171,9 @@ public class NonBlockingBufferReader implements AutoCloseable {
 
     public boolean hasNext() {
         try {
-            return (nread > 0 || nread == -1) && reader.ready();
+            boolean ready = reader.ready();
+            if (ready) return true;
+            return remaining() && containsLine();
         } catch (IOException e) {
             LOG.error("Error while checking for remaining bytes to read: {}", e.getLocalizedMessage());
             return false;
@@ -181,22 +183,37 @@ public class NonBlockingBufferReader implements AutoCloseable {
     public void seekTo(final Long offset) {
         if (offset != null && offset > 0) {
             buffer = new char[initialCapacity];
-            LOG.debug("Trying to skip to file bufferOffset bytes {}", offset);
+            LOG.debug("Trying to skip to file offset bytes {}", offset);
             long skipLeft = offset;
             while (skipLeft > 0) {
                 try {
                     long skipped = reader.skip(skipLeft);
                     skipLeft -= skipped;
                 } catch (IOException e) {
-                    LOG.error("Error while trying to seek to previous bufferOffset bytes in file: ", e);
+                    LOG.error("Error while trying to seek to previous offset bytes in file: ", e);
                     throw new ConnectException(e);
                 }
             }
-            LOG.debug("Skipped to bufferOffset bytes {}", offset);
+            LOG.debug("Skipped to offset bytes {}", offset);
             this.offset = offset;
         } else {
             this.offset = 0L;
         }
+    }
+
+    /**
+     * @return {@code true} if the internal read-buffer contains a text line.
+     */
+    private boolean containsLine() {
+        for (int i = 0; i < bufferOffset; i++) {
+            if (buffer[i] == '\n') {
+                return true;
+            } else if (buffer[i] == '\r') {
+                // We need to check for \r\n, so we must skip this if we can't check the next char
+                return i + 1 < bufferOffset;
+            }
+        }
+        return false;
     }
 
     private TextBlock tryToExtractLine() {
@@ -221,7 +238,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
         TextBlock result = null;
         if (until != -1) {
             final String line = new String(buffer, 0, until);
-            result =  new TextBlock(line, charset,  offset, offset + newStart ,until);
+            result =  new TextBlock(line, charset,  offset, offset + newStart, until);
             System.arraycopy(buffer, newStart, buffer, 0, buffer.length - newStart);
             bufferOffset = bufferOffset - newStart;
         }

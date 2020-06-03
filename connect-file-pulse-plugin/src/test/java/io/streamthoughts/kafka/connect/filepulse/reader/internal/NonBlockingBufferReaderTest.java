@@ -33,6 +33,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.streamthoughts.kafka.connect.filepulse.reader.internal.ReversedInputFileReader.*;
+
 public class NonBlockingBufferReaderTest {
 
     private static final String LF = "\n";
@@ -56,50 +58,75 @@ public class NonBlockingBufferReaderTest {
     @Test
     public void shouldReadAllLinesGivenHigherInitialCapacityThanFileSize() throws Exception {
         final List<TextBlock> expected = generateLines(writer, NLINES, LF);
-        NonBlockingBufferReader reader = createReaderWithCapacity(file, ReversedInputFileReader.DEFAULT_INITIAL_CAPACITY);
-        readAllAndAssert(expected, reader);
+        NonBlockingBufferReader reader = createReaderWithCapacity(file, DEFAULT_INITIAL_CAPACITY);
+        readAllAndAssert(expected, reader, false);
     }
 
     @Test
     public void shouldReadAllLinesGivenHigherInitialCapacityThanFileSizeAndCRLF() throws Exception {
         List<TextBlock> expected = generateLines(writer, NLINES, CR + LF);
-        NonBlockingBufferReader reader = createReaderWithCapacity(file, ReversedInputFileReader.DEFAULT_INITIAL_CAPACITY);
-        readAllAndAssert(expected, reader);
+        NonBlockingBufferReader reader = createReaderWithCapacity(file, DEFAULT_INITIAL_CAPACITY);
+        readAllAndAssert(expected, reader, false);
     }
 
     @Test
     public void shouldReadAllLinesGivenSmallerInitialCapacityThanFileSize() throws Exception {
         List<TextBlock> expected = generateLines(writer, NLINES, LF);
         NonBlockingBufferReader reader = createReaderWithCapacity(file, 16);
-        readAllAndAssert(expected, reader);
+        readAllAndAssert(expected, reader, false);
     }
 
     @Test
     public void shouldReadAllLinesGivenSmallerInitialCapacityThanFileSizeCRLF() throws Exception {
         List<TextBlock> expected = generateLines(writer, NLINES, CR + LF);
         NonBlockingBufferReader reader = createReaderWithCapacity(file, 16);
-        readAllAndAssert(expected, reader);
+        readAllAndAssert(expected, reader, false);
     }
 
     @Test
     public void shouldReadAllLinesGivenSmallerInitialCapacityThanLineSize() throws Exception {
         List<TextBlock> expected = generateLines(writer, NLINES, LF);
         NonBlockingBufferReader reader = createReaderWithCapacity(file, 4);
-        readAllAndAssert(expected, reader);
+        readAllAndAssert(expected, reader, false);
     }
 
     @Test
     public void shouldReadAllLinesGivenSmallerInitialCapacityThanLineSizeCRLF() throws Exception {
         List<TextBlock> expected = generateLines(writer, NLINES, CR + LF );
         NonBlockingBufferReader reader = createReaderWithCapacity(file, 4);
-        readAllAndAssert(expected, reader);
+        readAllAndAssert(expected, reader, false);
     }
 
     @Test
     public void shouldReadAllLinesGivenFileNotEndingWithNewLine() throws Exception {
         List<TextBlock> expected = generateLines(writer, NLINES, CR + LF, false);
         NonBlockingBufferReader reader = createReaderWithCapacity(file, 1024);
-        readAllAndAssert(expected, reader);
+        readAllAndAssert(expected, reader, false);
+    }
+
+    @Test
+    public void shouldAttemptToReadMoreLinesThanMinimumGivenStrictEqualsFalse() throws Exception {
+        generateLines(writer, NLINES, CR + LF, false);
+        try(NonBlockingBufferReader reader = createReaderWithCapacity(file, DEFAULT_INITIAL_CAPACITY)) {
+            List<TextBlock> records = reader.readLines(1, false);
+            Assert.assertTrue(records.size() > 1);
+        }
+    }
+
+    @Test
+    public void shouldNotAttemptToReadMoreLinesThanMinimumGivenStrictEqualsTrue() throws Exception {
+       generateLines(writer, NLINES, CR + LF, false);
+        try(NonBlockingBufferReader reader = createReaderWithCapacity(file, DEFAULT_INITIAL_CAPACITY)) {
+            List<TextBlock> records = reader.readLines(1, true);
+            Assert.assertEquals(1, records.size());
+        }
+    }
+
+    @Test
+    public void shouldReadAllLinesGivenStrictEqualsTrue()throws Exception {
+        final List<TextBlock> expected = generateLines(writer, NLINES, LF);
+        NonBlockingBufferReader reader = createReaderWithCapacity(file, DEFAULT_INITIAL_CAPACITY);
+        readAllAndAssert(expected, reader, true);
     }
 
     private static NonBlockingBufferReader createReaderWithCapacity(final File file,
@@ -111,10 +138,11 @@ public class NonBlockingBufferReaderTest {
     }
 
     private void readAllAndAssert(final List<TextBlock> expected,
-                                  final NonBlockingBufferReader reader) throws Exception {
+                                  final NonBlockingBufferReader reader,
+                                  final boolean strict) throws Exception {
         List<TextBlock> results = new ArrayList<>();
         while (reader.hasNext()) {
-            List<TextBlock> l = reader.readLines(1);
+            List<TextBlock> l = reader.readLines(1, strict);
             results.addAll(l);
         }
         assertResult(expected, results);

@@ -143,7 +143,7 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
             initializeIfNeeded();
             mayWaitForLinesToBeAvailable();
             List<FileRecord<TypedStruct>> records = new LinkedList<>();
-            List<TextBlock> lines = reader.readLines(minNumReadRecords);
+            List<TextBlock> lines = reader.readLines(minNumReadRecords, false);
             if (lines != null) {
                 for (TextBlock line : lines) {
                     offsetLines++;
@@ -281,7 +281,7 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
             LOG.info("Starting to read header lines ({}) from file {}", skipHeaders, fileName);
             try (final NonBlockingBufferReader sequentialReader =
                     new NonBlockingBufferReader(new File(path), charset)) {
-                headers = sequentialReader.readLines(skipHeaders);
+                headers = sequentialReader.readLines(skipHeaders, true);
                 headerStrings = headers
                     .stream()
                     .map(TextBlock::data)

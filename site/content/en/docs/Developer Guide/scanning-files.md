@@ -60,7 +60,7 @@ file.filter.minimum.age.ms=10000
 The `RegexFileFilter` can be used to filter files that do not match the specified regex.
 
 ```properties
-fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileFilter
+fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
 # The regex pattern used to matches input files
 file.filter.regex.pattern="\\.log$"
 ```

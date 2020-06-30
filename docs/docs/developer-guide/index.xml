@@ -260,7 +260,7 @@ At the next scan, previously filtered files will be evaluated again to determine
 file.filter.minimum.age.ms=10000
 &lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;regexfilefilter&#34;&gt;RegexFileFilter&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;RegexFileFilter&lt;/code&gt; can be used to filter files that do not match the specified regex.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileFilter
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
 # The regex pattern used to matches input files
 file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h2&gt;

@@ -26,12 +26,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/" />
 <meta property="article:published_time" content="2020-05-25T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-26T11:59:45+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-06-30T20:37:43+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Scanning Files">
 <meta itemprop="description" content="The commons configuration for Connect File Pulse.
 ">
 <meta itemprop="datePublished" content="2020-05-25T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-26T11:59:45&#43;02:00" />
+<meta itemprop="dateModified" content="2020-06-30T20:37:43&#43;02:00" />
 <meta itemprop="wordCount" content="341">
 
 
@@ -588,7 +588,7 @@ At the next scan, previously filtered files will be evaluated again to determine
 file.filter.minimum.age.ms=10000
 </code></pre><h3 id="regexfilefilter">RegexFileFilter</h3>
 <p>The <code>RegexFileFilter</code> can be used to filter files that do not match the specified regex.</p>
-<pre><code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileFilter
+<pre><code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
 # The regex pattern used to matches input files
 file.filter.regex.pattern=&quot;\\.log$&quot;
 </code></pre><h2 id="supported-file-types">Supported File types</h2>
@@ -602,7 +602,7 @@ file.filter.regex.pattern=&quot;\\.log$&quot;
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 26, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9b5c2650f0dcdb065bd70a265fd5c9779cb9c411">update(site): add entries into FAQ (9b5c265)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified June 30, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/cd1fba304b1453e8b51de40ae49ad21c82290509">fix(site): fix typo (cd1fba3)</a>
 </div>
 </div>
 

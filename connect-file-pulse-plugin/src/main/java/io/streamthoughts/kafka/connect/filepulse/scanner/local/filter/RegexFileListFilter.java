@@ -24,11 +24,15 @@ import java.util.regex.Pattern;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class RegexFileListFilter extends AbstractFileListFilter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RegexFileListFilter.class);
 
     private static final String FILE_FILTER_REGEX_PATTERN_CONFIG = "file.filter.regex.pattern";
     private static final String FILE_FILTER_REGEX_PATTERN_DOC    = "The regex pattern used to matches input files";
@@ -58,7 +62,13 @@ public class RegexFileListFilter extends AbstractFileListFilter {
      */
     @Override
     protected boolean accept(final File file) {
-        return file != null && pattern.matcher(file.getName()).matches();
+        if (file == null) return false;
+
+        boolean matched = pattern.matcher(file.getName()).matches();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Matching input file name {} to regex {}, matched = {}", file.getName(), pattern, matched);
+        }
+        return matched;
     }
 
     private static ConfigDef getConfigDef() {

@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.scanner;
 
-
 import io.streamthoughts.kafka.connect.filepulse.clean.BatchFileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.clean.DelegateBatchFileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
@@ -52,6 +51,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *  Default {@link FileSystemScanner} used to scan local file system.
@@ -244,11 +244,38 @@ public class LocalFileSystemScanner implements FileSystemScanner {
 
     private Map<String, SourceMetadata> toScheduled(final Collection<File> scanned,
                                                     final StateSnapshot<SourceFile> snapshot) {
-        return scanned.stream()
-                .map(SourceMetadata::fromFile)
-                .map(metadata -> KeyValuePair.of(offsetManager.toPartitionJson(metadata), metadata))
-                .filter(kv -> maybeScheduled(snapshot, kv.key))
-                .collect(Collectors.toMap(kv -> kv.key, kv -> kv.value));
+
+        final List<KeyValuePair<String, SourceMetadata>> toScheduled = scanned.stream()
+            .map(SourceMetadata::fromFile)
+            .map(metadata -> KeyValuePair.of(offsetManager.toPartitionJson(metadata), metadata))
+            .filter(kv -> maybeScheduled(snapshot, kv.key))
+            .collect(Collectors.toList());
+
+        // Looking for duplicates in sources files, i.e the offsetManager generate two identical offsets for two files.
+        final Stream<Map.Entry<String, List<KeyValuePair<String, SourceMetadata>>>> entryStream = toScheduled
+            .stream()
+            .collect(Collectors.groupingBy(kv -> kv.key))
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getValue().size() > 1);
+
+        final Map<String, List<String>> duplicates = entryStream
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                e -> e.getValue().stream().map(m -> m.value.absolutePath()).collect(Collectors.toList()))
+            );
+
+        if (!duplicates.isEmpty()) {
+            final String strDuplicates = duplicates
+                .entrySet()
+                .stream()
+                .map(e -> "offset=" + e.getKey() + ", files=" + e.getValue())
+                .collect(Collectors.joining("\n\t", "\n\t","\n"));
+            LOG.error("Duplicates detected in source files. Consider changing the configuration property \"offset.strategy\". Scan is ignored : {}", strDuplicates);
+            return Collections.emptyMap(); // ignore all sources files
+        }
+
+        return toScheduled.stream().collect(Collectors.toMap(kv -> kv.key, kv -> kv.value));
     }
 
     private boolean maybeScheduled(final StateSnapshot<SourceFile> snapshot, final String partition) {

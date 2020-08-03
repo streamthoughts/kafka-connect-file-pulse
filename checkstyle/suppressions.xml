@@ -56,6 +56,7 @@
     <suppress checks="LineLength" files="LocalFileSystemScanner.java"/>
     <!-- Those classes are copy from kafka-connect api-->
     <suppress checks="LineLength" files="KafkaBasedLog.java"/>
+    <suppress checks="NPathComplexity" files="KafkaBasedLog.java"/>
     <suppress checks="LineLength" files="KafkaStateBackingStore.java"/>
     <suppress checks="NPathComplexity" files="DefaultFileRecordsPollingConsumer.java"/>
     <suppress checks="ParameterNumber" files="InternalFilterContext" />

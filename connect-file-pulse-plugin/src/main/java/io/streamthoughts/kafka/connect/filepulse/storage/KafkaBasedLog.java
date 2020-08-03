@@ -49,7 +49,7 @@ import java.util.concurrent.Future;
 
 public class KafkaBasedLog<K, V> {
 
-    private static final Logger log = LoggerFactory.getLogger(KafkaBasedLog.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaBasedLog.class);
     private static final long CREATE_TOPIC_TIMEOUT_MS = 30000;
 
     private Time time;
@@ -64,6 +64,12 @@ public class KafkaBasedLog<K, V> {
     private boolean stopRequested;
     private Queue<Callback<Void>> readLogEndOffsetCallbacks;
     private Runnable initializer;
+
+    private volatile States state;
+
+    enum States {
+        CREATED, RUNNING, ERROR, PENDING_SHUTDOWN, CLOSED
+    }
 
     /**
      * Create a new KafkaBasedLog object. This does not start reading the log and writing is not permitted until
@@ -95,80 +101,90 @@ public class KafkaBasedLog<K, V> {
         this.stopRequested = false;
         this.readLogEndOffsetCallbacks = new ArrayDeque<>();
         this.time = time;
-        this.initializer = initializer != null ? initializer : new Runnable() {
-            @Override
-            public void run() {
-            }
-        };
+        this.initializer = initializer != null ? initializer : () -> { };
+        this.state = States.CREATED;
     }
 
-    public void start() {
-        log.info("Starting KafkaBasedLog with topic " + topic);
-
-        initializer.run();
-        producer = createProducer();
-        consumer = createConsumer();
-
-        List<TopicPartition> partitions = new ArrayList<>();
-
-        // We expect that the topics will have been created either manually by the user or automatically by the herder
-        List<PartitionInfo> partitionInfos = null;
-        long started = time.milliseconds();
-        while (partitionInfos == null && time.milliseconds() - started < CREATE_TOPIC_TIMEOUT_MS) {
-            partitionInfos = consumer.partitionsFor(topic);
-            Utils.sleep(Math.min(time.milliseconds() - started, 1000));
+    public synchronized void start() {
+        if (state != States.CREATED) {
+            throw new IllegalStateException("Cannot restart KafkaBasedLog due to state being " + state +")");
         }
-        if (partitionInfos == null)
-            throw new ConnectException("Could not look up partition metadata for position backing store topic in" +
-                    " allotted period. This could indicate a connectivity issue, unavailable topic partitions, or if" +
-                    " this is your first use of the topic it may have taken too long to create.");
+        LOG.info("Starting KafkaBasedLog with topic {}",  topic);
+        try {
+            initializer.run();
+            producer = createProducer();
+            consumer = createConsumer();
 
-        for (PartitionInfo partition : partitionInfos)
-            partitions.add(new TopicPartition(partition.topic(), partition.partition()));
-        consumer.assign(partitions);
+            List<TopicPartition> partitions = new ArrayList<>();
 
-        // Always consume from the beginning of all partitions. Necessary to ensure that we don't use committed offsets
-        // when a 'group.id' is specified (if offsets happen to have been committed unexpectedly).
-        consumer.seekToBeginning(partitions);
+            // We expect that the topics will have been created either manually by the user or automatically by the herder
+            List<PartitionInfo> partitionInfos = null;
+            long started = time.milliseconds();
+            while (partitionInfos == null && time.milliseconds() - started < CREATE_TOPIC_TIMEOUT_MS) {
+                partitionInfos = consumer.partitionsFor(topic);
+                Utils.sleep(Math.min(time.milliseconds() - started, 1000));
+            }
+            if (partitionInfos == null)
+                throw new ConnectException("Could not look up partition metadata for position backing store topic in" +
+                        " allotted period. This could indicate a connectivity issue, unavailable topic partitions, or if" +
+                        " this is your first use of the topic it may have taken too long to create.");
 
-        readToLogEnd();
+            for (PartitionInfo partition : partitionInfos)
+                partitions.add(new TopicPartition(partition.topic(), partition.partition()));
+            consumer.assign(partitions);
 
-        thread = new WorkThread();
-        thread.start();
+            // Always consume from the beginning of all partitions. Necessary to ensure that we don't use committed offsets
+            // when a 'group.id' is specified (if offsets happen to have been committed unexpectedly).
+            consumer.seekToBeginning(partitions);
 
-        log.info("Finished reading KafkaBasedLog for topic " + topic);
+            readToLogEnd();
 
-        log.info("Started KafkaBasedLog for topic " + topic);
+            thread = new WorkThread();
+            thread.start();
+            state = States.RUNNING;
+            LOG.info("Finished reading KafkaBasedLog for topic {}", topic);
+            LOG.info("Started KafkaBasedLog for topic {}", topic);
+        } catch (Exception e) {
+            state = States.ERROR;
+            throw e;
+        }
     }
 
     public void stop() {
-        log.info("Stopping KafkaBasedLog for topic " + topic);
+        if (state == States.PENDING_SHUTDOWN || state == States.CLOSED) {
+            LOG.info("KafkaBasedLog is either being shutdown or already closed for topic {}", topic);
+            return;
+        }
 
+        LOG.info("Stopping KafkaBasedLog for topic {}", topic);
         synchronized (this) {
             stopRequested = true;
         }
-        consumer.wakeup();
-
         try {
-            thread.join();
-        } catch (InterruptedException e) {
-            throw new ConnectException("Failed to stop KafkaBasedLog. Exiting without cleanly shutting " +
-                    "down it's producer and consumer.", e);
-        }
+            try {
+                if (consumer != null) consumer.wakeup();
+                if (thread != null) thread.join();
+            } catch (InterruptedException e) {
+                throw new ConnectException("Failed to stop KafkaBasedLog. Exiting without cleanly shutting " +
+                        "down it's producer and consumer.", e);
+            }
 
-        try {
-            producer.close();
-        } catch (KafkaException e) {
-            log.error("Failed to stop KafkaBasedLog producer", e);
-        }
+            try {
+                if (producer != null) producer.close();
+            } catch (KafkaException e) {
+                LOG.error("Failed to stop KafkaBasedLog producer", e);
+            }
 
-        try {
-            consumer.close();
-        } catch (KafkaException e) {
-            log.error("Failed to stop KafkaBasedLog consumer", e);
-        }
+            try {
+                if (consumer != null) consumer.close();
+            } catch (KafkaException e) {
+                LOG.error("Failed to stop KafkaBasedLog consumer", e);
+            }
 
-        log.info("Stopped KafkaBasedLog for topic " + topic);
+            LOG.info("Stopped KafkaBasedLog for topic {}", topic);
+        } finally {
+            state = States.CLOSED;
+        }
     }
 
     /**
@@ -185,7 +201,7 @@ public class KafkaBasedLog<K, V> {
      * @param callback the callback to invoke once the end of the log has been reached.
      */
     public void readToEnd(final Callback<Void> callback) {
-        log.trace("Starting read to end log for topic {}", topic);
+        LOG.trace("Starting read to end log for topic {}", topic);
         producer.flush();
         synchronized (this) {
             readLogEndOffsetCallbacks.add(callback);
@@ -197,7 +213,9 @@ public class KafkaBasedLog<K, V> {
      * Flush the underlying producer to ensure that all pending writes have been sent.
      */
     public void flush() {
-        producer.flush();
+        if (producer != null) {
+            producer.flush();
+        }
     }
 
     /**
@@ -237,25 +255,25 @@ public class KafkaBasedLog<K, V> {
         return new KafkaConsumer<>(consumerConfigs);
     }
 
-    private void poll(long timeoutMs) {
+    private void poll(Duration timeout) {
         try {
-            ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(timeoutMs));
+            ConsumerRecords<K, V> records = consumer.poll(timeout);
             for (ConsumerRecord<K, V> record : records)
                 consumedCallback.onCompletion(null, record);
         } catch (WakeupException e) {
             // Expected on instance() or stop(). The calling code should handle this
             throw e;
         } catch (KafkaException e) {
-            log.error("Error polling: " + e);
+            LOG.error("Error polling: " + e);
         }
     }
 
     private void readToLogEnd() {
-        log.trace("Reading to end of startPosition log");
+        LOG.trace("Reading to end of startPosition log");
 
         Set<TopicPartition> assignment = consumer.assignment();
         Map<TopicPartition, Long> endOffsets = consumer.endOffsets(assignment);
-        log.trace("Reading to end of log offsets {}", endOffsets);
+        LOG.trace("Reading to end of log offsets {}", endOffsets);
 
         while (!endOffsets.isEmpty()) {
             Iterator<Map.Entry<TopicPartition, Long>> it = endOffsets.entrySet().iterator();
@@ -264,7 +282,7 @@ public class KafkaBasedLog<K, V> {
                 if (consumer.position(entry.getKey()) >= entry.getValue())
                     it.remove();
                 else {
-                    poll(Integer.MAX_VALUE);
+                    poll(Duration.ofMillis(Integer.MAX_VALUE));
                     break;
                 }
             }
@@ -273,14 +291,14 @@ public class KafkaBasedLog<K, V> {
 
 
     private class WorkThread extends Thread {
-        public WorkThread() {
+        WorkThread() {
             super("KafkaBasedLog Work Thread - " + topic);
         }
 
         @Override
         public void run() {
             try {
-                log.trace("{} started execution", this);
+                LOG.trace("{} started execution", this);
                 while (true) {
                     int numCallbacks;
                     synchronized (KafkaBasedLog.this) {
@@ -292,7 +310,7 @@ public class KafkaBasedLog<K, V> {
                     if (numCallbacks > 0) {
                         try {
                             readToLogEnd();
-                            log.trace("Finished read to end log for topic {}", topic);
+                            LOG.trace("Finished read to end log for topic {}", topic);
                         } catch (WakeupException e) {
                             // Either received another instance() call and need to retry reading to end of log or stop() was
                             // called. Both are handled by restarting this loop.
@@ -310,14 +328,14 @@ public class KafkaBasedLog<K, V> {
                     }
 
                     try {
-                        poll(Integer.MAX_VALUE);
+                        poll(Duration.ofMillis(Integer.MAX_VALUE));
                     } catch (WakeupException e) {
                         // See previous comment, both possible causes of this wakeup are handled by starting this loop again
                         continue;
                     }
                 }
             } catch (Throwable t) {
-                log.error("Unexpected error in {}", this, t);
+                LOG.error("Unexpected error in {}", this, t);
             }
         }
     }

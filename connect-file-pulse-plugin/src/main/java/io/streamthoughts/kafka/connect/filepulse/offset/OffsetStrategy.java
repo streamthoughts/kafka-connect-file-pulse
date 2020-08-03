@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.offset;
 
+import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 
 import java.util.Collections;
@@ -50,10 +51,24 @@ public enum OffsetStrategy {
         Map<String, Object> toPartitionMap(final SourceMetadata metadata) {
             return Collections.singletonMap(FILEPATH_FIELD, metadata.path());
         }
+    },
+
+    INODE("inode") {
+        @Override
+        Map<String, Object> toPartitionMap(final SourceMetadata metadata) {
+            if (metadata.inode() == null) {
+                throw new ConnectFilePulseException(
+                    "Unix-inode is not supported. " +
+                    "Consider configuring a different 'offset-strategy' (i.e: path, name, hash, name+hash)");
+            }
+            return Collections.singletonMap(INODE_FIELD, metadata.inode());
+        }
     };
+
 
     private static final String FILEPATH_FIELD = "path";
     private static final String FILENAME_FIELD = "name";
+    private static final String INODE_FIELD    = "inode";
     private static final String CRC32_FIELD    = "hash";
 
     private final String label;

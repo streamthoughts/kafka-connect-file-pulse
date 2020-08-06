@@ -53,7 +53,7 @@ public class CommonFilterConfig extends AbstractConfig {
     public static final String FILTER_OVERWRITE_DOC       = "The fields to overwrite.";
 
     public static final String FILTER_SOURCE_FIELD_CONFIG = "source";
-    private static final String FILTER_SOURCE_FIELD_DOC   = "The input field on which to apply the filter.";
+    private static final String FILTER_SOURCE_FIELD_DOC   = "The input field on which to apply the filter (default: message).";
 
     /**
      * Creates a new {@link CommonFilterConfig} instance.
@@ -100,7 +100,6 @@ public class CommonFilterConfig extends AbstractConfig {
         for (String alias : filterAliases) {
             final String prefix = "filters." + alias + ".";
             try {
-                @SuppressWarnings("unchecked")
                 final RecordFilter filter = getClass(prefix + "type")
                         .asSubclass(RecordFilter.class)
                         .getDeclaredConstructor().newInstance();

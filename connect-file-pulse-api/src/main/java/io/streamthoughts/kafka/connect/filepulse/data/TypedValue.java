@@ -139,7 +139,7 @@ public class TypedValue implements GettableByType {
      * @return          the new {@link TypedValue} instance.
      */
     public static TypedValue map(final Map<String ,?> value, final Type valueType) {
-        return new TypedValue(Schema.map(Schema.of(valueType)), value);
+        return new TypedValue(Schema.map(value, Schema.of(valueType)), value);
     }
 
     /**
@@ -150,7 +150,7 @@ public class TypedValue implements GettableByType {
      * @return            the new {@link TypedValue} instance.
      */
     public static TypedValue array(final Collection<?> value, final Schema valueSchema) {
-        return new TypedValue(Schema.array(valueSchema), value);
+        return new TypedValue(Schema.array(value, valueSchema), value);
     }
 
     /**

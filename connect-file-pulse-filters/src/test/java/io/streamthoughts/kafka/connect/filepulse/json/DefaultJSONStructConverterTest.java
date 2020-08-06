@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.json;
 
+import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
+import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
@@ -26,11 +28,25 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class DefaultJSONStructConverterTest {
 
     private JSONStructConverter converter = new DefaultJSONStructConverter();
+
+    @Test
+    public void shouldConvertGivenFieldWithArrayOfComplexType() throws Exception {
+        TypedStruct struct = converter.readJson("{\"field-one\" : [{\"firstName\": \"foo\"}, {\"firstName\": \"bar\"}]}");
+        Assert.assertNotNull(struct);
+
+        StructSchema schema = struct.schema();
+        assertNotNull(schema.field("field-one"));
+        Schema fieldSchema = schema.field("field-one").schema();
+        assertEquals(Type.ARRAY, fieldSchema.type());
+        Schema arraySchema = ((ArraySchema) fieldSchema).valueSchema();
+        assertEquals(Type.STRUCT, arraySchema.type());
+    }
 
     @Test
     public void shouldConvertGivenFieldsWithStringType() throws Exception {
@@ -93,7 +109,6 @@ public class DefaultJSONStructConverterTest {
         assertEquals(Long.MAX_VALUE, struct.getLong("field-long").longValue());
         assertEquals(Double.MAX_VALUE, struct.getDouble("field-double"), 0.0);
         assertEquals(Float.MAX_VALUE, struct.getDouble("field-float").floatValue(), 0.0);
-
     }
 
 }

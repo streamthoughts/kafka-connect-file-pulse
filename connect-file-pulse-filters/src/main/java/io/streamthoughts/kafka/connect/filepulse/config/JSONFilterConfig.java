@@ -30,7 +30,7 @@ import java.util.Set;
 public class JSONFilterConfig extends CommonFilterConfig {
 
     public static final String JSON_TARGET_CONFIG    = "target";
-    public static final String JSON_TARGET_DOC       = "The target field to put the parsed JSON value";
+    public static final String JSON_TARGET_DOC       = "The target field to put the parsed JSON value (optional)";
 
     public static final String JSON_SOURCE_CHARSET_CONFIG  = "source.charset";
     public static final String JSON_SOURCE_CHARSET_DOC     = "The charset to be used for reading the source" +
@@ -53,7 +53,7 @@ public class JSONFilterConfig extends CommonFilterConfig {
     }
 
     public Charset charset() {
-        String name = getString(JSON_TARGET_CONFIG);
+        String name = getString(JSON_SOURCE_CHARSET_CONFIG);
         return name == null ? StandardCharsets.UTF_8 : Charset.forName(name);
     }
 
@@ -63,9 +63,9 @@ public class JSONFilterConfig extends CommonFilterConfig {
 
     public static ConfigDef configDef() {
         ConfigDef def = CommonFilterConfig.configDef()
-                .define(JSON_TARGET_CONFIG, ConfigDef.Type.STRING, null,
-                        ConfigDef.Importance.HIGH, JSON_TARGET_DOC)
-                    .define(JSON_SOURCE_CHARSET_CONFIG, ConfigDef.Type.STRING, null,
+            .define(JSON_TARGET_CONFIG, ConfigDef.Type.STRING, null,
+                ConfigDef.Importance.HIGH, JSON_TARGET_DOC)
+            .define(JSON_SOURCE_CHARSET_CONFIG, ConfigDef.Type.STRING, null,
                 ConfigDef.Importance.MEDIUM, JSON_SOURCE_CHARSET_DOC);
         CommonFilterConfig.withOverwrite(def);
         CommonFilterConfig.withSource(def);

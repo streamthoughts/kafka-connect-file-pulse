@@ -18,11 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
+import java.util.Collection;
 import java.util.List;
 
 public class LazyArraySchema extends ArraySchema implements Schema {
 
-    private final List list;
+    private final Collection<?>  list;
 
     private Schema valueSchema;
 
@@ -31,7 +32,7 @@ public class LazyArraySchema extends ArraySchema implements Schema {
      *
      * @param list the {@link List} instance.
      */
-    LazyArraySchema(final List list) {
+    LazyArraySchema(final Collection<?> list) {
         super(null);
         this.list = list;
 
@@ -46,7 +47,7 @@ public class LazyArraySchema extends ArraySchema implements Schema {
             if (list.isEmpty()) {
                 throw new DataException("Cannot infer value type because LIST is empty");
             }
-            valueSchema = SchemaSupplier.lazy(list.get(0)).get();
+            valueSchema = SchemaSupplier.lazy(list.iterator().next()).get();
         }
         return valueSchema;
     }

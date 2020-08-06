@@ -25,6 +25,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.SchemaMapper;
 import io.streamthoughts.kafka.connect.filepulse.data.SchemaMapperWithValue;
 import io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
@@ -34,9 +35,11 @@ import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWithValue<SchemaAndValue> {
@@ -44,6 +47,14 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
     private static final Object DEFAULT_NULL_VALUE = null;
 
     public static final ConnectSchemaMapper INSTANCE = new ConnectSchemaMapper();
+    private static final Pattern REGEX = Pattern.compile("[_\\-.]");
+
+    static String normalizeSchemaName(final String name) {
+        return Arrays
+            .stream(REGEX.split(name))
+            .map(it -> it.substring(0, 1).toUpperCase() + it.substring(1))
+            .collect(Collectors.joining());
+    }
 
     /**
      * {@inheritDoc}
@@ -84,10 +95,33 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
         }
 
         for(final TypedField field : schema) {
-            sb.field(field.name(), field.schema().map(this)).optional();
+            final io.streamthoughts.kafka.connect.filepulse.data.Schema fieldSchema = field.schema();
+            final String fieldName = field.name();
+            mayUpdateSchemaName(fieldSchema, fieldName);
+            sb.field(fieldName, fieldSchema.map(this)).optional();
         }
 
         return sb.build();
+    }
+
+    private void mayUpdateSchemaName(final io.streamthoughts.kafka.connect.filepulse.data.Schema schema,
+                                     final String fieldName) {
+        if (schema.type() == Type.ARRAY) {
+            final ArraySchema arraySchema = (ArraySchema)schema;
+            mayUpdateSchemaName(arraySchema.valueSchema(), fieldName);
+        }
+
+        if (schema.type() == Type.MAP) {
+            final MapSchema mapSchema = (MapSchema)schema;
+            mayUpdateSchemaName(mapSchema.valueSchema(), fieldName);
+        }
+
+        if (schema.type() == Type.STRUCT) {
+            final StructSchema structSchema = (StructSchema)schema;
+            if (structSchema.name() == null) {
+                structSchema.name(normalizeSchemaName(fieldName));
+            }
+        }
     }
 
     /**

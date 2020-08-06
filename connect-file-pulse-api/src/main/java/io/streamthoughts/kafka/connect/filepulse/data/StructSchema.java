@@ -225,6 +225,9 @@ public class StructSchema implements Schema, Iterable<TypedField> {
         return mapper.map(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object) {
         return mapper.map(this, (TypedStruct)object);

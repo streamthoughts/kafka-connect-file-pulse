@@ -18,6 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
+import java.util.Collection;
+import java.util.Map;
+
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_BOOLEAN;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_BYTES;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_FLOAT_32;
@@ -128,8 +131,8 @@ public interface Schema {
      *
      * @return  the {@link Schema} instance.
      */
-    static MapSchema map(final Schema valueSchema) {
-        return new MapSchema(valueSchema);
+    static MapSchema map(final Map<String ,?> value, final Schema valueSchema) {
+        return valueSchema == null ? new LazyMapSchema(value) : new MapSchema(valueSchema);
     }
 
     /**
@@ -139,8 +142,8 @@ public interface Schema {
      *
      * @return  the {@link Schema} instance.
      */
-    static ArraySchema array(final Schema valueSchema) {
-        return new ArraySchema(valueSchema);
+    static ArraySchema array(final Collection<?> value, final Schema valueSchema) {
+        return valueSchema == null ? new LazyArraySchema(value) : new ArraySchema(valueSchema);
     }
 
     /**

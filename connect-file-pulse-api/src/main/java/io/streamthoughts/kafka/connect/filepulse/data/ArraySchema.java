@@ -29,7 +29,7 @@ public class ArraySchema implements Schema {
     private Integer hash;
 
     /**
-     * Creates a new MapSchema for the specified type.
+     * Creates a new ArraySchema for the specified type.
      *
      * @param valueSchema the {@link Schema} instance.
      */

@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import io.streamthoughts.kafka.connect.filepulse.offset.ComposeOffsetStrategy;
 import io.streamthoughts.kafka.connect.filepulse.offset.OffsetStrategy;
 import io.streamthoughts.kafka.connect.filepulse.reader.RowFileInputReader;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -41,7 +42,9 @@ public class CommonConfig extends AbstractConfig {
     private static final String FILE_READER_CLASS_CONFIG_DOC    = "Class which is used by tasks to read an input file.";
 
     public static final String OFFSET_STRATEGY_CONFIG           = "offset.strategy";
-    private static final String OFFSET_STRATEGY_DOC             = "The strategy to use for building an startPosition from an input file; must be one of [name, path, name+hash].";
+    private static final String OFFSET_STRATEGY_DOC             = "A separated list of attributes, using '+' character as separator, " +
+                                                                  "to be used for uniquely identifying an input file; must be one of " +
+                                                                  "[name, path, lastModified, inode, hash] (e.g: name+hash). Note that order doesn't matter.";
     private static final String OFFSET_STRATEGY_DEFAULT         = "name+hash";
 
     public static final String FILTERS_GROUP                    = "Filters";
@@ -87,7 +90,7 @@ public class CommonConfig extends AbstractConfig {
     }
 
     public OffsetStrategy offsetStrategy() {
-        return OffsetStrategy.getForLabel(getString(OFFSET_STRATEGY_CONFIG));
+        return new ComposeOffsetStrategy(getString(OFFSET_STRATEGY_CONFIG));
     }
 
     public String getTaskReporterTopic() {

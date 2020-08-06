@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.scanner;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.OffsetStrategy;
+import io.streamthoughts.kafka.connect.filepulse.offset.ComposeOffsetStrategy;
 import io.streamthoughts.kafka.connect.filepulse.offset.SimpleOffsetManager;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceStatus;
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
 
 public class LocalFileSystemScannerTest {
 
-    private static final SimpleOffsetManager OFFSET_MANAGER = new SimpleOffsetManager(OffsetStrategy.FILENAME);
+    private static final SimpleOffsetManager OFFSET_MANAGER = new SimpleOffsetManager(new ComposeOffsetStrategy("name"));
 
     private static TemporaryFolder INPUT_DIRECTORY = new TemporaryFolder();
 

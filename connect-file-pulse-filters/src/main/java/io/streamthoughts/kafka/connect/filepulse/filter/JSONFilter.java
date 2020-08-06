@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.JSONFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.json.DefaultJSONStructConverter;

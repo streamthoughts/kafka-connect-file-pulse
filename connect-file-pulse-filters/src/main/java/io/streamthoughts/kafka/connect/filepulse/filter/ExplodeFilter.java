@@ -61,7 +61,8 @@ public class ExplodeFilter extends AbstractMergeRecordFilter<ExplodeFilter>  {
      * {@inheritDoc}
      */
     @Override
-    protected RecordsIterable<TypedStruct> apply(final FilterContext context, final TypedStruct record) throws FilterException {
+    protected RecordsIterable<TypedStruct> apply(final FilterContext context,
+                                                 final TypedStruct record) throws FilterException {
         TypedValue value = checkIsNotNull(record.get(config.source()));
         if (value.type() != Type.ARRAY) {
             throw new FilterException(

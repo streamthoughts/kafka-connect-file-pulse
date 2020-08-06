@@ -33,7 +33,8 @@ public class JSONFilterConfig extends CommonFilterConfig {
     public static final String JSON_TARGET_DOC       = "The target field to put the parsed JSON value";
 
     public static final String JSON_SOURCE_CHARSET_CONFIG  = "source.charset";
-    public static final String JSON_SOURCE_CHARSET_DOC     = "The charset to be used for reading the source field (default: UTF-8)";
+    public static final String JSON_SOURCE_CHARSET_DOC     = "The charset to be used for reading the source" +
+                                                            " field (default: UTF-8)";
 
     /**
      * Creates a new {@link JSONFilterConfig} instance.

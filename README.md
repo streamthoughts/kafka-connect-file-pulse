@@ -43,15 +43,15 @@ Connect FilePulse provides a set of built-in features for streaming local files 
 * Support plugeable strategies to cleanup up completed files
 * Etc.
 
+## Show your support
+You think this project can help you or your team to ingest data into Kafka ? 
+Please 🌟 this repository to support us!
+
 ## How to get started ?
 
 The best way to learn Connect File Pulse is to follow the step by step [Getting Started](https://streamthoughts.github.io/kafka-connect-file-pulse/docs/getting-started/).
 
 If you want to read about using Connect File Pulse, the full documentation can be found [here](https://streamthoughts.github.io/kafka-connect-file-pulse/)
-
-## Show your support
-
-Please ⭐ this repository if this project helped you!
 
 ## Contributions
 

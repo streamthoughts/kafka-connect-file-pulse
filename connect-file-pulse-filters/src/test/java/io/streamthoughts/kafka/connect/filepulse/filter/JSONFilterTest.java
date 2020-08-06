@@ -23,14 +23,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
+
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.*;
 
 public class JSONFilterTest {
 
     private static final String JSON = "    {\"firstName\" : \"foo\", \"lastName\" : \"bar\"}";
 
-    private static final TypedStruct DATA = TypedStruct.create().put("message", JSON);
+    private static final TypedStruct STRING_RECORD = create().put("message", JSON);
+    private static final TypedStruct BYTES_RECORD = create().put("message", JSON.getBytes(StandardCharsets.UTF_8));
 
     private JSONFilter filter;
 
@@ -41,14 +45,23 @@ public class JSONFilterTest {
     }
 
     @Test
-    public void testGivenNoTarget() {
-        List<TypedStruct> output = this.filter.apply(null, DATA, false).collect();
-        Assert.assertEquals(1, output.size());
+    public void should_parse_input_given_no_target_config() {
+        assertOutput(filter.apply(null, STRING_RECORD, false).collect());
     }
 
     @Test
-    public void testGivenTarget() {
-        List<TypedStruct> output = this.filter.apply(null, DATA, false).collect();
+    public void should_parse_input_given_target_config() {
+        assertOutput(filter.apply(null, STRING_RECORD, false).collect());
+    }
+
+    @Test
+    public void should_parse_input_given_value_of_type_bytes() {
+        assertOutput(filter.apply(null, BYTES_RECORD, false).collect());
+    }
+
+    private void assertOutput(List<TypedStruct> output) {
         Assert.assertEquals(1, output.size());
+        Assert.assertEquals("foo", output.get(0).getString("firstName"));
+        Assert.assertEquals("bar", output.get(0).getString("lastName"));
     }
 }

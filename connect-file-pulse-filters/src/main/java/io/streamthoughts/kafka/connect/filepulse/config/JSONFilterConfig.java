@@ -21,6 +21,8 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import io.streamthoughts.kafka.connect.filepulse.filter.config.CommonFilterConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +31,9 @@ public class JSONFilterConfig extends CommonFilterConfig {
 
     public static final String JSON_TARGET_CONFIG    = "target";
     public static final String JSON_TARGET_DOC       = "The target field to put the parsed JSON value";
+
+    public static final String JSON_SOURCE_CHARSET_CONFIG  = "source.charset";
+    public static final String JSON_SOURCE_CHARSET_DOC     = "The charset to be used for reading the source field (default: UTF-8)";
 
     /**
      * Creates a new {@link JSONFilterConfig} instance.
@@ -46,6 +51,11 @@ public class JSONFilterConfig extends CommonFilterConfig {
         return getString(JSON_TARGET_CONFIG);
     }
 
+    public Charset charset() {
+        String name = getString(JSON_TARGET_CONFIG);
+        return name == null ? StandardCharsets.UTF_8 : Charset.forName(name);
+    }
+
     public Set<String> overwrite() {
         return new HashSet<>(getList(CommonFilterConfig.FILTER_OVERWRITE_CONFIG));
     }
@@ -53,7 +63,9 @@ public class JSONFilterConfig extends CommonFilterConfig {
     public static ConfigDef configDef() {
         ConfigDef def = CommonFilterConfig.configDef()
                 .define(JSON_TARGET_CONFIG, ConfigDef.Type.STRING, null,
-                        ConfigDef.Importance.HIGH, JSON_TARGET_DOC);
+                        ConfigDef.Importance.HIGH, JSON_TARGET_DOC)
+                    .define(JSON_SOURCE_CHARSET_CONFIG, ConfigDef.Type.STRING, null,
+                ConfigDef.Importance.MEDIUM, JSON_SOURCE_CHARSET_DOC);
         CommonFilterConfig.withOverwrite(def);
         CommonFilterConfig.withSource(def);
 

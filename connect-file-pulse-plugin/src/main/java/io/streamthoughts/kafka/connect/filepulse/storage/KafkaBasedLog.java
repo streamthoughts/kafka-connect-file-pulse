@@ -125,9 +125,10 @@ public class KafkaBasedLog<K, V> {
                 Utils.sleep(Math.min(time.milliseconds() - started, 1000));
             }
             if (partitionInfos == null)
-                throw new ConnectException("Could not look up partition metadata for position backing store topic in" +
-                        " allotted period. This could indicate a connectivity issue, unavailable topic partitions, or if" +
-                        " this is your first use of the topic it may have taken too long to create.");
+                throw new ConnectException(
+                    "Could not look up partition metadata for position backing store topic '" + topic + "' in" +
+                    " allotted period (" + CREATE_TOPIC_TIMEOUT_MS + "ms). This could indicate a connectivity issue," +
+                    " unavailable topic partitions, or if this is your first use of the topic it may have taken too long to create.");
 
             for (PartitionInfo partition : partitionInfos)
                 partitions.add(new TopicPartition(partition.topic(), partition.partition()));

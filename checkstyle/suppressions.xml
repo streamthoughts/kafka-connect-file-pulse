@@ -54,6 +54,7 @@
     <suppress checks="LineLength" files="TaskConfig.java"/>
     <suppress checks="LineLength" files="CommonConfig.java"/>
     <suppress checks="LineLength" files="LocalFileSystemScanner.java"/>
+    <suppress checks="LineLength" files="ComposeOffsetStrategy.java"/>
     <!-- Those classes are copy from kafka-connect api-->
     <suppress checks="LineLength" files="KafkaBasedLog.java"/>
     <suppress checks="NPathComplexity" files="KafkaBasedLog.java"/>

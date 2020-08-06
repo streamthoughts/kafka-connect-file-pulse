@@ -125,10 +125,12 @@ public class FilePulseSourceConnector extends SourceConnector {
             });
             fsMonitorThread.start();
         } catch (Exception e) {
+            LOG.error(
+                "Closing resources due to an error thrown during initialization of connector {} ",
+                connectorGroupName
+            );
             StateBackingStoreRegistry.instance().release(connectorGroupName);
-            if( fsMonitorThread != null) {
-                fsMonitorThread.shutdown(0L);
-            }
+            if( fsMonitorThread != null) fsMonitorThread.shutdown(0L);
             throw e;
         }
     }

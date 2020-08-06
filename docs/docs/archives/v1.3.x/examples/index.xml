@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kafka Connect File Pulse – Tutorials and Shared Resources</title>
+    <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.3.x/examples/</link>
+    <description>Recent content in Tutorials and Shared Resources on Kafka Connect File Pulse</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 20 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.3.x/examples/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+  </channel>
+</rss>

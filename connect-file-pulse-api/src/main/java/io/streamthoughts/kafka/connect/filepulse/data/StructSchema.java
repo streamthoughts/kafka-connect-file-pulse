@@ -119,25 +119,25 @@ public class StructSchema implements Schema, Iterable<TypedField> {
     }
 
     void rename(final String fieldName, final String newField) {
-        TypedField tf = field(fieldName);
-        if (fieldName == null) {
+        TypedField tf = fields.remove(fieldName);
+        if (tf == null) {
             throw new DataException("Cannot rename field because of field do not exist " + fieldName);
         }
-        fields.remove(fieldName);
         fields.put(newField, new TypedField(tf.index(), tf.schema(), newField));
     }
 
-    void remove(final String fieldName) {
-        TypedField tf = field(fieldName);
-        if (tf != null) {
-            fields.remove(tf.name());
-            fields.replaceAll((k, v) -> {
-                if (v.index() > tf.index()) {
-                    return new TypedField(v.index() - 1, tf.schema(), tf.name());
-                }
-                return v;
-            });
-        }
+    TypedField remove(final String fieldName) {
+        final TypedField tf = field(fieldName);
+        if (tf == null) return null;
+
+        fields.remove(tf.name());
+        fields.replaceAll((k, v) -> {
+            if (v.index() > tf.index()) {
+                return new TypedField(v.index() - 1, v.schema(), v.name());
+            }
+            return v;
+        });
+        return tf;
     }
 
     /**

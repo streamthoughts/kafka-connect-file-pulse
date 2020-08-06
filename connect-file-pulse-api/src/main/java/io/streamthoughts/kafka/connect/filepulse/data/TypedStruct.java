@@ -84,7 +84,8 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
     }
 
     public TypedStruct remove(final String field) {
-        schema.remove(field);
+        TypedField removed = schema.remove(field);
+        if (removed != null) values.remove(removed.index());
         return this;
     }
 

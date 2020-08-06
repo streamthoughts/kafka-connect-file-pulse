@@ -27,10 +27,12 @@ public class TypedStructTest {
     private static final String STRING_FIELD_1 = "string-field-1";
     private static final String STRING_FIELD_2 = "string-field-2";
     private static final String STRING_FIELD_3 = "string-field-3";
+    private static final String STRING_FIELD_4 = "string-field-4";
 
     private static final String STRING_VALUE_1 = "string-value-1";
     private static final String STRING_VALUE_2 = "string-value-2";
     private static final String STRING_VALUE_3 = "string-value-3";
+    private static final String STRING_VALUE_4 = "string-value-4";
 
     @Test(expected = DataException.class)
     public void shouldThrowExceptionGivenInvalidFieldName() {
@@ -64,13 +66,16 @@ public class TypedStructTest {
         final TypedStruct struct = TypedStruct.create()
                 .put(STRING_FIELD_1, STRING_VALUE_1)
                 .put(STRING_FIELD_2, STRING_FIELD_2)
-                .put(STRING_FIELD_3, STRING_VALUE_3);
+                .put(STRING_FIELD_3, STRING_VALUE_3)
+                .put(STRING_FIELD_4, STRING_VALUE_4);
 
-        struct.remove(STRING_FIELD_2);
+        struct.remove(STRING_FIELD_1);
+        struct.remove(STRING_FIELD_3);
 
-        assertFalse(struct.has(STRING_FIELD_2));
-        assertEquals(0, struct.field(STRING_FIELD_1).index());
-        assertEquals(1, struct.field(STRING_FIELD_3).index());
+        assertFalse(struct.has(STRING_FIELD_1));
+        assertFalse(struct.has(STRING_FIELD_3));
+        assertEquals(0, struct.field(STRING_FIELD_2).index());
+        assertEquals(1, struct.field(STRING_FIELD_4).index());
     }
 
     @Test

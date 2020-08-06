@@ -1,5 +1,5 @@
 ---
-date: 2020-05-24
+date: 2020-08-06
 title: "Processing Filters"
 linkTitle: "Processing Filters"
 weight: 80
@@ -9,21 +9,21 @@ description: >
 
 These filters are available for use with Kafka Connect File Pulse:
 
-| Filter | Description |
+| Filter | Description | Since
 |---     | --- |
-| [AppendFilter](#appendfilter) | Appends one or more values to an existing or non-existing array field  |
-| [ConvertFilter](#convertfilter)  | Converts a message field's value to a specific type |
-| [DateFilter](#datefilter)  | Converts a field's value containing a date to a unix epoch time |
-| [DelimitedRowFilter](#delimitedrowfilter)  | Parses a message field's value containing columns delimited by a separator into a struct |
-| [DropFilter](#dropfilter)  | Drops messages satisfying a specific condition without throwing exception |
-| [FailFilter](#failfilter)  | Throws an exception when a message satisfy a specific condition |
-| [GrokFilter](#grokfilter)  | Parses an unstructured message field's value to a struct by combining Grok patterns |
-| [GroupRowFilter](#grouprowfilter)  | Regroups multiple following messages into a single message by composing a grouping key|
-| [JoinFilter](#joinfilter)  | Joins values of an array field with a specified separator |
-| [JSONFilter](#jsonfilter)  | Unmarshallings a JSON message field's value to a complex struct |
-| [MultiRowFilter](#multirowfilter)  | Combines following message lines into single one by combining patterns |
-| [RenameFilter](#renamefilter)  | Renames a message field |
-| [SplitFilter](#splitfilter)  | Splits a message field's value to array |
+| [AppendFilter](#appendfilter) | Appends one or more values to an existing or non-existing array field  | |
+| [ConvertFilter](#convertfilter)  | Converts a message field's value to a specific type | |
+| [DateFilter](#datefilter)  | Converts a field's value containing a date to a unix epoch time | |
+| [DelimitedRowFilter](#delimitedrowfilter)  | Parses a message field's value containing columns delimited by a separator into a struct | |
+| [ExplodeFilter](#explodeFilter)  | Explodes an array or list field into separate records. | `v1.4.0` |
+| [FailFilter](#failfilter)  | Throws an exception when a message satisfy a specific condition | |
+| [GrokFilter](#grokfilter)  | Parses an unstructured message field's value to a struct by combining Grok patterns | |
+| [GroupRowFilter](#grouprowfilter)  | Regroups multiple following messages into a single message by composing a grouping key| |
+| [JoinFilter](#joinfilter)  | Joins values of an array field with a specified separator | |
+| [JSONFilter](#jsonfilter)  | Unmarshallings a JSON message field's value to a complex struct | |
+| [MultiRowFilter](#multirowfilter)  | Combines following message lines into single one by combining patterns | |
+| [RenameFilter](#renamefilter)  | Renames a message field | |
+| [SplitFilter](#splitfilter)  | Splits a message field's value to array | |
 
 ## AppendFilter
 
@@ -292,6 +292,44 @@ filters.Drop.if={{ equals(level, ERROR) }}
 filters.Drop.invert=true
 ```
 
+
+## ExplodeFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter`.
+
+The `ExplodeFilter` can be used to explode an array or list field into separate records.
+
+### Configuration
+
+| Configuration |   Description |   Type    |   Default |   Importance  |
+| --------------| --------------|-----------| --------- | ------------- |
+| `source` | The input field on which to apply the filter  | string | *message* | medium |
+
+For more information about `if` property, see : [Conditional execution](conditional-execution).
+
+### Examples
+
+The following example shows the usage of **DropFilter** to only keep records with a field `level` containing to `ERROR`.
+
+```properties
+filters=Explode
+filters.Explode.type=io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter
+filters.Explode.source=measurements
+```
+
+**Input (single record)**
+```json
+{ "record" : { "id": "captor-0001", "date": "2020-08-06T17:00:00", "measurements": [38, 40, 42, 37] } }
+```
+
+**Output (multiple records)**
+```json
+{ "record" : { "id": "captor-0001", "date": "2020-08-06T17:00:00", "measurements": 38 } }
+{ "record" : { "id": "captor-0001", "date": "2020-08-06T17:00:00", "measurements": 40 } }
+{ "record" : { "id": "captor-0001", "date": "2020-08-06T17:00:00", "measurements": 42 } }
+{ "record" : { "id": "captor-0001", "date": "2020-08-06T17:00:00", "measurements": 37 } }
+```
+
 ## FailFilter
 
 The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.FailFilter`.
@@ -396,7 +434,8 @@ The `JSONFilter` parses an input json field.
 | --------------| --------------|-----------| --------- | ------------- |
 | `overwrite` | The fields to overwrite.    | list | *-* | medium |
 | `source` | The input field on which to apply the filter  | string | *message* | medium |
-| `target` | he target field to put the parsed JSON data  | string | *-* | high |
+| `target` | The target field to put the parsed JSON data  | string | *-* | high |
+| `charset` | The charset to be used for reading the source field  (if source if of type `BYTES` | string | *UTF-8* | medium |
 
 ### Examples
 

@@ -45,7 +45,7 @@ public class CommonConfig extends AbstractConfig {
     private static final String OFFSET_STRATEGY_DOC             = "A separated list of attributes, using '+' character as separator, " +
                                                                   "to be used for uniquely identifying an input file; must be one of " +
                                                                   "[name, path, lastModified, inode, hash] (e.g: name+hash). Note that order doesn't matter.";
-    private static final String OFFSET_STRATEGY_DEFAULT         = "name+hash";
+    private static final String OFFSET_STRATEGY_DEFAULT         = "path+name";
 
     public static final String FILTERS_GROUP                    = "Filters";
     public static final String FILTER_CONFIG                    = "filters";

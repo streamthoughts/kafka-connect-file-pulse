@@ -10,7 +10,7 @@ description: >
 These filters are available for use with Kafka Connect File Pulse:
 
 | Filter | Description | Since
-|---     | --- |
+---     | --- | --- |
 | [AppendFilter](#appendfilter) | Appends one or more values to an existing or non-existing array field  | |
 | [ConvertFilter](#convertfilter)  | Converts a message field's value to a specific type | |
 | [DateFilter](#datefilter)  | Converts a field's value containing a date to a unix epoch time | |

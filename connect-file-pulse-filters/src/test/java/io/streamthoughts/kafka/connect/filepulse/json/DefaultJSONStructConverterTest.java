@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,9 +37,18 @@ public class DefaultJSONStructConverterTest {
     private JSONStructConverter converter = new DefaultJSONStructConverter();
 
     @Test
-    public void shouldConvertGivenFieldWithArrayOfComplexType() throws Exception {
-        TypedStruct struct = converter.readJson("{\"field-one\" : [{\"firstName\": \"foo\"}, {\"firstName\": \"bar\"}]}");
+    public void shouldConvertGivenArrayOfComplexType() throws Exception {
+        TypedValue struct = converter.readJson("[{\"firstName\": \"foo\"}, {\"firstName\": \"bar\"}]");
         Assert.assertNotNull(struct);
+    }
+
+    @Test
+    public void shouldConvertGivenFieldWithArrayOfComplexType() throws Exception {
+        TypedValue value = converter.readJson("{\"field-one\" : [{\"firstName\": \"foo\"}, {\"firstName\": \"bar\"}]}");
+
+        Assert.assertNotNull(value);
+        Assert.assertEquals(Type.STRUCT, value.type());
+        TypedStruct struct = value.getStruct();
 
         StructSchema schema = struct.schema();
         assertNotNull(schema.field("field-one"));
@@ -51,9 +61,11 @@ public class DefaultJSONStructConverterTest {
     @Test
     public void shouldConvertGivenFieldsWithStringType() throws Exception {
 
-        TypedStruct struct = converter.readJson("{\"field-one\" : \"one\", \"field-two\":\"two\"}");
+        TypedValue value = converter.readJson("{\"field-one\" : \"one\", \"field-two\":\"two\"}");
 
-        Assert.assertNotNull(struct);
+        Assert.assertNotNull(value);
+        Assert.assertEquals(Type.STRUCT, value.type());
+        TypedStruct struct = value.getStruct();
 
         StructSchema schema = struct.schema();
         assertEquals(2, schema.fields().size());
@@ -69,9 +81,11 @@ public class DefaultJSONStructConverterTest {
     @Test
     public void shouldConvertGivenOneFieldWithArrayOfPrimitiveType() throws Exception {
 
-        TypedStruct struct = converter.readJson("{\"field-one\" : [\"foo\", \"bar\"]}");
+        TypedValue value = converter.readJson("{\"field-one\" : [\"foo\", \"bar\"]}");
 
-        Assert.assertNotNull(struct);
+        Assert.assertNotNull(value);
+        Assert.assertEquals(Type.STRUCT, value.type());
+        TypedStruct struct = value.getStruct();
 
         StructSchema schema = struct.schema();
         assertEquals(1, schema.fields().size());
@@ -84,12 +98,14 @@ public class DefaultJSONStructConverterTest {
     @Test
     public void shouldConvertGivenFieldsWithNumberType() throws Exception {
 
-        TypedStruct struct = converter.readJson("{\"field-int\" : " + Integer.MAX_VALUE + ", " +
+        TypedValue value = converter.readJson("{\"field-int\" : " + Integer.MAX_VALUE + ", " +
                       "\"field-long\":" + Long.MAX_VALUE + ", " +
                       "\"field-double\":" + Double.MAX_VALUE + "," +
                       "\"field-float\":" + Float.MAX_VALUE + "}");
 
-        Assert.assertNotNull(struct);
+        Assert.assertNotNull(value);
+        Assert.assertEquals(Type.STRUCT, value.type());
+        TypedStruct struct = value.getStruct();
 
         StructSchema schema = struct.schema();
         assertEquals(4, schema.fields().size());

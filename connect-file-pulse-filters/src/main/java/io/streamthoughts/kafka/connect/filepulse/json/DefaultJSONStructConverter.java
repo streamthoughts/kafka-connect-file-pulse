@@ -35,7 +35,6 @@ import java.util.Map;
 public class DefaultJSONStructConverter implements JSONStructConverter {
 
     private static final Map<ValueType, JsonFieldAccessor<?>> ACCESSORS = new HashMap<>();
-    private static final ObjectJsonFieldAccessor DEFAULT_ACCESSOR = new ObjectJsonFieldAccessor();
 
     /**
      * Creates a new {@link DefaultJSONStructConverter} instance.
@@ -43,7 +42,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
     public DefaultJSONStructConverter() {
         ACCESSORS.put(ValueType.ARRAY, new ArrayJsonFieldAccessor());
         ACCESSORS.put(ValueType.STRING, new StringJsonFieldAccessor());
-        ACCESSORS.put(ValueType.OBJECT, DEFAULT_ACCESSOR);
+        ACCESSORS.put(ValueType.OBJECT, new ObjectJsonFieldAccessor());
         ACCESSORS.put(ValueType.BOOLEAN, new BooleanJsonFieldAccessor());
         ACCESSORS.put(ValueType.NUMBER, new NumberJsonFieldAccessor());
     }
@@ -65,15 +64,13 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
      * {@inheritDoc}
      */
     @Override
-    public TypedStruct readJson(final String data) {
+    public TypedValue readJson(final String data) {
 
-        if (data == null) {
-            return null;
-        }
+        if (data == null) return null;
 
         try {
             JsonIterator it = JsonIterator.parse(data);
-            return DEFAULT_ACCESSOR.read(it).getStruct();
+            return getAccessorForType(it.whatIsNext()).read(it);
 
         } catch (Exception e) {
             throw new ReaderException("Error while reading json value, invalid JSON message.", e);

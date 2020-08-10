@@ -29,12 +29,20 @@ import java.util.Set;
 
 public class JSONFilterConfig extends CommonFilterConfig {
 
-    public static final String JSON_TARGET_CONFIG    = "target";
-    public static final String JSON_TARGET_DOC       = "The target field to put the parsed JSON value (optional)";
+    public static final String JSON_TARGET_CONFIG        = "target";
+    public static final String JSON_TARGET_DOC           = "The target field to put the parsed JSON value (optional)";
+
+    public static final String JSON_MERGE_CONFIG         = "merge";
+    public static final String JSON_MERGE_DOC            = "A boolean that specifies whether to merge the JSON " +
+                                                    "object into the top level of the input record (default: false).";
+
+    public static final String JSON_EXPLODE_ARRAY_CONFIG   = "explode.array";
+    public static final String JSON_EXPLODE_ARRAY_DOC      = "A boolean that specifies whether to explode arrays " +
+            "                                       into separate records (default: false)";
 
     public static final String JSON_SOURCE_CHARSET_CONFIG  = "source.charset";
-    public static final String JSON_SOURCE_CHARSET_DOC     = "The charset to be used for reading the source" +
-                                                            " field (default: UTF-8)";
+    public static final String JSON_SOURCE_CHARSET_DOC     = "The charset to be used for reading the source " +
+            "                                       field (default: UTF-8)";
 
     /**
      * Creates a new {@link JSONFilterConfig} instance.
@@ -52,6 +60,14 @@ public class JSONFilterConfig extends CommonFilterConfig {
         return getString(JSON_TARGET_CONFIG);
     }
 
+    public boolean explode() {
+        return getBoolean(JSON_EXPLODE_ARRAY_CONFIG);
+    }
+
+    public boolean merge() {
+        return getBoolean(JSON_MERGE_CONFIG);
+    }
+
     public Charset charset() {
         String name = getString(JSON_SOURCE_CHARSET_CONFIG);
         return name == null ? StandardCharsets.UTF_8 : Charset.forName(name);
@@ -66,7 +82,11 @@ public class JSONFilterConfig extends CommonFilterConfig {
             .define(JSON_TARGET_CONFIG, ConfigDef.Type.STRING, null,
                 ConfigDef.Importance.HIGH, JSON_TARGET_DOC)
             .define(JSON_SOURCE_CHARSET_CONFIG, ConfigDef.Type.STRING, null,
-                ConfigDef.Importance.MEDIUM, JSON_SOURCE_CHARSET_DOC);
+                ConfigDef.Importance.MEDIUM, JSON_SOURCE_CHARSET_DOC)
+            .define(JSON_EXPLODE_ARRAY_CONFIG, ConfigDef.Type.BOOLEAN, false,
+                ConfigDef.Importance.MEDIUM, JSON_EXPLODE_ARRAY_DOC)
+            .define(JSON_MERGE_CONFIG, ConfigDef.Type.BOOLEAN, false,
+                ConfigDef.Importance.MEDIUM, JSON_MERGE_DOC);
         CommonFilterConfig.withOverwrite(def);
         CommonFilterConfig.withSource(def);
 

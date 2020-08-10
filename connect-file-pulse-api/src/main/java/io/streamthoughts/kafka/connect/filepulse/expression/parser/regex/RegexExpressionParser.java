@@ -101,7 +101,7 @@ public class RegexExpressionParser implements ExpressionParser {
                 }
             }
         } else {
-            compiledExpression = matchers.matches(expression, defaultRootObject, substitution);
+            compiledExpression = matchers.matches(expression, defaultRootObject, false);
         }
 
         if (compiledExpression == null) {

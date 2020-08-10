@@ -19,13 +19,14 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.accessor;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.converter.Converters;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
 
 public class ReflectivePropertyAccessor implements PropertyAccessor {
 
-    private static final String GETTER_PREFIX = "of";
+    private static final String GETTER_PREFIX = "get";
     private static final String SETTER_PREFIX = "set";
 
     /**
@@ -83,7 +84,9 @@ public class ReflectivePropertyAccessor implements PropertyAccessor {
             Method method = findSetterMethodForProperty(type, name);
             if (method != null ) {
                 method.setAccessible(true);
-                method.invoke(target, newValue);
+                Class<?> expectedSetterType = method.getParameterTypes()[0];
+                Object converted = Converters.converts(context.getPropertyConverter(), newValue, expectedSetterType);
+                method.invoke(target, converted);
                 return;
             }
         } catch (Exception e) {

@@ -983,22 +983,87 @@ filters.AppendError.value=&amp;quot;{% raw %}{{ $error.message }}{% endraw %}&am
         
         
         &lt;p&gt;These filters are available for use with Kafka Connect File Pulse:&lt;/p&gt;
-&lt;p&gt;| Filter | Description | Since
-|&amp;mdash;     | &amp;mdash; |
-| &lt;a href=&#34;#appendfilter&#34;&gt;AppendFilter&lt;/a&gt; | Appends one or more values to an existing or non-existing array field  | |
-| &lt;a href=&#34;#convertfilter&#34;&gt;ConvertFilter&lt;/a&gt;  | Converts a message field&#39;s value to a specific type | |
-| &lt;a href=&#34;#datefilter&#34;&gt;DateFilter&lt;/a&gt;  | Converts a field&#39;s value containing a date to a unix epoch time | |
-| &lt;a href=&#34;#delimitedrowfilter&#34;&gt;DelimitedRowFilter&lt;/a&gt;  | Parses a message field&#39;s value containing columns delimited by a separator into a struct | |
-| &lt;a href=&#34;#excludeFilter&#34;&gt;ExcludeFilter&lt;/a&gt;  | Excludes one or more fields from the input record. | &lt;code&gt;v1.4.0&lt;/code&gt; |
-| &lt;a href=&#34;#explodeFilter&#34;&gt;ExplodeFilter&lt;/a&gt;  | Explodes an array or list field into separate records. | &lt;code&gt;v1.4.0&lt;/code&gt; |
-| &lt;a href=&#34;#failfilter&#34;&gt;FailFilter&lt;/a&gt;  | Throws an exception when a message satisfy a specific condition | |
-| &lt;a href=&#34;#grokfilter&#34;&gt;GrokFilter&lt;/a&gt;  | Parses an unstructured message field&#39;s value to a struct by combining Grok patterns | |
-| &lt;a href=&#34;#grouprowfilter&#34;&gt;GroupRowFilter&lt;/a&gt;  | Regroups multiple following messages into a single message by composing a grouping key| |
-| &lt;a href=&#34;#joinfilter&#34;&gt;JoinFilter&lt;/a&gt;  | Joins values of an array field with a specified separator | |
-| &lt;a href=&#34;#jsonfilter&#34;&gt;JSONFilter&lt;/a&gt;  | Unmarshallings a JSON message field&#39;s value to a complex struct | |
-| &lt;a href=&#34;#multirowfilter&#34;&gt;MultiRowFilter&lt;/a&gt;  | Combines following message lines into single one by combining patterns | |
-| &lt;a href=&#34;#renamefilter&#34;&gt;RenameFilter&lt;/a&gt;  | Renames a message field | |
-| &lt;a href=&#34;#splitfilter&#34;&gt;SplitFilter&lt;/a&gt;  | Splits a message field&#39;s value to array | |&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Filter&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Since&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#appendfilter&#34;&gt;AppendFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Appends one or more values to an existing or non-existing array field&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#convertfilter&#34;&gt;ConvertFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Converts a message field&#39;s value to a specific type&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#datefilter&#34;&gt;DateFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Converts a field&#39;s value containing a date to a unix epoch time&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#delimitedrowfilter&#34;&gt;DelimitedRowFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Parses a message field&#39;s value containing columns delimited by a separator into a struct&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#excludeFilter&#34;&gt;ExcludeFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Excludes one or more fields from the input record.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;v1.4.0&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#explodeFilter&#34;&gt;ExplodeFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Explodes an array or list field into separate records.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;v1.4.0&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#failfilter&#34;&gt;FailFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Throws an exception when a message satisfy a specific condition&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#grokfilter&#34;&gt;GrokFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Parses an unstructured message field&#39;s value to a struct by combining Grok patterns&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#grouprowfilter&#34;&gt;GroupRowFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Regroups multiple following messages into a single message by composing a grouping key&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#joinfilter&#34;&gt;JoinFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Joins values of an array field with a specified separator&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#jsonfilter&#34;&gt;JSONFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Unmarshallings a JSON message field&#39;s value to a complex struct&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#multirowfilter&#34;&gt;MultiRowFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Combines following message lines into single one by combining patterns&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#renamefilter&#34;&gt;RenameFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Renames a message field&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#splitfilter&#34;&gt;SplitFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Splits a message field&#39;s value to array&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;h2 id=&#34;appendfilter&#34;&gt;AppendFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;AppendFilter&lt;/code&gt; is probably one of the most important processing filters to know.

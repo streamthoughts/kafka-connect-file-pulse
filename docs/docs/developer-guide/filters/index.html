@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/" />
 <meta property="article:published_time" content="2020-08-06T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-06T22:32:49+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-08-10T18:46:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
 <meta itemprop="datePublished" content="2020-08-06T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-06T22:32:49&#43;02:00" />
-<meta itemprop="wordCount" content="2085">
+<meta itemprop="dateModified" content="2020-08-10T18:46:07&#43;02:00" />
+<meta itemprop="wordCount" content="2023">
 
 
 
@@ -1184,22 +1184,87 @@
     <div class="lead">The list of available transformation filters.</div>
 	       
 	<p>These filters are available for use with Kafka Connect File Pulse:</p>
-<p>| Filter | Description | Since
-|&mdash;     | &mdash; |
-| <a href="#appendfilter">AppendFilter</a> | Appends one or more values to an existing or non-existing array field  | |
-| <a href="#convertfilter">ConvertFilter</a>  | Converts a message field's value to a specific type | |
-| <a href="#datefilter">DateFilter</a>  | Converts a field's value containing a date to a unix epoch time | |
-| <a href="#delimitedrowfilter">DelimitedRowFilter</a>  | Parses a message field's value containing columns delimited by a separator into a struct | |
-| <a href="#excludeFilter">ExcludeFilter</a>  | Excludes one or more fields from the input record. | <code>v1.4.0</code> |
-| <a href="#explodeFilter">ExplodeFilter</a>  | Explodes an array or list field into separate records. | <code>v1.4.0</code> |
-| <a href="#failfilter">FailFilter</a>  | Throws an exception when a message satisfy a specific condition | |
-| <a href="#grokfilter">GrokFilter</a>  | Parses an unstructured message field's value to a struct by combining Grok patterns | |
-| <a href="#grouprowfilter">GroupRowFilter</a>  | Regroups multiple following messages into a single message by composing a grouping key| |
-| <a href="#joinfilter">JoinFilter</a>  | Joins values of an array field with a specified separator | |
-| <a href="#jsonfilter">JSONFilter</a>  | Unmarshallings a JSON message field's value to a complex struct | |
-| <a href="#multirowfilter">MultiRowFilter</a>  | Combines following message lines into single one by combining patterns | |
-| <a href="#renamefilter">RenameFilter</a>  | Renames a message field | |
-| <a href="#splitfilter">SplitFilter</a>  | Splits a message field's value to array | |</p>
+<table>
+<thead>
+<tr>
+<th>Filter</th>
+<th>Description</th>
+<th>Since</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#appendfilter">AppendFilter</a></td>
+<td>Appends one or more values to an existing or non-existing array field</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#convertfilter">ConvertFilter</a></td>
+<td>Converts a message field's value to a specific type</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#datefilter">DateFilter</a></td>
+<td>Converts a field's value containing a date to a unix epoch time</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#delimitedrowfilter">DelimitedRowFilter</a></td>
+<td>Parses a message field's value containing columns delimited by a separator into a struct</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#excludeFilter">ExcludeFilter</a></td>
+<td>Excludes one or more fields from the input record.</td>
+<td><code>v1.4.0</code></td>
+</tr>
+<tr>
+<td><a href="#explodeFilter">ExplodeFilter</a></td>
+<td>Explodes an array or list field into separate records.</td>
+<td><code>v1.4.0</code></td>
+</tr>
+<tr>
+<td><a href="#failfilter">FailFilter</a></td>
+<td>Throws an exception when a message satisfy a specific condition</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#grokfilter">GrokFilter</a></td>
+<td>Parses an unstructured message field's value to a struct by combining Grok patterns</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#grouprowfilter">GroupRowFilter</a></td>
+<td>Regroups multiple following messages into a single message by composing a grouping key</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#joinfilter">JoinFilter</a></td>
+<td>Joins values of an array field with a specified separator</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#jsonfilter">JSONFilter</a></td>
+<td>Unmarshallings a JSON message field's value to a complex struct</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#multirowfilter">MultiRowFilter</a></td>
+<td>Combines following message lines into single one by combining patterns</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#renamefilter">RenameFilter</a></td>
+<td>Renames a message field</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#splitfilter">SplitFilter</a></td>
+<td>Splits a message field's value to array</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h2 id="appendfilter">AppendFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter</code></p>
 <p>The <code>AppendFilter</code> is probably one of the most important processing filters to know.
@@ -2024,7 +2089,7 @@ filters.MySplitterFilter.target=output
 </code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 6, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/dccde5d214c140dc4a7ee933b02ded7aa0d4f59d">update(site): add missing docs (dccde5d)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 10, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8836cdaffe62b560f66309d0e8be2c64135ba5a3">docs(site): fix and comple examples (8836cda)</a>
 </div>
 </div>
 

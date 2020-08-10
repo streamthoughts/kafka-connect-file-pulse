@@ -18,23 +18,34 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.config.JSONFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.*;
 
 public class JSONFilterTest {
 
     private static final String JSON = "    {\"firstName\" : \"foo\", \"lastName\" : \"bar\"}";
+    private static final String ARRAY_STRING_JSON = "[\"foo\", \"bar\"]";
+    private static final String ARRAY_STRUCT_JSON = "[{\"name\" : \"foo\"}, {\"name\" : \"bar\"}]";
 
     private static final TypedStruct STRING_RECORD = create().put("message", JSON);
     private static final TypedStruct BYTES_RECORD = create().put("message", JSON.getBytes(StandardCharsets.UTF_8));
+
+    private static final TypedStruct ARRAY_STRING_RECORD = create().put("message", ARRAY_STRING_JSON);
+    private static final TypedStruct ARRAY_STRUCT_RECORD = create().put("message", ARRAY_STRUCT_JSON);
 
     private JSONFilter filter;
 
@@ -45,23 +56,94 @@ public class JSONFilterTest {
     }
 
     @Test
-    public void should_parse_input_given_no_target_config() {
-        assertOutput(filter.apply(null, STRING_RECORD, false).collect());
+    public void should_add_parsed_json_into_source_given_no_target_field() {
+        List<TypedStruct> expected = Collections.singletonList(create()
+                .put("message", create().put("firstName", "foo").put("lastName", "bar"))
+        );
+        assertOutput(filter.apply(null, STRING_RECORD, false).collect(), expected);
     }
 
     @Test
-    public void should_parse_input_given_target_config() {
-        assertOutput(filter.apply(null, STRING_RECORD, false).collect());
+    public void should_add_parsed_json_into_specific_field_given_target_field() {
+        filter.configure(new HashMap<String, Object>(){{
+            put(JSONFilterConfig.JSON_TARGET_CONFIG, "myTarget");
+        }});
+
+        List<TypedStruct> expected = Collections.singletonList(create()
+            .put("message", JSON)
+            .put("myTarget", create().put("firstName", "foo").put("lastName", "bar"))
+        );
+        assertOutput(filter.apply(null, STRING_RECORD, false).collect(), expected);
+    }
+
+    @Test
+    public void should_add_parsed_array_into_specific_field_given_target_field() {
+        filter.configure(new HashMap<String, Object>(){{
+            put(JSONFilterConfig.JSON_TARGET_CONFIG, "myTarget");
+        }});
+
+        List<TypedStruct> expected = Collections.singletonList(
+            create().put("message", ARRAY_STRING_JSON).put("myTarget", TypedValue.array(Arrays.asList("foo", "bar"), Type.STRING))
+        );
+
+        assertOutput(filter.apply(null, ARRAY_STRING_RECORD, false).collect(), expected);
+    }
+
+    @Test
+    public void should_add_parsed_array_into_specific_field_given_target_and_explode_true() {
+        filter.configure(new HashMap<String, Object>(){{
+            put(JSONFilterConfig.JSON_TARGET_CONFIG, "myTarget");
+            put(JSONFilterConfig.JSON_EXPLODE_ARRAY_CONFIG, true);
+        }});
+
+        List<TypedStruct> expected = Arrays.asList(
+            create().put("message", ARRAY_STRING_JSON).put("myTarget", "foo"),
+            create().put("message", ARRAY_STRING_JSON).put("myTarget", "bar")
+        );
+
+        assertOutput(filter.apply(null, ARRAY_STRING_RECORD, false).collect(), expected);
+    }
+
+    @Test
+    public void should_merge_parsed_json_into_root_field_given_merge_true() {
+        filter.configure(new HashMap<String, Object>(){{
+            put(JSONFilterConfig.JSON_MERGE_CONFIG, true);
+        }});
+
+        List<TypedStruct> expected = Collections.singletonList(create()
+            .put("message", JSON)
+            .put("firstName", "foo")
+            .put("lastName", "bar")
+        );
+        assertOutput(filter.apply(null, STRING_RECORD, false).collect(), expected);
+    }
+
+    @Test
+    public void should_merge_parsed_array_into_root_field_given_merge_and_explode_true() {
+        filter.configure(new HashMap<String, Object>(){{
+            put(JSONFilterConfig.JSON_MERGE_CONFIG, true);
+            put(JSONFilterConfig.JSON_EXPLODE_ARRAY_CONFIG, true);
+        }});
+
+        List<TypedStruct> expected = Arrays.asList(
+                create().put("message", ARRAY_STRUCT_JSON).put("name", "foo"),
+                create().put("message", ARRAY_STRUCT_JSON).put("name", "bar")
+        );
+        assertOutput(filter.apply(null, ARRAY_STRUCT_RECORD, false).collect(), expected);
     }
 
     @Test
     public void should_parse_input_given_value_of_type_bytes() {
-        assertOutput(filter.apply(null, BYTES_RECORD, false).collect());
+        List<TypedStruct> expected = Collections.singletonList(create()
+                .put("message", create().put("firstName", "foo").put("lastName", "bar"))
+        );
+        assertOutput(filter.apply(null, BYTES_RECORD, false).collect(), expected);
     }
 
-    private void assertOutput(List<TypedStruct> output) {
-        Assert.assertEquals(1, output.size());
-        Assert.assertEquals("foo", output.get(0).getString("firstName"));
-        Assert.assertEquals("bar", output.get(0).getString("lastName"));
+    private void assertOutput(List<TypedStruct> items, List<TypedStruct> expected) {
+        Assert.assertEquals(expected.size(), items.size());
+        for (int i = 0; i < items.size(); i++) {
+            Assert.assertEquals(expected.get(i), items.get(i));
+        }
     }
 }

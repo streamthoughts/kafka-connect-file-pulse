@@ -19,27 +19,26 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.JSONFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.json.DefaultJSONStructConverter;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
 
-import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class JSONFilter extends AbstractMergeRecordFilter<JSONFilter> {
 
     private final DefaultJSONStructConverter converter = new DefaultJSONStructConverter();
 
     private JSONFilterConfig configs;
-
-    private String source;
-
-    private String target;
-
-    private Charset charset;
 
     /**
      * {@inheritDoc}
@@ -48,9 +47,6 @@ public class JSONFilter extends AbstractMergeRecordFilter<JSONFilter> {
     public void configure(final Map<String, ?> props) {
         super.configure(props);
         configs = new JSONFilterConfig(props);
-        source = configs.source();
-        target = configs.target();
-        charset = configs.charset();
     }
 
     /**
@@ -66,17 +62,61 @@ public class JSONFilter extends AbstractMergeRecordFilter<JSONFilter> {
      */
     @Override
     protected RecordsIterable<TypedStruct> apply(final FilterContext context, final TypedStruct record) {
-        final String value = extractJsonField(checkIsNotNull(record.get(source)));
+        final String value = extractJsonField(checkIsNotNull(record.get(configs.source())));
+        final TypedValue typedValue;
+
         try {
-            final TypedStruct json = converter.readJson(value);
-            if (target != null) {
-                record.put(target, json);
-                return RecordsIterable.of(record);
-            }
-            return RecordsIterable.of(json);
+            typedValue = converter.readJson(value);
         } catch (Exception e) {
             throw new FilterException(e.getLocalizedMessage(), e.getCause());
         }
+
+        final Type type = typedValue.type();
+
+        if (type != Type.ARRAY && type != Type.STRUCT) {
+            throw new FilterException(
+                "Cannot process JSON value with unsupported type. Expected Array or Object, was " + type);
+        }
+
+        if (type == Type.STRUCT && configs.merge()) {
+            return RecordsIterable.of(typedValue.getStruct());
+        }
+
+        if (type == Type.ARRAY) {
+            if (configs.explode()) {
+
+                Collection<?> items = typedValue.getArray();
+                ArraySchema arraySchema = (ArraySchema)typedValue.schema();
+                Type arrayValueType = arraySchema.valueSchema().type();
+
+                if (configs.merge()) {
+                    if (arrayValueType == Type.STRUCT) {
+                        final List<TypedStruct> records = items
+                            .stream()
+                            .map(it -> TypedValue.any(it).getStruct())
+                            .collect(Collectors.toList());
+                        return new RecordsIterable<>(records);
+                    }
+
+                    throw new FilterException(
+                        "Unsupported operation. Cannot merge array value of type '"
+                         + arrayValueType + "' into the top level of the input record");
+                }
+
+                final List<TypedStruct> records = items
+                    .stream()
+                    .map(it -> TypedStruct.create().put(targetField(), TypedValue.of(it, arrayValueType)))
+                    .collect(Collectors.toList());
+                return new RecordsIterable<>(records);
+            }
+
+            if (configs.merge()) {
+                throw new FilterException(
+                    "Unsupported operation. Cannot merge JSON Array into the top level of the input record");
+            }
+        }
+
+        return RecordsIterable.of(TypedStruct.create().put(targetField(), typedValue));
     }
 
     private String extractJsonField(final TypedValue value) {
@@ -84,19 +124,24 @@ public class JSONFilter extends AbstractMergeRecordFilter<JSONFilter> {
             case STRING:
                 return value.getString();
             case BYTES:
-                return new String(value.getBytes(), charset);
+                return new String(value.getBytes(), configs.charset());
             default:
                 throw new FilterException(
-                        "Invalid field '" + source + "', cannot parse JSON field of type '" + value.type() + "'");
+                    "Invalid field '" + configs.source() + "', cannot parse JSON field of type '" + value.type() + "'"
+                );
         }
     }
 
     private TypedValue checkIsNotNull(final TypedValue value) {
         if (value.isNull()) {
             throw new FilterException(
-                "Invalid field '" + source + "', cannot convert empty value to JSON");
+                "Invalid field '" + configs.source() + "', cannot convert empty value to JSON");
         }
         return value;
+    }
+
+    private String targetField() {
+       return configs.target() != null ? configs.target() : configs.source();
     }
 
     /**
@@ -104,6 +149,8 @@ public class JSONFilter extends AbstractMergeRecordFilter<JSONFilter> {
      */
     @Override
     protected Set<String> overwrite() {
-        return configs.overwrite();
+        return configs.target() == null && !configs.merge() ?
+                Collections.singleton(configs.source())
+                : configs.overwrite() ;
     }
 }

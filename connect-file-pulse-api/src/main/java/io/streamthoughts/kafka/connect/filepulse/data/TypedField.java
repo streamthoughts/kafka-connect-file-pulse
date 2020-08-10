@@ -65,10 +65,10 @@ public class TypedField {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TypedField)) return false;
-        TypedField typeField = (TypedField) o;
-        return index == typeField.index &&
-                schema == typeField.schema &&
-                Objects.equals(name, typeField.name);
+        TypedField that = (TypedField) o;
+        return index == that.index &&
+                Objects.equals(schema, that.schema) &&
+                Objects.equals(name, that.name);
     }
 
     /**

@@ -113,6 +113,10 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
     private Expression evaluateWriteExpression(final StandardEvaluationContext evaluationContext) {
         if (mustEvaluateWriteExpression) {
             final String evaluated = fieldExpression.readValue(evaluationContext, String.class);
+            if (evaluated == null) {
+                throw new FilterException("Invalid value for property 'field'. Evaluation of expression '"
+                    + fieldExpression.originalExpression() + " 'returns 'null'.");
+            }
             return parser.parseExpression(evaluated, DEFAULT_ROOT_OBJECT, false);
         }
         return fieldExpression;

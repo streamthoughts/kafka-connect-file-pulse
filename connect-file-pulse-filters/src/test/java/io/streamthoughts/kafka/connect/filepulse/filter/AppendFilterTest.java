@@ -87,4 +87,13 @@ public class AppendFilterTest {
         TypedStruct result = output.collect().get(0);
         Assert.assertEquals("foo-bar", result.getString("foo"));
     }
+
+    @Test
+    public void shouldSupportPropertyExpressionWithScopeForFieldConfig() {
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$topic");
+        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "my-topic-{{ extract_array(values,0) }}");
+        filter.configure(configs);
+        filter.apply(context, STRUCT);
+        Assert.assertEquals("my-topic-foo", context.topic());
+    }
 }

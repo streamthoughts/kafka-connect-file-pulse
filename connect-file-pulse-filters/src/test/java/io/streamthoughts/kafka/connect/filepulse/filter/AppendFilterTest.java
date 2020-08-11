@@ -34,7 +34,7 @@ import java.util.Map;
 public class AppendFilterTest {
 
     private final static TypedStruct STRUCT = TypedStruct.create().put("values", Arrays.asList("foo", "bar"));
-    private final static String EXPRESSION = "{{ extract_array(values,0) }}-{{ extract_array(values,1) }}";
+    private final static String EXPRESSION = "{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}";
 
     private AppendFilter filter;
 
@@ -53,8 +53,8 @@ public class AppendFilterTest {
     }
 
     @Test
-    public void shouldSupportSubstitutionExpressionForValueConfig() {
-        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "target");
+    public void shouldSupportPropertyExpressionForValueConfig() {
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$.target");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
         filter.configure(configs);
 
@@ -66,7 +66,7 @@ public class AppendFilterTest {
 
     @Test
     public void shouldSupportPropertyExpressionForFieldConfig() {
-        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$value.target");
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$.target");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
         filter.configure(configs);
 
@@ -78,7 +78,7 @@ public class AppendFilterTest {
 
     @Test
     public void shouldSupportSubstitutionExpressionForFieldConfig() {
-        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "{{ extract_array(values,0) }}");
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "{{ '$.'extract_array($.values,0) }}");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
         filter.configure(configs);
 
@@ -91,7 +91,7 @@ public class AppendFilterTest {
     @Test
     public void shouldSupportPropertyExpressionWithScopeForFieldConfig() {
         configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$topic");
-        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "my-topic-{{ extract_array(values,0) }}");
+        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "my-topic-{{ extract_array($.values,0) }}");
         filter.configure(configs);
         filter.apply(context, STRUCT);
         Assert.assertEquals("my-topic-foo", context.topic());

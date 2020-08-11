@@ -22,8 +22,7 @@ import io.streamthoughts.kafka.connect.filepulse.config.DateFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
-import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
-import io.streamthoughts.kafka.connect.filepulse.expression.parser.regex.RegexExpressionParser;
+import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.errors.ConnectException;
@@ -38,19 +37,11 @@ import java.util.Map;
 
 public class DateFilter extends AbstractRecordFilter<DateFilter> {
 
-    private static final String DEFAULT_ROOT_OBJECT = "value";
-
     private DateFilterConfig config;
-
-    private RegexExpressionParser parser;
 
     private Expression fieldExpression;
 
     private Expression targetExpression;
-
-    private boolean mustEvaluateTargetExpression = true;
-
-    private boolean mustEvaluateFieldExpression = true;
 
     private List<DateTimeFormatter> dtf;
 
@@ -62,23 +53,9 @@ public class DateFilter extends AbstractRecordFilter<DateFilter> {
         super.configure(props);
         config = new DateFilterConfig(props);
 
-        parser = new RegexExpressionParser();
-
         // Parse expression while supporting substitution
-        fieldExpression = parser.parseExpression(config.field(), DEFAULT_ROOT_OBJECT);
-        targetExpression = parser.parseExpression(config.target(), DEFAULT_ROOT_OBJECT);
-
-        // Check whether the field expression can be pre-evaluated (i.e : is not a substitution expression).
-        if (fieldExpression instanceof ValueExpression) {
-            fieldExpression = mayEvaluateFieldExpression(new StandardEvaluationContext(new Object()));
-            mustEvaluateFieldExpression = false;
-        }
-
-        // Check whether the target expression can be pre-evaluated (i.e : is not a substitution expression).
-        if (targetExpression instanceof ValueExpression) {
-            targetExpression = mayEvaluateTargetExpression(new StandardEvaluationContext(new Object()));
-            mustEvaluateTargetExpression = false;
-        }
+        fieldExpression = ExpressionParsers.parseExpression(config.field());
+        targetExpression = ExpressionParsers.parseExpression(config.target());
 
         if (config.formats().isEmpty()) {
             throw new ConnectException("Invalid configuration, at least one date format must be provided");
@@ -151,17 +128,17 @@ public class DateFilter extends AbstractRecordFilter<DateFilter> {
     }
 
     private Expression mayEvaluateTargetExpression(final StandardEvaluationContext evaluationContext) {
-        if (mustEvaluateTargetExpression) {
+        if (!targetExpression.canWrite()) {
             final String evaluated = targetExpression.readValue(evaluationContext, String.class);
-            return parser.parseExpression(evaluated, DEFAULT_ROOT_OBJECT, false);
+            return ExpressionParsers.parseExpression(evaluated);
         }
         return targetExpression;
     }
 
     private Expression mayEvaluateFieldExpression(final StandardEvaluationContext evaluationContext) {
-        if (mustEvaluateFieldExpression) {
+        if (!fieldExpression.canWrite()) {
             final String evaluated = fieldExpression.readValue(evaluationContext, String.class);
-            return parser.parseExpression(evaluated, DEFAULT_ROOT_OBJECT, false);
+            return ExpressionParsers.parseExpression(evaluated);
         }
         return fieldExpression;
     }

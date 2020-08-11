@@ -52,7 +52,7 @@ public class JoinFilterTest {
 
     @Test
     public void shouldJoinArrayIntoFieldGivenNoTarget() {
-        configs.put(JoinFilterConfig.JOIN_FIELD_CONFIG, "array");
+        configs.put(JoinFilterConfig.JOIN_FIELD_CONFIG, "$.array");
         configs.put(JoinFilterConfig.JOIN_SEPARATOR_CONFIG, "|");
 
         filter.configure(configs);
@@ -69,8 +69,8 @@ public class JoinFilterTest {
 
     @Test
     public void shouldJoinArrayGivenTarget() {
-        configs.put(JoinFilterConfig.JOIN_FIELD_CONFIG, "array");
-        configs.put(JoinFilterConfig.JOIN_TARGET_CONFIG, "joined");
+        configs.put(JoinFilterConfig.JOIN_FIELD_CONFIG, "$.array");
+        configs.put(JoinFilterConfig.JOIN_TARGET_CONFIG, "$.joined");
         configs.put(JoinFilterConfig.JOIN_SEPARATOR_CONFIG, "|");
 
         filter.configure(configs);

@@ -70,6 +70,12 @@
         </dependency>
 
         <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>kafka-connect-file-pulse-expression</artifactId>
+            <version>${version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.jsoniter</groupId>
             <artifactId>jsoniter</artifactId>
         </dependency>

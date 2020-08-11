@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import io.streamthoughts.kafka.connect.filepulse.filter.config.CommonFilterConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Collections;

@@ -22,8 +22,6 @@ import io.streamthoughts.kafka.connect.filepulse.config.JoinFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
-import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
-import io.streamthoughts.kafka.connect.filepulse.expression.parser.regex.RegexExpressionParser;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
 
@@ -31,21 +29,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers.parseExpression;
+
 public class JoinFilter extends AbstractRecordFilter<JoinFilter> {
 
-    private static final String DEFAULT_ROOT_OBJECT = "value";
-
     private JoinFilterConfig config;
-
-    private RegexExpressionParser parser;
 
     private Expression fieldExpression;
 
     private Expression targetExpression;
-
-    private boolean mustEvaluateTargetExpression = true;
-
-    private boolean mustEvaluateFieldExpression = true;
 
     /**
      * {@inheritDoc}
@@ -55,28 +47,9 @@ public class JoinFilter extends AbstractRecordFilter<JoinFilter> {
         super.configure(props);
         config = new JoinFilterConfig(props);
 
-        parser = new RegexExpressionParser();
-
         // Parse expression while supporting substitution
-        fieldExpression = parser.parseExpression(config.field(), DEFAULT_ROOT_OBJECT);
-        // Check whether the field expression can be pre-evaluated (i.e : is not a substitution expression).
-        if (fieldExpression instanceof ValueExpression) {
-            fieldExpression = mayEvaluateFieldExpression(new StandardEvaluationContext(new Object()));
-            mustEvaluateFieldExpression = false;
-        }
-
-        if (config.target() == null)  {
-            targetExpression = fieldExpression;
-            mustEvaluateTargetExpression = mustEvaluateFieldExpression;
-        } else {
-            targetExpression = parser.parseExpression(config.target(), DEFAULT_ROOT_OBJECT);
-            // Check whether the target expression can be pre-evaluated (i.e : is not a substitution expression).
-            if (targetExpression instanceof ValueExpression) {
-                targetExpression = mayEvaluateTargetExpression(new StandardEvaluationContext(new Object()));
-                mustEvaluateTargetExpression = false;
-            }
-        }
-
+        fieldExpression = parseExpression(config.field());
+        targetExpression = config.target() == null ? fieldExpression : parseExpression(config.target());
     }
 
     /**
@@ -120,17 +93,17 @@ public class JoinFilter extends AbstractRecordFilter<JoinFilter> {
     }
 
     private Expression mayEvaluateTargetExpression(final StandardEvaluationContext evaluationContext) {
-        if (mustEvaluateTargetExpression) {
+        if (!targetExpression.canWrite()) {
             final String evaluated = targetExpression.readValue(evaluationContext, String.class);
-            return parser.parseExpression(evaluated, DEFAULT_ROOT_OBJECT, false);
+            return parseExpression(evaluated);
         }
         return targetExpression;
     }
 
     private Expression mayEvaluateFieldExpression(final StandardEvaluationContext evaluationContext) {
-        if (mustEvaluateFieldExpression) {
+        if (!fieldExpression.canWrite()) {
             final String evaluated = fieldExpression.readValue(evaluationContext, String.class);
-            return parser.parseExpression(evaluated, DEFAULT_ROOT_OBJECT, false);
+            return parseExpression(evaluated);
         }
         return fieldExpression;
     }

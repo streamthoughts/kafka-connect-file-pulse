@@ -53,8 +53,8 @@ Within an error filter chain, some additional fields are available to each filte
 
 | Predefined Fields / ScEL | Description | Type |
 |--- | --- |--- |
-| `{% raw %}{{ $error.message }}{% endraw %}` | The error message  | `string` |
-| `{% raw %}{{ $error.filter }}{% endraw %}` | The failed filter name  | `string` |
+| `$error.message` | The error message  | `string` |
+| `$error.filter`  | The failed filter name  | `string` |
 
 ### Example
 
@@ -71,6 +71,6 @@ filters.Log4jGrokFilter.withOnFailure=AppendError
 
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendError.field=errorMessage
-filters.AppendError.value="{% raw %}{{ $error.message }}{% endraw %}"
+filters.AppendError.value="$error.message"
 
 ```

@@ -2,10 +2,10 @@
   "config": {
     "connector.class": "io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector",
     "filters": "ParseDelimitedRow, SetTopic, SetKey",
-    "filters.SetTopic.value": "{{ replace_all(lowercase(type), \\s,-) }}",
+    "filters.SetTopic.value": "replace_all(lowercase($.type), '\\s','-')",
     "filters.SetTopic.field": "$topic",
     "filters.SetTopic.type": "io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter",
-    "filters.SetKey.value": "{{ lowercase(artist) }}-{{ lowercase(title) }}",
+    "filters.SetKey.value": "{{ lowercase($.artist) }}-{{ lowercase($.title) }}",
     "filters.SetKey.field": "$key",
     "filters.SetKey.type": "io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter",
     "filters.ParseDelimitedRow.extractColumnName": "headers",

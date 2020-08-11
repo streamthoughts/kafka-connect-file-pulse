@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.FailFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.filter.config.CommonFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.junit.Assert;
@@ -46,7 +46,7 @@ public class FailFilterTest {
                 .withOffset(FileRecordOffset.invalid())
                 .build();
         configs = new HashMap<>();
-        configs.put(CommonFilterConfig.CONDITION_CONFIG, "{{ exists($value, tags) }}");
+        configs.put(CommonFilterConfig.CONDITION_CONFIG, "{{ exists($value, 'tags') }}");
         configs.put(CommonFilterConfig.CONDITION_NOT_CONFIG, "true");
     }
 

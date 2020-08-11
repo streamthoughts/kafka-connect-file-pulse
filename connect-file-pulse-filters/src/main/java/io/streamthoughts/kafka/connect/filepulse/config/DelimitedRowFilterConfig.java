@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.filter.config.CommonFilterConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 

@@ -1,5 +1,5 @@
 ---
-date: 2020-08-06
+date: 2020-08-12
 title: "Processing Filters"
 linkTitle: "Processing Filters"
 weight: 80
@@ -51,7 +51,7 @@ The concat value is then added to the a field named `result`.
 **Configuration**
 ```properties
 filters.SubstituteFilter.field="result"
-filters.SubstituteFilter.value="{{ extract_array(values,0) }}-{{ extract_array(values,1) }}"
+filters.SubstituteFilter.value="{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}"
 ```
 
 **Input**
@@ -84,7 +84,7 @@ The following configuration show how to use the `$topic` scope :
 
 ```properties
 filters.SubstituteFilter.field="$topic"
-filters.SubstituteFilter.value="my-topic-{{ lowercase(extract_array(values,0) }}"
+filters.SubstituteFilter.value="my-topic-{{ lowercase(extract_array($.values,0)) }}"
 ```
 **Input**
 ```json
@@ -111,8 +111,8 @@ This allows to dynamically determine the name of the field to be added.
 The following examples show how to use a property expression to get the named of the field from a
 
 ```properties
-filters.SubstituteFilter.field="{{ target }}"
-filters.SubstituteFilter.value="{{ extract_array(values,0) }}-{{ extract_array(values,1) }}"
+filters.SubstituteFilter.field="$.target"
+filters.SubstituteFilter.value="{{ extract_array($.values, 0) }}-{{ extract_array($.values,1) }}"
 ```
 
 **Input**
@@ -208,8 +208,8 @@ The `DateFilter` converts a field's value containing a date to a unix epoch time
 ### Examples
         
 ```properties
-filters.MyDateFilter.field="date"
-filters.MyDateFilter.target="timestamp"
+filters.MyDateFilter.field="$.date"
+filters.MyDateFilter.target="$.timestamp"
 filters.MyDateFilter.format="yyyy-MM-dd'T'HH:mm:ss"
 ```
 
@@ -289,7 +289,7 @@ The following example shows the usage of **DropFilter** to only keep records wit
 ```properties
 filters=Drop
 filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
-filters.Drop.if={{ equals(level, ERROR) }}
+filters.Drop.if={{ equals($.level, 'ERROR') }}
 filters.Drop.invert=true
 ```
 
@@ -384,7 +384,7 @@ The following example shows the usage of **FailFilter** to stop processing a fil
 ```properties
 filters=Fail
 filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
-filters.Fail.if={{ is_null(user_id) }}
+filters.Fail.if={{ is_null($.user_id) }}
 filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 ```
 

@@ -2,7 +2,7 @@
   "config": {
     "connector.class": "io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector",
     "filters": "ParseDelimitedRow, Drop",
-    "filters.Drop.if": "{{ equals(artist,U2) }}",
+    "filters.Drop.if": "{{ equals($value.artist, 'U2') }}",
     "filters.Drop.invert": "true",
     "filters.Drop.type": "io.streamthoughts.kafka.connect.filepulse.filter.DropFilter",
     "filters.ParseDelimitedRow.extractColumnName": "headers",

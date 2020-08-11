@@ -35,6 +35,7 @@
         <module>connect-file-pulse-api</module>
         <module>connect-file-pulse-filters</module>
         <module>connect-file-pulse-plugin</module>
+        <module>connect-file-pulse-expression</module>
     </modules>
 
     <developers>
@@ -313,9 +314,14 @@
 
             <dependency>
                 <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.30</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>1.7.25</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>

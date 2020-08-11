@@ -22,15 +22,13 @@ import io.streamthoughts.kafka.connect.filepulse.config.FailFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
-import io.streamthoughts.kafka.connect.filepulse.expression.parser.regex.RegexExpressionParser;
+import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
 
 public class FailFilter extends AbstractRecordFilter<FailFilter> {
-
-    private static final String DEFAULT_ROOT_OBJECT = "value";
 
     private FailFilterConfig config;
 
@@ -51,7 +49,7 @@ public class FailFilter extends AbstractRecordFilter<FailFilter> {
     public void configure(final Map<String, ?> props) {
         super.configure(props);
         config = new FailFilterConfig(props);
-        expression = new RegexExpressionParser().parseExpression(config.message(), DEFAULT_ROOT_OBJECT);
+        expression = ExpressionParsers.parseExpression(config.message());
     }
 
     /**

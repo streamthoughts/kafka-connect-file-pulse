@@ -49,8 +49,8 @@ public class DateFilterTest {
 
     @Test
     public void shouldConvertToEpochTimeGivenNoTimezoneAndNoLocale() {
-        configs.put(DateFilterConfig.DATE_FIELD_CONFIG, "date");
-        configs.put(DateFilterConfig.DATE_TARGET_CONFIG, "timestamp");
+        configs.put(DateFilterConfig.DATE_FIELD_CONFIG, "$.date");
+        configs.put(DateFilterConfig.DATE_TARGET_CONFIG, "$.timestamp");
         configs.put(DateFilterConfig.DATE_FORMATS_CONFIG, Collections.singletonList("yyyy-MM-dd'T'HH:mm:ss"));
 
         filter.configure(configs);
@@ -64,8 +64,8 @@ public class DateFilterTest {
 
     @Test
     public void shouldConvertToEpochTimeGivenTimezone() {
-        configs.put(DateFilterConfig.DATE_FIELD_CONFIG, "date");
-        configs.put(DateFilterConfig.DATE_TARGET_CONFIG, "timestamp");
+        configs.put(DateFilterConfig.DATE_FIELD_CONFIG, "$.date");
+        configs.put(DateFilterConfig.DATE_TARGET_CONFIG, "$.timestamp");
         configs.put(DateFilterConfig.DATE_TIMEZONE_CONFIG, "Europe/Paris");
         configs.put(DateFilterConfig.DATE_FORMATS_CONFIG, Collections.singletonList("yyyy-MM-dd'T'HH:mm:ss"));
 
@@ -80,8 +80,8 @@ public class DateFilterTest {
 
     @Test
     public void shouldConvertToEpochTimeGivenLocale() {
-        configs.put(DateFilterConfig.DATE_FIELD_CONFIG, "date");
-        configs.put(DateFilterConfig.DATE_TARGET_CONFIG, "timestamp");
+        configs.put(DateFilterConfig.DATE_FIELD_CONFIG, "$.date");
+        configs.put(DateFilterConfig.DATE_TARGET_CONFIG, "$.timestamp");
         configs.put(DateFilterConfig.DATE_LOCALE_CONFIG, "fr_FR");
         configs.put(DateFilterConfig.DATE_FORMATS_CONFIG, Collections.singletonList("EEEE, d MMMM yyyy HH:mm:ss"));
 

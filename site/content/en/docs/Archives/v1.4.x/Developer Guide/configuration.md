@@ -1,5 +1,5 @@
 ---
-date: 2020-05-25
+date: 2020-08-12
 title: "Basic Configuration"
 linkTitle: "Basic Configuration"
 weight: 20
@@ -23,7 +23,7 @@ Those configuration are described in detail in subsequent chapters.
 |`internal.kafka.reporter.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | high |
 |`internal.kafka.reporter.bootstrap.servers` |A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster. | string | *-* | high |
 |`task.reader.class` | The fully qualified name of the class which is used by tasks to read input files | class | *io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader* | high |
-|`offset.strategy` | The strategy to use for building source offset from an input file; must be one of [name, path, name+hash] | string | *name+hash* | high |
+|`offset.strategy` | A separated list of attributes, using `+`  as a character separator, to be used for uniquely identifying an input file; must be one of [`name`, `path`, `lastModified`, `inode`, `hash`] (e.g: `name+hash`). Note that order doesn't matter.| string | *path+name* | high |
 |`topic` | The default output topic to write | string | *-* | high |
 
 
@@ -31,4 +31,3 @@ Those configuration are described in detail in subsequent chapters.
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
 |`internal.kafka.reporter.id` | The reporter identifier to be used by tasks and connector to report and monitor file progression (default null). This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility (when set, must be unique for each connect instance). | string | *-* | high |
-

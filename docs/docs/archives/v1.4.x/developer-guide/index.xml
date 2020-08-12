@@ -56,7 +56,7 @@ When you run Connect workers in &lt;strong&gt;distributed mode&lt;/strong&gt;, t
     <item>
       <title>Docs: Basic Configuration</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/configuration/</link>
-      <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/configuration/</guid>
       <description>
@@ -141,9 +141,9 @@ Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;offset.strategy&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The strategy to use for building source offset from an input file; must be one of [name, path, name+hash]&lt;/td&gt;
+&lt;td&gt;A separated list of attributes, using &lt;code&gt;+&lt;/code&gt;  as a character separator, to be used for uniquely identifying an input file; must be one of [&lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;inode&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;] (e.g: &lt;code&gt;name+hash&lt;/code&gt;). Note that order doesn&#39;t matter.&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;name+hash&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;path+name&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;

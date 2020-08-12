@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/" />
-<meta property="article:published_time" content="2020-05-25T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-25T09:45:47+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-08-12T17:53:28+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Basic Configuration">
 <meta itemprop="description" content="The commons configuration for deploying a File Pulse connector.
 ">
-<meta itemprop="datePublished" content="2020-05-25T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-25T09:45:47&#43;02:00" />
-<meta itemprop="wordCount" content="277">
+<meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-08-12T17:53:28&#43;02:00" />
+<meta itemprop="wordCount" content="294">
 
 
 
@@ -1177,9 +1177,9 @@ Those configuration are described in detail in subsequent chapters.</p>
 </tr>
 <tr>
 <td><code>offset.strategy</code></td>
-<td>The strategy to use for building source offset from an input file; must be one of [name, path, name+hash]</td>
+<td>A separated list of attributes, using <code>+</code>  as a character separator, to be used for uniquely identifying an input file; must be one of [<code>name</code>, <code>path</code>, <code>lastModified</code>, <code>inode</code>, <code>hash</code>] (e.g: <code>name+hash</code>). Note that order doesn't matter.</td>
 <td>string</td>
-<td><em>name+hash</em></td>
+<td><em>path+name</em></td>
 <td>high</td>
 </tr>
 <tr>
@@ -1215,7 +1215,7 @@ Those configuration are described in detail in subsequent chapters.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 25, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f11bd9e95b73107259c8282b3f0d150c23a8c166">update(site): update docs for version 1.3 (f11bd9e)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 12, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/01f9fcd82192d167154be5d7a4a7b3801485233b">docs(site): fix offset.strategy config description (01f9fcd)</a>
 </div>
 </div>
 

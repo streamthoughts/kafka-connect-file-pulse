@@ -1,5 +1,5 @@
 ---
-date: 2020-05-21
+date: 2020-08-12
 title: "File Readers"
 linkTitle: "File Readers"
 weight: 40
@@ -34,3 +34,9 @@ The following provides usage information for `io.streamthoughts.kafka.connect.fi
 The `XMLFileInputReader` is used to read XML files.
 
 The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/XMLFileInputReader.java))
+
+## FileInputMetadataReader
+
+The `FileInputMetadataReader` is used to send a single record per file containing metadata (i.e: `name`, `path`, `hash`, `lastModified`, `size`, etc)
+
+The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.FileInputMetadataReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputMetadataReader.java))

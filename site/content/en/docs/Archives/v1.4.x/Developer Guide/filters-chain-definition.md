@@ -27,8 +27,8 @@ filters.GroupMultilineException.negate=false
 filters.GroupMultilineException.pattern="^[\\t]"
 
 filters.ExtractFirstLine.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
-filters.ExtractFirstLine.field=logmessage
-filters.ExtractFirstLine.values=${extractarray(message,0)}
+filters.ExtractFirstLine.field=$.logmessage
+filters.ExtractFirstLine.values={{ extract_array($.message, 0) }
 
 filters.ParseLog4jLog.type=io.streamthoughts.kafka.connect.filepulse.filter.impl.GrokFilter
 filters.ParseLog4jLog.match="%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:thread} %{GREEDYDATA:logmessage}"

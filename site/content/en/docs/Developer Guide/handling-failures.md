@@ -1,5 +1,5 @@
 ---
-date: 2020-05-21
+date: 2020-08-12
 title: "Handling Failures"
 linkTitle: "Handling Failures"
 weight: 70
@@ -72,5 +72,4 @@ filters.Log4jGrokFilter.withOnFailure=AppendError
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendError.field=errorMessage
 filters.AppendError.value="$error.message"
-
 ```

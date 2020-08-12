@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/filters/" />
-<meta property="article:published_time" content="2020-08-06T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-10T18:46:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-08-12T17:33:57+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
-<meta itemprop="datePublished" content="2020-08-06T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-10T18:46:07&#43;02:00" />
-<meta itemprop="wordCount" content="2023">
+<meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-08-12T17:33:57&#43;02:00" />
+<meta itemprop="wordCount" content="2022">
 
 
 
@@ -1331,7 +1331,7 @@ using a <a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-a
 The concat value is then added to the a field named <code>result</code>.</p>
 <p><strong>Configuration</strong></p>
 <pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;result&quot;
-filters.SubstituteFilter.value=&quot;{{ extract_array(values,0) }}-{{ extract_array(values,1) }}&quot;
+filters.SubstituteFilter.value=&quot;{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}&quot;
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
     <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span><span style="color:#000;font-weight:bold">{</span>
@@ -1353,7 +1353,7 @@ Hence, we could have used the fully expression <code>$value.result</code> which 
 resolve the record-key or the output topic based on the record data.</p>
 <p>The following configuration show how to use the <code>$topic</code> scope :</p>
 <pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;$topic&quot;
-filters.SubstituteFilter.value=&quot;my-topic-{{ lowercase(extract_array(values,0) }}&quot;
+filters.SubstituteFilter.value=&quot;my-topic-{{ lowercase(extract_array($.values,0)) }}&quot;
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
@@ -1370,8 +1370,8 @@ filters.SubstituteFilter.value=&quot;my-topic-{{ lowercase(extract_array(values,
 </code></pre></div><p>Finally the <code>AppendFilter</code> can also accept an substitution expression for the property field.
 This allows to dynamically determine the name of the field to be added.</p>
 <p>The following examples show how to use a property expression to get the named of the field from a</p>
-<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;{{ target }}&quot;
-filters.SubstituteFilter.value=&quot;{{ extract_array(values,0) }}-{{ extract_array(values,1) }}&quot;
+<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;$.target&quot;
+filters.SubstituteFilter.value=&quot;{{ extract_array($.values, 0) }}-{{ extract_array($.values,1) }}&quot;
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
@@ -1507,8 +1507,8 @@ filters.BooleanConverter.type=&quot;BOOLEAN&quot;
 </tbody>
 </table>
 <h3 id="examples2">Examples</h3>
-<pre><code class="language-properties" data-lang="properties">filters.MyDateFilter.field=&quot;date&quot;
-filters.MyDateFilter.target=&quot;timestamp&quot;
+<pre><code class="language-properties" data-lang="properties">filters.MyDateFilter.field=&quot;$.date&quot;
+filters.MyDateFilter.target=&quot;$.timestamp&quot;
 filters.MyDateFilter.format=&quot;yyyy-MM-dd'T'HH:mm:ss&quot;
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
@@ -1627,7 +1627,7 @@ method accepts a regex as argument then any special character must be escaped.
 <p>The following example shows the usage of <strong>DropFilter</strong> to only keep records with a field <code>level</code> containing to <code>ERROR</code>.</p>
 <pre><code class="language-properties" data-lang="properties">filters=Drop
 filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
-filters.Drop.if={{ equals(level, ERROR) }}
+filters.Drop.if={{ equals($.level, 'ERROR') }}
 filters.Drop.invert=true
 </code></pre><h2 id="excludefilter">ExcludeFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFilter</code>.</p>
@@ -1741,7 +1741,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 <p>The following example shows the usage of <strong>FailFilter</strong> to stop processing a file when a field is equals to <code>null</code>.</p>
 <pre><code class="language-properties" data-lang="properties">filters=Fail
 filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
-filters.Fail.if={{ is_null(user_id) }}
+filters.Fail.if={{ is_null($.user_id) }}
 filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 </code></pre><h2 id="grokfilter">GrokFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter</code>.</p>
@@ -2109,7 +2109,7 @@ filters.MySplitterFilter.target=output
 </code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 10, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8836cdaffe62b560f66309d0e8be2c64135ba5a3">docs(site): fix and comple examples (8836cda)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 12, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/70151e9da2c5ac41587a0f4e457cee856f7accbb">update(site): update docs (70151e9)</a>
 </div>
 </div>
 

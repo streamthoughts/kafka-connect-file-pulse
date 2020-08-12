@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/handling-failures/" />
-<meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-06T22:32:49+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-08-12T17:33:57+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Handling Failures">
 <meta itemprop="description" content="Learn how to handle failures thrown while processing of records by the filter chain.
 ">
-<meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-06T22:32:49&#43;02:00" />
-<meta itemprop="wordCount" content="267">
+<meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-08-12T17:33:57&#43;02:00" />
+<meta itemprop="wordCount" content="249">
 
 
 
@@ -1183,12 +1183,12 @@ filters.Log4jGrokFilter.ignoreFailure=true
 </thead>
 <tbody>
 <tr>
-<td><code>{% raw %}{{ $error.message }}{% endraw %}</code></td>
+<td><code>$error.message</code></td>
 <td>The error message</td>
 <td><code>string</code></td>
 </tr>
 <tr>
-<td><code>{% raw %}{{ $error.filter }}{% endraw %}</code></td>
+<td><code>$error.filter</code></td>
 <td>The failed filter name</td>
 <td><code>string</code></td>
 </tr>
@@ -1206,12 +1206,11 @@ filters.Log4jGrokFilter.withOnFailure=AppendError
 
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendError.field=errorMessage
-filters.AppendError.value=&quot;{% raw %}{{ $error.message }}{% endraw %}&quot;
-
+filters.AppendError.value=&quot;$error.message&quot;
 </code></pre>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 6, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/dccde5d214c140dc4a7ee933b02ded7aa0d4f59d">update(site): add missing docs (dccde5d)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 12, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/70151e9da2c5ac41587a0f4e457cee856f7accbb">update(site): update docs (70151e9)</a>
 </div>
 </div>
 

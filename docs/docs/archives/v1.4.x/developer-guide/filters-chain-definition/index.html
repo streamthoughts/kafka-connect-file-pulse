@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/filters-chain-definition/" />
 <meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-06T22:32:49+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-08-12T17:33:57+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Filter Chain Definition">
 <meta itemprop="description" content="Learn how to define complex pipelines to transform and structure your data before integration into Kafka.
 ">
 <meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-06T22:32:49&#43;02:00" />
-<meta itemprop="wordCount" content="316">
+<meta itemprop="dateModified" content="2020-08-12T17:33:57&#43;02:00" />
+<meta itemprop="wordCount" content="319">
 
 
 
@@ -1132,8 +1132,8 @@ filters.GroupMultilineException.negate=false
 filters.GroupMultilineException.pattern=&quot;^[\\t]&quot;
 
 filters.ExtractFirstLine.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
-filters.ExtractFirstLine.field=logmessage
-filters.ExtractFirstLine.values=${extractarray(message,0)}
+filters.ExtractFirstLine.field=$.logmessage
+filters.ExtractFirstLine.values={{ extract_array($.message, 0) }
 
 filters.ParseLog4jLog.type=io.streamthoughts.kafka.connect.filepulse.filter.impl.GrokFilter
 filters.ParseLog4jLog.match=&quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:thread} %{GREEDYDATA:logmessage}&quot;
@@ -1210,7 +1210,7 @@ For example, they can be used to split one input message to multiple messages or
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 6, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/dccde5d214c140dc4a7ee933b02ded7aa0d4f59d">update(site): add missing docs (dccde5d)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 12, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/70151e9da2c5ac41587a0f4e457cee856f7accbb">update(site): update docs (70151e9)</a>
 </div>
 </div>
 

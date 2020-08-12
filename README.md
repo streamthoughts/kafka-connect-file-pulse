@@ -30,7 +30,7 @@ for streaming any type of data file with the Apache Kafka™ platform.
 
 Connect File Pulse is inspired by the features provided by **Elasticsearch** and **Logstash**.
 
-## Key Features Overview
+## 🚀 Key Features Overview
 
 Connect FilePulse provides a set of built-in features for streaming local files into Kafka. This includes, among other things:
 
@@ -43,19 +43,31 @@ Connect FilePulse provides a set of built-in features for streaming local files 
 * Support plugeable strategies to cleanup up completed files
 * Etc.
 
-## Show your support
+## 🙏 Show your support
 You think this project can help you or your team to ingest data into Kafka ? 
 Please 🌟 this repository to support us!
 
-## How to get started ?
+## 🏁 How to get started ?
 
 The best way to learn Connect File Pulse is to follow the step by step [Getting Started](https://streamthoughts.github.io/kafka-connect-file-pulse/docs/getting-started/).
 
 If you want to read about using Connect File Pulse, the full documentation can be found [here](https://streamthoughts.github.io/kafka-connect-file-pulse/)
 
-## Contributions
+**File Pulse** is also available on [Docker Hub](https://hub.docker.com/r/streamthoughts/kafka-connect-file-pulse) 🐳
 
-Any feedback, bug reports and PRs are greatly appreciated! See our [guideline](./CONTRIBUTING.md)
+```bash
+https://hub.docker.com/r/streamthoughts/kafka-connect-file-pulse:latest
+```
+
+## 💡 Contributions
+
+Any feedback, bug reports and PRs are greatly appreciated! See our [guideline](./CONTRIBUTING.md).
+
+* Source Code: [https://github.com/streamthoughts/kafka-connect-file-pulse](https://github.com/streamthoughts/kafka-connect-file-pulse)
+* Issue Tracker: [https://github.com/streamthoughts/kafka-connect-file-pulse/issues](https://github.com/streamthoughts/kafka-connect-file-pulse/issues)
+
+* Documentation: [https://streamthoughts.github.io/kafka-connect-file-pulse/](https://streamthoughts.github.io/kafka-connect-file-pulse/)
+* Releases: [https://github.com/streamthoughts/kafka-connect-file-pulse/releases](https://github.com/streamthoughts/kafka-connect-file-pulse/releases)
 
 ## Licence
 

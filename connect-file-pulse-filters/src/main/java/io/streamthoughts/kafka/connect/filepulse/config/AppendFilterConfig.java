@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
@@ -42,8 +44,8 @@ public class AppendFilterConfig extends CommonFilterConfig {
         super(configDef(), originals);
     }
 
-    public String field() {
-        return getString(APPEND_FIELD_CONFIG);
+    public Expression field() {
+        return ExpressionParsers.parseExpression(getString(APPEND_FIELD_CONFIG));
     }
 
     public boolean overwrite() {

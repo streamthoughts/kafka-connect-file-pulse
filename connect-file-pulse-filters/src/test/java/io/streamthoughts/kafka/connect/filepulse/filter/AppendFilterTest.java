@@ -96,4 +96,26 @@ public class AppendFilterTest {
         filter.apply(context, STRUCT);
         Assert.assertEquals("my-topic-foo", context.topic());
     }
+
+    @Test
+    public void shouldOverwriteExistingValueGivenOverwriteTrue() {
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$value.field");
+        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "bar");
+        configs.put(AppendFilterConfig.APPEND_OVERWRITE_CONFIG, "true");
+        filter.configure(configs);
+        final TypedStruct input = TypedStruct.create().put("field", "foo");
+        RecordsIterable<TypedStruct> results = filter.apply(context, input, false);
+        Assert.assertEquals("bar", results.last().getString("field"));
+    }
+
+    @Test
+    public void shouldMergeExistingValueGivenOverwriteFalse() {
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$value.field");
+        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "bar");
+        configs.put(AppendFilterConfig.APPEND_OVERWRITE_CONFIG, "false");
+        filter.configure(configs);
+        final TypedStruct input = TypedStruct.create().put("field", "foo");
+        RecordsIterable<TypedStruct> results = filter.apply(context, input, false);
+        Assert.assertEquals("[foo, bar]", results.last().getArray("field").toString());
+    }
 }

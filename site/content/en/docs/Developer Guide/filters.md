@@ -15,6 +15,7 @@ These filters are available for use with Kafka Connect File Pulse:
 | [ConvertFilter](#convertfilter)  | Converts a message field's value to a specific type | |
 | [DateFilter](#datefilter)  | Converts a field's value containing a date to a unix epoch time | |
 | [DelimitedRowFilter](#delimitedrowfilter)  | Parses a message field's value containing columns delimited by a separator into a struct | |
+| [DropFilter](#dropfilter)  | Drops messages satisfying a specific condition without throwing exception. | |
 | [ExcludeFilter](#excludeFilter)  | Excludes one or more fields from the input record. | `v1.4.0` |
 | [ExplodeFilter](#explodeFilter)  | Explodes an array or list field into separate records. | `v1.4.0` |
 | [FailFilter](#failfilter)  | Throws an exception when a message satisfy a specific condition | |
@@ -442,8 +443,8 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `field` | The field to get the date from .   | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
-| `target` | The target field.    | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
+| `field` | The field to get the date from  | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
+| `target` | The target field    | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
 | `separator` | The separator used for joining array values.   | string | *,* | high |
 
 ### Examples
@@ -458,10 +459,10 @@ The `JSONFilter` parses an input json field.
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `overwrite` | The fields to overwrite.    | list | *-* | medium |
+| `overwrite` | The fields to overwrite    | list | *-* | medium |
 | `source` | The input field on which to apply the filter  | string | *message* | medium |
 | `target` | The target field to put the parsed JSON data  | string | *-* | high |
-| `charset` | The charset to be used for reading the source field  (if source if of type `BYTES` | string | *UTF-8* | medium |
+| `charset` | The charset to be used for reading the source field (if source if of type `BYTES` | string | *UTF-8* | medium |
 
 ### Examples
 
@@ -516,26 +517,18 @@ The `RenameFilter` is used to rename a specified field.
 ### Examples
 
 ```properties
-filters.MyJsonFilter.field=input
-filters.MyJsonFilter.target=renamed
+filters.MyRenameFilter.field=input
+filters.MyRenameFilter.target=renamed
 ```
 
 **Input**
 ```json
-{
-  "record" : {
-    "input": "foo"
-  }
-}
+{ "record" : { "input": "foo" } }
 ```
 
 **Output**
 ```json
-{
-  "record" : {
-    "renamed": "foo"
-  }
-}
+{ "record" : { "renamed": "foo" } }
 ```
 
 ## SplitFilter

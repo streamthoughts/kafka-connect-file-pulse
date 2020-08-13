@@ -18,8 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import javax.validation.constraints.AssertTrue;
+
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.*;
 import static org.junit.Assert.*;
 
 public class TypedStructTest {
@@ -36,13 +40,13 @@ public class TypedStructTest {
 
     @Test(expected = DataException.class)
     public void shouldThrowExceptionGivenInvalidFieldName() {
-        TypedStruct struct = TypedStruct.create();
+        TypedStruct struct = create();
         struct.get(STRING_FIELD_1);
     }
 
     @Test
     public void shouldReturnFieldPreviouslyAdded() {
-        TypedStruct struct = TypedStruct.create()
+        TypedStruct struct = create()
                 .put(STRING_FIELD_1, STRING_VALUE_1);
 
         TypedValue typed = struct.get(STRING_FIELD_1);
@@ -53,7 +57,7 @@ public class TypedStructTest {
 
     @Test
     public void shouldIncrementIndexWhilePuttingNewFields() {
-        TypedStruct struct = TypedStruct.create()
+        TypedStruct struct = create()
                 .put(STRING_FIELD_1, STRING_VALUE_1)
                 .put(STRING_FIELD_2, STRING_VALUE_2);
 
@@ -63,7 +67,7 @@ public class TypedStructTest {
 
     @Test
     public void shouldRemoveAndReIndexFieldsGivenValidFieldName() {
-        final TypedStruct struct = TypedStruct.create()
+        final TypedStruct struct = create()
                 .put(STRING_FIELD_1, STRING_VALUE_1)
                 .put(STRING_FIELD_2, STRING_FIELD_2)
                 .put(STRING_FIELD_3, STRING_VALUE_3)
@@ -80,12 +84,36 @@ public class TypedStructTest {
 
     @Test
     public void shouldRenameGivenValidFieldName() {
-        final TypedStruct struct = TypedStruct.create()
+        final TypedStruct struct = create()
                 .put(STRING_FIELD_1, STRING_VALUE_1);
 
         struct.rename(STRING_FIELD_1, STRING_FIELD_2);
 
         assertFalse(struct.has(STRING_FIELD_1));
         assertTrue(struct.has(STRING_FIELD_2));
+    }
+
+    @Test
+    public void shouldReturnValueWhenUsingFindGivenValidPath() {
+        TypedStruct struct = create().put("foo", create().put("bar", "value"));
+        Assert.assertEquals("value", struct.find("foo.bar").getString());
+    }
+
+    @Test
+    public void shouldReturnNullWhenUsingFindGivenInvalidPath() {
+        TypedStruct struct = create().put("foo", create().put("bar", "value"));
+        Assert.assertNull(struct.find("foo.foo"));
+    }
+
+    @Test
+    public void shouldInsertValueGivenValidPath() {
+        TypedStruct struct = create()
+                .insert("first.child", "v1")
+                .insert("foo", "v2");
+
+        Assert.assertEquals("v1", struct.getStruct("first").getString("child"));
+        Assert.assertEquals("v2", struct.getString("foo"));
+
+
     }
 }

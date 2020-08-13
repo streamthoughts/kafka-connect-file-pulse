@@ -208,7 +208,6 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
             this.schema.field(field, schema);
             values.add(object);
         } else {
-
             int index = this.schema.indexOf(field);
             this.schema.set(field, schema); // handle case where field's schema is changed.
             values.set(index, object);
@@ -318,6 +317,51 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
     @Override
     public <K, V> Map<K, V> getMap(final String field) throws DataException {
         return getCheckedType(field, Type.MAP);
+    }
+
+    public TypedValue find(final String path) {
+        if (has(path)) return get(path);
+
+        if (isDotPropertyAccessPath(path)) {
+            String[] split = path.split("\\.", 2);
+            if (has(split[0])) {
+                TypedValue child = get(split[0]);
+                if (child.schema().type() == Type.STRUCT) {
+                    return child.getStruct().find(split[1]);
+                }
+            }
+        }
+        return null;
+    }
+
+    public TypedStruct insert(final String path, final Object value) {
+        if (path == null || path.isEmpty()) {
+            throw new IllegalArgumentException("Cannot insert value given null or empty path");
+        }
+        doInsert(path, (value instanceof TypedValue) ? (TypedValue)value : TypedValue.any(value));
+        return this;
+    }
+
+    private void doInsert(final String path, final TypedValue value) {
+        if (isDotPropertyAccessPath(path)) {
+            String[] split = path.split("\\.", 2);
+            final String field = split[0];
+            final String remaining = split[1];
+            TypedStruct child;
+            if (has(field)) {
+                child = getStruct(field);
+            } else {
+                child = new TypedStruct();
+                put(field, child);
+            }
+            child.doInsert(remaining, value);
+        } else {
+            put(path, value);
+        }
+    }
+
+    private static boolean isDotPropertyAccessPath(final String name) {
+        return name.contains(".");
     }
 
     public TypedValue first(final String fieldName) {

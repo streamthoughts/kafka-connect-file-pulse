@@ -19,7 +19,9 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.ConvertFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import org.junit.Assert;
@@ -49,18 +51,71 @@ public class ConvertFilterTest {
     }
 
     @Test
-    public void test() {
-        configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "foo");
-        configs.put(ConvertFilterConfig.CONVERT_TYPE_CONFIG, "boolean");
+    public void should_convert_value_given_valid_field() {
+        configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field");
+        configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "boolean");
         filter.configure(configs);
 
-        TypedStruct struct = TypedStruct.create().put("foo", "yes");
+        TypedStruct struct = TypedStruct.create().put("field", "yes");
         List<TypedStruct> results = filter.apply(context, struct, false).collect();
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
 
-        TypedStruct result = results.get(0);
-        Assert.assertTrue(result.getBoolean("foo"));
+        final TypedValue result = results.get(0).get("field");
+        Assert.assertEquals(Type.BOOLEAN, result.type());
+        Assert.assertTrue(result.getBool());
+    }
+
+    @Test
+    public void should_convert_value_given_valid_path() {
+        configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field.child");
+        configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "boolean");
+        filter.configure(configs);
+
+        TypedStruct struct = TypedStruct.create().insert("field.child", "yes");
+        List<TypedStruct> results = filter.apply(context, struct, false).collect();
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(1, results.size());
+
+        final TypedValue result = results.get(0).find("field.child");
+        Assert.assertEquals(Type.BOOLEAN, result.type());
+        Assert.assertTrue(result.getBool());
+    }
+
+    @Test(expected = FilterException.class)
+    public void should_fail_given_invalid_path_and_ignore_missing_false() {
+        configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field");
+        configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "boolean");
+        configs.put(ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG, "false");
+        filter.configure(configs);
+        filter.apply(context, TypedStruct.create(), false).collect();
+    }
+
+    @Test(expected = FilterException.class)
+    public void should_fail_given_not_convertible_value_and_not_default() {
+        configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field");
+        configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "integer");
+        configs.put(ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG, "false");
+        filter.configure(configs);
+
+        TypedStruct struct = TypedStruct.create().insert("field", "dummy");
+        filter.apply(context, struct, false).collect();
+    }
+
+    @Test
+    public void should_use_default_given_not_convertible_value() {
+        configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field");
+        configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "integer");
+        configs.put(ConvertFilterConfig.CONVERT_DEFAULT_CONFIG, "-1");
+        configs.put(ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG, "false");
+        filter.configure(configs);
+
+        TypedStruct struct = TypedStruct.create().insert("field", "dummy");
+        List<TypedStruct> results = filter.apply(context, struct, false).collect();
+        final TypedValue result = results.get(0).find("field");
+        Assert.assertEquals(Type.INTEGER, result.type());
+        Assert.assertEquals(-1, result.getInt().intValue());
     }
 }

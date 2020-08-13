@@ -19,18 +19,21 @@
 package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import org.apache.kafka.common.config.AbstractConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
 
-public class ConvertFilterConfig extends AbstractConfig {
+public class ConvertFilterConfig extends CommonFilterConfig {
 
-    public static final String CONVERT_FIELD_CONFIG = "field";
-    private static final String CONVERT_FIELD_DOC = "The field to convert";
+    public static final String CONVERT_FIELD_CONFIG  = "field";
+    private static final String CONVERT_FIELD_DOC    = "The field to convert (dot notation is supported)";
 
-    public static final String CONVERT_TYPE_CONFIG = "type";
-    private static final String CONVERT_TYPE_DOC = "The type field must be converted to";
+    public static final String CONVERT_TO_CONFIG     = "to";
+    private static final String CONVERT_TO_DOC       = "The type to which the field must be converted";
+
+    public static final String CONVERT_DEFAULT_CONFIG = "default";
+    private static final String CONVERT_DEFAULT_DOC   = "The default value to apply if the field cannot be converted";
 
     public static final String CONVERT_IGNORE_MISSING_CONFIG = "ignoreMissing";
     private static final String CONVERT_IGNORE_MISSING_DOC = "If true and field does not exist the filter will be apply successfully without modifying the value. If field is null the schema will be modified.";
@@ -48,8 +51,13 @@ public class ConvertFilterConfig extends AbstractConfig {
         return getString(CONVERT_FIELD_CONFIG);
     }
 
-    public Type type() {
-        return Type.valueOf(getString(CONVERT_TYPE_CONFIG).toUpperCase());
+    public Type to() {
+        return Type.valueOf(getString(CONVERT_TO_CONFIG).toUpperCase());
+    }
+
+    public TypedValue defaultValue() {
+        String defaultValue = getString(CONVERT_DEFAULT_CONFIG);
+        return defaultValue != null ? TypedValue.any(defaultValue).as(to()) : null;
     }
 
     public boolean ignoreMissing() {
@@ -58,13 +66,16 @@ public class ConvertFilterConfig extends AbstractConfig {
 
     public static ConfigDef configDef() {
         return CommonFilterConfig.configDef()
-                .define(CONVERT_FIELD_CONFIG, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, CONVERT_FIELD_DOC)
+            .define(CONVERT_FIELD_CONFIG, ConfigDef.Type.STRING,
+                    ConfigDef.Importance.HIGH, CONVERT_FIELD_DOC)
 
-                .define(CONVERT_TYPE_CONFIG, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, CONVERT_TYPE_DOC)
+            .define(CONVERT_TO_CONFIG, ConfigDef.Type.STRING,
+                    ConfigDef.Importance.HIGH, CONVERT_TO_DOC)
 
-                .define(CONVERT_IGNORE_MISSING_CONFIG, ConfigDef.Type.BOOLEAN, true,
-                        ConfigDef.Importance.HIGH, CONVERT_IGNORE_MISSING_DOC);
+            .define(CONVERT_DEFAULT_CONFIG, ConfigDef.Type.STRING, null,
+                    ConfigDef.Importance.HIGH, CONVERT_DEFAULT_DOC)
+
+            .define(CONVERT_IGNORE_MISSING_CONFIG, ConfigDef.Type.BOOLEAN, true,
+                    ConfigDef.Importance.HIGH, CONVERT_IGNORE_MISSING_DOC);
     }
 }

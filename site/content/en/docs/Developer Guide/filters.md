@@ -146,8 +146,9 @@ The `ConvertFilter` can be used to convert a field's value into a specific type.
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `field` | The field to convert    | string | *-* | high |
-| `type` | The type field must be converted to  | string | *,* | high |
+| `field` | The field to convert (dot notation is supported)    | string | *-* | high |
+| `to` | The type to which the field must be converted  | string | *,* | high |
+| `default` | The default value to apply if the field cannot be converted | string | *,* | medium |
 | `ignoreMissing` | If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified. | boolean | *true* | high |
 
 Supported types are : 
@@ -170,26 +171,19 @@ The following example shows how to convert a a field's value containing the stri
 
 ```properties
 filters.BooleanConverter.field="target"
-filters.BooleanConverter.type="BOOLEAN"
+filters.BooleanConverter.to="BOOLEAN"
 ```
 
 **Input**
 ```json
-{
-  "record" : {
-    "target": "yes"
-  }
-}
+{ "record" : { "target": "yes" } }
 ```
 
 **Output**
 ```json
-{
-  "record" : {
-    "target": true
-  }
-}
+{ "record" : { "target": true } }
 ```
+
 ## DateFilter
 
 The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.DateFilter`

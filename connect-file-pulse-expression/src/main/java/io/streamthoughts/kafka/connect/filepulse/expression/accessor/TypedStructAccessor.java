@@ -55,25 +55,11 @@ public class TypedStructAccessor implements PropertyAccessor {
         Objects.requireNonNull(target, "target cannot be null");
         Objects.requireNonNull(name, "name cannot be null");
 
-        final TypedStruct struct = (TypedStruct)target;
-
-        if (struct.has(name)) {
-            return struct.get(name);
+        final TypedValue value = ((TypedStruct) target).find(name);
+        if (value == null) {
+            throw new AccessException("Cannot access to field '" + name + "'");
         }
-
-        if (isDotPropertyAccessPath(name)) {
-            String[] split = name.split("\\.", 2);
-            Object rootObject = read(context, target, split[0]);
-            if (rootObject != null) {
-                return read(context, rootObject, split[1]);
-            }
-        }
-
-        throw new AccessException("Cannot access to field '" + name + "'");
-    }
-
-    private boolean isDotPropertyAccessPath(final String name) {
-        return name.contains(".");
+        return value;
     }
 
     /**
@@ -87,27 +73,7 @@ public class TypedStructAccessor implements PropertyAccessor {
 
         Objects.requireNonNull(target, "target cannot be null");
         Objects.requireNonNull(name, "name cannot be null");
-
-        final TypedStruct struct = (TypedStruct)target;
-
-        if (isDotPropertyAccessPath(name)) {
-            String[] split = name.split("\\.", 2);
-            final String field = split[0];
-            final String remaining = split[1];
-
-            TypedStruct child;
-            if (struct.has(field)) {
-                child = struct.getStruct(field);
-            } else {
-                child = TypedStruct.create();
-            }
-            write(context, child, remaining, newValue);
-
-        } else if (newValue instanceof TypedValue) {
-            struct.put(name, (TypedValue)newValue);
-        } else {
-            struct.put(name, TypedValue.any(newValue));
-        }
+        ((TypedStruct)target).insert(name, newValue);
     }
 
     /**

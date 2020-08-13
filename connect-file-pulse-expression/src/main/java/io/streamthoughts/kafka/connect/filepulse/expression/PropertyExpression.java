@@ -57,6 +57,14 @@ public class PropertyExpression extends AbstractExpression {
         return readValue(context, Object.class);
     }
 
+    public String getRootObject() {
+        return rootObject;
+    }
+
+    public String getAttribute() {
+        return attribute;
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -26,6 +26,8 @@ import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
 
+import static io.streamthoughts.kafka.connect.filepulse.config.ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG;
+
 public class ConvertFilter extends AbstractRecordFilter<ConvertFilter> {
 
     private ConvertFilterConfig config;
@@ -55,14 +57,25 @@ public class ConvertFilter extends AbstractRecordFilter<ConvertFilter> {
                                               final TypedStruct record,
                                               final boolean hasNext) throws FilterException {
 
-        if (record.has(config.field())) {
-            TypedValue value = record.get(config.field());
-            TypedValue converted = value.as(config.type());
-
-            record.put(config.field(), converted);
+        final String fieldName = config.field();
+        final TypedValue value = record.find(fieldName);
+        if (value != null) {
+            try {
+                TypedValue converted = value.as(config.to());
+                record.insert(fieldName, converted);
+            } catch (Exception e) {
+                if (config.defaultValue() == null) {
+                    throw new FilterException(
+                        "Fail to convert field '" + fieldName + "' to type " + config.to() + ": " + e.getMessage()
+                    );
+                }
+                record.insert(fieldName, config.defaultValue());
+            }
 
         } else if (!config.ignoreMissing()) {
-            throw new FilterException("Cannot find field with name '" + config.field() + "'");
+            throw new FilterException(
+                "Cannot find field for name '" + fieldName + "' (" + CONVERT_IGNORE_MISSING_CONFIG+ "=false)"
+            );
         }
 
         return RecordsIterable.of(record);

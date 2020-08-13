@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.Converters;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
 
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class SubstitutionExpression extends AbstractExpression {
 
@@ -86,8 +88,8 @@ public class SubstitutionExpression extends AbstractExpression {
      * {@inheritDoc}
      */
     @Override
-    public String readValue(final EvaluationContext context) {
-        return readValue(context, String.class);
+    public Object readValue(final EvaluationContext context) {
+        return readValue(context, TypedValue.class).value();
     }
 
     /**
@@ -107,7 +109,7 @@ public class SubstitutionExpression extends AbstractExpression {
 
         int offset = 0;
         for (ReplacementExpression replacement : replacements) {
-            String replacementString = replacement.readValue(context);
+            String replacementString = replacement.readValue(context, String.class);
             if (offset < replacement.startIndex()) {
                 sb.append(originalExpression(), offset, replacement.startIndex());
             }
@@ -191,12 +193,15 @@ public class SubstitutionExpression extends AbstractExpression {
          * {@inheritDoc}
          */
         @Override
-        public String readValue(final EvaluationContext context) {
-            List<String> values = new ArrayList<>(expressions.size());
+        public Object readValue(final EvaluationContext context) {
+            List<TypedValue> values = new ArrayList<>(expressions.size());
             for (Expression replacement : expressions) {
-                values.add(replacement.readValue(context, String.class));
+                values.add(replacement.readValue(context, TypedValue.class));
             }
-            return String.join("", values);
+            if (values.size() == 1) {
+                return values.get(0).value();
+            }
+            return values.stream().map(TypedValue::getString).collect(Collectors.joining());
         }
 
         /**
@@ -205,7 +210,7 @@ public class SubstitutionExpression extends AbstractExpression {
         @Override
         @SuppressWarnings("unchecked")
         public <T> T readValue(final EvaluationContext context, final Class<T> expectedType) {
-            final String returned = readValue(context);
+            final Object returned = readValue(context);
             if (expectedType.isAssignableFrom(returned.getClass())) {
                 return (T)returned;
             }

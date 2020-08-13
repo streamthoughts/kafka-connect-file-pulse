@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/" />
 <meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-12T01:43:51+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-08-13T18:30:24+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
 <meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-12T01:43:51&#43;02:00" />
-<meta itemprop="wordCount" content="2022">
+<meta itemprop="dateModified" content="2020-08-13T18:30:24&#43;02:00" />
+<meta itemprop="wordCount" content="2043">
 
 
 
@@ -1384,17 +1384,24 @@ filters.SubstituteFilter.value=&quot;{{ extract_array($.values, 0) }}-{{ extract
 <tbody>
 <tr>
 <td><code>field</code></td>
-<td>The field to convert</td>
+<td>The field to convert (dot notation is supported)</td>
 <td>string</td>
 <td><em>-</em></td>
 <td>high</td>
 </tr>
 <tr>
-<td><code>type</code></td>
-<td>The type field must be converted to</td>
+<td><code>to</code></td>
+<td>The type to which the field must be converted</td>
 <td>string</td>
 <td><em>,</em></td>
 <td>high</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>The default value to apply if the field cannot be converted</td>
+<td>string</td>
+<td><em>,</em></td>
+<td>medium</td>
 </tr>
 <tr>
 <td><code>ignoreMissing</code></td>
@@ -1421,19 +1428,11 @@ filters.SubstituteFilter.value=&quot;{{ extract_array($.values, 0) }}-{{ extract
 <p>The following example shows how to convert a a field's value containing the string <code>yes</code> into a boolean.</p>
 <p><strong>Configuration</strong></p>
 <pre><code class="language-properties" data-lang="properties">filters.BooleanConverter.field=&quot;target&quot;
-filters.BooleanConverter.type=&quot;BOOLEAN&quot;
+filters.BooleanConverter.to=&quot;BOOLEAN&quot;
 </code></pre><p><strong>Input</strong></p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#204a87;font-weight:bold">&#34;target&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;yes&#34;</span>
-  <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;target&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;yes&#34;</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span>
 </code></pre></div><p><strong>Output</strong></p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#204a87;font-weight:bold">&#34;target&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">true</span>
-  <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;target&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">true</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span>
 </code></pre></div><h2 id="datefilter">DateFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.DateFilter</code></p>
 <p>The <code>DateFilter</code> converts a field's value containing a date to a unix epoch time.</p>
@@ -2089,7 +2088,7 @@ filters.MySplitterFilter.target=output
 </code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 12, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e36443ca34339a423cff89c397ade4bb62c2c8ee">feat(expression): migrate ScEL to Antlr4 grammar (#60) (e36443c)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 13, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/37cefea75747d67c53712516d3854dfeeb2678fd">fix(filter): fix ConvertFilter (#61) (37cefea)</a>
 </div>
 </div>
 

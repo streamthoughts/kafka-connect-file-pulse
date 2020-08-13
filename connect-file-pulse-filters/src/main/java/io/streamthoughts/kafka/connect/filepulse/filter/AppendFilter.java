@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import io.streamthoughts.kafka.connect.filepulse.config.AppendFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.PropertyExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
@@ -38,6 +39,8 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
     private List<Expression> values;
     private Expression fieldExpression;
 
+    protected String target;
+
     /**
      * {@inheritDoc}
      */
@@ -49,7 +52,7 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
         // currently, multiple expressions is not supported
         values = Collections.singletonList(ExpressionParsers.parseExpression(config.value()));
 
-        fieldExpression = ExpressionParsers.parseExpression(config.field());
+        fieldExpression = config.field();
     }
 
     /**
@@ -97,15 +100,18 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
     }
 
     private Expression mayEvaluateWriteExpression(final StandardEvaluationContext evaluationContext) {
+        Expression expression = fieldExpression;
         if (!fieldExpression.canWrite()) {
             final String evaluated = fieldExpression.readValue(evaluationContext, String.class);
             if (evaluated == null) {
                 throw new FilterException("Invalid value for property 'field'. Evaluation of expression '"
                     + fieldExpression.originalExpression() + " 'returns 'null'.");
             }
-            return ExpressionParsers.parseExpression(evaluated);
+            expression = ExpressionParsers.parseExpression(evaluated);
         }
-        return fieldExpression;
+
+        target = ((PropertyExpression)expression).getAttribute();
+        return expression;
     }
 
     /**
@@ -114,7 +120,7 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
     @Override
     protected Set<String> overwrite() {
         if (config.overwrite()) {
-            return Collections.singleton(config.field());
+            return Collections.singleton(target);
         }
         return Collections.emptySet();
     }

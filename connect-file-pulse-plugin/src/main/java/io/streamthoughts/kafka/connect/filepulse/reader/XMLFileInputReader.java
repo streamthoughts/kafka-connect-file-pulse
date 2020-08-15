@@ -28,7 +28,6 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import net.sf.saxon.lib.NamespaceConstant;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -50,6 +49,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.Collections.singletonList;
 
 /**
  * This {@link FileInputReader} can be used for reading XML source files.
@@ -92,6 +95,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
             try (FileInputStream is = new FileInputStream(context.file())) {
 
                 DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+                builderFactory.setIgnoringElementContentWhitespace(true);
                 DocumentBuilder builder = builderFactory.newDocumentBuilder();
                 Document document = builder.parse(new InputSource(is));
 
@@ -136,8 +140,12 @@ public class XMLFileInputReader extends AbstractFileInputReader {
 
             position++;
 
-            final TypedStruct struct = Node2StructConverter.convertNodeObjectTree(item);
-            return RecordsIterable.of(new TypedFileRecord(new XMLRecordOffset(position), struct));
+            try {
+                final TypedStruct struct = Node2StructConverter.convertNodeObjectTree(item);
+                return RecordsIterable.of(new TypedFileRecord(new XMLRecordOffset(position), struct));
+            } catch (Exception e) {
+                throw new ReaderException("Fail to convert XML document to connect struct object: " + context, e);
+            }
         }
 
         /**
@@ -149,9 +157,18 @@ public class XMLFileInputReader extends AbstractFileInputReader {
         }
     }
 
+    /**
+     * Utility class to convert a {@link Node} object into {@link TypedStruct}.
+     */
     private static class Node2StructConverter {
 
-        private static TypedStruct convertNodeObjectTree(final Node node) throws DOMException {
+        /**
+         * Converts the given {@link Node} object tree into a new new {@link TypedStruct} instance.
+         *
+         * @param node      the {@link Node} object tree to convert.
+         * @return          the new {@link TypedStruct} instance.
+         */
+        private static TypedStruct convertNodeObjectTree(final Node node) {
             Objects.requireNonNull(node, "node cannot be null");
 
             TypedStruct container = TypedStruct.create(determineNodeName(node));
@@ -191,7 +208,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
         }
 
         private static Optional<?> readNodeObject(final Node node) {
-            if (isNewLineNodeElement(node)) {
+            if (isWhitespaceOrNewLineNodeElement(node)) {
                 return Optional.empty();
             }
 
@@ -211,22 +228,35 @@ public class XMLFileInputReader extends AbstractFileInputReader {
         }
 
         private static Optional<String> peekChildNodeTextContent(final Node node) {
-            if (isSingleChildNode(node)) {
-                Node child = node.getFirstChild();
+            if (!node.hasChildNodes()) return Optional.empty();
+
+            final List<Node> nonNewLineNodes = collectAllNotNewLineNodes(node.getChildNodes());
+
+            if (nonNewLineNodes.size() == 1) {
+                final Node child = nonNewLineNodes.get(0);
                 if (isTextNode(child)) {
                     // Text content can be an empty string.
                     return Optional.of(child.getTextContent());
                 }
             }
+
             return Optional.empty();
         }
 
-        private static boolean isSingleChildNode(final Node node) {
-            return node.hasChildNodes() && node.getChildNodes().getLength() == 1;
+        private static List<Node> collectAllNotNewLineNodes(final NodeList nodes) {
+            if (nodes.getLength() == 1) {
+                return singletonList(nodes.item(0));
+            }
+
+            return IntStream.range(0, nodes.getLength())
+                .mapToObj(nodes::item)
+                .filter(it -> !isWhitespaceOrNewLineNodeElement(it))
+                .collect(Collectors.toList());
         }
 
         private static boolean isTextNode(final Node n) {
-            return isNodeOfType(n, Node.TEXT_NODE);
+            return isNodeOfType(n, Node.TEXT_NODE) ||
+                   isNodeOfType(n, Node.CDATA_SECTION_NODE);
         }
 
         private static boolean isElementNode(final Node n) {
@@ -254,7 +284,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
             return !XMLConstants.XMLNS_ATTRIBUTE.equalsIgnoreCase(node.getPrefix()) ;
         }
 
-        private static boolean isNewLineNodeElement(final Node node) {
+        private static boolean isWhitespaceOrNewLineNodeElement(final Node node) {
             return node != null && isTextNode(node) && node.getTextContent().trim().isEmpty();
         }
 

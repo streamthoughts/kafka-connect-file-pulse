@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,13 +37,14 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReaderConfig.XPATH_QUERY_CONFIG;
 
 public class XMLFileInputReaderTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-
-    private File file;
 
     private FileContext context;
 
@@ -50,19 +52,18 @@ public class XMLFileInputReaderTest {
 
     @Before
     public void setUp() throws IOException {
-        file = testFolder.newFile();
-        try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
-            bw.append(XML_DOCUMENT);
-            bw.flush();
-            context = new FileContext(SourceMetadata.fromFile(file));
-        }
-        reader = new XMLFileInputReader();
+        reader = createNewXMLFileInputReader(DEFAULT_TEST_XML_DOCUMENT);
+    }
+
+    @After
+    public void tearDown() {
+       reader.close();
     }
 
     @Test
-    public void shouldReadAllRecordsGivenValidXPathExpression() {
+    public void should_read_all_records_given_valid_xpath_expression() {
         reader.configure(new HashMap<String, String>(){{
-            put(XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "//broker");
+            put(XPATH_QUERY_CONFIG, "//broker");
         }});
 
         FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
@@ -77,9 +78,9 @@ public class XMLFileInputReaderTest {
     }
 
     @Test
-    public void shouldReadAllRecordsGivenRootXPathExpression() {
+    public void should_read_all_records_given_root_xpath_expression() {
         reader.configure(new HashMap<String, String>(){{
-            put(XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "/cluster");
+            put(XPATH_QUERY_CONFIG, "/cluster");
         }});
 
         FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
@@ -100,7 +101,52 @@ public class XMLFileInputReaderTest {
         assertTopicPartitionObject(brokers.get(2), "103", "2");
     }
 
-    private void assertTopicPartitionObject(final TypedStruct struct,
+    @Test
+    public void should_ignore_white_space_and_nl_nodes() throws IOException {
+        try(XMLFileInputReader reader1 =
+                    createNewXMLFileInputReader("<ROOT><DATA>data</DATA></ROOT>")) {
+            try(XMLFileInputReader reader2 =
+                    createNewXMLFileInputReader("<ROOT>\n\t<DATA>data</DATA>\n</ROOT>"))
+            {
+                Map<String, String> config = new HashMap<String, String>() {{  put(XPATH_QUERY_CONFIG, "/"); }};
+
+                reader1.configure(config);
+                reader2.configure(config);
+
+                FileRecord<TypedStruct> rs1 = reader1.newIterator(context).next().last();
+                FileRecord<TypedStruct> rs2 = reader2.newIterator(context).next().last();
+                Assert.assertEquals(rs1.value(), rs2.value());
+            }
+        }
+    }
+
+    @Test
+    public void should_read_record_given_document_with_cdata_node() throws IOException {
+        try(XMLFileInputReader reader = createNewXMLFileInputReader(CDATA_TEST_XML_DOCUMENT)) {
+            reader.configure(new HashMap<String, String>(){{
+                put(XPATH_QUERY_CONFIG, "/");
+            }});
+
+            FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
+            List<FileRecord<TypedStruct>> records = new ArrayList<>();
+            iterator.forEachRemaining(r -> records.addAll(r.collect()));
+
+            Assert.assertEquals(1, records.size());
+            Assert.assertEquals("dummy text", records.get(0).value().getString("ROOT"));
+        }
+    }
+
+    private XMLFileInputReader createNewXMLFileInputReader(final String xmlDocument) throws IOException {
+        File file = testFolder.newFile();
+        try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
+            bw.append(xmlDocument);
+            bw.flush();
+            context = new FileContext(SourceMetadata.fromFile(file));
+        }
+        return new XMLFileInputReader();
+    }
+
+    private static void assertTopicPartitionObject(final TypedStruct struct,
                                             final String expectedId,
                                             final String expectedNum) {
         Assert.assertEquals(expectedId, struct.getString("id"));
@@ -115,7 +161,13 @@ public class XMLFileInputReaderTest {
         Assert.assertEquals("1", topicPartition.getString("numSegments"));
     }
 
-    private static final String XML_DOCUMENT = "" +
+
+    private static final String CDATA_TEST_XML_DOCUMENT = "" +
+            "<ROOT>\n" +
+            "\t<![CDATA[dummy text]]>\n" +
+            "</ROOT>";
+
+    private static final String DEFAULT_TEST_XML_DOCUMENT = "" +
         "<cluster id=\"my-cluster\" version=\"2.3.0\">\n" +
         "\t<broker id=\"101\">\n" +
         "\t\t<topicPartition topic=\"topicA\" num=\"0\" insync=\"true\">\n" +

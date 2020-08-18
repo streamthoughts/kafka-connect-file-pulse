@@ -21,8 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.data;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.validation.constraints.AssertTrue;
-
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.*;
 import static org.junit.Assert.*;
 
@@ -39,13 +37,13 @@ public class TypedStructTest {
     private static final String STRING_VALUE_4 = "string-value-4";
 
     @Test(expected = DataException.class)
-    public void shouldThrowExceptionGivenInvalidFieldName() {
+    public void should_throw_exception_given_invalid_field_name() {
         TypedStruct struct = create();
         struct.get(STRING_FIELD_1);
     }
 
     @Test
-    public void shouldReturnFieldPreviouslyAdded() {
+    public void should_return_field_previously_added() {
         TypedStruct struct = create()
                 .put(STRING_FIELD_1, STRING_VALUE_1);
 
@@ -56,7 +54,7 @@ public class TypedStructTest {
     }
 
     @Test
-    public void shouldIncrementIndexWhilePuttingNewFields() {
+    public void should_increment_index_while_putting_new_fields() {
         TypedStruct struct = create()
                 .put(STRING_FIELD_1, STRING_VALUE_1)
                 .put(STRING_FIELD_2, STRING_VALUE_2);
@@ -66,12 +64,12 @@ public class TypedStructTest {
     }
 
     @Test
-    public void shouldRemoveAndReIndexFieldsGivenValidFieldName() {
+    public void should_remove_and_reindex_fields_given_valid_fieldname() {
         final TypedStruct struct = create()
-                .put(STRING_FIELD_1, STRING_VALUE_1)
-                .put(STRING_FIELD_2, STRING_FIELD_2)
-                .put(STRING_FIELD_3, STRING_VALUE_3)
-                .put(STRING_FIELD_4, STRING_VALUE_4);
+            .put(STRING_FIELD_1, STRING_VALUE_1)
+            .put(STRING_FIELD_2, STRING_FIELD_2)
+            .put(STRING_FIELD_3, STRING_VALUE_3)
+            .put(STRING_FIELD_4, STRING_VALUE_4);
 
         struct.remove(STRING_FIELD_1);
         struct.remove(STRING_FIELD_3);
@@ -83,7 +81,21 @@ public class TypedStructTest {
     }
 
     @Test
-    public void shouldRenameGivenValidFieldName() {
+    public void should_remove_and_drop_empty_struct_fields_given_valid_fieldname() {
+        final TypedStruct struct = create()
+            .insert("field1.child1.child2", "?")
+            .insert("field2", "?");
+
+        struct.remove("field1.child1.child2");
+
+        assertFalse(struct.exists("field1.child1.child2"));
+        assertFalse(struct.exists("field1.child1"));
+        assertFalse(struct.exists("field1"));
+        assertTrue(struct.exists("field2"));
+    }
+
+    @Test
+    public void should_rename_given_valid_field_name() {
         final TypedStruct struct = create()
                 .put(STRING_FIELD_1, STRING_VALUE_1);
 
@@ -94,19 +106,19 @@ public class TypedStructTest {
     }
 
     @Test
-    public void shouldReturnValueWhenUsingFindGivenValidPath() {
+    public void should_return_value_when_using_find_given_valid_path() {
         TypedStruct struct = create().put("foo", create().put("bar", "value"));
         Assert.assertEquals("value", struct.find("foo.bar").getString());
     }
 
     @Test
-    public void shouldReturnNullWhenUsingFindGivenInvalidPath() {
+    public void should_return_null_when_using_find_given_invalid_path() {
         TypedStruct struct = create().put("foo", create().put("bar", "value"));
         Assert.assertNull(struct.find("foo.foo"));
     }
 
     @Test
-    public void shouldInsertValueGivenValidPath() {
+    public void should_insert_value_given_valid_path() {
         TypedStruct struct = create()
                 .insert("first.child", "v1")
                 .insert("foo", "v2");

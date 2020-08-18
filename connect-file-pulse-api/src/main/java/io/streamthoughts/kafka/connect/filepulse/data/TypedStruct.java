@@ -336,27 +336,34 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
 
     /**
      * Removes the field present to the given path.
+     * This method will remove any empty struct field that result from the suppression of the specified field.
      *
      * @param path      the path of the field.
-     * @return          return this.
+     * @return          return the removed value or {@code null} if no object value exist for the given path.
      */
-    public TypedStruct remove(final String path) {
+    public TypedValue remove(final String path) {
         if (has(path)) {
+            final TypedValue value = get(path);
             TypedField removed = schema.remove(path);
             if (removed != null) values.remove(removed.index());
-            return this;
+            return value;
         }
 
         if (isDotPropertyAccessPath(path)) {
-            String[] split = path.split("\\.", 2);
+            final String[] split = path.split("\\.", 2);
             if (has(split[0])) {
-                TypedValue child = get(split[0]);
+                final TypedValue child = get(split[0]);
                 if (child.schema().type() == Type.STRUCT) {
-                    return child.getStruct().remove(split[1]);
+                    final TypedStruct childStruct = child.getStruct();
+                    final TypedValue removed = childStruct.remove(split[1]);
+                    if (removed != null && childStruct.values.isEmpty()) {
+                        remove(split[0]);
+                    }
+                    return removed;
                 }
             }
         }
-        return this;
+        return null;
     }
 
     /**

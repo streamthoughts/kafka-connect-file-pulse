@@ -96,6 +96,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
 
                 DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
                 builderFactory.setIgnoringElementContentWhitespace(true);
+                builderFactory.setIgnoringComments(true);
                 DocumentBuilder builder = builderFactory.newDocumentBuilder();
                 Document document = builder.parse(new InputSource(is));
 

@@ -136,6 +136,22 @@ public class XMLFileInputReaderTest {
         }
     }
 
+    @Test
+    public void should_read_record_given_document_with_comment_node() throws IOException {
+        try(XMLFileInputReader reader = createNewXMLFileInputReader(COMMENT_TEST_XML_DOCUMENT)) {
+            reader.configure(new HashMap<String, String>(){{
+                put(XPATH_QUERY_CONFIG, "/");
+            }});
+
+            FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
+            List<FileRecord<TypedStruct>> records = new ArrayList<>();
+            iterator.forEachRemaining(r -> records.addAll(r.collect()));
+
+            Assert.assertEquals(1, records.size());
+            Assert.assertEquals("dummy text", records.get(0).value().getString("ROOT"));
+        }
+    }
+
     private XMLFileInputReader createNewXMLFileInputReader(final String xmlDocument) throws IOException {
         File file = testFolder.newFile();
         try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
@@ -161,11 +177,9 @@ public class XMLFileInputReaderTest {
         Assert.assertEquals("1", topicPartition.getString("numSegments"));
     }
 
+    private static final String COMMENT_TEST_XML_DOCUMENT = "<ROOT><!-- This is a comment -->dummy text</ROOT>";
 
-    private static final String CDATA_TEST_XML_DOCUMENT = "" +
-            "<ROOT>\n" +
-            "\t<![CDATA[dummy text]]>\n" +
-            "</ROOT>";
+    private static final String CDATA_TEST_XML_DOCUMENT = "<ROOT>\n\t<![CDATA[dummy text]]>\n</ROOT>";
 
     private static final String DEFAULT_TEST_XML_DOCUMENT = "" +
         "<cluster id=\"my-cluster\" version=\"2.3.0\">\n" +

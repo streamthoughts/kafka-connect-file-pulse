@@ -59,11 +59,11 @@ public class SplitFilter extends AbstractRecordFilter<SplitFilter> {
 
         for (final String key : configs.split()) {
 
-            if (!record.has(key)) {
+            if (!record.exists(key)) {
                 throw new FilterException("Invalid field name '" + key + "'");
             }
 
-            TypedValue value = record.get(key);
+            TypedValue value = record.find(key);
             if (value.type() != Type.STRING) {
                 throw new FilterException("Cannot split field '" + key + "' of type '" + value.type() + "'");
             }

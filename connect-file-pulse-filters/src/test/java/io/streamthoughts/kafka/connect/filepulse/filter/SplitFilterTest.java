@@ -41,21 +41,38 @@ public class SplitFilterTest {
     }
 
     @Test
-    public void shouldSplitGivenExistingField() {
+    public void should_split_given_existing_field() {
 
         configs.put(SplitFilterConfig.MUTATE_SPLIT_CONFIG, "foo");
         filter.configure(configs);
 
         TypedStruct record = TypedStruct.create().put("foo", "val0,val1,val2");
-        List<TypedStruct> results = this.filter.apply(null, record, false).collect();
+        List<TypedStruct> results = filter.apply(null, record, false).collect();
+
+        assertOutput(results, "foo");
+    }
+
+    @Test
+    public void should_split_given_existing_path() {
+
+        configs.put(SplitFilterConfig.MUTATE_SPLIT_CONFIG, "foo.bar");
+        filter.configure(configs);
+
+        TypedStruct record = TypedStruct.create().insert("foo.bar", "val0,val1,val2");
+        List<TypedStruct> results = filter.apply(null, record, false).collect();
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
+        assertOutput(results, "foo.bar");
+    }
 
+    private void assertOutput(final List<TypedStruct> results, final String field) {
+        Assert.assertNotNull(results);
+        Assert.assertEquals(1, results.size());
         TypedStruct result = results.get(0);
-        List<String> array = result.getArray("foo");
+        List<String> array = result.getArray(field);
         Assert.assertEquals(3, array.size());
-        for (int i = 0 ; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             Assert.assertEquals("val" + i, array.get(i));
         }
     }

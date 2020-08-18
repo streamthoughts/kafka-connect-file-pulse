@@ -54,7 +54,7 @@ public class RenameFilter extends AbstractRecordFilter<RenameFilter> {
                                               final TypedStruct record,
                                               final boolean hasNext) throws FilterException {
 
-        if (record.has(configs.field())) {
+        if (record.exists(configs.field())) {
             record.rename(configs.field(), configs.target());
             return new RecordsIterable<>(record);
 

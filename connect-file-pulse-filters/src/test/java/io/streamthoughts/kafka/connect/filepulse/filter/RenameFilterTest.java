@@ -41,19 +41,36 @@ public class RenameFilterTest {
     }
 
     @Test
-    public void shouldRenameGivenExistingField() {
+    public void should_rename_given_existing_fields() {
 
         configs.put(RenameFilterConfig.RENAME_FIELD_CONFIG, "foo");
         configs.put(RenameFilterConfig.RENAME_TARGET_CONFIG, "bar");
         filter.configure(configs);
 
         TypedStruct record = TypedStruct.create().put("foo", "dummy-value");
-        List<TypedStruct> results = this.filter.apply(null, record, false).collect();
+        List<TypedStruct> results = filter.apply(null, record, false).collect();
 
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
 
         TypedStruct result = results.get(0);
         Assert.assertEquals("dummy-value", result.getString("bar"));
+    }
+
+    @Test
+    public void should_rename_given_existing_path() {
+
+        configs.put(RenameFilterConfig.RENAME_FIELD_CONFIG, "foo.bar");
+        configs.put(RenameFilterConfig.RENAME_TARGET_CONFIG, "foo");
+        filter.configure(configs);
+
+        TypedStruct record = TypedStruct.create().insert("foo.bar", "dummy-value");
+        List<TypedStruct> results = filter.apply(null, record, false).collect();
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(1, results.size());
+
+        TypedStruct result = results.get(0);
+        Assert.assertEquals("dummy-value", result.find("foo.foo").getString());
     }
 }

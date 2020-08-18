@@ -78,17 +78,6 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
         this.values = new LinkedList<>();
     }
 
-    public TypedStruct rename(final String field, final String newField) {
-        schema.rename(field, newField);
-        return this;
-    }
-
-    public TypedStruct remove(final String field) {
-        TypedField removed = schema.remove(field);
-        if (removed != null) values.remove(removed.index());
-        return this;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -319,7 +308,57 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
         return getCheckedType(field, Type.MAP);
     }
 
+
+    /**
+     * Renames the field present to the given path.
+     *
+     * @param path      the path of the field.
+     * @param newField  the new field name.
+     * @return          return this.
+     */
+    public TypedStruct rename(final String path, final String newField) {
+        if (has(path)) {
+            schema.rename(path, newField);
+            return this;
+        }
+
+        if (isDotPropertyAccessPath(path)) {
+            String[] split = path.split("\\.", 2);
+            if (has(split[0])) {
+                TypedValue child = get(split[0]);
+                if (child.schema().type() == Type.STRUCT) {
+                    return child.getStruct().rename(split[1], newField);
+                }
+            }
+        }
+        return this;
+    }
+
+    public TypedStruct remove(final String field) {
+        TypedField removed = schema.remove(field);
+        if (removed != null) values.remove(removed.index());
+        return this;
+    }
+
+    /**
+     * Checks if a field exist for the given path.
+     *
+     * @param path  the path to check.
+     * @return      {@code true} if the path exists.
+     */
+    public boolean exists(final String path) {
+        Objects.requireNonNull(path, "path cannot be null");
+        return find(path) != null;
+    }
+
+    /**
+     * Finds the value for the given path.
+     *
+     * @param path  the path.
+     * @return      the value or {@code null} if no value exists.
+     */
     public TypedValue find(final String path) {
+        Objects.requireNonNull(path, "path cannot be null");
         if (has(path)) return get(path);
 
         if (isDotPropertyAccessPath(path)) {
@@ -334,6 +373,13 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
         return null;
     }
 
+    /**
+     * Inserts the given object value to the given path.
+     *
+     * @param path      the object path.
+     * @param value     the object value.
+     * @return          return this?
+     */
     public TypedStruct insert(final String path, final Object value) {
         if (path == null || path.isEmpty()) {
             throw new IllegalArgumentException("Cannot insert value given null or empty path");

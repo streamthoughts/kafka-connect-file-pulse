@@ -31,9 +31,10 @@ import java.util.HashMap;
 public class ExcludeFilterTest {
 
     private final TypedStruct struct = TypedStruct.create()
-            .put("fieldOne", "1")
-            .put("fieldTwo", "2")
-            .put("fieldThree", "3");
+            .insert("fieldOne", "1")
+            .insert("fieldTwo", "2")
+            .insert("fieldThree.fieldFour", "4")
+            .insert("fieldThree.fieldFive", "5");
 
     private ExcludeFilter filter;
 
@@ -44,16 +45,31 @@ public class ExcludeFilterTest {
     }
 
     @Test
-    public void should_exclude_existing_fields() {
+    public void should_exclude_given_existing_fields() {
         filter.configure(new HashMap<String, String>() {{
             put(ExcludeFilterConfig.EXCLUDE_FIELDS_CONFIG, "fieldOne, fieldTwo");
         }});
 
         RecordsIterable<TypedStruct> result = filter.apply(null, struct, false);
         Assert.assertEquals(1, result.size());
-        Assert.assertFalse(result.last().has("fieldOne"));
-        Assert.assertFalse(result.last().has("fieldTwo"));
-        Assert.assertTrue(result.last().has("fieldThree"));
+        Assert.assertFalse(result.last().exists("fieldOne"));
+        Assert.assertFalse(result.last().exists("fieldTwo"));
+        Assert.assertTrue(result.last().exists("fieldThree"));
+    }
+
+    @Test
+    public void should_exclude_given_existing_path() {
+        filter.configure(new HashMap<String, String>() {{
+            put(ExcludeFilterConfig.EXCLUDE_FIELDS_CONFIG, "fieldThree.fieldFive");
+        }});
+
+        RecordsIterable<TypedStruct> result = filter.apply(null, struct, false);
+        Assert.assertEquals(1, result.size());
+        Assert.assertTrue(result.last().exists("fieldOne"));
+        Assert.assertTrue(result.last().exists("fieldTwo"));
+        Assert.assertTrue(result.last().exists("fieldThree"));
+        Assert.assertTrue(result.last().exists("fieldThree.fieldFour"));
+        Assert.assertFalse(result.last().exists("fieldThree.fieldFive"));
     }
 
     @Test
@@ -64,8 +80,8 @@ public class ExcludeFilterTest {
 
         RecordsIterable<TypedStruct> result = filter.apply(null, struct, false);
         Assert.assertEquals(1, result.size());
-        Assert.assertTrue(result.last().has("fieldOne"));
-        Assert.assertTrue(result.last().has("fieldTwo"));
-        Assert.assertTrue(result.last().has("fieldThree"));
+        Assert.assertTrue(result.last().exists("fieldOne"));
+        Assert.assertTrue(result.last().exists("fieldTwo"));
+        Assert.assertTrue(result.last().exists("fieldThree"));
     }
 }

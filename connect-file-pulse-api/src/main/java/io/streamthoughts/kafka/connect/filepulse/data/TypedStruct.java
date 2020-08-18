@@ -334,9 +334,28 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
         return this;
     }
 
-    public TypedStruct remove(final String field) {
-        TypedField removed = schema.remove(field);
-        if (removed != null) values.remove(removed.index());
+    /**
+     * Removes the field present to the given path.
+     *
+     * @param path      the path of the field.
+     * @return          return this.
+     */
+    public TypedStruct remove(final String path) {
+        if (has(path)) {
+            TypedField removed = schema.remove(path);
+            if (removed != null) values.remove(removed.index());
+            return this;
+        }
+
+        if (isDotPropertyAccessPath(path)) {
+            String[] split = path.split("\\.", 2);
+            if (has(split[0])) {
+                TypedValue child = get(split[0]);
+                if (child.schema().type() == Type.STRUCT) {
+                    return child.getStruct().remove(split[1]);
+                }
+            }
+        }
         return this;
     }
 

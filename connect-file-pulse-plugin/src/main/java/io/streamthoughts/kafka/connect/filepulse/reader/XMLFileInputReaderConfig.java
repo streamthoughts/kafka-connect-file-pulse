@@ -34,7 +34,8 @@ import static org.apache.kafka.common.config.ConfigDef.ValidString.in;
 public class XMLFileInputReaderConfig extends AbstractConfig {
 
     public static final String XPATH_QUERY_CONFIG  = "xpath.expression";
-    private static final String XPATH_QUERY_DOC    = "The XPath expression used to split the XML into a list of nodes";
+    private static final String XPATH_QUERY_DOC    = "The XPath expression used extract data from XML input " +
+                                                      "files (default: '/')";
 
     public static final String XPATH_RESULT_TYPE_CONFIG  = "xpath.result.type";
     private static final String XPATH_RESULT_TYPE_DOC    = "The expected result type for the XPath expression in" +
@@ -74,7 +75,7 @@ public class XMLFileInputReaderConfig extends AbstractConfig {
             .define(FORCE_ARRAY_ON_FIELDS_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
                 ConfigDef.Importance.MEDIUM, FORCE_ARRAY_ON_FIELDS_FORCE)
 
-            .define(XPATH_QUERY_CONFIG, ConfigDef.Type.STRING,
+            .define(XPATH_QUERY_CONFIG, ConfigDef.Type.STRING, "/",
                 ConfigDef.Importance.HIGH, XPATH_QUERY_DOC);
     }
 }

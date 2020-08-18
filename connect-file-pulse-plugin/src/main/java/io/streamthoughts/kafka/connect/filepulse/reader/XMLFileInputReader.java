@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -52,6 +53,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord.*;
 import static java.util.Collections.singletonList;
 
 /**
@@ -80,18 +82,27 @@ public class XMLFileInputReader extends AbstractFileInputReader {
 
     private static class XMLFileInputIterator extends AbstractFileInputIterator<TypedStruct> {
 
-        private final NodeList nodes;
+        private final Object xpathResult;
 
         private final int totalRecords;
 
         private int position = 0;
 
+        private final ResultType type;
+
+        private enum ResultType {NODE_SET, STRING }
+
         XMLFileInputIterator(final XMLFileInputReaderConfig configs,
                              final IteratorManager iteratorManager,
                              final FileContext context) {
             super(iteratorManager, context);
-            System.setProperty("javax.xml.xpath.XPathFactory:"+  NamespaceConstant.OBJECT_MODEL_SAXON,
-                    "net.sf.saxon.xpath.XPathFactoryImpl");
+            System.setProperty(
+                "javax.xml.xpath.XPathFactory:"+  NamespaceConstant.OBJECT_MODEL_SAXON,
+                "net.sf.saxon.xpath.XPathFactoryImpl"
+            );
+
+            final QName qName = new QName("http://www.w3.org/1999/XSL/Transform", configs.resultType());
+
             try (FileInputStream is = new FileInputStream(context.file())) {
 
                 DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -104,8 +115,8 @@ public class XMLFileInputReader extends AbstractFileInputReader {
                 XPath expression = xPathFactory.newXPath();
                 XPathExpression e = expression.compile(configs.xpathQuery());
 
-                nodes = (NodeList) e.evaluate(document, XPathConstants.NODESET);
-                totalRecords = nodes.getLength();
+                xpathResult = e.evaluate(document, qName);
+
             } catch (XPathExpressionException e) {
                 throw new ReaderException(
                     "Error happened while compiling XPath query '" + configs.xpathQuery() + "'", e);
@@ -115,6 +126,19 @@ public class XMLFileInputReader extends AbstractFileInputReader {
             } catch (Exception e) {
                 throw new ReaderException(
                     "Unexpected error happened while initializing 'XMLFileInputIterator'", e);
+            }
+
+            if (XPathConstants.NODESET.equals(qName)) {
+                type = ResultType.NODE_SET;
+                totalRecords = ((NodeList) xpathResult).getLength();
+            }
+
+            else if (XPathConstants.STRING.equals(qName)) {
+                type = ResultType.STRING;
+                totalRecords = 1;
+            }
+            else {
+                throw new ReaderException("Unsupported result type '" + configs.resultType() + "'");
             }
         }
 
@@ -134,19 +158,29 @@ public class XMLFileInputReader extends AbstractFileInputReader {
          */
         @Override
         public RecordsIterable<FileRecord<TypedStruct>> next() {
-            final Node item = nodes.item(position);
-            if (item == null) {
-                return RecordsIterable.empty();
+
+            if (type == ResultType.NODE_SET) {
+                final Node item = ((NodeList)xpathResult).item(position);
+
+                if (item == null) return RecordsIterable.empty();
+
+                try {
+                    return incrementAndGet(Node2StructConverter.convertNodeObjectTree(item));
+                } catch (Exception e) {
+                    throw new ReaderException("Fail to convert XML document to connect struct object: " + context, e);
+                }
             }
 
+            if (type == ResultType.STRING) {
+                return incrementAndGet(TypedStruct.create().put(DEFAULT_MESSAGE_FIELD, (String) xpathResult));
+            }
+
+            throw new ReaderException("Unsupported result type '" + type + "'");
+        }
+
+        private RecordsIterable<FileRecord<TypedStruct>> incrementAndGet(final TypedStruct struct) {
             position++;
-
-            try {
-                final TypedStruct struct = Node2StructConverter.convertNodeObjectTree(item);
-                return RecordsIterable.of(new TypedFileRecord(new XMLRecordOffset(position), struct));
-            } catch (Exception e) {
-                throw new ReaderException("Fail to convert XML document to connect struct object: " + context, e);
-            }
+            return RecordsIterable.of(new TypedFileRecord(new XMLRecordOffset(position), struct));
         }
 
         /**

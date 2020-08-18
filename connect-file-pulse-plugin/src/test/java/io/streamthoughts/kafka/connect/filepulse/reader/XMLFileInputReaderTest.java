@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReaderConfig.XPATH_QUERY_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReaderConfig.XPATH_RESULT_TYPE_CONFIG;
 
 public class XMLFileInputReaderTest {
 
@@ -151,6 +153,21 @@ public class XMLFileInputReaderTest {
             Assert.assertEquals("dummy text", records.get(0).value().getString("ROOT"));
         }
     }
+
+    @Test
+    public void should_read_record_given_node_xpath_expression() {
+        reader.configure(new HashMap<String, String>(){{
+            put(XPATH_QUERY_CONFIG, "(//broker)[1]/topicPartition/logSize/text()");
+            put(XPATH_RESULT_TYPE_CONFIG, "STRING");
+        }});
+        FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
+        List<FileRecord<TypedStruct>> records = new ArrayList<>();
+        iterator.forEachRemaining(r -> records.addAll(r.collect()));
+
+        Assert.assertEquals(1, records.size());
+        Assert.assertEquals("1G", records.get(0).value().getString(TypedFileRecord.DEFAULT_MESSAGE_FIELD));
+    }
+
 
     private XMLFileInputReader createNewXMLFileInputReader(final String xmlDocument) throws IOException {
         File file = testFolder.newFile();

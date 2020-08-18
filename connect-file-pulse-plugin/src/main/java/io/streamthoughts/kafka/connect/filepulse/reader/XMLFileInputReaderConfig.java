@@ -21,7 +21,10 @@ package io.streamthoughts.kafka.connect.filepulse.reader;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
+import javax.xml.xpath.XPathConstants;
 import java.util.Map;
+
+import static org.apache.kafka.common.config.ConfigDef.ValidString.in;
 
 /**
  * Configuration class for {@link RowFileInputReader}.
@@ -29,7 +32,11 @@ import java.util.Map;
 public class XMLFileInputReaderConfig extends AbstractConfig {
 
     public static final String XPATH_QUERY_CONFIG  = "xpath.expression";
-    public static final String XPATH_QUERY_DOC     = "The XPath expression used to split the XML into a list of nodes";
+    private static final String XPATH_QUERY_DOC    = "The XPath expression used to split the XML into a list of nodes";
+
+    public static final String XPATH_RESULT_TYPE_CONFIG  = "xpath.result.type";
+    private static final String XPATH_RESULT_TYPE_DOC    = "The expected result type for the XPath expression in" +
+            "[NODESET, STRING]";
 
     /**
      * Creates a new {@link XMLFileInputReaderConfig} instance.
@@ -44,9 +51,17 @@ public class XMLFileInputReaderConfig extends AbstractConfig {
         return getString(XPATH_QUERY_CONFIG);
     }
 
+    String resultType() {
+        return getString(XPATH_RESULT_TYPE_CONFIG);
+    }
+
     private static ConfigDef configDef() {
         return new ConfigDef()
-                .define(XPATH_QUERY_CONFIG, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, XPATH_QUERY_DOC);
+            .define(XPATH_RESULT_TYPE_CONFIG, ConfigDef.Type.STRING, XPathConstants.NODESET.getLocalPart(),
+                in(XPathConstants.NODESET.getLocalPart(), XPathConstants.STRING.getLocalPart()),
+                ConfigDef.Importance.HIGH, XPATH_RESULT_TYPE_DOC)
+
+            .define(XPATH_QUERY_CONFIG, ConfigDef.Type.STRING,
+                ConfigDef.Importance.HIGH, XPATH_QUERY_DOC);
     }
 }

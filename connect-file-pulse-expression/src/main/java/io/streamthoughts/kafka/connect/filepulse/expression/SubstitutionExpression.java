@@ -211,9 +211,12 @@ public class SubstitutionExpression extends AbstractExpression {
         @SuppressWarnings("unchecked")
         public <T> T readValue(final EvaluationContext context, final Class<T> expectedType) {
             final Object returned = readValue(context);
-            if (expectedType.isAssignableFrom(returned.getClass())) {
+            if (returned == null)
+                return null;
+
+            if (expectedType.isAssignableFrom(returned.getClass()))
                 return (T)returned;
-            }
+
             final List<PropertyConverter> converters = context.getPropertyConverter();
             return Converters.converts(converters, returned, expectedType);
         }

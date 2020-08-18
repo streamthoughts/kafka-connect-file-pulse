@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
+import io.streamthoughts.kafka.connect.filepulse.data.SchemaSupplier;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
@@ -53,7 +54,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord.*;
+import static io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord.DEFAULT_MESSAGE_FIELD;
 import static java.util.Collections.singletonList;
 
 /**
@@ -82,6 +83,8 @@ public class XMLFileInputReader extends AbstractFileInputReader {
 
     private static class XMLFileInputIterator extends AbstractFileInputIterator<TypedStruct> {
 
+        private final XMLFileInputReaderConfig config;
+
         private final Object xpathResult;
 
         private final int totalRecords;
@@ -92,16 +95,18 @@ public class XMLFileInputReader extends AbstractFileInputReader {
 
         private enum ResultType {NODE_SET, STRING }
 
-        XMLFileInputIterator(final XMLFileInputReaderConfig configs,
+        XMLFileInputIterator(final XMLFileInputReaderConfig config,
                              final IteratorManager iteratorManager,
                              final FileContext context) {
             super(iteratorManager, context);
+
+            this.config = config;
             System.setProperty(
                 "javax.xml.xpath.XPathFactory:"+  NamespaceConstant.OBJECT_MODEL_SAXON,
                 "net.sf.saxon.xpath.XPathFactoryImpl"
             );
 
-            final QName qName = new QName("http://www.w3.org/1999/XSL/Transform", configs.resultType());
+            final QName qName = new QName("http://www.w3.org/1999/XSL/Transform", config.resultType());
 
             try (FileInputStream is = new FileInputStream(context.file())) {
 
@@ -113,13 +118,13 @@ public class XMLFileInputReader extends AbstractFileInputReader {
 
                 final XPathFactory xPathFactory = XPathFactory.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON);
                 XPath expression = xPathFactory.newXPath();
-                XPathExpression e = expression.compile(configs.xpathQuery());
+                XPathExpression e = expression.compile(config.xpathQuery());
 
                 xpathResult = e.evaluate(document, qName);
 
             } catch (XPathExpressionException e) {
                 throw new ReaderException(
-                    "Error happened while compiling XPath query '" + configs.xpathQuery() + "'", e);
+                    "Cannot compile XPath expression '" + config.xpathQuery() + "'", e);
             } catch (IOException e) {
                 throw new ReaderException(
                     "Error happened while reading source file '" + context + "'", e);
@@ -138,7 +143,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
                 totalRecords = 1;
             }
             else {
-                throw new ReaderException("Unsupported result type '" + configs.resultType() + "'");
+                throw new ReaderException("Unsupported result type '" + config.resultType() + "'");
             }
         }
 
@@ -165,7 +170,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
                 if (item == null) return RecordsIterable.empty();
 
                 try {
-                    return incrementAndGet(Node2StructConverter.convertNodeObjectTree(item));
+                    return incrementAndGet(Node2StructConverter.convertNodeObjectTree(item, config.forceArrayFields()));
                 } catch (Exception e) {
                     throw new ReaderException("Fail to convert XML document to connect struct object: " + context, e);
                 }
@@ -203,17 +208,18 @@ public class XMLFileInputReader extends AbstractFileInputReader {
          * @param node      the {@link Node} object tree to convert.
          * @return          the new {@link TypedStruct} instance.
          */
-        private static TypedStruct convertNodeObjectTree(final Node node) {
+        private static TypedStruct convertNodeObjectTree(final Node node, final List<String> forceArrayFields) {
             Objects.requireNonNull(node, "node cannot be null");
 
             TypedStruct container = TypedStruct.create();
             readAllNodeAttributes(node, container);
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-                Optional<?> optional = readNodeObject(child);
+                Optional<?> optional = readNodeObject(child, forceArrayFields);
                 if (optional.isPresent()) {
                     final Object nodeValue = optional.get();
                     final String nodeName = isTextNode(child) ? determineNodeName(node) : determineNodeName(child);
-                    container = enrichStructWithObject(container, nodeName, nodeValue);
+                    final boolean isArray = forceArrayFields.contains(nodeName);
+                    container = enrichStructWithObject(container, nodeName, nodeValue, isArray);
 
                 }
             }
@@ -222,7 +228,8 @@ public class XMLFileInputReader extends AbstractFileInputReader {
 
         private static TypedStruct enrichStructWithObject(final TypedStruct container,
                                                           final String nodeName,
-                                                          final Object nodeValue) {
+                                                          final Object nodeValue,
+                                                          final boolean forceArrayField) {
             TypedValue value;
             if (container.has(nodeName)) {
                 final TypedField field = container.field(nodeName);
@@ -236,13 +243,17 @@ public class XMLFileInputReader extends AbstractFileInputReader {
                     array.add(nodeValue);
                     value = TypedValue.array(array, field.schema());
                 }
+            } else if(forceArrayField) {
+                List<Object> array = new LinkedList<>();
+                array.add(nodeValue);
+                value = TypedValue.array(array, SchemaSupplier.lazy(nodeValue).get());
             } else {
                 value = TypedValue.any(nodeValue);
             }
             return container.put(nodeName, value);
         }
 
-        private static Optional<?> readNodeObject(final Node node) {
+        private static Optional<?> readNodeObject(final Node node, final List<String> forceArrayFields) {
             if (isWhitespaceOrNewLineNodeElement(node)) {
                 return Optional.empty();
             }
@@ -256,7 +267,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
                 if (childTextContent.isPresent()) {
                     return childTextContent;
                 } else {
-                    return Optional.of(convertNodeObjectTree(node));
+                    return Optional.of(convertNodeObjectTree(node, forceArrayFields));
                 }
             }
             throw new ReaderException("Unsupported node type '" + node.getNodeType() + "'");

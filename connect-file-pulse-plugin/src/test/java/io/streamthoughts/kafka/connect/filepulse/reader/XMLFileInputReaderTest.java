@@ -18,7 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
@@ -40,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReaderConfig.FORCE_ARRAY_ON_FIELDS_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReaderConfig.XPATH_QUERY_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReaderConfig.XPATH_RESULT_TYPE_CONFIG;
 
@@ -166,6 +169,22 @@ public class XMLFileInputReaderTest {
 
         Assert.assertEquals(1, records.size());
         Assert.assertEquals("1G", records.get(0).value().getString(TypedFileRecord.DEFAULT_MESSAGE_FIELD));
+    }
+
+    @Test
+    public void should_read_record_given_valid_force_array_fields() {
+        reader.configure(new HashMap<String, String>(){{
+            put(XPATH_QUERY_CONFIG, "//broker[1]");
+            put(FORCE_ARRAY_ON_FIELDS_CONFIG, "topicPartition");
+        }});
+
+        FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
+        List<FileRecord<TypedStruct>> records = new ArrayList<>();
+        iterator.forEachRemaining(r -> records.addAll(r.collect()));
+
+        Assert.assertEquals(1, records.size());
+        Assert.assertEquals(Type.ARRAY, records.get(0).value().get("topicPartition").type());
+        Assert.assertEquals(1, records.get(0).value().get("topicPartition").getArray().size());
     }
 
 

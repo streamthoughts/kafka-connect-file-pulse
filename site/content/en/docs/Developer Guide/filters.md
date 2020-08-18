@@ -24,6 +24,7 @@ These filters are available for use with Kafka Connect File Pulse:
 | [JoinFilter](#joinfilter)  | Joins values of an array field with a specified separator | |
 | [JSONFilter](#jsonfilter)  | Unmarshallings a JSON message field's value to a complex struct | |
 | [MultiRowFilter](#multirowfilter)  | Combines following message lines into single one by combining patterns | |
+| [MoveFilter](#movefilter)  | Moves an existing record field's value to a specific target path | `v1.5.0` |
 | [RenameFilter](#renamefilter)  | Renames a message field | |
 | [SplitFilter](#splitfilter)  | Splits a message field's value to array | |
 
@@ -489,16 +490,40 @@ The `MultiRowFilter` joins multiple lines into a single Struct using a regex pat
 | `patternsDir` | List of user-defined pattern directories | string | *-* | low |
 | `separator` | The character to be used to concat multi lines  | string | "\\n" | high |
 
+## MoveFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter`.
+
+The `MoveFilter` moves an existing record field's value to a specific target path.
+
+### Configuration
+
+| Configuration |   Description |   Type    |   Default |   Importance  |
+| --------------| --------------|-----------| --------- | ------------- |
+| `source` | The path of the field to move"   | string | *-* | high |
+| `target` | The path to move the field  | string | *-* | high |
+
 ### Examples
 
-The following example shows the usage of the `MultiRowFilter` to join Java exception message with its stacktrace. 
+The following example shows the usage of the `MoveFilter`.
 
 ```properties
-filters=StackTraceMultiRowFilter
-filters.StackTraceMultiRowFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
-filters.StackTraceMultiRowFilter.negate=false
-filters.StackTraceMultiRowFilter.pattern=^[\t]
+filters=MyMoveFilter
+filters.MyMoveFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter
+filters.MyMoveFilter.source=field.child
+filters.MyMoveFilter.target=moved
 ```
+
+**Input**
+```json
+{ "record" : { "field": { "child" : "foo" } } }
+```
+
+**Output**
+```json
+{ "record" : { "moved": "foo" } }
+```
+
 
 ## RenameFilter
 
@@ -541,7 +566,7 @@ The `SplitFilter` splits a field's value of type string into an array by using a
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `split` | Split a message field's value to array    | string | *-* | high |
+| `split` | The comma-separated list of fields to split  | string | *-* | high |
 | `separator` | The separator used for splitting a message field's value to array  | string | *,* | high |
 | `target` | The target field to put the parsed JSON data  | string | *-* | high |
 
@@ -553,7 +578,6 @@ The `SplitFilter` splits a field's value of type string into an array by using a
 ```properties
 filters.MySplitterFilter.split=input
 filters.MySplitterFilter.separator=,
-filters.MySplitterFilter.target=output
 ```
 
 **Input**

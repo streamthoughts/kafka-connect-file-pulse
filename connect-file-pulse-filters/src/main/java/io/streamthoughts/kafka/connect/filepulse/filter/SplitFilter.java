@@ -28,6 +28,9 @@ import org.apache.kafka.common.config.ConfigDef;
 import java.util.LinkedList;
 import java.util.Map;
 
+/**
+ * Split one or multiples message field's value to array.
+ */
 public class SplitFilter extends AbstractRecordFilter<SplitFilter> {
 
     private SplitFilterConfig configs;

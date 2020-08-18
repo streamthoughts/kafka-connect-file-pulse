@@ -27,7 +27,7 @@ import java.util.Map;
 public class SplitFilterConfig extends CommonFilterConfig {
 
     public static final String MUTATE_SPLIT_CONFIG      = "split";
-    private static final String MUTATE_SPLIT_DOC        = "Split a message field's value to array";
+    private static final String MUTATE_SPLIT_DOC        = "The comma-separated list of fields to split";
 
     public static final String MUTATE_SPLIT_SEP_CONFIG  = "separator";
     private static final String MUTATE_SPLIT_SEP_DOC    = "The separator used for splitting a message field's value to array (default separator : ',')";

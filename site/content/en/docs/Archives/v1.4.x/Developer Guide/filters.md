@@ -541,7 +541,7 @@ The `SplitFilter` splits a field's value of type string into an array by using a
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `split` | Split a message field's value to array    | string | *-* | high |
+| `split` | The comma-separated list of fields to split  | string | *-* | high |
 | `separator` | The separator used for splitting a message field's value to array  | string | *,* | high |
 | `target` | The target field to put the parsed JSON data  | string | *-* | high |
 
@@ -553,7 +553,6 @@ The `SplitFilter` splits a field's value of type string into an array by using a
 ```properties
 filters.MySplitterFilter.split=input
 filters.MySplitterFilter.separator=,
-filters.MySplitterFilter.target=output
 ```
 
 **Input**

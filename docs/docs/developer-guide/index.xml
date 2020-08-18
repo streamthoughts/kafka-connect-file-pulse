@@ -1094,6 +1094,11 @@ filters.AppendError.value=&amp;quot;$error.message&amp;quot;
 &lt;td&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;#movefilter&#34;&gt;MoveFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Moves an existing record field&#39;s value to a specific target path&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;v1.5.0&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
 &lt;td&gt;&lt;a href=&#34;#renamefilter&#34;&gt;RenameFilter&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;Renames a message field&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
@@ -1810,16 +1815,51 @@ filters.MyJsonFilter.target=payload
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;h2 id=&#34;movefilter&#34;&gt;MoveFilter&lt;/h2&gt;
+&lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;MoveFilter&lt;/code&gt; moves an existing record field&#39;s value to a specific target path.&lt;/p&gt;
+&lt;h3 id=&#34;configuration13&#34;&gt;Configuration&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;source&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The path of the field to move&amp;rdquo;&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;high&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;target&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The path to move the field&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;high&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;h3 id=&#34;examples12&#34;&gt;Examples&lt;/h3&gt;
-&lt;p&gt;The following example shows the usage of the &lt;code&gt;MultiRowFilter&lt;/code&gt; to join Java exception message with its stacktrace.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters=StackTraceMultiRowFilter
-filters.StackTraceMultiRowFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
-filters.StackTraceMultiRowFilter.negate=false
-filters.StackTraceMultiRowFilter.pattern=^[\t]
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;renamefilter&#34;&gt;RenameFilter&lt;/h2&gt;
+&lt;p&gt;The following example shows the usage of the &lt;code&gt;MoveFilter&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters=MyMoveFilter
+filters.MyMoveFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter
+filters.MyMoveFilter.source=field.child
+filters.MyMoveFilter.target=moved
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Input&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;record&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;field&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;child&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;foo&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Output&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;record&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;moved&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;foo&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;renamefilter&#34;&gt;RenameFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;RenameFilter&lt;/code&gt; is used to rename a specified field.&lt;/p&gt;
-&lt;h3 id=&#34;configuration13&#34;&gt;Configuration&lt;/h3&gt;
+&lt;h3 id=&#34;configuration14&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -1864,7 +1904,7 @@ filters.MyRenameFilter.target=renamed
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;splitfilter&#34;&gt;SplitFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;SplitFilter&lt;/code&gt; splits a field&#39;s value of type string into an array by using a specific separator.&lt;/p&gt;
-&lt;h3 id=&#34;configuration14&#34;&gt;Configuration&lt;/h3&gt;
+&lt;h3 id=&#34;configuration15&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -1878,7 +1918,7 @@ filters.MyRenameFilter.target=renamed
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;split&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Split a message field&#39;s value to array&lt;/td&gt;
+&lt;td&gt;The comma-separated list of fields to split&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
@@ -1903,7 +1943,6 @@ filters.MyRenameFilter.target=renamed
 &lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.MySplitterFilter.split=input
 filters.MySplitterFilter.separator=,
-filters.MySplitterFilter.target=output
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Input&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;record&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;

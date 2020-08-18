@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/filters/" />
 <meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-13T20:07:02+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-08-18T21:16:43+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
 <meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-13T20:07:02&#43;02:00" />
-<meta itemprop="wordCount" content="2052">
+<meta itemprop="dateModified" content="2020-08-18T21:16:43&#43;02:00" />
+<meta itemprop="wordCount" content="2051">
 
 
 
@@ -2063,7 +2063,7 @@ filters.MyRenameFilter.target=renamed
 <tbody>
 <tr>
 <td><code>split</code></td>
-<td>Split a message field's value to array</td>
+<td>The comma-separated list of fields to split</td>
 <td>string</td>
 <td><em>-</em></td>
 <td>high</td>
@@ -2088,7 +2088,6 @@ filters.MyRenameFilter.target=renamed
 <p><strong>Configuration</strong></p>
 <pre><code class="language-properties" data-lang="properties">filters.MySplitterFilter.split=input
 filters.MySplitterFilter.separator=,
-filters.MySplitterFilter.target=output
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
@@ -2105,7 +2104,7 @@ filters.MySplitterFilter.target=output
 </code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 13, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f11d77dc9d238cdcc72f1980a20b6b1f144dcd5b">docs(site): fix links (f11d77d)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 18, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a1ae8b9d82bb636f3b7924ae4e4a100616dcfed5">docs(site): fix and add docs for MoveFilter (a1ae8b9)</a>
 </div>
 </div>
 

@@ -1878,7 +1878,7 @@ filters.MyRenameFilter.target=renamed
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;split&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Split a message field&#39;s value to array&lt;/td&gt;
+&lt;td&gt;The comma-separated list of fields to split&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;high&lt;/td&gt;
@@ -1903,7 +1903,6 @@ filters.MyRenameFilter.target=renamed
 &lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.MySplitterFilter.split=input
 filters.MySplitterFilter.separator=,
-filters.MySplitterFilter.target=output
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Input&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;record&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;

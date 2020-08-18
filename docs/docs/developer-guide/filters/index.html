@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/" />
 <meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-13T20:07:02+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2020-08-18T21:16:43+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
 <meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-13T20:07:02&#43;02:00" />
-<meta itemprop="wordCount" content="2052">
+<meta itemprop="dateModified" content="2020-08-18T21:16:43&#43;02:00" />
+<meta itemprop="wordCount" content="2127">
 
 
 
@@ -1119,18 +1119,23 @@
     <li><a href="#multirowfilter">MultiRowFilter</a>
       <ul>
         <li><a href="#configuration12">Configuration</a></li>
+      </ul>
+    </li>
+    <li><a href="#movefilter">MoveFilter</a>
+      <ul>
+        <li><a href="#configuration13">Configuration</a></li>
         <li><a href="#examples12">Examples</a></li>
       </ul>
     </li>
     <li><a href="#renamefilter">RenameFilter</a>
       <ul>
-        <li><a href="#configuration13">Configuration</a></li>
+        <li><a href="#configuration14">Configuration</a></li>
         <li><a href="#examples13">Examples</a></li>
       </ul>
     </li>
     <li><a href="#splitfilter">SplitFilter</a>
       <ul>
-        <li><a href="#configuration14">Configuration</a></li>
+        <li><a href="#configuration15">Configuration</a></li>
         <li><a href="#example">Example</a></li>
       </ul>
     </li>
@@ -1257,6 +1262,11 @@
 <td><a href="#multirowfilter">MultiRowFilter</a></td>
 <td>Combines following message lines into single one by combining patterns</td>
 <td></td>
+</tr>
+<tr>
+<td><a href="#movefilter">MoveFilter</a></td>
+<td>Moves an existing record field's value to a specific target path</td>
+<td><code>v1.5.0</code></td>
 </tr>
 <tr>
 <td><a href="#renamefilter">RenameFilter</a></td>
@@ -1975,16 +1985,51 @@ filters.MyJsonFilter.target=payload
 </tr>
 </tbody>
 </table>
+<h2 id="movefilter">MoveFilter</h2>
+<p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter</code>.</p>
+<p>The <code>MoveFilter</code> moves an existing record field's value to a specific target path.</p>
+<h3 id="configuration13">Configuration</h3>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source</code></td>
+<td>The path of the field to move&rdquo;</td>
+<td>string</td>
+<td><em>-</em></td>
+<td>high</td>
+</tr>
+<tr>
+<td><code>target</code></td>
+<td>The path to move the field</td>
+<td>string</td>
+<td><em>-</em></td>
+<td>high</td>
+</tr>
+</tbody>
+</table>
 <h3 id="examples12">Examples</h3>
-<p>The following example shows the usage of the <code>MultiRowFilter</code> to join Java exception message with its stacktrace.</p>
-<pre><code class="language-properties" data-lang="properties">filters=StackTraceMultiRowFilter
-filters.StackTraceMultiRowFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
-filters.StackTraceMultiRowFilter.negate=false
-filters.StackTraceMultiRowFilter.pattern=^[\t]
-</code></pre><h2 id="renamefilter">RenameFilter</h2>
+<p>The following example shows the usage of the <code>MoveFilter</code>.</p>
+<pre><code class="language-properties" data-lang="properties">filters=MyMoveFilter
+filters.MyMoveFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter
+filters.MyMoveFilter.source=field.child
+filters.MyMoveFilter.target=moved
+</code></pre><p><strong>Input</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;field&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;child&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;foo&#34;</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span>
+</code></pre></div><p><strong>Output</strong></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;moved&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;foo&#34;</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span>
+</code></pre></div><h2 id="renamefilter">RenameFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter</code>.</p>
 <p>The <code>RenameFilter</code> is used to rename a specified field.</p>
-<h3 id="configuration13">Configuration</h3>
+<h3 id="configuration14">Configuration</h3>
 <table>
 <thead>
 <tr>
@@ -2029,7 +2074,7 @@ filters.MyRenameFilter.target=renamed
 </code></pre></div><h2 id="splitfilter">SplitFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter</code>.</p>
 <p>The <code>SplitFilter</code> splits a field's value of type string into an array by using a specific separator.</p>
-<h3 id="configuration14">Configuration</h3>
+<h3 id="configuration15">Configuration</h3>
 <table>
 <thead>
 <tr>
@@ -2043,7 +2088,7 @@ filters.MyRenameFilter.target=renamed
 <tbody>
 <tr>
 <td><code>split</code></td>
-<td>Split a message field's value to array</td>
+<td>The comma-separated list of fields to split</td>
 <td>string</td>
 <td><em>-</em></td>
 <td>high</td>
@@ -2068,7 +2113,6 @@ filters.MyRenameFilter.target=renamed
 <p><strong>Configuration</strong></p>
 <pre><code class="language-properties" data-lang="properties">filters.MySplitterFilter.split=input
 filters.MySplitterFilter.separator=,
-filters.MySplitterFilter.target=output
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
@@ -2085,7 +2129,7 @@ filters.MySplitterFilter.target=output
 </code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 13, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f11d77dc9d238cdcc72f1980a20b6b1f144dcd5b">docs(site): fix links (f11d77d)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 18, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a1ae8b9d82bb636f3b7924ae4e4a100616dcfed5">docs(site): fix and add docs for MoveFilter (a1ae8b9)</a>
 </div>
 </div>
 

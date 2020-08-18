@@ -172,7 +172,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
         private static TypedStruct convertNodeObjectTree(final Node node) {
             Objects.requireNonNull(node, "node cannot be null");
 
-            TypedStruct container = TypedStruct.create(determineNodeName(node));
+            TypedStruct container = TypedStruct.create();
             readAllNodeAttributes(node, container);
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
                 Optional<?> optional = readNodeObject(child);

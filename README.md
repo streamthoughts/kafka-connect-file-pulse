@@ -7,7 +7,7 @@
   <img width="400" height="400" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/site/static/images/streamthoughts-connect-file-pule-logo.png">
 </p>
 
-**Connect FilePulse** is a polyvalent, scalable and reliable, 
+**Connect FilePulse** is a multipurpose, scalable and reliable, 
 [Kafka Connector](http://kafka.apache.org/documentation.html#connect) that makes it easy to parse, transform and stream any file, in any format, into Apache Kafka™.
 Connect FilePulse*
 
@@ -36,7 +36,7 @@ Connect FilePulse provides a set of built-in features for streaming local files 
 
 * Support for recursive scanning of local directories.
 * Reading and writing files into Kafka line by line.
-* Support multiple input file formats (e.g: CSV, Avro, XML).
+* Support multiple input file formats (e.g: CSV, JSON, AVRO, XML).
 * Parsing and transforming data using built-in or custom processing filters.
 * Error handler definition
 * Monitoring files while they are being written into Kafka
@@ -44,6 +44,7 @@ Connect FilePulse provides a set of built-in features for streaming local files 
 * Etc.
 
 ## 🙏 Show your support
+
 You think this project can help you or your team to ingest data into Kafka ? 
 Please 🌟 this repository to support us!
 

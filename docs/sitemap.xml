@@ -173,6 +173,11 @@
   </url>
   
   <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/examples/</loc>
+    <lastmod>2020-08-19T11:17:43+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/accessing-data-and-metadata/</loc>
     <lastmod>2020-08-12T17:33:57+02:00</lastmod>
   </url>
@@ -210,11 +215,6 @@
   <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/examples/</loc>
     <lastmod>2020-08-06T22:32:49+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/examples/</loc>
-    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
   </url>
   
   <url>
@@ -324,7 +324,7 @@
   
   <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/</loc>
-    <lastmod>2020-05-24T01:15:18+02:00</lastmod>
+    <lastmod>2020-08-19T11:17:43+02:00</lastmod>
   </url>
   
   <url>

@@ -59,6 +59,10 @@ public class MoveCleanupPolicy implements FileCleanupPolicy {
     @Override
     public boolean onSuccess(final SourceFile source) {
         final File file = source.file();
+        if (!file.exists()) {
+            LOG.warn("Cannot move file '{}' to success path due to file does not exist.", file);
+            return true;
+        }
         return doCleanup(file, buildTargetPath(configs.scanDirectoryPath(), file, configs.outputSucceedPath()));
     }
 
@@ -68,6 +72,10 @@ public class MoveCleanupPolicy implements FileCleanupPolicy {
     @Override
     public boolean onFailure(final SourceFile source) {
         final File file = source.file();
+        if (!file.exists()) {
+            LOG.warn("Cannot move file '{}' to error path due to file does not exist.", file);
+            return true;
+        }
         return doCleanup(file, buildTargetPath(configs.scanDirectoryPath(), file, configs.outputFailedPath()));
     }
 
@@ -105,8 +113,9 @@ public class MoveCleanupPolicy implements FileCleanupPolicy {
                 LOG.debug(
                     "Non-atomic move of {} to {} succeeded after atomic move failed due to {}",
                     source,
-                        target,
-                    outer.getMessage());
+                    target,
+                    outer.getMessage()
+                );
             } catch (IOException inner) {
                 inner.addSuppressed(outer);
                 LOG.error("Error while moving file {}", source, inner);

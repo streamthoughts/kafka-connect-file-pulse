@@ -132,4 +132,20 @@ public class TypeValueMergerTest {
         assertEquals(VALUE_A,  merged.getArray(FIELD_VALUE_A).get(0));
         assertEquals(VALUE_B,  merged.getArray(FIELD_VALUE_A).get(1));
     }
+
+    @Test
+    public void shouldMergedGivenTwoStructWithCommonChildFields() {
+        final TypedStruct structLeft = TypedStruct.create()
+            .insert("a.b1.c", VALUE_A);
+
+        final TypedStruct structRight = TypedStruct.create()
+            .insert("a.b2.c", VALUE_B);
+
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
+
+        assertNotNull(merged);
+
+        assertEquals(VALUE_A,  merged.find("a.b1.c").getString());
+        assertEquals(VALUE_B,  merged.find("a.b2.c").getString());
+    }
 }

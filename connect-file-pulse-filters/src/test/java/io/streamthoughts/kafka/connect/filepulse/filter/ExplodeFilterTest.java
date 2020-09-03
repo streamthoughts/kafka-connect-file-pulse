@@ -80,6 +80,19 @@ public class ExplodeFilterTest {
         Assert.assertEquals(PRIMITIVE_VALUES, extractStringValues(result, it -> it.getString("values")));
     }
 
+    @Test
+    public void should_explode_input_given_sub_dotted_field_source() {
+        filter.configure(new HashMap<String, String>() {{
+            put(CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG, "field.values");
+        }});
+
+        RecordsIterable<TypedStruct> result = filter.apply(null, create()
+                .insert("message", "dummy")
+                .insert("field.values", PRIMITIVE_VALUES), false);
+        Assert.assertEquals(PRIMITIVE_VALUES.size(), result.size());
+        Assert.assertEquals(PRIMITIVE_VALUES, extractStringValues(result, it -> it.find("field.values").getString()));
+    }
+
     private <T> List<T> extractStringValues(final RecordsIterable<TypedStruct> result,
                                              final Function<TypedStruct, T> extractor) {
         return result.stream().map(extractor).collect(Collectors.toList());

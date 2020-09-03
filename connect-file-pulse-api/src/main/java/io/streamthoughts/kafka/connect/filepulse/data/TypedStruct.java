@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.data;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -502,8 +501,14 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
     @Override
     public String toString() {
         return StreamSupport.stream(schema.spliterator(), false)
-                .map( field -> field.name() + "=" + get(field))
-                .collect(Collectors.joining(",", "[", "]"));
+            .map( field -> {
+                TypedValue value = get(field);
+                return
+                    "name: " + field.name()
+                    + ", type: " +  value.schema().type()
+                    + ", value: " +  value.value();
+            })
+            .collect(Collectors.joining(", ", "[", "]"));
     }
 
     /**

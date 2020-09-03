@@ -63,15 +63,16 @@ public class ExplodeFilter extends AbstractMergeRecordFilter<ExplodeFilter>  {
     @Override
     protected RecordsIterable<TypedStruct> apply(final FilterContext context,
                                                  final TypedStruct record) throws FilterException {
-        TypedValue value = checkIsNotNull(record.get(config.source()));
+        final TypedValue value = checkIsNotNull(record.find(config.source()));
+
         if (value.type() != Type.ARRAY) {
             throw new FilterException(
-                    "Invalid type for field '" + config.source()  + "', expected ARRAY, was " + value.type());
+                "Invalid type for field '" + config.source()  + "', expected ARRAY, was " + value.type());
         }
 
         final List<TypedStruct> explode = value.getArray()
                 .stream()
-                .map(it -> TypedStruct.create().put(config.source(), TypedValue.any(it)))
+                .map(it -> TypedStruct.create().insert(config.source(), TypedValue.any(it)))
                 .collect(Collectors.toList());
 
         return new RecordsIterable<>(explode);

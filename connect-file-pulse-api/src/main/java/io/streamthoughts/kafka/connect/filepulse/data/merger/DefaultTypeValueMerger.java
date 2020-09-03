@@ -28,7 +28,9 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Default {@link TypeValueMerger} implementation which automatically
@@ -42,37 +44,54 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
      * @param left      the left {@link TypedStruct} to be merged.
      * @param right     the right {@link TypedStruct} to be merged.
      * @param overwrite the left field that must overwritten.
-     *
-     * @return       the new {@link TypedStruct} instance.
+     * @return the new {@link TypedStruct} instance.
      */
     public TypedStruct merge(final TypedStruct left,
                              final TypedStruct right,
                              final Set<String> overwrite) {
+        return mergeObjects(left, right, overwrite.stream().map(Path::new).collect(Collectors.toSet()));
+    }
 
+    private static TypedStruct mergeObjects(final TypedStruct left,
+                                            final TypedStruct right,
+                                            final Set<Path> overwrite) {
         if (left == null) return right;
         if (right == null) return left;
 
         final TypedStruct struct = TypedStruct.create();
 
         for (TypedField leftField : left) {
-            final String leftFieldName = leftField.name();
+            final String fieldName = leftField.name();
 
-            boolean isOverwrite = overwrite.contains(leftFieldName);
+            final TypedValue leftValue = left.get(leftField);
 
-            TypedValue typedValue = left.get(leftField);
-
-            if (!right.has(leftFieldName)) {
-                struct.put(leftFieldName, typedValue);
+            if (!right.has(fieldName)) {
+                struct.put(fieldName, leftValue);
                 continue;
             }
+
+            boolean isOverwrite = overwrite.stream().anyMatch(it -> it.matches(fieldName));
 
             if (isOverwrite) {
                 continue; // skip the left field
             }
 
-            final TypedField rightField = right.field(leftFieldName);
+            final TypedField rightField = right.field(fieldName);
             checkIfTypesAreCompatibleForMerge(leftField, rightField);
-            TypedValue merged = merge(typedValue, right.get(rightField));
+
+            final TypedValue rightValue = right.get(rightField);
+            final TypedValue merged;
+
+            if (leftField.type() == Type.STRUCT) {
+                final TypedStruct mergedStruct = mergeObjects(
+                    leftValue.getStruct(),
+                    rightValue.getStruct(),
+                    overwrite.stream().map(Path::forward).filter(Objects::nonNull).collect(Collectors.toSet())
+                );
+                merged = TypedValue.struct(mergedStruct);
+            } else {
+                merged = merge(leftValue, rightValue);
+            }
             struct.put(leftField.name(), merged);
         }
 
@@ -82,6 +101,33 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
             }
         }
         return struct;
+    }
+
+    private static class Path {
+
+        private final String path;
+        private final String field;
+        private final String remaining;
+
+        Path(final String path) {
+            this.path = path;
+            if (path.contains(".")) {
+                String[] split = path.split("\\.", 2);
+                field = split[0];
+                remaining = split[1];
+            } else {
+                field = path;
+                remaining = null;
+            }
+        }
+
+        public boolean matches(final String field) {
+            return this.field.equals(field) || path.equals(field);
+        }
+
+        private Path forward() {
+            return remaining == null ? null : new Path(remaining);
+        }
     }
 
     private static TypedValue merge(final TypedValue left, final TypedValue right) {
@@ -170,4 +216,5 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
     private static boolean isTypeNotEqual(final Schema left, final Schema right) {
         return left != null && right != null && left.type() != right.type();
     }
+
 }

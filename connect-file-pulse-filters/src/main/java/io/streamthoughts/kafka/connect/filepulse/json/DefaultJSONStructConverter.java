@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.json;
 import com.jsoniter.JsonIterator;
 import com.jsoniter.ValueType;
 import com.jsoniter.any.Any;
+import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
@@ -45,6 +46,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
         ACCESSORS.put(ValueType.OBJECT, new ObjectJsonFieldAccessor());
         ACCESSORS.put(ValueType.BOOLEAN, new BooleanJsonFieldAccessor());
         ACCESSORS.put(ValueType.NUMBER, new NumberJsonFieldAccessor());
+        ACCESSORS.put(ValueType.NULL, new NullJsonFieldAccessor());
     }
 
     private static JsonFieldAccessor<?> getAccessorForType(final ValueType type) {
@@ -81,6 +83,14 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
     private interface JsonFieldAccessor<T> {
 
         TypedValue read(final JsonIterator it) throws IOException;
+    }
+
+    private static class NullJsonFieldAccessor implements JsonFieldAccessor<Object> {
+
+        @Override
+        public TypedValue read(JsonIterator it) {
+            return TypedValue.of(null, Schema.none());
+        }
     }
 
     private static class NumberJsonFieldAccessor implements JsonFieldAccessor<Object> {

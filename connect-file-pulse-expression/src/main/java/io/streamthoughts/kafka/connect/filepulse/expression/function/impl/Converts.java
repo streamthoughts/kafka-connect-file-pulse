@@ -57,7 +57,6 @@ public class Converts implements ExpressionFunction<SimpleArguments> {
      */
     @Override
     public TypedValue apply(final TypedValue field, final SimpleArguments args) {
-        Type type = args.valueOf(TYPE);
-        return TypedValue.of(type.convert(field.value()), type);
+        return field.as(args.valueOf(TYPE));
     }
 }

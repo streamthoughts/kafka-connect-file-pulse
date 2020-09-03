@@ -53,6 +53,7 @@ public class KafkaFileStateReporter implements StateListener {
 
     /**
      * Notify a state change for the specified source file.
+     *
      * @param metadata  the source file metadata.
      * @param offset    the source file offset.
      * @param status    the status.

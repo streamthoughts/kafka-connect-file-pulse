@@ -96,11 +96,13 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
 
         for(final TypedField field : schema) {
             final io.streamthoughts.kafka.connect.filepulse.data.Schema fieldSchema = field.schema();
-            final String fieldName = field.name();
-            mayUpdateSchemaName(fieldSchema, fieldName);
-            sb.field(fieldName, fieldSchema.map(this)).optional();
+            // Ignore schema NULL because cannot determine the expected type.
+            if (fieldSchema.type() != Type.NULL) {
+                final String fieldName = field.name();
+                mayUpdateSchemaName(fieldSchema, fieldName);
+                sb.field(fieldName, fieldSchema.map(this)).optional();
+            }
         }
-
         return sb.build();
     }
 

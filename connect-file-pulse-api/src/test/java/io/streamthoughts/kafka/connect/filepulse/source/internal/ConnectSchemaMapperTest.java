@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source.internal;
 
+import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.Struct;
@@ -122,6 +123,20 @@ public class ConnectSchemaMapperTest {
         Map<String, Struct> field1 = (Map<String, Struct>)connectStruct.get("field1");
         Assert.assertNotNull(field1);
         Assert.assertEquals("value", field1.get("field2").getString("field3"));
+    }
+
+    @Test
+    public void shouldMapGivenTypeStructWithNullValue() {
+        TypedStruct struct = TypedStruct.create()
+                .put("field1", "value1")
+                .put("field2", Schema.none(), null);
+
+        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        Assert.assertNotNull(schemaAndValue);
+
+        Struct connectStruct = (Struct)schemaAndValue.value();
+        Assert.assertNotNull(connectStruct.schema().field("field1"));
+        Assert.assertNull(connectStruct.schema().field("field2"));
     }
 
 }

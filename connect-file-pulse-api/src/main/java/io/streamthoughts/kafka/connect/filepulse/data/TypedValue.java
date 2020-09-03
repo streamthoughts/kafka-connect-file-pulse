@@ -358,7 +358,8 @@ public class TypedValue implements GettableByType {
     }
 
     public TypedValue as(final Type type) {
-        return TypedValue.of(type.convert(value), type);
+        Object converted = isNull() ? null : type.convert(value);
+        return TypedValue.of(converted, type);
     }
 
     /**

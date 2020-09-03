@@ -32,13 +32,15 @@ public class FileStateBackingStore extends KafkaStateBackingStore<SourceFile> {
     /**
      * Creates a new {@link FileStateBackingStore} instance.
      *
-     * @param store   the state store name.
-     * @param groupId the group attached to the backing store.
-     * @param configs the configuration.
+     * @param store          the state store name.
+     * @param groupId        the group attached to the backing store.
+     * @param configs        the configuration.
+     * @param isProducerOnly is the backing store only used for writing data.
      */
     public FileStateBackingStore(final String store,
                                  final String groupId,
-                                 final Map<String, ?> configs) {
-        super(store, KEY_PREFIX, groupId, configs, new SourceFileSerde());
+                                 final Map<String, ?> configs,
+                                 final boolean isProducerOnly) {
+        super(store, KEY_PREFIX, groupId, configs, new SourceFileSerde(), isProducerOnly);
     }
 }

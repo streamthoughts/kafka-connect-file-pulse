@@ -73,7 +73,7 @@ public class KafkaBasedLog<K, V> {
 
     /**
      * Create a new KafkaBasedLog object. This does not start reading the log and writing is not permitted until
-     * {@link #start()} is invoked.
+     * {@link #start(boolean)} is invoked.
      *
      * @param topic the topic to treat as a log
      * @param producerConfigs configuration options to use when creating the internal producer. At a minimum this must
@@ -86,7 +86,7 @@ public class KafkaBasedLog<K, V> {
      *                        behavior of this class.
      * @param consumedCallback callback to invoke for each {@link ConsumerRecord} consumed when tailing the log
      * @param time Time interface
-     * @param initializer the component that should be run when this log is {@link #start() started}; may be null
+     * @param initializer the component that should be run when this log is {@link #start(boolean) started}; may be null
      */
     KafkaBasedLog(final String topic,
                   final Map<String, Object> producerConfigs,
@@ -105,7 +105,7 @@ public class KafkaBasedLog<K, V> {
         this.state = States.CREATED;
     }
 
-    public synchronized void start() {
+    public synchronized void start(final boolean producerOnly) {
         if (state != States.CREATED) {
             throw new IllegalStateException("Cannot restart KafkaBasedLog due to state being " + state +")");
         }
@@ -113,35 +113,36 @@ public class KafkaBasedLog<K, V> {
         try {
             initializer.run();
             producer = createProducer();
-            consumer = createConsumer();
+            if (!producerOnly) {
+                consumer = createConsumer();
 
-            List<TopicPartition> partitions = new ArrayList<>();
+                List<TopicPartition> partitions = new ArrayList<>();
 
-            // We expect that the topics will have been created either manually by the user or automatically by the herder
-            List<PartitionInfo> partitionInfos = null;
-            long started = time.milliseconds();
-            while (partitionInfos == null && time.milliseconds() - started < CREATE_TOPIC_TIMEOUT_MS) {
-                partitionInfos = consumer.partitionsFor(topic);
-                Utils.sleep(Math.min(time.milliseconds() - started, 1000));
+                List<PartitionInfo> partitionInfos = null;
+                long started = time.milliseconds();
+                while (partitionInfos == null && time.milliseconds() - started < CREATE_TOPIC_TIMEOUT_MS) {
+                    partitionInfos = consumer.partitionsFor(topic);
+                    Utils.sleep(Math.min(time.milliseconds() - started, 1000));
+                }
+                if (partitionInfos == null)
+                    throw new ConnectException(
+                        "Could not look up partition metadata for position backing store topic '" + topic + "' in" +
+                        " allotted period (" + CREATE_TOPIC_TIMEOUT_MS + "ms). This could indicate a connectivity issue," +
+                        " unavailable topic partitions, or if this is your first use of the topic it may have taken too long to create.");
+
+                for (PartitionInfo partition : partitionInfos)
+                    partitions.add(new TopicPartition(partition.topic(), partition.partition()));
+                consumer.assign(partitions);
+
+                // Always consume from the beginning of all partitions. Necessary to ensure that we don't use committed offsets
+                // when a 'group.id' is specified (if offsets happen to have been committed unexpectedly).
+                consumer.seekToBeginning(partitions);
+
+                readToLogEnd();
+
+                thread = new WorkThread();
+                thread.start();
             }
-            if (partitionInfos == null)
-                throw new ConnectException(
-                    "Could not look up partition metadata for position backing store topic '" + topic + "' in" +
-                    " allotted period (" + CREATE_TOPIC_TIMEOUT_MS + "ms). This could indicate a connectivity issue," +
-                    " unavailable topic partitions, or if this is your first use of the topic it may have taken too long to create.");
-
-            for (PartitionInfo partition : partitionInfos)
-                partitions.add(new TopicPartition(partition.topic(), partition.partition()));
-            consumer.assign(partitions);
-
-            // Always consume from the beginning of all partitions. Necessary to ensure that we don't use committed offsets
-            // when a 'group.id' is specified (if offsets happen to have been committed unexpectedly).
-            consumer.seekToBeginning(partitions);
-
-            readToLogEnd();
-
-            thread = new WorkThread();
-            thread.start();
             state = States.RUNNING;
             LOG.info("Finished reading KafkaBasedLog for topic {}", topic);
             LOG.info("Started KafkaBasedLog for topic {}", topic);

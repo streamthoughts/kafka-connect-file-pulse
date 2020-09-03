@@ -99,9 +99,10 @@ public class FilePulseSourceTask extends SourceTask {
         final String groupId = config.getTasksReporterGroupId();
         StateBackingStoreRegistry.instance().register(groupId, () -> {
             final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
-            return new FileStateBackingStore(
-                    config.getTaskReporterTopic(),
-                    groupId, configs);
+            final String stateStoreTopic = config.getTaskReporterTopic();
+            FileStateBackingStore store = new FileStateBackingStore(stateStoreTopic, groupId, configs, true);
+            store.start();
+            return store;
         });
 
         return StateBackingStoreRegistry.instance().get(groupId);

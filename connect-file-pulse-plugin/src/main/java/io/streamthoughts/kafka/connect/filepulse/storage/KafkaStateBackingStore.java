@@ -46,6 +46,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
     private final Map<String, T> states = new HashMap<>();
     private final StateSerde<T> serde;
     private final String keyPrefix;
+    private final boolean isProducerOnly;
     private States status = States.CREATED;
     private StateBackingStore.UpdateListener<T> updateListener;
 
@@ -62,12 +63,14 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
                                   final String keyPrefix,
                                   final String groupId,
                                   final Map<String, ?> configs,
-                                  final StateSerde<T> serde) {
+                                  final StateSerde<T> serde,
+                                  final boolean isProducerOnly) {
         KafkaBasedLogFactory factory = new KafkaBasedLogFactory(configs);
         this.configLog = factory.make(topic, new ConsumeCallback());
         this.groupId = groupId;
         this.serde = serde;
         this.keyPrefix = keyPrefix;
+        this.isProducerOnly = isProducerOnly;
     }
 
     synchronized States getState() {
@@ -89,7 +92,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
         LOG.info("Starting {}", getBackingStoreName());
         // Before startup, callbacks are *not* invoked. You can grab a snapshot after starting -- just take care that
         // updates can continue to occur in the background
-        configLog.start();
+        configLog.start(isProducerOnly);
         setState(States.STARTED);
         LOG.info("Started {}", getBackingStoreName());
     }

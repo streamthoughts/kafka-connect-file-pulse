@@ -97,10 +97,9 @@ public class FilePulseSourceConnector extends SourceConnector {
         final String tasksReporterGroupId = config.getTasksReporterGroupId();
         connectorGroupName = tasksReporterGroupId != null ? tasksReporterGroupId : connectName;
         StateBackingStoreRegistry.instance().register(connectorGroupName, () -> {
+            final String stateStoreTopic = config.getTaskReporterTopic();
             final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
-            return new FileStateBackingStore(
-                    config.getTaskReporterTopic(),
-                    connectorGroupName, configs);
+            return new FileStateBackingStore(stateStoreTopic, connectorGroupName, configs, false);
         });
 
         final FSDirectoryWalker directoryScanner = this.config.directoryScanner();

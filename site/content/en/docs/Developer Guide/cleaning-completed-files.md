@@ -1,5 +1,5 @@
 ---
-date: 2020-05-21
+date: 2020-09-10
 title: "File Cleanup Policies"
 linkTitle: "File Cleanup Policies"
 weight: 100
@@ -25,7 +25,7 @@ This policy deletes all files regardless of their final status (completed or fai
 To enable this policy, the property `fs.cleanup.policy.class` must configured to : 
 
 ```
-io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanPolicy
+io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanupPolicy
 ```
 
 #### Configuration
@@ -38,7 +38,7 @@ This policy prints to logs some information after files completion.
 To enable this policy, the property `fs.cleanup.policy.class` must configured to : 
 
 ```
-io.streamthoughts.kafka.connect.filepulse.clean.LogCleanPolicy 
+io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy 
 ```
 
 #### Configuration
@@ -51,7 +51,7 @@ This policy attempts to move atomically files to configurable target directories
 To enable this policy, the property `fs.cleanup.policy.class` must configured to : 
 
 ```
-io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanPolicy
+io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanupPolicy
 ```
 
 #### Configuration

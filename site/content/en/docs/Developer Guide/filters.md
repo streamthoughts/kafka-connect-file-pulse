@@ -1,5 +1,5 @@
 ---
-date: 2020-08-12
+date: 2020-09-10
 title: "Processing Filters"
 linkTitle: "Processing Filters"
 weight: 80
@@ -52,7 +52,7 @@ The concat value is then added to the a field named `result`.
 
 **Configuration**
 ```properties
-filters.SubstituteFilter.field="result"
+filters.SubstituteFilter.field="$.result"
 filters.SubstituteFilter.value="{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}"
 ```
 
@@ -464,6 +464,8 @@ The `JSONFilter` parses an input json field.
 | `source` | The input field on which to apply the filter  | string | *message* | medium |
 | `target` | The target field to put the parsed JSON data  | string | *-* | high |
 | `charset` | The charset to be used for reading the source field (if source if of type `BYTES` | string | *UTF-8* | medium |
+| `explode.array` | A boolean that specifies whether to explode arrays into separate records | boolean | *false* | medium |
+| `merge` |  boolean that specifies whether to merge the JSON object into the top level of the input record | boolean | *false* | medium |
 
 ### Examples
 

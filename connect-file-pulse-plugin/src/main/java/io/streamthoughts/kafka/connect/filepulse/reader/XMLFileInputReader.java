@@ -202,6 +202,8 @@ public class XMLFileInputReader extends AbstractFileInputReader {
      */
     private static class Node2StructConverter {
 
+        private static final String DEFAULT_TEXT_NODE_FIELD_NAME = "value";
+
         /**
          * Converts the given {@link Node} object tree into a new new {@link TypedStruct} instance.
          *
@@ -212,11 +214,11 @@ public class XMLFileInputReader extends AbstractFileInputReader {
             Objects.requireNonNull(node, "node cannot be null");
 
             TypedStruct container = TypedStruct.create();
-            readAllNodeAttributes(node, container);
+            addAllNodeAttributes(container, node.getAttributes());
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
                 Optional<?> optional = readNodeObject(child, forceArrayFields);
                 if (optional.isPresent()) {
-                    final Object nodeValue = optional.get();
+                    Object nodeValue = optional.get();
                     final String nodeName = isTextNode(child) ? determineNodeName(node) : determineNodeName(child);
                     final boolean isArray = forceArrayFields.contains(nodeName);
                     container = enrichStructWithObject(container, nodeName, nodeValue, isArray);
@@ -259,18 +261,30 @@ public class XMLFileInputReader extends AbstractFileInputReader {
             }
 
             if (isTextNode(node)) {
-                return Optional.of(node.getNodeValue());
+                return readTextNode(node, node.getNodeValue());
             }
 
             if (isElementNode(node)) {
                 Optional<String> childTextContent = peekChildNodeTextContent(node);
                 if (childTextContent.isPresent()) {
-                    return childTextContent;
+                    return readTextNode(node, childTextContent.get());
                 } else {
                     return Optional.of(convertNodeObjectTree(node, forceArrayFields));
                 }
             }
             throw new ReaderException("Unsupported node type '" + node.getNodeType() + "'");
+        }
+
+        private static Optional<?> readTextNode(final Node node,
+                                                final String text) {
+            final NamedNodeMap attributes = node.getAttributes();
+            if (attributes != null && attributes.getLength() > 0) {
+                final TypedStruct container = TypedStruct.create();
+                addAllNodeAttributes(container, attributes);
+                container.put(DEFAULT_TEXT_NODE_FIELD_NAME, text);
+                return Optional.of(container);
+            }
+            return Optional.of(text);
         }
 
         private static Optional<String> peekChildNodeTextContent(final Node node) {
@@ -313,15 +327,15 @@ public class XMLFileInputReader extends AbstractFileInputReader {
             return node.getNodeType() == textNode;
         }
 
-        private static void readAllNodeAttributes(final Node node, final TypedStruct values) {
-            final NamedNodeMap attributes = node.getAttributes();
+        private static void addAllNodeAttributes(final TypedStruct struct,
+                                                 final NamedNodeMap attributes) {
             if (attributes == null) return;
 
             for (int i = 0; i < attributes.getLength(); i++) {
                 Node attr = attributes.item(i);
                 String attrName = determineNodeName(attr);
                 if (isNotXmlNamespace(attr)) {
-                    values.put(attrName, attr.getNodeValue());
+                    struct.put(attrName, attr.getNodeValue());
                 }
             }
         }

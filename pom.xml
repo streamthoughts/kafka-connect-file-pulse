@@ -26,7 +26,7 @@
     <groupId>io.streamthoughts</groupId>
     <artifactId>kafka-connect-file-pulse-reactor</artifactId>
     <packaging>pom</packaging>
-    <version>1.5.2</version>
+    <version>1.5.3</version>
 
     <name>Kafka Connect Source File Pulse Reactor</name>
     <description>Connect File Pulse is a multi-purpose source connector for streaming files from a local filesystem to Kafka.</description>

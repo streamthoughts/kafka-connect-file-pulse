@@ -36,7 +36,7 @@ public class TypeValueMergerTest {
     private final TypeValueMerger merger = new DefaultTypeValueMerger();
 
     @Test
-    public void shouldMergeStructGivenTwoFieldsWithDifferentName() {
+    public void should_merge_struct_given_two_fields_with_different_name() {
         final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_A);
 
@@ -52,7 +52,7 @@ public class TypeValueMergerTest {
     }
 
     @Test
-    public void shouldMergeStructGivenTwoFieldsWithDifferentTypeGivenOverride() {
+    public void should_merge_struct_given_two_fields_with_different_type_given_override() {
         final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_A);
 
@@ -66,7 +66,7 @@ public class TypeValueMergerTest {
     }
 
     @Test
-    public void shouldMergeStructGivenTwoFieldsWithSameNameIntoArray() {
+    public void should_merge_struct_given_two_fields_with_same_name_into_array() {
         final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, VALUE_A);
 
@@ -83,7 +83,60 @@ public class TypeValueMergerTest {
     }
 
     @Test
-    public void shouldMergeStructGivenLeftFieldWithArrayTypeEqualToRightField() {
+    public void should_merge_struct_given_two_identical_paths_into_array() {
+        final TypedStruct structLeft = TypedStruct.create()
+                .insert("a.b1", VALUE_A)
+                .insert("a.b2", VALUE_A);
+
+        final TypedStruct structRight = TypedStruct.create()
+                .insert("a.b2", VALUE_B);
+
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
+
+        assertNotNull(merged);
+
+        assertEquals(VALUE_A,  merged.find("a.b1").getString());
+        assertEquals(2,  merged.find("a.b2").getArray().size());
+        assertTrue(merged.find("a.b2").getArray().contains(VALUE_A));
+        assertTrue(merged.find("a.b2").getArray().contains(VALUE_B));
+    }
+
+    @Test
+    public void should_merge_struct_given_two_existing_paths_and_overwrite() {
+        final TypedStruct structLeft = TypedStruct.create()
+                .insert("a.b1", VALUE_A)
+                .insert("a.b2", VALUE_A);
+
+        final TypedStruct structRight = TypedStruct.create()
+                .insert("a.b2", VALUE_B);
+
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.singleton("a.b2"));
+
+        assertNotNull(merged);
+
+        assertEquals(VALUE_A,  merged.find("a.b1").getString());
+        assertEquals(VALUE_B,  merged.find("a.b2").getString());
+    }
+
+    @Test
+    public void should_merge_struct_given_two_existing_paths_into_array() {
+        final TypedStruct structLeft = TypedStruct.create()
+                .insert("a.b1", VALUE_A)
+                .insert("a.b2", VALUE_A);
+
+        final TypedStruct structRight = TypedStruct.create()
+                .insert("a.b2", VALUE_B);
+
+        final TypedStruct merged = merger.merge(structLeft, structRight, Collections.emptySet());
+
+        assertNotNull(merged);
+
+        assertEquals(VALUE_A,  merged.find("a.b1").getString());
+        assertEquals(2,  merged.find("a.b2").getArray().size());
+    }
+
+    @Test
+    public void should_merge_struct_given_left_field_with_array_type_equal_to_right_field() {
         final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_A));
 
@@ -117,7 +170,7 @@ public class TypeValueMergerTest {
     }
 
     @Test
-    public void shouldMergeStructGivenTwoArrayFieldsWithEqualsValueType() {
+    public void should_merge_struct_given_two_array_fields_with_equals_value_type() {
         final TypedStruct structLeft = TypedStruct.create()
                 .put(FIELD_VALUE_A, Collections.singletonList(VALUE_A));
 
@@ -134,7 +187,7 @@ public class TypeValueMergerTest {
     }
 
     @Test
-    public void shouldMergedGivenTwoStructWithCommonChildFields() {
+    public void should_merged_given_two_struct_with_common_child_fields() {
         final TypedStruct structLeft = TypedStruct.create()
             .insert("a.b1.c", VALUE_A);
 

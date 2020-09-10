@@ -86,13 +86,13 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
                 final TypedStruct mergedStruct = mergeObjects(
                     leftValue.getStruct(),
                     rightValue.getStruct(),
-                    overwrite.stream().map(Path::forward).filter(Objects::nonNull).collect(Collectors.toSet())
+                    computeNextOverwrite(overwrite, fieldName)
                 );
                 merged = TypedValue.struct(mergedStruct);
             } else {
                 merged = merge(leftValue, rightValue);
             }
-            struct.put(leftField.name(), merged);
+            struct.put(fieldName, merged);
         }
 
         for (TypedField f : right) {
@@ -101,6 +101,13 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
             }
         }
         return struct;
+    }
+
+    private static Set<Path> computeNextOverwrite(final Set<Path> overwrite, final String fieldName) {
+        return overwrite.stream()
+            .map(p -> p.forwardIfOrNull(fieldName))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 
     private static class Path {
@@ -122,11 +129,15 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
         }
 
         public boolean matches(final String field) {
-            return this.field.equals(field) || path.equals(field);
+            return path.equals(field);
         }
 
-        private Path forward() {
-            return remaining == null ? null : new Path(remaining);
+        private Path forwardIfOrNull(final String field) {
+            if (!this.field.equals(field))
+                return null;
+            if (remaining == null)
+                return null;
+            return new Path(remaining);
         }
     }
 

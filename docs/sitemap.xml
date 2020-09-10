@@ -233,12 +233,12 @@
   </url>
   
   <url>
-    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/filters/</loc>
-    <lastmod>2020-08-18T21:16:43+02:00</lastmod>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</loc>
+    <lastmod>2020-09-10T14:16:15+02:00</lastmod>
   </url>
   
   <url>
-    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</loc>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/filters/</loc>
     <lastmod>2020-08-18T21:16:43+02:00</lastmod>
   </url>
   
@@ -278,6 +278,11 @@
   </url>
   
   <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</loc>
+    <lastmod>2020-09-10T14:16:15+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.3.x/developer-guide/cleaning-completed-files/</loc>
     <lastmod>2020-08-06T16:49:06+02:00</lastmod>
   </url>
@@ -285,11 +290,6 @@
   <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/cleaning-completed-files/</loc>
     <lastmod>2020-08-06T22:32:49+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</loc>
-    <lastmod>2020-05-22T02:07:07+02:00</lastmod>
   </url>
   
   <url>

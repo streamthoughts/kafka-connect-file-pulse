@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/" />
-<meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-18T21:16:43+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-09-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-09-10T14:16:15+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
-<meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-18T21:16:43&#43;02:00" />
-<meta itemprop="wordCount" content="2127">
+<meta itemprop="datePublished" content="2020-09-10T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-09-10T14:16:15&#43;02:00" />
+<meta itemprop="wordCount" content="2163">
 
 
 
@@ -1325,7 +1325,7 @@ value or a value extracted from another existing field using  <a href="/kafka-co
 using a <a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#string-substitution">substitution expression</a>.
 The concat value is then added to the a field named <code>result</code>.</p>
 <p><strong>Configuration</strong></p>
-<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;result&quot;
+<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;$.result&quot;
 filters.SubstituteFilter.value=&quot;{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}&quot;
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
@@ -1926,6 +1926,20 @@ filters.ParseLog4jLog.ignoreFailure=&quot;true&quot;
 <td><em>UTF-8</em></td>
 <td>medium</td>
 </tr>
+<tr>
+<td><code>explode.array</code></td>
+<td>A boolean that specifies whether to explode arrays into separate records</td>
+<td>boolean</td>
+<td><em>false</em></td>
+<td>medium</td>
+</tr>
+<tr>
+<td><code>merge</code></td>
+<td>boolean that specifies whether to merge the JSON object into the top level of the input record</td>
+<td>boolean</td>
+<td><em>false</em></td>
+<td>medium</td>
+</tr>
 </tbody>
 </table>
 <h3 id="examples11">Examples</h3>
@@ -2129,7 +2143,7 @@ filters.MySplitterFilter.separator=,
 </code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 18, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a1ae8b9d82bb636f3b7924ae4e4a100616dcfed5">docs(site): fix and add docs for MoveFilter (a1ae8b9)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 10, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/dbe4e7e5ded0c61b684111dcbf14da257f763508">docs(site): fix docs (dbe4e7e)</a>
 </div>
 </div>
 

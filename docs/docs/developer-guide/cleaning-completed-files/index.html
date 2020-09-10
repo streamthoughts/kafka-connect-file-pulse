@@ -25,13 +25,13 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/" />
-<meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T02:07:07+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-09-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-09-10T14:16:15+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="File Cleanup Policies">
 <meta itemprop="description" content="The commons configuration for Connect File Pulse.
 ">
-<meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T02:07:07&#43;02:00" />
+<meta itemprop="datePublished" content="2020-09-10T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-09-10T14:16:15&#43;02:00" />
 <meta itemprop="wordCount" content="157">
 
 
@@ -1127,19 +1127,19 @@
 <h3 id="deletecleanpolicy">DeleteCleanPolicy</h3>
 <p>This policy deletes all files regardless of their final status (completed or failed).</p>
 <p>To enable this policy, the property <code>fs.cleanup.policy.class</code> must configured to :</p>
-<pre><code>io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanPolicy
+<pre><code>io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanupPolicy
 </code></pre><h4 id="configuration">Configuration</h4>
 <p>no configuration</p>
 <h3 id="logcleanpolicy">LogCleanPolicy</h3>
 <p>This policy prints to logs some information after files completion.</p>
 <p>To enable this policy, the property <code>fs.cleanup.policy.class</code> must configured to :</p>
-<pre><code>io.streamthoughts.kafka.connect.filepulse.clean.LogCleanPolicy 
+<pre><code>io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy 
 </code></pre><h4 id="configuration1">Configuration</h4>
 <p>no configuration</p>
 <h3 id="movecleanpolicy">MoveCleanPolicy</h3>
 <p>This policy attempts to move atomically files to configurable target directories.</p>
 <p>To enable this policy, the property <code>fs.cleanup.policy.class</code> must configured to :</p>
-<pre><code>io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanPolicy
+<pre><code>io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanupPolicy
 </code></pre><h4 id="configuration2">Configuration</h4>
 <table>
 <thead>
@@ -1172,7 +1172,7 @@
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/29525710d59bcf1e6bcfa14c7f3b27b2afdc3aab">feat(site): migrate documentation to Docsy (2952571)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 10, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/dbe4e7e5ded0c61b684111dcbf14da257f763508">docs(site): fix docs (dbe4e7e)</a>
 </div>
 </div>
 

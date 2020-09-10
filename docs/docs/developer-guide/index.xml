@@ -1012,7 +1012,7 @@ filters.AppendError.value=&amp;quot;$error.message&amp;quot;
     <item>
       <title>Docs: Processing Filters</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link>
-      <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</guid>
       <description>
@@ -1155,7 +1155,7 @@ value or a value extracted from another existing field using  &lt;a href=&#34;ht
 using a &lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#string-substitution&#34;&gt;substitution expression&lt;/a&gt;.
 The concat value is then added to the a field named &lt;code&gt;result&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Configuration&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.SubstituteFilter.field=&amp;quot;result&amp;quot;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.SubstituteFilter.field=&amp;quot;$.result&amp;quot;
 filters.SubstituteFilter.value=&amp;quot;{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Input&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;
@@ -1756,6 +1756,20 @@ filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
 &lt;td&gt;&lt;em&gt;UTF-8&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;medium&lt;/td&gt;
 &lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;explode.array&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;A boolean that specifies whether to explode arrays into separate records&lt;/td&gt;
+&lt;td&gt;boolean&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;false&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;merge&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;boolean that specifies whether to merge the JSON object into the top level of the input record&lt;/td&gt;
+&lt;td&gt;boolean&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;false&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;medium&lt;/td&gt;
+&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;examples11&#34;&gt;Examples&lt;/h3&gt;
@@ -2082,7 +2096,7 @@ you can used one of the following override prefixes :&lt;/p&gt;
     <item>
       <title>Docs: File Cleanup Policies</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</link>
-      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</guid>
       <description>
@@ -2114,19 +2128,19 @@ you can used one of the following override prefixes :&lt;/p&gt;
 &lt;h3 id=&#34;deletecleanpolicy&#34;&gt;DeleteCleanPolicy&lt;/h3&gt;
 &lt;p&gt;This policy deletes all files regardless of their final status (completed or failed).&lt;/p&gt;
 &lt;p&gt;To enable this policy, the property &lt;code&gt;fs.cleanup.policy.class&lt;/code&gt; must configured to :&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanPolicy
+&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanupPolicy
 &lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;configuration&#34;&gt;Configuration&lt;/h4&gt;
 &lt;p&gt;no configuration&lt;/p&gt;
 &lt;h3 id=&#34;logcleanpolicy&#34;&gt;LogCleanPolicy&lt;/h3&gt;
 &lt;p&gt;This policy prints to logs some information after files completion.&lt;/p&gt;
 &lt;p&gt;To enable this policy, the property &lt;code&gt;fs.cleanup.policy.class&lt;/code&gt; must configured to :&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.LogCleanPolicy 
+&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy 
 &lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;configuration1&#34;&gt;Configuration&lt;/h4&gt;
 &lt;p&gt;no configuration&lt;/p&gt;
 &lt;h3 id=&#34;movecleanpolicy&#34;&gt;MoveCleanPolicy&lt;/h3&gt;
 &lt;p&gt;This policy attempts to move atomically files to configurable target directories.&lt;/p&gt;
 &lt;p&gt;To enable this policy, the property &lt;code&gt;fs.cleanup.policy.class&lt;/code&gt; must configured to :&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanPolicy
+&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanupPolicy
 &lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;configuration2&#34;&gt;Configuration&lt;/h4&gt;
 &lt;table&gt;
 &lt;thead&gt;

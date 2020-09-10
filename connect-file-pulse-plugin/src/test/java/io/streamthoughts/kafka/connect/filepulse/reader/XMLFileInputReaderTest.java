@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
@@ -187,6 +186,20 @@ public class XMLFileInputReaderTest {
         Assert.assertEquals(1, records.get(0).value().get("topicPartition").getArray().size());
     }
 
+    @Test
+    public void should_read_record_given_single_text_node_with_attrs() throws IOException {
+        try(XMLFileInputReader reader = createNewXMLFileInputReader(TEXT_NODE_TEST_XML_DOCUMENT)) {
+            reader.configure(new HashMap<String, String>());
+            FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
+            List<FileRecord<TypedStruct>> records = new ArrayList<>();
+            iterator.forEachRemaining(r -> records.addAll(r.collect()));
+
+            Assert.assertEquals(1, records.size());
+            Assert.assertEquals("dummy text", records.get(0).value().find("ROOT.value").getString());
+            Assert.assertEquals("dummy attr", records.get(0).value().find("ROOT.attr").getString());
+        }
+    }
+
 
     private XMLFileInputReader createNewXMLFileInputReader(final String xmlDocument) throws IOException {
         File file = testFolder.newFile();
@@ -212,6 +225,8 @@ public class XMLFileInputReaderTest {
         Assert.assertEquals("1G", topicPartition.getString("logSize"));
         Assert.assertEquals("1", topicPartition.getString("numSegments"));
     }
+
+    private static final String TEXT_NODE_TEST_XML_DOCUMENT = "<ROOT attr=\"dummy attr\">dummy text</ROOT>";
 
     private static final String COMMENT_TEST_XML_DOCUMENT = "<ROOT><!-- This is a comment -->dummy text</ROOT>";
 

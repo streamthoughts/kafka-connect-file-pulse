@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
@@ -174,7 +175,7 @@ public class XMLFileInputReaderTest {
     public void should_read_record_given_valid_force_array_fields() {
         reader.configure(new HashMap<String, String>(){{
             put(XPATH_QUERY_CONFIG, "//broker[1]");
-            put(FORCE_ARRAY_ON_FIELDS_CONFIG, "topicPartition");
+            put(FORCE_ARRAY_ON_FIELDS_CONFIG, "broker.topicPartition, broker.topicPartition.numSegments");
         }});
 
         FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
@@ -182,8 +183,12 @@ public class XMLFileInputReaderTest {
         iterator.forEachRemaining(r -> records.addAll(r.collect()));
 
         Assert.assertEquals(1, records.size());
-        Assert.assertEquals(Type.ARRAY, records.get(0).value().get("topicPartition").type());
-        Assert.assertEquals(1, records.get(0).value().get("topicPartition").getArray().size());
+        TypedStruct broker = records.get(0).value();
+        Assert.assertEquals(Type.ARRAY, broker.get("topicPartition").type());
+        Assert.assertEquals(1, broker.get("topicPartition").getArray().size());
+        TypedValue segment = ((TypedStruct) broker.get("topicPartition").getArray().iterator().next()).find("numSegments");
+        Assert.assertEquals(Type.ARRAY, segment.type());
+        Assert.assertEquals(1, segment.getArray().size());
     }
 
     @Test

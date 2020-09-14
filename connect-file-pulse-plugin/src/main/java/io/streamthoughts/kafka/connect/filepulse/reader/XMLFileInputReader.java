@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
+import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 import io.streamthoughts.kafka.connect.filepulse.data.SchemaSupplier;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
@@ -170,7 +171,9 @@ public class XMLFileInputReader extends AbstractFileInputReader {
                 if (item == null) return RecordsIterable.empty();
 
                 try {
-                    return incrementAndGet(Node2StructConverter.convertNodeObjectTree(item, config.forceArrayFields()));
+                    final FieldPaths forceArrayFields = FieldPaths.from(config.forceArrayFields());
+                    final TypedStruct struct = Node2StructConverter.convertNodeObjectTree(item, forceArrayFields);
+                    return incrementAndGet(struct);
                 } catch (Exception e) {
                     throw new ReaderException("Fail to convert XML document to connect struct object: " + context, e);
                 }
@@ -210,17 +213,17 @@ public class XMLFileInputReader extends AbstractFileInputReader {
          * @param node      the {@link Node} object tree to convert.
          * @return          the new {@link TypedStruct} instance.
          */
-        private static TypedStruct convertNodeObjectTree(final Node node, final List<String> forceArrayFields) {
+        private static TypedStruct convertNodeObjectTree(final Node node, final FieldPaths forceArrayFields) {
             Objects.requireNonNull(node, "node cannot be null");
-
+            final FieldPaths currentForceArrayFields = forceArrayFields.next(determineNodeName(node));
             TypedStruct container = TypedStruct.create();
             addAllNodeAttributes(container, node.getAttributes());
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-                Optional<?> optional = readNodeObject(child, forceArrayFields);
+                final String nodeName = isTextNode(child) ? determineNodeName(node) : determineNodeName(child);
+                Optional<?> optional = readNodeObject(child, currentForceArrayFields);
                 if (optional.isPresent()) {
                     Object nodeValue = optional.get();
-                    final String nodeName = isTextNode(child) ? determineNodeName(node) : determineNodeName(child);
-                    final boolean isArray = forceArrayFields.contains(nodeName);
+                    final boolean isArray = currentForceArrayFields.anyMatches(nodeName);
                     container = enrichStructWithObject(container, nodeName, nodeValue, isArray);
 
                 }
@@ -255,7 +258,7 @@ public class XMLFileInputReader extends AbstractFileInputReader {
             return container.put(nodeName, value);
         }
 
-        private static Optional<?> readNodeObject(final Node node, final List<String> forceArrayFields) {
+        private static Optional<?> readNodeObject(final Node node, final FieldPaths forceArrayFields) {
             if (isWhitespaceOrNewLineNodeElement(node)) {
                 return Optional.empty();
             }

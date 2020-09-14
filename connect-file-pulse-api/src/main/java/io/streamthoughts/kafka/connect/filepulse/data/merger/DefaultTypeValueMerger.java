@@ -25,12 +25,11 @@ import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Default {@link TypeValueMerger} implementation which automatically
@@ -49,12 +48,12 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
     public TypedStruct merge(final TypedStruct left,
                              final TypedStruct right,
                              final Set<String> overwrite) {
-        return mergeObjects(left, right, overwrite.stream().map(Path::new).collect(Collectors.toSet()));
+        return mergeObjects(left, right, FieldPaths.from(overwrite));
     }
 
     private static TypedStruct mergeObjects(final TypedStruct left,
                                             final TypedStruct right,
-                                            final Set<Path> overwrite) {
+                                            final FieldPaths overwrite) {
         if (left == null) return right;
         if (right == null) return left;
 
@@ -70,7 +69,7 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
                 continue;
             }
 
-            boolean isOverwrite = overwrite.stream().anyMatch(it -> it.matches(fieldName));
+            boolean isOverwrite = overwrite.anyMatches(fieldName);
 
             if (isOverwrite) {
                 continue; // skip the left field
@@ -86,7 +85,7 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
                 final TypedStruct mergedStruct = mergeObjects(
                     leftValue.getStruct(),
                     rightValue.getStruct(),
-                    computeNextOverwrite(overwrite, fieldName)
+                        overwrite.next(fieldName)
                 );
                 merged = TypedValue.struct(mergedStruct);
             } else {
@@ -103,43 +102,7 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
         return struct;
     }
 
-    private static Set<Path> computeNextOverwrite(final Set<Path> overwrite, final String fieldName) {
-        return overwrite.stream()
-            .map(p -> p.forwardIfOrNull(fieldName))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
-    }
 
-    private static class Path {
-
-        private final String path;
-        private final String field;
-        private final String remaining;
-
-        Path(final String path) {
-            this.path = path;
-            if (path.contains(".")) {
-                String[] split = path.split("\\.", 2);
-                field = split[0];
-                remaining = split[1];
-            } else {
-                field = path;
-                remaining = null;
-            }
-        }
-
-        public boolean matches(final String field) {
-            return path.equals(field);
-        }
-
-        private Path forwardIfOrNull(final String field) {
-            if (!this.field.equals(field))
-                return null;
-            if (remaining == null)
-                return null;
-            return new Path(remaining);
-        }
-    }
 
     private static TypedValue merge(final TypedValue left, final TypedValue right) {
         List<Object> values = new LinkedList<>();

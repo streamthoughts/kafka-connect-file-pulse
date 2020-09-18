@@ -70,21 +70,26 @@ ScEL supports a number of predefined functions that can be used to apply a singl
 
 | Function       | Description   | Syntax   |
 | ---------------| --------------|-----------|
+| `concat`       | Concatenate two or more string expressions.  | `{{ concat(expr1, expr2, ...) }}` |
+| `concat_ws`    | Concatenate two or more string expressions, using the specified separator between each.  | `{{ concat(separator, prefix, suffix, expr1, expr2, ...) }}` |
 | `contains`     | Returns `true` if an array field's value contains the specified value  | `{{ contains(array, 'value') }}` |
 | `converts`     | Converts a field'value into the specified type | `{{ converts(field, INTEGER) }}` |
 | `ends_with`    | Returns `true` if an a string field's value end with the specified string suffix | `{{ ends_with(field, 'suffix') }}` |
 | `equals`       | Returns `true` if an a string or number fields's value equals the specified value | `{{ equals(field, value) }}` |
 | `exists`       | Returns `true` if an the specified field exists | `{{ ends_with(field, value) }}` |
 | `extract_array`| Returns the element at the specified position of the specified array | `{{extract_array(array, 0) }}` |
+| `hash`         | Hash a given string expression, using murmur2 algorithm | `{{ hash(field_expr) }}` |
 | `is_null`      | Returns `true` if a field's value is null | `{{ is_null(field) }}` |
 | `length`       | Returns the number of elements into an array of the length of an string field | `{{ length(array) }}` |
 | `lowercase`    | Converts all of the characters in a string field's value to lower case | `{{ lowercase(field) }}` |
 | `matches`      | Returns `true` if a field's value match the specified regex | `{{ matches(field, 'regex') }}` |
+| `md5`          | Compute the MD5 hash of string expression  | `{{ md5(field_expr) }}` |
 | `nlv`          | Sets a default value if a field's value is null | `{{ length(array) }}` |
 | `replace_all ` | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string. | `{{ replace_all(field, 'regex', 'replacement') }}` |
 | `starts_with`  | Returns `true` if an a string field's value start with the specified string prefix | `{{ starts_with(field, 'prefix') }}` |
 | `trim`         | Trims the spaces from the beginning and end of a string.  | `{{ trim(field) }}` |
 | `uppercase`    | Converts all of the characters in a string field's value to upper case  | `{{ uppercase(field) }}` |
+| `uuid`         | Create a Universally Unique Identifier (UUID)  | `{{ uuid() }}` |
 
 
 In addition, ScEL supports nested functions. 

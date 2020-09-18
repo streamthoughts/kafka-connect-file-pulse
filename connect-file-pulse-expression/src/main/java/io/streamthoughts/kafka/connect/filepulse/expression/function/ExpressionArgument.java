@@ -16,24 +16,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
+
+package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import org.junit.Test;
+import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 
-import static org.junit.Assert.*;
+public class ExpressionArgument extends GenericArgument<Expression> {
 
-public class IsNullTest {
-
-    private final IsNull isNull = new IsNull();
-
-    @Test
-    public void shouldReturnTrueGivenNull() {
-        assertTrue(isNull.accept(TypedValue.string(null)));
+    /**
+     * Creates a new {@link ExpressionArgument} instance.
+     * @param name          the argument name.
+     * @param expression    the argument expression.
+     */
+    public ExpressionArgument(final String name, final Expression expression) {
+        super(name, expression);
     }
 
-    @Test
-    public void shouldReturnFalseGivenNonNull() {
-        assertTrue(isNull.accept(TypedValue.string("dummy")));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TypedValue evaluate(EvaluationContext context) {
+        return value().readValue(context, TypedValue.class);
     }
 }

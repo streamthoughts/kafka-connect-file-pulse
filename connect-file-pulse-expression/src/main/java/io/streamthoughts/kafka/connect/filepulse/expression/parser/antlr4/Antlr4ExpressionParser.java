@@ -174,19 +174,18 @@ public class Antlr4ExpressionParser implements ExpressionParser {
             final ContextExpressions contextExpression = contexts.remove(ctx);
 
             final ArrayDeque<Expression> argsExpressions = contextExpression.expressions;
-            final Expression valueExpression = argsExpressions.remove();
 
-            List<TypedValue> args = new ArrayList<>(argsExpressions.size());
+            List<Expression> arguments = new ArrayList<>(argsExpressions.size());
             while (!argsExpressions.isEmpty()) {
-                args.add(((ValueExpression) argsExpressions.remove()).value());
+                arguments.add(argsExpressions.remove());
             }
 
             ExpressionFunctionExecutor executor = ExpressionFunctionExecutors.resolve(
                 ctx.Identifier().getText(),
-                args.toArray(new TypedValue[0])
+                arguments.toArray(new Expression[0])
             );
 
-            FunctionExpression expression = new FunctionExpression(ctx.getText(), valueExpression, executor);
+            FunctionExpression expression = new FunctionExpression(ctx.getText(), executor);
             if (contextExpression.parent != null) {
                 contextExpression.parent.expressions.add(expression);
                 current = contextExpression.parent;

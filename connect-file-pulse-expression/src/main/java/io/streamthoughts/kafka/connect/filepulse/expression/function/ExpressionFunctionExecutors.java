@@ -18,15 +18,19 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Concat;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.ConcatWs;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Converts;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.EndsWith;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Equals;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Exists;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.ExtractArray;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Hash;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.IsNull;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Lowercase;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Md5;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Matches;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Nlv;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Length;
@@ -34,6 +38,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Replac
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.StartsWith;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Trim;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Uppercase;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Uuid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,11 +52,11 @@ public class ExpressionFunctionExecutors {
 
     private static final ExpressionFunctionExecutors INSTANCE = new ExpressionFunctionExecutors();
 
-    public static ExpressionFunctionExecutor resolve(final String functionName, final TypedValue[] arguments) {
+    public static ExpressionFunctionExecutor resolve(final String functionName, final Expression[] arguments) {
         return INSTANCE.make(functionName, arguments);
     }
 
-    private final Map<String, ExpressionFunction<?>> functions = new HashMap<>();
+    private final Map<String, ExpressionFunction> functions = new HashMap<>();
 
 
     /**
@@ -73,10 +78,15 @@ public class ExpressionFunctionExecutors {
         register(new Equals());
         register(new Trim());
         register(new ReplaceAll());
+        register(new Uuid());
+        register(new Concat());
+        register(new ConcatWs());
+        register(new Hash());
+        register(new Md5());
     }
 
     @SuppressWarnings("unchecked")
-    public ExpressionFunctionExecutor make(final String functionName, final TypedValue[] arguments) {
+    private ExpressionFunctionExecutor make(final String functionName, final Expression[] arguments) {
         Objects.requireNonNull(functionName, "functionName cannot be null");
         boolean exists = functions.containsKey(functionName);
         if (!exists) {
@@ -85,7 +95,7 @@ public class ExpressionFunctionExecutors {
         }
 
         ExpressionFunction function = functions.get(functionName);
-        Arguments prepared = function.prepare(arguments);
+        final Arguments prepared = function.prepare(arguments);
 
         if (!prepared.valid()) {
             final String errorMessages = prepared.buildErrorMessage();
@@ -94,7 +104,7 @@ public class ExpressionFunctionExecutors {
         return new ExpressionFunctionExecutor(functionName, function, prepared);
     }
 
-    private void register(final ExpressionFunction<?> function) {
+    private void register(final ExpressionFunction function) {
         LOG.info("Registered expression function '" + function.name() + "'");
         functions.put(function.name(), function);
     }

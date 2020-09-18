@@ -669,19 +669,16 @@ public class ScELParser extends Parser {
 
 	public static class FunctionParametersContext extends ParserRuleContext {
 		public TerminalNode LPAREN() { return getToken(ScELParser.LPAREN, 0); }
-		public FunctionObjectParameterContext functionObjectParameter() {
-			return getRuleContext(FunctionObjectParameterContext.class,0);
-		}
 		public TerminalNode RPAREN() { return getToken(ScELParser.RPAREN, 0); }
+		public List<FunctionObjectParameterContext> functionObjectParameter() {
+			return getRuleContexts(FunctionObjectParameterContext.class);
+		}
+		public FunctionObjectParameterContext functionObjectParameter(int i) {
+			return getRuleContext(FunctionObjectParameterContext.class,i);
+		}
 		public List<TerminalNode> COMMA() { return getTokens(ScELParser.COMMA); }
 		public TerminalNode COMMA(int i) {
 			return getToken(ScELParser.COMMA, i);
-		}
-		public List<ValueContext> value() {
-			return getRuleContexts(ValueContext.class);
-		}
-		public ValueContext value(int i) {
-			return getRuleContext(ValueContext.class,i);
 		}
 		public FunctionParametersContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -702,29 +699,44 @@ public class ScELParser extends Parser {
 		enterRule(_localctx, 18, RULE_functionParameters);
 		int _la;
 		try {
+			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(77);
 			match(LPAREN);
-			setState(78);
-			functionObjectParameter();
-			setState(83);
+			setState(88);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==COMMA) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Literal) | (1L << PropertyExprStart) | (1L << Identifier))) != 0)) {
 				{
 				{
-				setState(79);
-				match(COMMA);
-				setState(80);
-				value();
+				setState(78);
+				functionObjectParameter();
+				setState(83);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
+				while ( _alt!=1 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+					if ( _alt==1+1 ) {
+						{
+						{
+						setState(79);
+						match(COMMA);
+						setState(80);
+						functionObjectParameter();
+						}
+						} 
+					}
+					setState(85);
+					_errHandler.sync(this);
+					_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 				}
 				}
-				setState(85);
+				}
+				setState(90);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(86);
+			setState(91);
 			match(RPAREN);
 			}
 		}
@@ -742,6 +754,9 @@ public class ScELParser extends Parser {
 	public static class FunctionObjectParameterContext extends ParserRuleContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ValueContext value() {
+			return getRuleContext(ValueContext.class,0);
 		}
 		public FunctionObjectParameterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -761,10 +776,26 @@ public class ScELParser extends Parser {
 		FunctionObjectParameterContext _localctx = new FunctionObjectParameterContext(_ctx, getState());
 		enterRule(_localctx, 20, RULE_functionObjectParameter);
 		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(88);
-			expression();
+			setState(95);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case PropertyExprStart:
+			case Identifier:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(93);
+				expression();
+				}
+				break;
+			case Literal:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(94);
+				value();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -800,7 +831,7 @@ public class ScELParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(90);
+			setState(97);
 			match(Literal);
 			}
 		}
@@ -816,29 +847,31 @@ public class ScELParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\33_\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\33f\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
 		"\f\t\f\4\r\t\r\3\2\3\2\3\2\5\2\36\n\2\3\2\3\2\3\3\3\3\7\3$\n\3\f\3\16"+
 		"\3\'\13\3\3\4\3\4\3\5\3\5\3\5\6\5.\n\5\r\5\16\5/\3\5\3\5\3\6\3\6\5\6\66"+
 		"\n\6\3\7\3\7\3\7\3\7\5\7<\n\7\3\7\3\7\3\7\5\7A\n\7\3\b\3\b\3\t\3\t\3\t"+
 		"\7\tH\n\t\f\t\16\tK\13\t\3\n\3\n\3\n\3\13\3\13\3\13\3\13\7\13T\n\13\f"+
-		"\13\16\13W\13\13\3\13\3\13\3\f\3\f\3\r\3\r\3\r\3I\2\16\2\4\6\b\n\f\16"+
-		"\20\22\24\26\30\2\3\3\2\23\24\2]\2\35\3\2\2\2\4%\3\2\2\2\6(\3\2\2\2\b"+
-		"*\3\2\2\2\n\65\3\2\2\2\f@\3\2\2\2\16B\3\2\2\2\20D\3\2\2\2\22L\3\2\2\2"+
-		"\24O\3\2\2\2\26Z\3\2\2\2\30\\\3\2\2\2\32\36\5\f\7\2\33\36\5\4\3\2\34\36"+
-		"\5\30\r\2\35\32\3\2\2\2\35\33\3\2\2\2\35\34\3\2\2\2\36\37\3\2\2\2\37 "+
-		"\7\2\2\3 \3\3\2\2\2!$\5\6\4\2\"$\5\b\5\2#!\3\2\2\2#\"\3\2\2\2$\'\3\2\2"+
-		"\2%#\3\2\2\2%&\3\2\2\2&\5\3\2\2\2\'%\3\2\2\2()\t\2\2\2)\7\3\2\2\2*-\7"+
-		"\25\2\2+.\5\n\6\2,.\5\30\r\2-+\3\2\2\2-,\3\2\2\2./\3\2\2\2/-\3\2\2\2/"+
-		"\60\3\2\2\2\60\61\3\2\2\2\61\62\7\32\2\2\62\t\3\2\2\2\63\66\5\f\7\2\64"+
-		"\66\5\22\n\2\65\63\3\2\2\2\65\64\3\2\2\2\66\13\3\2\2\2\678\7\26\2\28;"+
-		"\5\16\b\29:\7\b\2\2:<\5\20\t\2;9\3\2\2\2;<\3\2\2\2<A\3\2\2\2=>\7\26\2"+
-		"\2>?\7\b\2\2?A\5\20\t\2@\67\3\2\2\2@=\3\2\2\2A\r\3\2\2\2BC\7\31\2\2C\17"+
-		"\3\2\2\2DI\7\31\2\2EF\7\b\2\2FH\7\31\2\2GE\3\2\2\2HK\3\2\2\2IJ\3\2\2\2"+
-		"IG\3\2\2\2J\21\3\2\2\2KI\3\2\2\2LM\7\31\2\2MN\5\24\13\2N\23\3\2\2\2OP"+
-		"\7\t\2\2PU\5\26\f\2QR\7\13\2\2RT\5\30\r\2SQ\3\2\2\2TW\3\2\2\2US\3\2\2"+
-		"\2UV\3\2\2\2VX\3\2\2\2WU\3\2\2\2XY\7\n\2\2Y\25\3\2\2\2Z[\5\n\6\2[\27\3"+
-		"\2\2\2\\]\7\3\2\2]\31\3\2\2\2\f\35#%-/\65;@IU";
+		"\13\16\13W\13\13\7\13Y\n\13\f\13\16\13\\\13\13\3\13\3\13\3\f\3\f\5\fb"+
+		"\n\f\3\r\3\r\3\r\4IU\2\16\2\4\6\b\n\f\16\20\22\24\26\30\2\3\3\2\23\24"+
+		"\2f\2\35\3\2\2\2\4%\3\2\2\2\6(\3\2\2\2\b*\3\2\2\2\n\65\3\2\2\2\f@\3\2"+
+		"\2\2\16B\3\2\2\2\20D\3\2\2\2\22L\3\2\2\2\24O\3\2\2\2\26a\3\2\2\2\30c\3"+
+		"\2\2\2\32\36\5\f\7\2\33\36\5\4\3\2\34\36\5\30\r\2\35\32\3\2\2\2\35\33"+
+		"\3\2\2\2\35\34\3\2\2\2\36\37\3\2\2\2\37 \7\2\2\3 \3\3\2\2\2!$\5\6\4\2"+
+		"\"$\5\b\5\2#!\3\2\2\2#\"\3\2\2\2$\'\3\2\2\2%#\3\2\2\2%&\3\2\2\2&\5\3\2"+
+		"\2\2\'%\3\2\2\2()\t\2\2\2)\7\3\2\2\2*-\7\25\2\2+.\5\n\6\2,.\5\30\r\2-"+
+		"+\3\2\2\2-,\3\2\2\2./\3\2\2\2/-\3\2\2\2/\60\3\2\2\2\60\61\3\2\2\2\61\62"+
+		"\7\32\2\2\62\t\3\2\2\2\63\66\5\f\7\2\64\66\5\22\n\2\65\63\3\2\2\2\65\64"+
+		"\3\2\2\2\66\13\3\2\2\2\678\7\26\2\28;\5\16\b\29:\7\b\2\2:<\5\20\t\2;9"+
+		"\3\2\2\2;<\3\2\2\2<A\3\2\2\2=>\7\26\2\2>?\7\b\2\2?A\5\20\t\2@\67\3\2\2"+
+		"\2@=\3\2\2\2A\r\3\2\2\2BC\7\31\2\2C\17\3\2\2\2DI\7\31\2\2EF\7\b\2\2FH"+
+		"\7\31\2\2GE\3\2\2\2HK\3\2\2\2IJ\3\2\2\2IG\3\2\2\2J\21\3\2\2\2KI\3\2\2"+
+		"\2LM\7\31\2\2MN\5\24\13\2N\23\3\2\2\2OZ\7\t\2\2PU\5\26\f\2QR\7\13\2\2"+
+		"RT\5\26\f\2SQ\3\2\2\2TW\3\2\2\2UV\3\2\2\2US\3\2\2\2VY\3\2\2\2WU\3\2\2"+
+		"\2XP\3\2\2\2Y\\\3\2\2\2ZX\3\2\2\2Z[\3\2\2\2[]\3\2\2\2\\Z\3\2\2\2]^\7\n"+
+		"\2\2^\25\3\2\2\2_b\5\n\6\2`b\5\30\r\2a_\3\2\2\2a`\3\2\2\2b\27\3\2\2\2"+
+		"cd\7\3\2\2d\31\3\2\2\2\16\35#%-/\65;@IUZa";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

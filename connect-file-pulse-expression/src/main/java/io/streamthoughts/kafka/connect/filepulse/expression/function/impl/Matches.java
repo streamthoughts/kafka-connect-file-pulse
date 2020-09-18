@@ -18,43 +18,45 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.TypedExpressionFunction;
 
 import java.util.regex.Pattern;
 
-public class Matches extends TypedExpressionFunction<String, SimpleArguments> {
+public class Matches implements ExpressionFunction {
 
+    private static final String FIELD_ARG = "field";
     private static final String PATTERN_ARG = "pattern";
 
-    /**
-     * Creates a new {@link Matches} instance.
-     */
-    public Matches() {
-        super(Type.STRING);
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypedValue[] args) {
-        if (args.length < 1) {
-            return new SimpleArguments(new MissingArgumentValue(PATTERN_ARG));
+    public Arguments prepare(final Expression[] args) {
+        if (args.length < 2) {
+            return new Arguments<>(new MissingArgumentValue(PATTERN_ARG));
         }
-        String pattern = args[0].getString();
-        return new SimpleArguments(new ArgumentValue(PATTERN_ARG,  Pattern.compile(pattern)));
+
+        final String pattern = ((ValueExpression)args[1]).value().getString();
+        return Arguments.of(
+            new ExpressionArgument(FIELD_ARG, args[0]),
+            new GenericArgument<>(PATTERN_ARG, Pattern.compile(pattern))
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
+    public TypedValue apply(final Arguments<GenericArgument> args) {
+        final TypedValue field = args.valueOf(FIELD_ARG);
         final Pattern pattern = args.valueOf(PATTERN_ARG);
         final String value = field.value();
         final boolean matches = pattern.matcher(value).matches();

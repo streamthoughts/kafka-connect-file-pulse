@@ -20,43 +20,45 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
 
 /**
  * Simple function to convert a field into a new type.
  */
-public class Converts implements ExpressionFunction<SimpleArguments> {
+public class Converts implements ExpressionFunction {
 
     private static final String TYPE = "type";
+    private static final String FIELD = "field";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypedValue[] args) {
-        if (args.length < 1) {
-            return new SimpleArguments(new MissingArgumentValue(TYPE));
+    public Arguments<?> prepare(final Expression[] args) {
+        if (args.length < 2) {
+            return Arguments.of(
+                new MissingArgumentValue(TYPE),
+                new MissingArgumentValue(FIELD));
         }
-        TypedValue targetType = args[0];
-        try {
-            Type type = Type.valueOf(targetType.getString());
-            return new SimpleArguments(new ArgumentValue(TYPE, type));
-        } catch (Exception e) {
-            return new SimpleArguments(new ArgumentValue(
-                    TYPE,
-                    targetType,
-                    "unknown type '" + targetType + "'"));
-        }
+
+        return Arguments.of(
+            new ExpressionArgument(FIELD, args[0]),
+            new ExpressionArgument(TYPE, args[1]));
     }
 
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
-        return field.as(args.valueOf(TYPE));
+    public TypedValue apply(final Arguments<GenericArgument> args) {
+        final TypedValue value = args.valueOf(FIELD);
+        final TypedValue type  = args.valueOf(TYPE);
+        return value.as(Type.valueOf(type.value()));
     }
 }

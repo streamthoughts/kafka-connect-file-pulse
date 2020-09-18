@@ -19,14 +19,16 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import org.apache.kafka.connect.data.SchemaAndValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Default interface to define a function that can be used into an expression.
- *
- * @param <T>   the type of {@link Arguments}.
  */
-public interface ExpressionFunction<T extends Arguments> {
+public interface ExpressionFunction {
 
     /**
      * Returns the case-insensitive function name.
@@ -38,32 +40,38 @@ public interface ExpressionFunction<T extends Arguments> {
     }
 
     /**
-     * Prepares the arguments that will be passed to {@link #apply(TypedValue, Arguments)}.
+     * Prepares the arguments that will be passed to {@link #validate(Arguments)}.
      *
      * @param args  list of {@link TypedValue} arguments.
      * @return  an instance of {@link Arguments}.
      */
-    T prepare(final TypedValue[] args);
+    default Arguments<?> prepare(final Expression[] args) {
+        if (args.length == 0) return Arguments.empty();
+        List<Argument> arguments = new ArrayList<>();
+        for (int i = 0; i < args.length; i++) {
+            arguments.add(new ExpressionArgument(String.valueOf(i), args[i]));
+        }
+        return new Arguments<>(arguments);
+    }
 
     /**
-     * Checks whether this function accepts the specified value.
+     * Checks whether this function accepts the given arguments.
      *
-     * @param value the value to be checked.
-     * @return  {@code true} if this function can be executed on the value.
+     * @param   arguments the arguments value to be checked.
+     * @return  {@code true} if this function can be executed with the given arguments.
      */
-    default boolean accept(final TypedValue value) {
-        return true;
+    default Arguments<GenericArgument> validate(final Arguments<GenericArgument> arguments) {
+        return arguments;
     }
 
     /**
      * Executes the function on the specified value for the specified arguments.
      *
-     * @param field the field on which to apply the function.
      * @param args  the function arguments.
      *
      * @return  a new {@link SchemaAndValue}.
      */
-    TypedValue apply(final TypedValue field, final T args);
+    TypedValue apply(final Arguments<GenericArgument> args);
 
     static String functionNameFor(final ExpressionFunction function) {
         // simple class name conversion to camelCase

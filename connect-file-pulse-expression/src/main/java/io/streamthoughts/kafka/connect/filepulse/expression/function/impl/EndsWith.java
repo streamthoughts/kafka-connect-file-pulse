@@ -18,43 +18,43 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.TypedExpressionFunction;
 
-public class EndsWith extends TypedExpressionFunction<String, SimpleArguments> {
+public class EndsWith implements ExpressionFunction {
 
+    private static final String STRING_ARG = "string";
     private static final String SUFFIX_ARG = "suffix";
 
-    /**
-     * Creates a new {@link EndsWith} instance.
-     */
-    public EndsWith() {
-        super(Type.STRING);
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypedValue[] args) {
-        if (args.length < 1) {
-            return new SimpleArguments(new MissingArgumentValue(SUFFIX_ARG));
+    public Arguments prepare(final Expression[] args) {
+        if (args.length < 2) {
+            return Arguments.of(
+                new MissingArgumentValue(STRING_ARG),
+                new MissingArgumentValue(SUFFIX_ARG));
         }
-        return new SimpleArguments(new ArgumentValue(SUFFIX_ARG, args[0].getString()));
+
+        return Arguments.of(
+            new ExpressionArgument(STRING_ARG, args[0]),
+            new ExpressionArgument(SUFFIX_ARG, args[1]));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
-        final String prefix = args.valueOf(SUFFIX_ARG);
-        final String value = field.value();
-        final boolean prefixed = value.endsWith(prefix);
-        return TypedValue.bool(prefixed);
+    public TypedValue apply(final Arguments<GenericArgument> args) {
+        final TypedValue string = args.valueOf(STRING_ARG);
+        final TypedValue prefix = args.valueOf(SUFFIX_ARG);
+        return TypedValue.bool(string.getString().endsWith(prefix.getString()));
     }
 }

@@ -19,34 +19,42 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
 
 /**
  * Replace a null value with a non-null value.
  */
-public class Nlv implements ExpressionFunction<SimpleArguments> {
+public class Nlv implements ExpressionFunction {
 
+    private static final String FIELD_ARG = "field";
     private static final String DEFAULT_ARG = "default";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypedValue[] args) {
-        if (args.length < 1) {
-            return new SimpleArguments(new MissingArgumentValue(DEFAULT_ARG));
+    public Arguments<?> prepare(final Expression[] args) {
+        if (args.length < 2) {
+            return new Arguments<>(new MissingArgumentValue(DEFAULT_ARG));
         }
-        return new SimpleArguments(new ArgumentValue(DEFAULT_ARG, args[0]));
+
+        return Arguments.of(
+            new ExpressionArgument(FIELD_ARG, args[0]),
+            new ExpressionArgument(DEFAULT_ARG, args[1])
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
+    public TypedValue apply(final Arguments<GenericArgument> args) {
+        final TypedValue field = args.valueOf(FIELD_ARG);
         return field.isNull() ? args.valueOf(DEFAULT_ARG) : field;
     }
 }

@@ -16,31 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import org.junit.Assert;
-import org.junit.Test;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 
-public class LowercaseTest {
+import java.util.UUID;
 
-    private static final String DEFAULT_VALUE = "DEFAULT-VALUE";
+public class Uuid implements ExpressionFunction {
 
-    private static final TypedValue DEFAULT_TYPE_VALUE = TypedValue.string(DEFAULT_VALUE);
-
-    private final Lowercase lowercase = new Lowercase();
-
-    @Test
-    public void shouldAcceptGivenStringSchemaAndValue() {
-        Assert.assertTrue(lowercase.accept(DEFAULT_TYPE_VALUE));
-    }
-
-    @Test
-    public void shouldApplyGivenValidArgument() {
-        TypedValue output = lowercase.apply(DEFAULT_TYPE_VALUE, Arguments.empty());
-        Assert.assertEquals(Type.STRING, output.type());
-        Assert.assertEquals(DEFAULT_VALUE.toLowerCase(), output.value());
+    @Override
+    public TypedValue apply(final Arguments<GenericArgument> args) {
+        return TypedValue.string(UUID.randomUUID().toString());
     }
 }

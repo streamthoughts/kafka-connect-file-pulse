@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
@@ -23,13 +24,11 @@ import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
+import org.apache.kafka.common.utils.Utils;
 
-/**
- * Simple function to uppercase a string field.
- */
-public class Uppercase implements ExpressionFunction {
+public class Hash implements ExpressionFunction {
 
     private static final String FIELD_ARG = "field";
 
@@ -49,7 +48,7 @@ public class Uppercase implements ExpressionFunction {
      */
     @Override
     public TypedValue apply(final Arguments<GenericArgument> args) {
-        final TypedValue field = args.valueOf(FIELD_ARG);
-        return TypedValue.string(field.getString().toUpperCase());
+        final TypedValue value = args.valueOf(FIELD_ARG);
+        return TypedValue.int32(Utils.murmur2(value.getBytes()));
     }
 }

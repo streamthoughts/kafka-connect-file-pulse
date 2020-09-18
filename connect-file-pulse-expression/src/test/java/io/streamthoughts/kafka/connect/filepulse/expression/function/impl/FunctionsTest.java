@@ -191,6 +191,12 @@ public class FunctionsTest {
     }
 
     @Test
+    public void should_execute_concat_ws_function_given_no_empty_prefix_suffix() {
+        Expression expression = parseExpression("{{ concat_ws(',','','', 'one','two','three') }}");
+        Assert.assertEquals("one,two,three", expression.readValue(EMPTY_CONTEXT, TypedValue.class).value());
+    }
+
+    @Test
     public void should_execute_hash_functions() {
         Expression expression = parseExpression("{{ hash('hello') }}");
         Assert.assertEquals("2132663229", expression.readValue(EMPTY_CONTEXT, TypedValue.class).getString());

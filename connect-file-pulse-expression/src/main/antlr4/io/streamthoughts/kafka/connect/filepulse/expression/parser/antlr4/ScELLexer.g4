@@ -8,7 +8,7 @@ Literal
 	;
 
 StringLiteral
-    : '\'' (EscapeSeq | .)+? '\''
+    : '\'' (EscapeSeq | .)*? '\''
     ;
 
 fragment EscapeSeq

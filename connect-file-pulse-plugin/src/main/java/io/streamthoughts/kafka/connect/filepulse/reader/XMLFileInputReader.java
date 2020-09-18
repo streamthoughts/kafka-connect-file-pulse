@@ -215,16 +215,19 @@ public class XMLFileInputReader extends AbstractFileInputReader {
          */
         private static TypedStruct convertNodeObjectTree(final Node node, final FieldPaths forceArrayFields) {
             Objects.requireNonNull(node, "node cannot be null");
-            final FieldPaths currentForceArrayFields = forceArrayFields.next(determineNodeName(node));
+            String nodeName = determineNodeName(node);
+            final FieldPaths currentForceArrayFields = nodeName.equals("#document")
+                    ? forceArrayFields :
+                    forceArrayFields.next(nodeName);
             TypedStruct container = TypedStruct.create();
             addAllNodeAttributes(container, node.getAttributes());
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-                final String nodeName = isTextNode(child) ? determineNodeName(node) : determineNodeName(child);
+                final String childNodeName = isTextNode(child) ? nodeName : determineNodeName(child);
                 Optional<?> optional = readNodeObject(child, currentForceArrayFields);
                 if (optional.isPresent()) {
                     Object nodeValue = optional.get();
-                    final boolean isArray = currentForceArrayFields.anyMatches(nodeName);
-                    container = enrichStructWithObject(container, nodeName, nodeValue, isArray);
+                    final boolean isArray = currentForceArrayFields.anyMatches(childNodeName);
+                    container = enrichStructWithObject(container, childNodeName, nodeValue, isArray);
 
                 }
             }

@@ -16,27 +16,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 
-public class MissingArgumentValue extends GenericArgument<Object> {
+import java.util.List;
 
-    /**
-     * Creates a new {@link MissingArgumentValue} instance.
-     *
-     * @param name  the argument name.
-     */
-    public MissingArgumentValue(final String name) {
-        super(name, null, "Argument is missing");
-    }
+public interface Argument {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue evaluate(final EvaluationContext context) {
-        throw new UnsupportedOperationException();
-    }
+    String name();
+
+    Object value();
+
+    List<String> errorMessages();
+
+    boolean isValid();
+
+    Object evaluate(final EvaluationContext context) ;
 }

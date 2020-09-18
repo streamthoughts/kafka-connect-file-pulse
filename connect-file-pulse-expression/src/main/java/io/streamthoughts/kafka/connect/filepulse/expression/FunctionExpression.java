@@ -27,21 +27,17 @@ import java.util.List;
 
 public class FunctionExpression extends AbstractExpression {
 
-    private final Expression valueExpression;
     private final ExpressionFunctionExecutor functionExecutor;
 
     /**
      * Creates a new {@link FunctionExpression} instance.
      *
      * @param originalExpression the original string expression.
-     * @param valueExpression    the expression value
      * @param functionExecutor   the function to be apply on the acceded value.
      */
     public FunctionExpression(final String originalExpression,
-                              final Expression valueExpression,
                               final ExpressionFunctionExecutor functionExecutor) {
         super(originalExpression);
-        this.valueExpression = valueExpression;
         this.functionExecutor = functionExecutor;
     }
 
@@ -59,8 +55,7 @@ public class FunctionExpression extends AbstractExpression {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T readValue(final EvaluationContext context, final Class<T> expectedType) {
-        TypedValue returned = valueExpression.readValue(context, TypedValue.class);
-        final Object evaluated = functionExecutor.execute(returned);
+        final Object evaluated = functionExecutor.execute(context);
 
         if (evaluated != null && expectedType.isAssignableFrom(evaluated.getClass())) {
             return (T)evaluated;
@@ -86,10 +81,6 @@ public class FunctionExpression extends AbstractExpression {
         return false;
     }
 
-    public Expression getValueExpression() {
-        return valueExpression;
-    }
-
     public ExpressionFunctionExecutor getFunctionExecutor() {
         return functionExecutor;
     }
@@ -98,7 +89,6 @@ public class FunctionExpression extends AbstractExpression {
     public String toString() {
         return "[" +
                 "originalExpression=" + originalExpression() +
-                ", valueExpression=" + valueExpression +
                 ", function=" + functionExecutor +
                 ']';
     }

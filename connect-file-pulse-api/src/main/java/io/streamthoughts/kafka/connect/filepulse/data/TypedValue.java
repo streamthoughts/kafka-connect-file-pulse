@@ -340,6 +340,10 @@ public class TypedValue implements GettableByType {
         return value == null;
     }
 
+    public boolean isNotNull() {
+        return value != null;
+    }
+
     public boolean isEmpty() {
         final Type type = schema.get().type();
         if (Type.STRING == type) {

@@ -18,43 +18,46 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.TypedExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 
-public class StartsWith extends TypedExpressionFunction<String, SimpleArguments> {
+public class StartsWith implements ExpressionFunction {
 
+    private static final String FIELD_ARG = "field";
     private static final String PREFIX_ARG = "prefix";
 
-    /**
-     * Creates a new {@link TypedExpressionFunction} instance.
-     */
-    public StartsWith() {
-        super(Type.STRING);
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypedValue[] args) {
-        if (args.length < 1) {
-            return new SimpleArguments(new MissingArgumentValue(PREFIX_ARG));
+    public Arguments<?> prepare(final Expression[] args) {
+        if (args.length < 2) {
+            return Arguments.of(
+                new MissingArgumentValue(FIELD_ARG),
+                new MissingArgumentValue(PREFIX_ARG)
+            );
         }
-        return new SimpleArguments(new ArgumentValue(PREFIX_ARG, args[0].getString()));
+
+        return Arguments.of(
+            new ExpressionArgument(FIELD_ARG, args[0]),
+            new ExpressionArgument(PREFIX_ARG, args[1])
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
-        final String prefix = args.valueOf(PREFIX_ARG);
-        final String value = field.value();
-        final boolean prefixed = value.startsWith(prefix);
+    public TypedValue apply(final Arguments<GenericArgument> args) {
+        TypedValue field = args.valueOf(FIELD_ARG);
+        TypedValue prefix = args.valueOf(PREFIX_ARG);
+        final boolean prefixed = field.getString().startsWith(prefix.getString());
         return TypedValue.bool(prefixed);
     }
 }

@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 
 import java.util.Objects;
@@ -27,9 +28,9 @@ public class ExpressionFunctionExecutor {
 
     private final String name;
 
-    private final ExpressionFunction<Arguments> function;
+    private final ExpressionFunction function;
 
-    private final Arguments arguments;
+    private final Arguments<ExpressionArgument> arguments;
 
     /**
      * Creates a new {@link ExpressionFunctionExecutor} instance.
@@ -39,8 +40,8 @@ public class ExpressionFunctionExecutor {
      * @param arguments     the function arguments.
      */
     ExpressionFunctionExecutor(final String name,
-                               final ExpressionFunction<Arguments> function,
-                               final Arguments arguments) {
+                               final ExpressionFunction function,
+                               final Arguments<ExpressionArgument> arguments) {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(function, "function cannot be null");
         Objects.requireNonNull(arguments, "arguments cannot be null");
@@ -49,19 +50,16 @@ public class ExpressionFunctionExecutor {
         this.arguments = arguments;
     }
 
-    public TypedValue execute(final TypedValue record) {
-        if (function.accept(record)) {
-            return function.apply(record, arguments);
-        } else {
-            throw new ExpressionException(
-                String.format(
-                    "Cannot applied method '%s' on record of type %s : %s",
-                    name,
-                    record.getClass(),
-                    record)
-            );
-        }
+    public TypedValue execute(final EvaluationContext context) {
 
+        Arguments<GenericArgument> evaluated = arguments.evaluate(context);
+        Arguments<GenericArgument> arguments = function.validate(this.arguments.evaluate(context));
+        if (!arguments.valid()) {
+            final String errorMessages = arguments.buildErrorMessage();
+            throw new ExpressionException(
+                "Invalid arguments for function '" + function.name() + "' : " + errorMessages);
+        }
+        return function.apply(evaluated);
     }
 
     /**

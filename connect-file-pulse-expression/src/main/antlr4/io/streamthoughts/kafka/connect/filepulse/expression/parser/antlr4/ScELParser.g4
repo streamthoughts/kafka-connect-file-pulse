@@ -65,11 +65,11 @@ functionDeclaration
     ;
 
 functionParameters
-    :   LPAREN functionObjectParameter (COMMA value)* RPAREN
+    :   LPAREN (functionObjectParameter (COMMA functionObjectParameter)*?)* RPAREN
     ;
 
 functionObjectParameter
-    :   expression
+    :   expression | value
     ;
 
 

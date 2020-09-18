@@ -22,10 +22,13 @@ import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ArgumentValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.SimpleArguments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,23 +36,33 @@ import java.util.List;
 /**
  * Returns the element at the specified position in an array field.
  */
-public class ExtractArray implements ExpressionFunction<SimpleArguments> {
+public class ExtractArray implements ExpressionFunction {
 
+    private static final String ARRAY_ARG = "array";
     private static final String INDEX_ARG = "index";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SimpleArguments prepare(final TypedValue[] args) {
-        if (args.length < 1) {
-            return new SimpleArguments(new MissingArgumentValue(INDEX_ARG));
+    public Arguments prepare(final Expression[] args) {
+        if (args.length < 2) {
+            return Arguments.of(
+                new MissingArgumentValue(ARRAY_ARG),
+                new MissingArgumentValue(INDEX_ARG)
+            );
         }
 
         try {
-            return new SimpleArguments(new ArgumentValue(INDEX_ARG, args[0].getInt()));
+            return Arguments.of(
+                new ExpressionArgument(ARRAY_ARG, args[0]),
+                new GenericArgument<>(INDEX_ARG, ((ValueExpression)args[1]).value().getInt())
+            );
         } catch (DataException e) {
-            return new SimpleArguments(new ArgumentValue(INDEX_ARG, args[0], "must be of type 'integer'"));
+            return Arguments.of(
+                new ExpressionArgument(ARRAY_ARG, args[0]),
+                new GenericArgument<>(INDEX_ARG, (ValueExpression)args[1], "must be of type 'integer'")
+            );
         }
     }
 
@@ -57,18 +70,22 @@ public class ExtractArray implements ExpressionFunction<SimpleArguments> {
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final TypedValue value) {
-        return value.type() == Type.ARRAY;
+    public Arguments<GenericArgument> validate(final Arguments<GenericArgument> args) {
+        GenericArgument argument = args.get(0);
+        TypedValue value = (TypedValue) argument.value();
+        if (value.type() != Type.ARRAY) {
+            argument.addErrorMessage("Expected type ARRAY, was " + value.type());
+        }
+        return args;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public TypedValue apply(final TypedValue field, final SimpleArguments args) {
-        final Integer index = args.valueOf(INDEX_ARG);
-        List<Object> array = new ArrayList<>(field.getArray());
-        return TypedValue.of(array.get(index), ((ArraySchema) field.schema()).valueSchema());
+    public TypedValue apply(final Arguments<GenericArgument> args) {
+        TypedValue array = args.valueOf(ARRAY_ARG);
+        List<Object> list = new ArrayList<>(array.getArray());
+        return TypedValue.of(list.get(args.valueOf(INDEX_ARG)), ((ArraySchema) array.schema()).valueSchema());
     }
 }

@@ -19,24 +19,34 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
-public class IsNull implements ExpressionFunction<Arguments> {
+public class IsNull implements ExpressionFunction {
+
+    private  static final String FIELD_ARG = "field";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments prepare(final TypedValue[] args) {
-        return Arguments.empty();
+    public Arguments prepare(final Expression[] args) {
+        if (args.length == 0) {
+            return new Arguments<>(new MissingArgumentValue(FIELD_ARG));
+        }
+        return new Arguments<>(new ExpressionArgument(FIELD_ARG, args[0]));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final TypedValue field, final Arguments args) {
+    public TypedValue apply(final Arguments<GenericArgument> args) {
+        TypedValue field = args.valueOf(FIELD_ARG);
         return TypedValue.bool(field == null || field.isNull());
     }
 }

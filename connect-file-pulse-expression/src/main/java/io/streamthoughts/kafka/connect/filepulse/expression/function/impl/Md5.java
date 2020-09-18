@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
@@ -23,33 +24,38 @@ import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
-/**
- * Simple function to uppercase a string field.
- */
-public class Uppercase implements ExpressionFunction {
+import java.math.BigInteger;
+import java.security.MessageDigest;
 
-    private static final String FIELD_ARG = "field";
+import static io.streamthoughts.kafka.connect.filepulse.internal.Silent.unchecked;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Arguments<?> prepare(final Expression[] args) {
-        if (args.length == 0) {
-            return new Arguments<>(new MissingArgumentValue(FIELD_ARG));
-        }
-        return new Arguments<>(new ExpressionArgument(FIELD_ARG, args[0]));
+public class Md5 implements ExpressionFunction {
+
+  private static final String FIELD_ARG = "field";
+
+  private static final MessageDigest DIGEST = unchecked(() -> MessageDigest.getInstance("MD5"));
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Arguments<?> prepare(final Expression[] args) {
+    if (args.length == 0) {
+      return new Arguments<>(new MissingArgumentValue(FIELD_ARG));
     }
+    return new Arguments<>(new ExpressionArgument(FIELD_ARG, args[0]));
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final TypedValue field = args.valueOf(FIELD_ARG);
-        return TypedValue.string(field.getString().toUpperCase());
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public TypedValue apply(final Arguments<GenericArgument> args) {
+    TypedValue field = args.valueOf(FIELD_ARG);
+    byte[] digest = DIGEST.digest(field.getBytes());
+    return TypedValue.string(new BigInteger(1, digest).toString(16));
+  }
 }

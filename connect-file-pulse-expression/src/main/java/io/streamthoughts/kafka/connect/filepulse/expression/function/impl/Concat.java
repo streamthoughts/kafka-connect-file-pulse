@@ -16,29 +16,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
+package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
+
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 
-public abstract class TypedExpressionFunction<E, T extends Arguments> implements ExpressionFunction<T> {
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-    private final Type accept;
-
-    /**
-     * Creates a new {@link TypedExpressionFunction} instance.
-     *
-     * @param accept the {@link Type} which is accepted.
-     */
-    protected TypedExpressionFunction(final Type accept) {
-        this.accept = accept;
-    }
+public class Concat implements ExpressionFunction {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(final TypedValue value) {
-        return accept.equals(value.type());
+    public TypedValue apply(Arguments<GenericArgument> args) {
+        String concat = StreamSupport.stream(args.spliterator(), false)
+            .map(it -> (TypedValue) it.value())
+            .filter(TypedValue::isNotNull)
+            .map(TypedValue::getString)
+            .collect(Collectors.joining("", "", ""));
+        return TypedValue.string(concat);
     }
 }

@@ -16,10 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
@@ -28,52 +27,57 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionF
 import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
-public class Exists implements ExpressionFunction {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    private static final String OBJECT_ARG = "object";
-    private static final String FIELD_ARG = "field";
+public class ConcatWs implements ExpressionFunction {
+
+    private static final String SEPARATOR_ARG = "separator";
+    private static final String PREFIX_ARG = "prefix";
+    private static final String SUFFIX_ARG = "suffix";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments prepare(final Expression[] args) {
-        if (args.length < 2) {
+    public Arguments<?> prepare(final Expression[] args) {
+        if (args.length < 3) {
             return Arguments.of(
-                new MissingArgumentValue(OBJECT_ARG),
-                new MissingArgumentValue(FIELD_ARG)
+                new MissingArgumentValue(SEPARATOR_ARG),
+                new MissingArgumentValue(PREFIX_ARG),
+                new MissingArgumentValue(SUFFIX_ARG)
             );
         }
-        return Arguments.of(
-            new ExpressionArgument(OBJECT_ARG, args[0]),
-            new ExpressionArgument(FIELD_ARG, args[1])
-        );
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Arguments<GenericArgument> validate(final Arguments<GenericArgument> args) {
-        GenericArgument argument = args.get(0);
-        TypedValue value = (TypedValue) argument.value();
-        if (value.type() != Type.STRUCT && value.type() != Type.NULL) {
-            argument.addErrorMessage("Expected type [STRUCT|NULL], was " + value.type());
+        List<ExpressionArgument> arguments = new ArrayList<>(args.length);
+        arguments.add(new ExpressionArgument(SEPARATOR_ARG, args[0]));
+        arguments.add(new ExpressionArgument(PREFIX_ARG, args[1]));
+        arguments.add(new ExpressionArgument(SUFFIX_ARG, args[2]));
+
+        for (int i = 3; i < args.length; i++) {
+            arguments.add(new ExpressionArgument("expr" + (i-2), args[i]));
         }
-        return args;
+
+        return new Arguments<>(arguments);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        TypedValue object = args.valueOf(OBJECT_ARG);
-        TypedValue path = args.valueOf(FIELD_ARG);
-        if (object.type() == Type.NULL) return TypedValue.bool(false);
+    public TypedValue apply(Arguments<GenericArgument> args) {
 
-        final TypedStruct struct = object.getStruct();
-        final boolean exists = struct.exists(path.getString());
-        return TypedValue.bool(exists);
+        final String delimiter = ((TypedValue)args.get(0).value()).getString();
+        final String prefix = ((TypedValue)args.get(1).value()).getString();
+        final String suffix = ((TypedValue)args.get(2).value()).getString();
+
+        List<GenericArgument> values = args.get(3, args.size());
+        String concat = values.stream()
+            .map(it -> (TypedValue) it.value())
+            .filter(TypedValue::isNotNull)
+            .map(TypedValue::getString)
+            .collect(Collectors.joining(delimiter, prefix, suffix));
+        return TypedValue.string(concat);
     }
 }

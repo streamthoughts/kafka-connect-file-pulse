@@ -183,12 +183,28 @@ public class XMLFileInputReaderTest {
         iterator.forEachRemaining(r -> records.addAll(r.collect()));
 
         Assert.assertEquals(1, records.size());
-        TypedStruct broker = records.get(0).value();
-        Assert.assertEquals(Type.ARRAY, broker.get("topicPartition").type());
-        Assert.assertEquals(1, broker.get("topicPartition").getArray().size());
-        TypedValue segment = ((TypedStruct) broker.get("topicPartition").getArray().iterator().next()).find("numSegments");
+
+        TypedStruct record = records.get(0).value();
+        Assert.assertEquals(Type.ARRAY, record.get("topicPartition").type());
+        Assert.assertEquals(1, record.get("topicPartition").getArray().size());
+        TypedValue segment = ((TypedStruct) record.get("topicPartition").getArray().iterator().next()).find("numSegments");
         Assert.assertEquals(Type.ARRAY, segment.type());
         Assert.assertEquals(1, segment.getArray().size());
+    }
+
+    @Test
+    public void should_read_record_given_valid_force_array_fields_and_default_xpath() {
+        reader.configure(new HashMap<String, String>(){{
+            put(FORCE_ARRAY_ON_FIELDS_CONFIG, "cluster.broker.topicPartition");
+        }});
+
+        FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
+        List<FileRecord<TypedStruct>> records = new ArrayList<>();
+        iterator.forEachRemaining(r -> records.addAll(r.collect()));
+
+        TypedStruct record = records.get(0).value();
+        TypedStruct element = (TypedStruct)record.find("cluster.broker").getArray().iterator().next();
+        Assert.assertEquals(Type.ARRAY, element.find("topicPartition").type());
     }
 
     @Test
@@ -204,7 +220,6 @@ public class XMLFileInputReaderTest {
             Assert.assertEquals("dummy attr", records.get(0).value().find("ROOT.attr").getString());
         }
     }
-
 
     private XMLFileInputReader createNewXMLFileInputReader(final String xmlDocument) throws IOException {
         File file = testFolder.newFile();

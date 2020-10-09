@@ -88,7 +88,8 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
     private static class NullJsonFieldAccessor implements JsonFieldAccessor<Object> {
 
         @Override
-        public TypedValue read(JsonIterator it) {
+        public TypedValue read(JsonIterator it) throws IOException {
+            it.readNull();
             return TypedValue.of(null, Schema.none());
         }
     }

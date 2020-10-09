@@ -129,16 +129,22 @@ public class DefaultJSONStructConverterTest {
 
     @Test
     public void shouldConvertGivenFieldWithNullValue() throws Exception {
-        TypedValue value = converter.readJson("{\"field-one\" : \"one\", \"field-two\":null}");
+        TypedValue value = converter.readJson("{\"field-one\" : \"one\", \"field-two\":null, \"field-three\":null, \"field-four\":10, \"field-five\":\"five\"}");
         Assert.assertNotNull(value);
         Assert.assertEquals(Type.STRUCT, value.type());
         TypedStruct struct = value.getStruct();
 
         StructSchema schema = struct.schema();
-        assertEquals(2, schema.fields().size());
+        assertEquals(5, schema.fields().size());
         assertNotNull(schema.field("field-one"));
         assertEquals(Type.STRING, schema.field("field-one").schema().type());
         assertNotNull(schema.field("field-two"));
         assertEquals(Type.NULL, schema.field("field-two").schema().type());
+        assertNotNull(schema.field("field-three"));
+        assertEquals(Type.NULL, schema.field("field-three").schema().type());
+        assertNotNull(schema.field("field-four"));
+        assertEquals(Type.LONG, schema.field("field-four").schema().type());
+        assertNotNull(schema.field("field-five"));
+        assertEquals(Type.STRING, schema.field("field-five").schema().type());
     }
 }

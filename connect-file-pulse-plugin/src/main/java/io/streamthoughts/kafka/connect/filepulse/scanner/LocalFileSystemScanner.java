@@ -59,7 +59,7 @@ import java.util.stream.Stream;
 public class LocalFileSystemScanner implements FileSystemScanner {
 
     private enum ScanStatus {
-        CREATED, READY, STARTED, STOPPED;
+        CREATED, READY, STARTED, STOPPED
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystemScanner.class);
@@ -87,6 +87,10 @@ public class LocalFileSystemScanner implements FileSystemScanner {
 
     private final BatchFileCleanupPolicy cleaner;
 
+    private final Long allowTasksReconfigurationAfterTimeoutMs;
+
+    private Long nextAllowedTasksReconfiguration = -1L;
+
     private ScanStatus status;
 
     /**
@@ -99,6 +103,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
      * @param store               the state store used to track file progression.
      */
     public LocalFileSystemScanner(final String sourceDirectoryPath,
+                                  final Long allowTasksReconfigurationAfterTimeoutMs,
                                   final FSDirectoryWalker fsWalker,
                                   final GenericFileCleanupPolicy cleaner,
                                   final OffsetManager offsetManager,
@@ -109,6 +114,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
 
         this.sourceDirectoryPath = sourceDirectoryPath;
         this.fsWalker = fsWalker;
+        this.allowTasksReconfigurationAfterTimeoutMs = allowTasksReconfigurationAfterTimeoutMs;
 
         if (cleaner instanceof FileCleanupPolicy) {
             this.cleaner = new DelegateBatchFileCleanupPolicy((FileCleanupPolicy)cleaner);
@@ -217,29 +223,61 @@ public class LocalFileSystemScanner implements FileSystemScanner {
     }
 
     private synchronized boolean updateFiles() {
-
-        if (scheduled.isEmpty()) {
-            LOG.info("Scanning local file system directory '{}'", sourceDirectoryPath);
-            final Collection<File> files = fsWalker.listFiles(new File(sourceDirectoryPath));
-            LOG.info("Completed scanned, number of files detected '{}' ", files.size());
-
-            if (readStatesToEnd(TimeUnit.SECONDS.toMillis(5))) {
-                final StateSnapshot<SourceFile> snapshot = store.snapshot();
-                scheduled.putAll(toScheduled(files, snapshot));
-                LOG.info("Finished lookup for new files : '{}' files selected", scheduled.size());
-
-                notifyAll();
-                // Only return true if the status is started, i.e. if this was not the first directory scan
-                // This is used to not trigger task reconfiguration before the connector is fully started.
-                return !scheduled.isEmpty() && status.equals(ScanStatus.STARTED);
-            }
-            LOG.info("Finished scanning directory '{}'", sourceDirectoryPath);
-        } else {
+        final boolean noScheduledFiles = scheduled.isEmpty();
+        if (!noScheduledFiles && allowTasksReconfigurationAfterTimeoutMs == Long.MAX_VALUE) {
             LOG.info(
-                "Remaining in progress scheduled files: {}. Skip directory scan while waiting for tasks completion.",
-                scheduled.size());
+                "Scheduled files still being processed: {}. Skip directory scan while waiting for tasks completion",
+                scheduled.size()
+            );
+            return false;
         }
-        return false;
+
+        boolean toEnd = readStatesToEnd(TimeUnit.SECONDS.toMillis(5));
+        if (noScheduledFiles && !toEnd) {
+            LOG.warn("Finished scanning directory '{}'. Skip task reconfiguration due to timeout", sourceDirectoryPath);
+            return false;
+        }
+
+        LOG.info("Scanning local file system directory '{}'", sourceDirectoryPath);
+        final Collection<File> files = fsWalker.listFiles(new File(sourceDirectoryPath));
+        LOG.info("Completed scanned, number of files found '{}' ", files.size());
+
+        final StateSnapshot<SourceFile> snapshot = store.snapshot();
+        final Map<String, SourceMetadata> toScheduled = toScheduled(files, snapshot);
+
+        // Some scheduled files are still being processed, but new files are detected
+        if (!noScheduledFiles) {
+            if (scheduled.keySet().containsAll(toScheduled.keySet())) {
+                LOG.info(
+                    "Scheduled files still being processed ({}) and no new files found. Skip task reconfiguration",
+                    scheduled.size()
+                );
+                return false;
+            }
+            if (nextAllowedTasksReconfiguration == -1) {
+                nextAllowedTasksReconfiguration = Time.SYSTEM.milliseconds() + allowTasksReconfigurationAfterTimeoutMs;
+            }
+
+            long timeout = Math.max(0, nextAllowedTasksReconfiguration - Time.SYSTEM.milliseconds());
+            if (timeout > 0) {
+                LOG.info(
+                    "Scheduled files still being processed ({}) but new files detected. Waiting for {} ms before allowing tasks reconfiguration",
+                    scheduled.size(),
+                    timeout
+                );
+                return false;
+            }
+        }
+
+        nextAllowedTasksReconfiguration = -1L;
+        scheduled.putAll(toScheduled);
+
+        notifyAll();
+
+        LOG.info("Finished lookup for new files : '{}' files can be scheduled for processing", scheduled.size());
+        // Only return true if the status is started, i.e. if this was not the first directory scan
+        // This is used to not trigger task reconfiguration before the connector is fully started.
+        return !scheduled.isEmpty() && status.equals(ScanStatus.STARTED);
     }
 
     private Map<String, SourceMetadata> toScheduled(final Collection<File> scanned,

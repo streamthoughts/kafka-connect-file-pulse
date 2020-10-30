@@ -21,13 +21,12 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.FSDirectoryWalker;
 import io.streamthoughts.kafka.connect.filepulse.scanner.local.FileListFilter;
+import io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker;
+import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker;
-import org.apache.kafka.common.config.ConfigDef;
 
 public class ConnectorConfig extends CommonConfig {
 
@@ -46,6 +45,9 @@ public class ConnectorConfig extends CommonConfig {
 
     public static final String FS_SCAN_FILTERS_CONFIG         = "fs.scan.filters";
     private static final String FS_SCAN_FILTERS_DOC           = "Filters classes which are used to apply list input files.";
+
+    public static final String ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_CONFIG = "allow.tasks.reconfiguration.after.timeout.ms";
+    public static final String ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_DOC = "Specifies the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed.";
 
     @Deprecated
     public static final String INTERNAL_REPORTER_GROUP_ID       = "internal.kafka.reporter.id";
@@ -79,13 +81,20 @@ public class ConnectorConfig extends CommonConfig {
                 .define(FILE_CLEANER_CLASS_CONFIG,
                         ConfigDef.Type.CLASS, ConfigDef.Importance.HIGH, FILE_CLEANER_CLASS_DOC)
 
+                .define(ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_CONFIG, ConfigDef.Type.LONG, Long.MAX_VALUE,
+                        ConfigDef.Importance.MEDIUM, ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_DOC)
+
                 .define(INTERNAL_REPORTER_GROUP_ID, ConfigDef.Type.STRING, null,
                         ConfigDef.Importance.MEDIUM, INTERNAL_REPORTER_GROUP_ID_DOC);
 
     }
 
+    public Long allowTasksReconfigurationAfterTimeoutMs() {
+        return getLong(ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_CONFIG);
+    }
+
     public String getTasksReporterGroupId() {
-        return this.getString(INTERNAL_REPORTER_GROUP_ID);
+        return getString(INTERNAL_REPORTER_GROUP_ID);
     }
 
     public FileCleanupPolicy cleanupPolicy() {

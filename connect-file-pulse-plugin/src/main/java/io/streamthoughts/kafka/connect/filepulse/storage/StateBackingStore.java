@@ -39,10 +39,9 @@ public interface StateBackingStore<T> {
     boolean isStarted();
 
     /**
-     * Get a snapshot of the current state including.
-     * configurations.
+     * Get a snapshot of the current state.
      *
-     * @return the cluster configDef state
+     * @return the {@link StateSnapshot}.
      */
     StateSnapshot<T> snapshot();
 

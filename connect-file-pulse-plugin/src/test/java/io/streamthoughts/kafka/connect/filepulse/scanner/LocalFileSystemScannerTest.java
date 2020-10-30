@@ -214,6 +214,7 @@ public class LocalFileSystemScannerTest {
                                                       final StateBackingStore<SourceFile> store) {
         return new LocalFileSystemScanner(
                 INPUT_FILES.inputDirectory().getAbsolutePath(),
+                Long.MAX_VALUE,
                 scanner,
                 cleaner,
                 OFFSET_MANAGER,

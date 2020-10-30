@@ -112,6 +112,7 @@ public class FilePulseSourceConnector extends SourceConnector {
         try {
             scanner = new LocalFileSystemScanner(
                 config.scanDirectoryPath(),
+                config.allowTasksReconfigurationAfterTimeoutMs(),
                 directoryScanner,
                 cleaner,
                 new SimpleOffsetManager(strategy),

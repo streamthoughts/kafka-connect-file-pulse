@@ -17,7 +17,10 @@
 # limitations under the License.
 #
 # Kafka Connect File Pulse
-FROM confluentinc/cp-kafka-connect-base:5.5.1
+FROM confluentinc/cp-kafka-connect-base:5.5.2
+
+
+USER root
 
 ARG connectFilePulseVersion
 ARG connectFilePulseBranch

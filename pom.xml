@@ -80,13 +80,12 @@
     <properties>
         <apache.avro.version>1.8.2</apache.avro.version>
         <confluent.maven.repo>http://packages.confluent.io/maven/</confluent.maven.repo>
-        <io.confluent.version>5.5.0</io.confluent.version>
-        <org.apache.kafka.version>2.5.0</org.apache.kafka.version>
+        <io.confluent.version>6.0.0</io.confluent.version>
+        <org.apache.kafka.version>2.6.0</org.apache.kafka.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.13.1</junit.version>
-        <kafka.connect.maven.plugin.version>0.11.2</kafka.connect.maven.plugin.version>
-
+        <kafka.connect.maven.plugin.version>0.11.3</kafka.connect.maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${basedir}</checkstyle.config.location>

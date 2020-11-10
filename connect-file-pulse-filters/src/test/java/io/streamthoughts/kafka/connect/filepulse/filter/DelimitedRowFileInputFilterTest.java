@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.junit.Assert;
@@ -40,7 +41,7 @@ public class DelimitedRowFileInputFilterTest {
 
 
     private static final TypedStruct DEFAULT_STRUCT = TypedStruct.create()
-        .put("message", "value1;value2;value3")
+        .put("message", "value1;2;true")
         .put("headers", Collections.singletonList("col1;col2;col3"));
 
 
@@ -59,8 +60,8 @@ public class DelimitedRowFileInputFilterTest {
 
         final TypedStruct record = output.iterator().next();
         Assert.assertEquals("value1", record.getString("column1"));
-        Assert.assertEquals("value2", record.getString("column2"));
-        Assert.assertEquals("value3", record.getString("column3"));
+        Assert.assertEquals("2", record.getString("column2"));
+        Assert.assertEquals("true", record.getString("column3"));
     }
 
     @Test
@@ -73,21 +74,24 @@ public class DelimitedRowFileInputFilterTest {
 
         final TypedStruct record = output.iterator().next();
         Assert.assertEquals("value1", record.getString("col1"));
-        Assert.assertEquals("value2", record.getString("col2"));
-        Assert.assertEquals("value3", record.getString("col3"));
+        Assert.assertEquals("2", record.getString("col2"));
+        Assert.assertEquals("true", record.getString("col3"));
     }
 
     @Test
-    public void shouldUseConfiguredSchemaWithNoType() {
-        configs.put(READER_FIELD_COLUMNS_CONFIG, "c1:STRING;c2:STRING;c3:STRING");
+    public void shouldUseConfiguredSchema() {
+        configs.put(READER_FIELD_COLUMNS_CONFIG, "c1:STRING;c2:INTEGER;c3:BOOLEAN");
         filter.configure(configs);
         RecordsIterable<TypedStruct> output = filter.apply(null, DEFAULT_STRUCT, false);
         Assert.assertNotNull(output);
         Assert.assertEquals(1, output.size());
 
         final TypedStruct record = output.iterator().next();
+        Assert.assertEquals(Type.STRING, record.get("c1").type());
+        Assert.assertEquals(Type.INTEGER, record.get("c2").type());
+        Assert.assertEquals(Type.BOOLEAN, record.get("c3").type());
         Assert.assertEquals("value1", record.getString("c1"));
-        Assert.assertEquals("value2", record.getString("c2"));
-        Assert.assertEquals("value3", record.getString("c3"));
+        Assert.assertEquals(2, record.getInt("c2").intValue());
+        Assert.assertTrue(record.getBoolean("c3"));
     }
 }

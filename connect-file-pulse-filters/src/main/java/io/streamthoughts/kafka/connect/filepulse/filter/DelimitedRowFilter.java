@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
@@ -39,7 +40,7 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
 
     private static final String DEFAULT_SOURCE_FIELD = "message";
 
-    private static Schema DEFAULT_COLUMN_TYPE = Schema.string();
+    private static final Schema DEFAULT_COLUMN_TYPE = Schema.string();
 
     private static final String AUTO_GENERATED_COLUMN_NAME_PREFIX = "column";
 
@@ -141,7 +142,8 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
                 fieldValue = fieldValue.trim();
             }
             TypedField field = fields.get(i);
-            struct = struct.put(field.name(), fieldValue);
+            final Type type = field.type();
+            struct = struct.put(field.name(), type, type.convert(fieldValue));
         }
         return struct;
     }

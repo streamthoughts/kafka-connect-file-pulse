@@ -26,6 +26,7 @@ connector property. Scan is executed in a background-thread invoking the configu
 |`fs.scan.interval.ms` | Time interval in milliseconds at wish the input directory is scanned | long | *10000* | high |
 |`fs.scan.filters` | The comma-separated list of fully qualified class names of the filter-filters to be uses to list eligible input files| list | *-* | medium |
 |`fs.recursive.scan.enable` | Boolean indicating whether local directory should be recursively scanned | boolean | *true* | medium |
+|`allow.tasks.reconfiguration.after.timeout.ms` | Specifies the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed | long | *Long.MAX_VALUE* | medium |
 
 ## Filtering input files
 

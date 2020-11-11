@@ -80,7 +80,7 @@
                             <supportSummary>This connector is supported by the open source community and StreamThoughts as part of its open source offering.</supportSummary>
                             <supportUrl>https://streamthoughts.io/open-source</supportUrl>
 
-                            <logo>${project.basedir}/../assets/streamthoughts_logo.png</logo>
+                            <logo>${project.basedir}/../assets/logo.png</logo>
 
                             <ownerUsername>streamthoughts</ownerUsername>
                             <ownerType>organization</ownerType>

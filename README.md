@@ -4,7 +4,7 @@
 [![CircleCI](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse.svg?style=svg)](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse)
 
 <p align="center">
-  <img width="400" height="400" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/site/static/images/streamthoughts-connect-file-pule-logo.png">
+  <img width="400" height="400" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/assets/logo.png">
 </p>
 
 **Connect FilePulse** is a multipurpose, scalable and reliable, 

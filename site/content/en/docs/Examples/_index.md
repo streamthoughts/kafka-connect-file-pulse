@@ -1,5 +1,5 @@
 ---
-date: 2020-08-19
+date: 2020-11-11
 title: "Tutorials and Shared Resources"
 linkTitle: "Tutorials and Shared Resources"
 weight: 60
@@ -14,6 +14,7 @@ description: >
 
 ## Blog Posts & Release Announcements
 
+* 2020-10-01 | [Ingesting XML data into Kafka - Option 3: Kafka Connect FilePulse connector](https://rmoff.net/2020/10/01/ingesting-xml-data-into-kafka-option-3-kafka-connect-filepulse-connector/)
 * 2020-09-10 | [Streaming data into Kafka S01/E03 - Loading JSON file](https://dev.to/fhussonnois/streaming-data-into-kafka-s01-e03-loading-json-file-3d76)
 * 2020-08-19 | [Streaming data into Kafka S01/E02 — Loading XML file](https://dev.to/fhussonnois/streaming-data-into-kafka-s01-e02-loading-xml-file-529i)
 * 2020-08-12 | [Streaming data into Kafka S01/E01 - Loading CSV file](https://dev.to/fhussonnois/streaming-csv-data-into-kafka-46a5)

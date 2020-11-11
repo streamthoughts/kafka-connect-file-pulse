@@ -437,15 +437,15 @@ For example, they can be used to split one input message to multiple messages or
     <item>
       <title>Docs: Accessing Data and Metadata</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</link>
-      <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 11 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</guid>
       <description>
         
         
-        &lt;p&gt;Some filters (e.g : &lt;a href=&#34;#appendfilter&#34;&gt;AppendFilter&lt;/a&gt;) can be configured using &lt;em&gt;Simple Connect Expression Language&lt;/em&gt;.&lt;/p&gt;
+        &lt;p&gt;Some filters (e.g : &lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter&#34;&gt;AppendFilter&lt;/a&gt; can be configured using &lt;em&gt;Simple Connect Expression Language&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Simple Connect Expression Language&lt;/em&gt; (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.&lt;/p&gt;
-&lt;p&gt;The synthaxes to define an expression are of the form : &lt;code&gt;&amp;lt;expression string&amp;gt;&lt;/code&gt; or &lt;code&gt;&amp;quot;{{ &amp;lt;expression string&amp;gt; }}&amp;quot;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The syntaxes to define an expression are of the form : &lt;code&gt;&amp;lt;expression string&amp;gt;&lt;/code&gt; or &lt;code&gt;&amp;quot;{{ &amp;lt;expression string&amp;gt; }}&amp;quot;&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;ScEL supports the following capabilities :&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Literal expressions&lt;/strong&gt;&lt;/li&gt;
@@ -498,7 +498,7 @@ the first element present in the array field &lt;code&gt;$.values&lt;/code&gt;.&
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;concat_ws&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;Concatenate two or more string expressions, using the specified separator between each.&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;{{ concat(separator, prefix, suffix, expr1, expr2, ...) }}&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;contains&lt;/code&gt;&lt;/td&gt;
@@ -507,7 +507,7 @@ the first element present in the array field &lt;code&gt;$.values&lt;/code&gt;.&
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;converts&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Converts a field&#39;value into the specified type&lt;/td&gt;
+&lt;td&gt;Converts a field&#39;s value into the specified type&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;{{ converts(field, INTEGER) }}&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -526,9 +526,9 @@ the first element present in the array field &lt;code&gt;$.values&lt;/code&gt;.&
 &lt;td&gt;&lt;code&gt;{{ ends_with(field, value) }}&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;extract_array&lt;/code&gt;| Returns the element at the specified position of the specified array&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;{{extract_array(array, 0) }}&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;extract_array&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Returns the element at the specified position of the specified array&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;{{ extract_array(array, 0) }}&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;hash&lt;/code&gt;&lt;/td&gt;
@@ -571,6 +571,11 @@ the first element present in the array field &lt;code&gt;$.values&lt;/code&gt;.&
 &lt;td&gt;&lt;code&gt;{{ replace_all(field, &#39;regex&#39;, &#39;replacement&#39;) }}&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
+&lt;td&gt;&lt;code&gt;split&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Split a string field&#39;s value into an array using the specified regex or character&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;{{ split(field_expr, regex) }}&lt;/code&gt; or  &lt;code&gt;{{ split(field_expr, regex, limit) }}&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
 &lt;td&gt;&lt;code&gt;starts_with&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;Returns &lt;code&gt;true&lt;/code&gt; if an a string field&#39;s value start with the specified string prefix&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;{{ starts_with(field, &#39;prefix&#39;) }}&lt;/code&gt;&lt;/td&gt;
@@ -593,7 +598,7 @@ the first element present in the array field &lt;code&gt;$.values&lt;/code&gt;.&
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;In addition, ScEL supports nested functions.&lt;/p&gt;
-&lt;p&gt;For example, the following expression is used to replace all whitespace characters after transforming our field&#39;s value into lowercase.&lt;/p&gt;
+&lt;p&gt;For example, the following expression can be used to replace all whitespace characters after transforming our field&#39;s value into lowercase.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;replace_all(lowercase($.field), &#39;\\s&#39;, &#39;-&#39;)
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -603,7 +608,7 @@ Currently, FilePulse does not support user-defined functions (UDFs). So you cann
 &lt;/div&gt;
 
 &lt;h2 id=&#34;scopes&#34;&gt;Scopes&lt;/h2&gt;
-&lt;p&gt;In previous section, we have shown how to use the expression language to select a specific field.
+&lt;p&gt;In the previous section, we have shown how to use the expression language to select a specific field.
 The selected field was part of our the current record being processed.&lt;/p&gt;
 &lt;p&gt;Actually, ScEL allows you to get access to additional fields through the used of scopes.
 Basically, a scope defined the root object on which a selector expression must evaluated.&lt;/p&gt;
@@ -674,9 +679,9 @@ Basically, a scope defined the root object on which a selector expression must e
 &lt;/table&gt;
 &lt;p&gt;Note, that in case of failures more fields are added to the current filter context (see : &lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/handling-failures/&#34;&gt;Handling Failures&lt;/a&gt;)&lt;/p&gt;
 &lt;h3 id=&#34;record-headers&#34;&gt;Record Headers&lt;/h3&gt;
-&lt;p&gt;The scope &lt;code&gt;headers&lt;/code&gt; allows to defined the headers of the output record.&lt;/p&gt;
+&lt;p&gt;The scope &lt;code&gt;headers&lt;/code&gt; allows defining the headers of the output record.&lt;/p&gt;
 &lt;h3 id=&#34;record-key&#34;&gt;Record key&lt;/h3&gt;
-&lt;p&gt;The scope &lt;code&gt;key&lt;/code&gt; allows to defined the key of the output record. Only string key is currently supported.&lt;/p&gt;
+&lt;p&gt;The scope &lt;code&gt;key&lt;/code&gt; allows defining the key of the output record. Only string key is currently supported.&lt;/p&gt;
 &lt;h3 id=&#34;source-metadata&#34;&gt;Source Metadata&lt;/h3&gt;
 &lt;p&gt;The scope &lt;code&gt;metadata&lt;/code&gt; allows read access to information about the file being processing.&lt;/p&gt;
 &lt;table&gt;
@@ -727,7 +732,7 @@ Basically, a scope defined the root object on which a selector expression must e
 &lt;/table&gt;
 &lt;h2 id=&#34;record-offset&#34;&gt;Record Offset&lt;/h2&gt;
 &lt;p&gt;The scope &lt;code&gt;offset&lt;/code&gt; allows read access to information about the original position of the record into the source file.
-The available fields depend of the configured FileInputRecord.&lt;/p&gt;
+The available fields depend on the configured FileInputRecord.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -826,7 +831,7 @@ The available fields depend of the configured FileInputRecord.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
-&lt;p&gt;The scope &lt;code&gt;system&lt;/code&gt; allows read access to system environment variables and runtime properties.&lt;/p&gt;
+&lt;p&gt;The scope &lt;code&gt;system&lt;/code&gt; allows accessing to the system environment variables and runtime properties.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -849,11 +854,11 @@ The available fields depend of the configured FileInputRecord.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id=&#34;timestamp&#34;&gt;Timestamp&lt;/h2&gt;
-&lt;p&gt;The scope &lt;code&gt;$timestamp&lt;/code&gt; allows to defined the timestamp of the output record.&lt;/p&gt;
+&lt;p&gt;The scope &lt;code&gt;$timestamp&lt;/code&gt; allows defining the timestamp of the output record.&lt;/p&gt;
 &lt;h2 id=&#34;topic&#34;&gt;Topic&lt;/h2&gt;
-&lt;p&gt;The scope &lt;code&gt;$topic&lt;/code&gt; allows to defined the target topic of the output record.&lt;/p&gt;
+&lt;p&gt;The scope &lt;code&gt;$topic&lt;/code&gt; allows defining the target topic of the output record.&lt;/p&gt;
 &lt;h2 id=&#34;value&#34;&gt;Value&lt;/h2&gt;
-&lt;p&gt;The scope &lt;code&gt;$value&lt;/code&gt; allows to defined the fields of the output record&lt;/p&gt;
+&lt;p&gt;The scope &lt;code&gt;$value&lt;/code&gt; allows defining the fields of the output record&lt;/p&gt;
 &lt;h2 id=&#34;variables&#34;&gt;Variables&lt;/h2&gt;
 &lt;p&gt;The scope &lt;code&gt;$variables&lt;/code&gt; allows read/write access to a simple key-value map structure.
 This scope can be used to share user-defined variables between &lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/&#34;&gt;Processing Filters&lt;/a&gt;.&lt;/p&gt;

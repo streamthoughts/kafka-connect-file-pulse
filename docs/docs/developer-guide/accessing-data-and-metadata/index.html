@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/" />
-<meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-09-18T12:42:32+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-11-11T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-11T16:49:59+01:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Accessing Data and Metadata">
 <meta itemprop="description" content="The commons configuration for Connect File Pulse.
 ">
-<meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-09-18T12:42:32&#43;02:00" />
-<meta itemprop="wordCount" content="1202">
+<meta itemprop="datePublished" content="2020-11-11T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-11-11T16:49:59&#43;01:00" />
+<meta itemprop="wordCount" content="1226">
 
 
 
@@ -1113,9 +1113,9 @@
 	<h1>Accessing Data and Metadata</h1>
     <div class="lead">The commons configuration for Connect File Pulse.</div>
 	       
-	<p>Some filters (e.g : <a href="#appendfilter">AppendFilter</a>) can be configured using <em>Simple Connect Expression Language</em>.</p>
+	<p>Some filters (e.g : <a href="/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter">AppendFilter</a> can be configured using <em>Simple Connect Expression Language</em>.</p>
 <p><em>Simple Connect Expression Language</em> (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.</p>
-<p>The synthaxes to define an expression are of the form : <code>&lt;expression string&gt;</code> or <code>&quot;{{ &lt;expression string&gt; }}&quot;</code>.</p>
+<p>The syntaxes to define an expression are of the form : <code>&lt;expression string&gt;</code> or <code>&quot;{{ &lt;expression string&gt; }}&quot;</code>.</p>
 <p>ScEL supports the following capabilities :</p>
 <ul>
 <li><strong>Literal expressions</strong></li>
@@ -1168,7 +1168,7 @@ the first element present in the array field <code>$.values</code>.</p>
 <tr>
 <td><code>concat_ws</code></td>
 <td>Concatenate two or more string expressions, using the specified separator between each.</td>
-<td><code>{{ concat(separator, prefix, suffix, expr1, expr2, ...) }}</code></td>
+<td><code>{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}</code></td>
 </tr>
 <tr>
 <td><code>contains</code></td>
@@ -1177,7 +1177,7 @@ the first element present in the array field <code>$.values</code>.</p>
 </tr>
 <tr>
 <td><code>converts</code></td>
-<td>Converts a field'value into the specified type</td>
+<td>Converts a field's value into the specified type</td>
 <td><code>{{ converts(field, INTEGER) }}</code></td>
 </tr>
 <tr>
@@ -1196,9 +1196,9 @@ the first element present in the array field <code>$.values</code>.</p>
 <td><code>{{ ends_with(field, value) }}</code></td>
 </tr>
 <tr>
-<td><code>extract_array</code>| Returns the element at the specified position of the specified array</td>
-<td><code>{{extract_array(array, 0) }}</code></td>
-<td></td>
+<td><code>extract_array</code></td>
+<td>Returns the element at the specified position of the specified array</td>
+<td><code>{{ extract_array(array, 0) }}</code></td>
 </tr>
 <tr>
 <td><code>hash</code></td>
@@ -1241,6 +1241,11 @@ the first element present in the array field <code>$.values</code>.</p>
 <td><code>{{ replace_all(field, 'regex', 'replacement') }}</code></td>
 </tr>
 <tr>
+<td><code>split</code></td>
+<td>Split a string field's value into an array using the specified regex or character</td>
+<td><code>{{ split(field_expr, regex) }}</code> or  <code>{{ split(field_expr, regex, limit) }}</code></td>
+</tr>
+<tr>
 <td><code>starts_with</code></td>
 <td>Returns <code>true</code> if an a string field's value start with the specified string prefix</td>
 <td><code>{{ starts_with(field, 'prefix') }}</code></td>
@@ -1263,7 +1268,7 @@ the first element present in the array field <code>$.values</code>.</p>
 </tbody>
 </table>
 <p>In addition, ScEL supports nested functions.</p>
-<p>For example, the following expression is used to replace all whitespace characters after transforming our field's value into lowercase.</p>
+<p>For example, the following expression can be used to replace all whitespace characters after transforming our field's value into lowercase.</p>
 <pre><code>replace_all(lowercase($.field), '\\s', '-')
 </code></pre>
 
@@ -1273,7 +1278,7 @@ Currently, FilePulse does not support user-defined functions (UDFs). So you cann
 </div>
 
 <h2 id="scopes">Scopes</h2>
-<p>In previous section, we have shown how to use the expression language to select a specific field.
+<p>In the previous section, we have shown how to use the expression language to select a specific field.
 The selected field was part of our the current record being processed.</p>
 <p>Actually, ScEL allows you to get access to additional fields through the used of scopes.
 Basically, a scope defined the root object on which a selector expression must evaluated.</p>
@@ -1344,9 +1349,9 @@ Basically, a scope defined the root object on which a selector expression must e
 </table>
 <p>Note, that in case of failures more fields are added to the current filter context (see : <a href="/kafka-connect-file-pulse/docs/developer-guide/handling-failures/">Handling Failures</a>)</p>
 <h3 id="record-headers">Record Headers</h3>
-<p>The scope <code>headers</code> allows to defined the headers of the output record.</p>
+<p>The scope <code>headers</code> allows defining the headers of the output record.</p>
 <h3 id="record-key">Record key</h3>
-<p>The scope <code>key</code> allows to defined the key of the output record. Only string key is currently supported.</p>
+<p>The scope <code>key</code> allows defining the key of the output record. Only string key is currently supported.</p>
 <h3 id="source-metadata">Source Metadata</h3>
 <p>The scope <code>metadata</code> allows read access to information about the file being processing.</p>
 <table>
@@ -1397,7 +1402,7 @@ Basically, a scope defined the root object on which a selector expression must e
 </table>
 <h2 id="record-offset">Record Offset</h2>
 <p>The scope <code>offset</code> allows read access to information about the original position of the record into the source file.
-The available fields depend of the configured FileInputRecord.</p>
+The available fields depend on the configured FileInputRecord.</p>
 <table>
 <thead>
 <tr>
@@ -1496,7 +1501,7 @@ The available fields depend of the configured FileInputRecord.</p>
 </tbody>
 </table>
 <h2 id="system">System</h2>
-<p>The scope <code>system</code> allows read access to system environment variables and runtime properties.</p>
+<p>The scope <code>system</code> allows accessing to the system environment variables and runtime properties.</p>
 <table>
 <thead>
 <tr>
@@ -1519,11 +1524,11 @@ The available fields depend of the configured FileInputRecord.</p>
 </tbody>
 </table>
 <h2 id="timestamp">Timestamp</h2>
-<p>The scope <code>$timestamp</code> allows to defined the timestamp of the output record.</p>
+<p>The scope <code>$timestamp</code> allows defining the timestamp of the output record.</p>
 <h2 id="topic">Topic</h2>
-<p>The scope <code>$topic</code> allows to defined the target topic of the output record.</p>
+<p>The scope <code>$topic</code> allows defining the target topic of the output record.</p>
 <h2 id="value">Value</h2>
-<p>The scope <code>$value</code> allows to defined the fields of the output record</p>
+<p>The scope <code>$value</code> allows defining the fields of the output record</p>
 <h2 id="variables">Variables</h2>
 <p>The scope <code>$variables</code> allows read/write access to a simple key-value map structure.
 This scope can be used to share user-defined variables between <a href="/kafka-connect-file-pulse/docs/developer-guide/filters/">Processing Filters</a>.</p>
@@ -1531,7 +1536,7 @@ This scope can be used to share user-defined variables between <a href="/kafka-c
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified September 18, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/df088c296d1888ffdfe4224c8d2d2f8e49a4b2f7">update(site): update new functions (df088c2)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified November 11, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e7878d8e0ca152e2553bb3858b4cb82fa23b7705">feat(filters): Add split function to SCEL (#88) (e7878d8)</a>
 </div>
 </div>
 

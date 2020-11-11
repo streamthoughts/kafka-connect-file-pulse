@@ -67,5 +67,6 @@
     <suppress checks="Header" files="log4j.properties"/>
 
     <suppress checks="[a-zA-Z0-9]*" files="src/main/java/io/streamthoughts/kafka/connect/filepulse/expression/parser/antlr4/*"/>
+    <suppress checks="BooleanExpressionComplexity" files="Split.java"/>
 
 </suppressions>

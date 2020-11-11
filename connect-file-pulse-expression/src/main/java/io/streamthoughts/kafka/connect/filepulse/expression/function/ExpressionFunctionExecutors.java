@@ -35,6 +35,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Matche
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Nlv;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Length;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.ReplaceAll;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Split;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.StartsWith;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Trim;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Uppercase;
@@ -83,6 +84,7 @@ public class ExpressionFunctionExecutors {
         register(new ConcatWs());
         register(new Hash());
         register(new Md5());
+        register(new Split());
     }
 
     @SuppressWarnings("unchecked")

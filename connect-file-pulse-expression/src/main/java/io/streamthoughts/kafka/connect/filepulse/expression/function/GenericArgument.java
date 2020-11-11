@@ -27,8 +27,8 @@ import java.util.Objects;
 
 public class GenericArgument<T> implements Argument {
 
-    private String name;
-    private T value;
+    private final String name;
+    private final T value;
     private final List<String> errorMessages;
 
     /**

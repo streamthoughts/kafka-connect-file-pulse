@@ -1,5 +1,5 @@
 ---
-date: 2020-08-12
+date: 2020-11-11
 title: "Accessing Data and Metadata"
 linkTitle: "Accessing Data and Metadata"
 weight: 60
@@ -7,11 +7,11 @@ description: >
   The commons configuration for Connect File Pulse.
 ---
 
-Some filters (e.g : [AppendFilter](#appendfilter)) can be configured using *Simple Connect Expression Language*.
+Some filters (e.g : [AppendFilter](/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter) can be configured using *Simple Connect Expression Language*.
 
 *Simple Connect Expression Language* (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.
 
-The synthaxes to define an expression are of the form : `<expression string>` or `"{{ <expression string> }}"`.
+The syntaxes to define an expression are of the form : `<expression string>` or `"{{ <expression string> }}"`.
 
 ScEL supports the following capabilities :
 
@@ -68,33 +68,34 @@ Note the used of double-quotes to define a substitution expressions
 
 ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.
 
-| Function       | Description   | Syntax   |
-| ---------------| --------------|-----------|
-| `concat`       | Concatenate two or more string expressions.  | `{{ concat(expr1, expr2, ...) }}` |
-| `concat_ws`    | Concatenate two or more string expressions, using the specified separator between each.  | `{{ concat(separator, prefix, suffix, expr1, expr2, ...) }}` |
-| `contains`     | Returns `true` if an array field's value contains the specified value  | `{{ contains(array, 'value') }}` |
-| `converts`     | Converts a field'value into the specified type | `{{ converts(field, INTEGER) }}` |
-| `ends_with`    | Returns `true` if an a string field's value end with the specified string suffix | `{{ ends_with(field, 'suffix') }}` |
-| `equals`       | Returns `true` if an a string or number fields's value equals the specified value | `{{ equals(field, value) }}` |
-| `exists`       | Returns `true` if an the specified field exists | `{{ ends_with(field, value) }}` |
-| `extract_array`| Returns the element at the specified position of the specified array | `{{extract_array(array, 0) }}` |
-| `hash`         | Hash a given string expression, using murmur2 algorithm | `{{ hash(field_expr) }}` |
-| `is_null`      | Returns `true` if a field's value is null | `{{ is_null(field) }}` |
-| `length`       | Returns the number of elements into an array of the length of an string field | `{{ length(array) }}` |
-| `lowercase`    | Converts all of the characters in a string field's value to lower case | `{{ lowercase(field) }}` |
-| `matches`      | Returns `true` if a field's value match the specified regex | `{{ matches(field, 'regex') }}` |
-| `md5`          | Compute the MD5 hash of string expression  | `{{ md5(field_expr) }}` |
-| `nlv`          | Sets a default value if a field's value is null | `{{ length(array) }}` |
-| `replace_all ` | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string. | `{{ replace_all(field, 'regex', 'replacement') }}` |
-| `starts_with`  | Returns `true` if an a string field's value start with the specified string prefix | `{{ starts_with(field, 'prefix') }}` |
-| `trim`         | Trims the spaces from the beginning and end of a string.  | `{{ trim(field) }}` |
-| `uppercase`    | Converts all of the characters in a string field's value to upper case  | `{{ uppercase(field) }}` |
-| `uuid`         | Create a Universally Unique Identifier (UUID)  | `{{ uuid() }}` |
+| Function        | Description   | Syntax   |
+| ----------------|---------------|-----------|
+| `concat`        | Concatenate two or more string expressions.  | `{{ concat(expr1, expr2, ...) }}` |
+| `concat_ws`     | Concatenate two or more string expressions, using the specified separator between each.  | `{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}` |
+| `contains`      | Returns `true` if an array field's value contains the specified value  | `{{ contains(array, 'value') }}` |
+| `converts`      | Converts a field's value into the specified type | `{{ converts(field, INTEGER) }}` |
+| `ends_with`     | Returns `true` if an a string field's value end with the specified string suffix | `{{ ends_with(field, 'suffix') }}` |
+| `equals`        | Returns `true` if an a string or number fields's value equals the specified value | `{{ equals(field, value) }}` |
+| `exists`        | Returns `true` if an the specified field exists | `{{ ends_with(field, value) }}` |
+| `extract_array` | Returns the element at the specified position of the specified array | `{{ extract_array(array, 0) }}` |
+| `hash`          | Hash a given string expression, using murmur2 algorithm | `{{ hash(field_expr) }}` |
+| `is_null`       | Returns `true` if a field's value is null | `{{ is_null(field) }}` |
+| `length`        | Returns the number of elements into an array of the length of an string field | `{{ length(array) }}` |
+| `lowercase`     | Converts all of the characters in a string field's value to lower case | `{{ lowercase(field) }}` |
+| `matches`       | Returns `true` if a field's value match the specified regex | `{{ matches(field, 'regex') }}` |
+| `md5`           | Compute the MD5 hash of string expression  | `{{ md5(field_expr) }}` |
+| `nlv`           | Sets a default value if a field's value is null | `{{ length(array) }}` |
+| `replace_all `  | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string. | `{{ replace_all(field, 'regex', 'replacement') }}` |
+| `split`         | Split a string field's value into an array using the specified regex or character | `{{ split(field_expr, regex) }}` or  `{{ split(field_expr, regex, limit) }}` |
+| `starts_with`   | Returns `true` if an a string field's value start with the specified string prefix | `{{ starts_with(field, 'prefix') }}` |
+| `trim`          | Trims the spaces from the beginning and end of a string.  | `{{ trim(field) }}` |
+| `uppercase`     | Converts all of the characters in a string field's value to upper case  | `{{ uppercase(field) }}` |
+| `uuid`          | Create a Universally Unique Identifier (UUID)  | `{{ uuid() }}` |
 
 
 In addition, ScEL supports nested functions. 
 
-For example, the following expression is used to replace all whitespace characters after transforming our field's value into lowercase.
+For example, the following expression can be used to replace all whitespace characters after transforming our field's value into lowercase.
 
 ```
 replace_all(lowercase($.field), '\\s', '-')
@@ -107,7 +108,7 @@ Currently, FilePulse does not support user-defined functions (UDFs). So you cann
 
 ## Scopes
 
-In previous section, we have shown how to use the expression language to select a specific field.
+In the previous section, we have shown how to use the expression language to select a specific field.
 The selected field was part of our the current record being processed.
 
 Actually, ScEL allows you to get access to additional fields through the used of scopes. 
@@ -140,11 +141,11 @@ Note, that in case of failures more fields are added to the current filter conte
 
 ### Record Headers
 
-The scope `headers` allows to defined the headers of the output record.
+The scope `headers` allows defining the headers of the output record.
 
 ### Record key
 
-The scope `key` allows to defined the key of the output record. Only string key is currently supported.
+The scope `key` allows defining the key of the output record. Only string key is currently supported.
 
 ### Source Metadata
 
@@ -163,7 +164,7 @@ The scope `metadata` allows read access to information about the file being proc
 ## Record Offset
 
 The scope `offset` allows read access to information about the original position of the record into the source file.
-The available fields depend of the configured FileInputRecord.
+The available fields depend on the configured FileInputRecord.
 
 | Predefined Fields (ScEL) | Description | Type |
 |--- | --- |--- |
@@ -195,7 +196,7 @@ Information only available if `AvroFilterInputReader` is configured.
 
 ## System
 
-The scope `system` allows read access to system environment variables and runtime properties.
+The scope `system` allows accessing to the system environment variables and runtime properties.
 
 | Predefined Fields (ScEL) | Description | Type |
 |--- | --- |--- |
@@ -204,15 +205,15 @@ The scope `system` allows read access to system environment variables and runtim
 
 ## Timestamp
 
-The scope `$timestamp` allows to defined the timestamp of the output record.
+The scope `$timestamp` allows defining the timestamp of the output record.
 
 ## Topic
 
-The scope `$topic` allows to defined the target topic of the output record.
+The scope `$topic` allows defining the target topic of the output record.
 
 ## Value
 
-The scope `$value` allows to defined the fields of the output record
+The scope `$value` allows defining the fields of the output record
 
 ## Variables
 

@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
     static String normalizeSchemaName(final String name) {
         return Arrays
             .stream(REGEX.split(name))
+            .filter(s -> !s.isEmpty())
             .map(it -> it.substring(0, 1).toUpperCase() + it.substring(1))
             .collect(Collectors.joining());
     }

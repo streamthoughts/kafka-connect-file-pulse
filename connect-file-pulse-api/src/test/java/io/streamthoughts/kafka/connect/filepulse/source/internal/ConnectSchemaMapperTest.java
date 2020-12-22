@@ -139,4 +139,12 @@ public class ConnectSchemaMapperTest {
         Assert.assertNull(connectStruct.schema().field("field2"));
     }
 
+    @Test
+    public void test_normalize_schema_name() {
+        Assert.assertEquals("Foo", ConnectSchemaMapper.normalizeSchemaName("foo"));
+        Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("foo_bar"));
+        Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("foo.bar"));
+        Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("_foo_bar"));
+    }
+
 }

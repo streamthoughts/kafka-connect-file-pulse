@@ -47,7 +47,7 @@
     </licenses>
 
     <properties>
-        <org.jruby.joni.version>2.1.25</org.jruby.joni.version>
+        <org.jruby.joni.version>2.1.40</org.jruby.joni.version>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
     </properties>
 

@@ -1,7 +1,7 @@
 version: '3'
 services:
   cp-zookeeper:
-    image: confluentinc/cp-zookeeper:5.2.1
+    image: confluentinc/cp-zookeeper:6.0.1
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -32,7 +32,7 @@ services:
       CONFLUENT_METRICS_ENABLE: 'false'
 
   cp-schema-registry:
-    image: confluentinc/cp-schema-registry:5.2.1
+    image: confluentinc/cp-schema-registry:6.0.1
     hostname: schema-registry
     container_name: schema-registry
     depends_on:

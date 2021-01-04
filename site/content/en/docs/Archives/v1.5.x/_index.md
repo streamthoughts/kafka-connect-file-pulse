@@ -1,13 +1,7 @@
-
 ---
-title: "Documentation"
-linkTitle: "Documentation"
-weight: 20
-description: >
-  All of Connect FilePulse documentation
-menu:
-  main:
-    weight: 20
+title: "Docs Release v1.5.x"
+linkTitle: "v1.5.x"
+url: "/v1-5/docs"    
 ---
 
 This section is where the user documentation for Connect File Pulse lives - all the information that users need to understand and successfully use Connect File Pulse.

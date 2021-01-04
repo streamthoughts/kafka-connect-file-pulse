@@ -38,6 +38,6 @@ log4j.appender.connectAppender.layout.ConversionPattern=%d{ISO8601} %p [%t] %m (
 # default log levels
 {% set loggers = default_loggers %}
 {% endif %}
-{% for logger,loglevel in loggers.iteritems() %}
+{% for logger,loglevel in loggers.items() %}
 log4j.logger.{{logger}}={{loglevel}}
 {% endfor %}

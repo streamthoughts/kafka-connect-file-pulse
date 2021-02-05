@@ -79,7 +79,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
     private final Map<String, SourceMetadata> scheduled = new ConcurrentHashMap<>();
 
     // List of files for which an event of completion has been received - those files are waiting for cleanup
-    private LinkedBlockingQueue<SourceFile> completed = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<SourceFile> completed = new LinkedBlockingQueue<>();
 
     private StateSnapshot<SourceFile> fileState;
 
@@ -122,9 +122,7 @@ public class LocalFileSystemScanner implements FileSystemScanner {
             this.cleaner = (BatchFileCleanupPolicy) cleaner;
         } else {
             throw new IllegalArgumentException("Cleaner must be one of 'FileCleanupPolicy', "
-                    + "'BatchFileCleanupPolicy', or the variants that are consumer aware and/or "
-                    + "Acknowledging"
-                    + " not " + cleaner.getClass().getName());
+                    + "'BatchFileCleanupPolicy'" + " not " + cleaner.getClass().getName());
         }
         this.offsetManager = offsetManager;
         this.store = store;

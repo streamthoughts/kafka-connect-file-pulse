@@ -58,7 +58,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private Map<String, String> configProperties;
 
-    private AtomicInteger taskConfigsGeneration = new AtomicInteger(0);
+    private final AtomicInteger taskConfigsGeneration = new AtomicInteger(0);
 
     private FileSystemMonitorThread fsMonitorThread;
 
@@ -94,8 +94,7 @@ public class FilePulseSourceConnector extends SourceConnector {
         // property for tracking file processing. Newer version directly use the connector 'name' property.
         // To guarantee backward-compatibility with prior version, we need to use the
         // 'internal.kafka.reporter.id' property if provided.
-        final String tasksReporterGroupId = config.getTasksReporterGroupId();
-        connectorGroupName = tasksReporterGroupId != null ? tasksReporterGroupId : connectName;
+        connectorGroupName = config.getTasksReporterGroupId() != null ? config.getTasksReporterGroupId() : connectName;
         StateBackingStoreRegistry.instance().register(connectorGroupName, () -> {
             final String stateStoreTopic = config.getTaskReporterTopic();
             final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
@@ -130,7 +129,7 @@ public class FilePulseSourceConnector extends SourceConnector {
                 connectorGroupName
             );
             StateBackingStoreRegistry.instance().release(connectorGroupName);
-            if( fsMonitorThread != null) fsMonitorThread.shutdown(0L);
+            if (fsMonitorThread != null) fsMonitorThread.shutdown(0L);
             throw e;
         }
     }

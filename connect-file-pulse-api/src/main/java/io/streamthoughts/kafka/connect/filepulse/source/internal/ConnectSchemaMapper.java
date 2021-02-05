@@ -34,6 +34,8 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +45,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWithValue<SchemaAndValue> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectSchemaMapper.class);
 
     private static final Object DEFAULT_NULL_VALUE = null;
 
@@ -96,12 +100,14 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
         }
 
         for(final TypedField field : schema) {
+            final String fieldName = field.name();
             final io.streamthoughts.kafka.connect.filepulse.data.Schema fieldSchema = field.schema();
             // Ignore schema NULL because cannot determine the expected type.
-            if (fieldSchema.type() != Type.NULL) {
-                final String fieldName = field.name();
+            if (fieldSchema.type() != Type.NULL && fieldSchema.isResolvable()) {
                 mayUpdateSchemaName(fieldSchema, fieldName);
                 sb.field(fieldName, fieldSchema.map(this)).optional();
+            } else {
+                LOG.debug("Ignore field '{}', schema type is either NULL or cannot be resolved.", fieldName);
             }
         }
         return sb.build();

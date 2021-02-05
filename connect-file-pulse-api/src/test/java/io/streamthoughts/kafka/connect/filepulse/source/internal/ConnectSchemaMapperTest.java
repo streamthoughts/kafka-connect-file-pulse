@@ -32,7 +32,7 @@ import java.util.Map;
 public class ConnectSchemaMapperTest {
 
     @Test
-    public void shouldMapGivenSimpleTypedStruct() {
+    public void should_map_given_simple_typed_struct() {
 
         TypedStruct struct = TypedStruct.create()
                 .put("field1", "value1")
@@ -47,7 +47,7 @@ public class ConnectSchemaMapperTest {
     }
 
     @Test
-    public void shouldMapGivenNestedTypedStruct() {
+    public void should_map_given_nested_typed_struct() {
         TypedStruct struct = TypedStruct.create()
                 .put("field1", TypedStruct.create().put("field2", "value2"));
 
@@ -63,7 +63,7 @@ public class ConnectSchemaMapperTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldMapGivenTypeStructWithArrayField() {
+    public void should_map_given_type_struct_with_array_field() {
         TypedStruct struct = TypedStruct.create()
                 .put("field1", Collections.singletonList("value"));
 
@@ -78,7 +78,7 @@ public class ConnectSchemaMapperTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldMapGivenTypeStructWithArrayOfStruct() {
+    public void should_Map_given_type_struct_with_array_of_struct() {
         TypedStruct struct = TypedStruct.create()
                 .put("field1", Collections.singletonList(TypedStruct.create().put("field2", "value")));
 
@@ -108,7 +108,7 @@ public class ConnectSchemaMapperTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldMapGivenTypeStructWithMapWithStructValue() {
+    public void should_map_given_type_struct_with_map_with_struct_value() {
         TypedStruct struct = TypedStruct.create()
             .put("field1",
                 Collections.singletonMap(
@@ -126,10 +126,24 @@ public class ConnectSchemaMapperTest {
     }
 
     @Test
-    public void shouldMapGivenTypeStructWithNullValue() {
+    public void should_map_given_type_struct_with_null_value() {
         TypedStruct struct = TypedStruct.create()
                 .put("field1", "value1")
                 .put("field2", Schema.none(), null);
+
+        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        Assert.assertNotNull(schemaAndValue);
+
+        Struct connectStruct = (Struct)schemaAndValue.value();
+        Assert.assertNotNull(connectStruct.schema().field("field1"));
+        Assert.assertNull(connectStruct.schema().field("field2"));
+    }
+
+    @Test
+    public void should_map_given_type_struct_with_empty_array() {
+        TypedStruct struct = TypedStruct.create()
+                .put("field1", "value1")
+                .put("field2", Schema.array(Collections.emptyList(), null), Collections.emptyList());
 
         SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
         Assert.assertNotNull(schemaAndValue);

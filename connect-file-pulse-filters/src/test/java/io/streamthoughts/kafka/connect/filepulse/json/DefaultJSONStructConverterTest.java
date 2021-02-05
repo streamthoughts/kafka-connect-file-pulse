@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class DefaultJSONStructConverterTest {
 
-    private JSONStructConverter converter = new DefaultJSONStructConverter();
+    private final JSONStructConverter converter = new DefaultJSONStructConverter();
 
     @Test
     public void shouldConvertGivenArrayOfComplexType() throws Exception {

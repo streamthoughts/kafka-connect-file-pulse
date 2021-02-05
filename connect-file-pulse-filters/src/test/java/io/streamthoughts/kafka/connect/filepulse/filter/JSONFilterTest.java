@@ -19,14 +19,17 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.JSONFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.SchemaSupplier;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.source.internal.ConnectSchemaMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,6 +48,7 @@ public class JSONFilterTest {
     private static final TypedStruct BYTES_RECORD = create().put("message", JSON.getBytes(StandardCharsets.UTF_8));
 
     private static final TypedStruct ARRAY_STRING_RECORD = create().put("message", ARRAY_STRING_JSON);
+    private static final TypedStruct ARRAY_EMPTY_RECORD = create().put("message", "[]");
     private static final TypedStruct ARRAY_STRUCT_RECORD = create().put("message", ARRAY_STRUCT_JSON);
 
     private JSONFilter filter;
@@ -83,10 +87,26 @@ public class JSONFilterTest {
         }});
 
         List<TypedStruct> expected = Collections.singletonList(
-            create().put("message", ARRAY_STRING_JSON).put("myTarget", TypedValue.array(Arrays.asList("foo", "bar"), Type.STRING))
+            create().put("message", ARRAY_STRING_JSON)
+                    .put("myTarget", TypedValue.array(Arrays.asList("foo", "bar"), Type.STRING))
         );
 
         assertOutput(filter.apply(null, ARRAY_STRING_RECORD, false).collect(), expected);
+    }
+
+    @Test
+    public void should_add_parsed_array_into_specific_field_given_target_field_and_empty_array() {
+        filter.configure(new HashMap<String, Object>(){{
+            put(JSONFilterConfig.JSON_TARGET_CONFIG, "myTarget");
+        }});
+
+        List<TypedStruct> expected = Collections.singletonList(
+                create().put("message", "[]")
+                        .put("myTarget", TypedValue.array(new ArrayList<>(), SchemaSupplier.lazy(new ArrayList<>()).get()))
+        );
+
+        final List<TypedStruct> collect = filter.apply(null, ARRAY_EMPTY_RECORD, false).collect();
+        assertOutput(collect, expected);
     }
 
     @Test

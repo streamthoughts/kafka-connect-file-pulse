@@ -65,9 +65,20 @@ public class MapSchema implements Schema {
         return mapper.map(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object) {
         return mapper.map(this, (Map<String, ?>)object);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResolvable() {
+        return valueSchema.isResolvable();
     }
 
     /**

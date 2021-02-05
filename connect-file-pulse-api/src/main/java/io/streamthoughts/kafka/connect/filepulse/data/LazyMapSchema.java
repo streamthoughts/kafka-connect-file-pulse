@@ -35,6 +35,9 @@ public class LazyMapSchema extends MapSchema implements Schema {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Schema valueSchema() {
         if (valueSchema == null) {
@@ -45,5 +48,13 @@ public class LazyMapSchema extends MapSchema implements Schema {
             valueSchema = SchemaSupplier.lazy(peek).get();
         }
         return valueSchema;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResolvable() {
+        return valueSchema!= null || !map.isEmpty();
     }
 }

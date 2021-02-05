@@ -22,6 +22,7 @@ import com.jsoniter.JsonIterator;
 import com.jsoniter.ValueType;
 import com.jsoniter.any.Any;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
+import io.streamthoughts.kafka.connect.filepulse.data.SchemaSupplier;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
@@ -147,7 +148,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
                 type = read.type();
                 array.add(read.value());
             }
-            return TypedValue.array(array, type);
+            return TypedValue.array(array, type != null ? Schema.of(type) : SchemaSupplier.lazy(array).get());
         }
     }
     private static class ObjectJsonFieldAccessor implements JsonFieldAccessor<TypedStruct> {

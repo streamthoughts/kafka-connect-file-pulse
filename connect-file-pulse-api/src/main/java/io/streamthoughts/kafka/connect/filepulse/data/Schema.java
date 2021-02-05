@@ -153,6 +153,17 @@ public interface Schema {
     Type type() ;
 
     /**
+     * Checks whether this schemas is resolvable.
+     *
+     * @see LazyArraySchema
+     * @see LazyMapSchema
+     * @return  {@code true}.
+     */
+    default boolean isResolvable() {
+        return true;
+    }
+
+    /**
      * Maps this schema into a new type T.
      *
      * @param mapper    the {@link SchemaMapper} to be used.

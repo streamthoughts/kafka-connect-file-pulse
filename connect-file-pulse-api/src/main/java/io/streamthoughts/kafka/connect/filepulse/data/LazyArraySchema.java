@@ -51,4 +51,12 @@ public class LazyArraySchema extends ArraySchema implements Schema {
         }
         return valueSchema;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResolvable() {
+        return valueSchema != null || !list.isEmpty();
+    }
 }

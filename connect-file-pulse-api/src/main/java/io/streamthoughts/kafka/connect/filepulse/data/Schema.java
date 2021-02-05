@@ -142,6 +142,17 @@ public interface Schema {
      *
      * @return  the {@link Schema} instance.
      */
+    static ArraySchema array(final Schema valueSchema) {
+        return new ArraySchema(valueSchema);
+    }
+
+    /**
+     * Gets the schema for type ARRAY.
+     *
+     * @param valueSchema the {@link Schema} instance.
+     *
+     * @return  the {@link Schema} instance.
+     */
     static ArraySchema array(final Collection<?> value, final Schema valueSchema) {
         return valueSchema == null ? new LazyArraySchema(value) : new ArraySchema(valueSchema);
     }

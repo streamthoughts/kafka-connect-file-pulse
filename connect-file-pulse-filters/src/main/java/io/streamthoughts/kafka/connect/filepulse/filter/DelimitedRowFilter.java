@@ -24,13 +24,21 @@ import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG;
@@ -48,6 +56,10 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
 
     private StructSchema schema;
 
+    private final Map<Integer, TypedField> columnsTypesByIndex = new HashMap<>();
+
+    private Pattern pattern = null;
+
     /**
      * {@inheritDoc}
      */
@@ -59,19 +71,25 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
         if (isMandatoryConfigsMissing()) {
             StringJoiner joiner = new StringJoiner(",", "[", "]");
             final String mandatory = joiner
-                .add(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG)
-                .add(READER_EXTRACT_COLUMN_NAME_CONFIG)
-                .add(READER_FIELD_COLUMNS_CONFIG).toString();
+                    .add(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG)
+                    .add(READER_EXTRACT_COLUMN_NAME_CONFIG)
+                    .add(READER_FIELD_COLUMNS_CONFIG).toString();
             throw new ConfigException("At least one of those parameters should be configured " + mandatory);
         }
 
+        if (!StringUtils.isFastSplit(this.configs.delimiter())) pattern = Pattern.compile(this.configs.delimiter());
+
         this.schema = this.configs.schema();
+        if (schema != null) {
+            final List<TypedField> fields = schema.fields();
+            IntStream.range(0, fields.size()).forEach(i -> columnsTypesByIndex.put(i, fields.get(i)));
+        }
     }
 
     private boolean isMandatoryConfigsMissing() {
         return configs.schema() == null &&
-               configs.extractColumnName() == null &&
-               !configs.isAutoGenerateColumnNames();
+                configs.extractColumnName() == null &&
+                !configs.isAutoGenerateColumnNames();
     }
 
     /**
@@ -87,52 +105,70 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
      */
     @Override
     public RecordsIterable<TypedStruct> apply(final FilterContext context,
-                                                final TypedStruct record,
-                                                final boolean hasNext) throws FilterException {
+                                              final TypedStruct record,
+                                              final boolean hasNext) throws FilterException {
 
         final String source = record.first(DEFAULT_SOURCE_FIELD).getString();
 
-        String[] fieldValues = splitFields(source);
-        final StructSchema schema = getSchema(record, fieldValues.length);
-        final TypedStruct struct = buildStructForFields(fieldValues, schema);
+        String[] columnValues = splitColumnValues(source);
+        if (schema == null) {
+            inferSchemaFromRecord(record, columnValues.length);
+        }
+        final TypedStruct struct = buildStructForFields(columnValues);
         return RecordsIterable.of(struct);
     }
 
-    private StructSchema getSchema(final TypedStruct record, int n) {
-        if (schema != null) return schema;
-
+    private void inferSchemaFromRecord(final TypedStruct record, int numColumns) {
         schema = Schema.struct();
+
         if (configs.extractColumnName() != null) {
             final String fieldName = configs.extractColumnName();
             String field = record.first(fieldName).getString();
             if (field == null) {
                 throw new FilterException(
-                    "Can't found field for name '" + fieldName + "' to determine columns names");
+                        "Can't found field for name '" + fieldName + "' to determine columns names");
             }
-            final String[] columns = splitFields(field);
+            final List<String> columns = Arrays
+                    .stream(splitColumnValues(field))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
 
-            for (String column : columns) {
-                schema.field(column, DEFAULT_COLUMN_TYPE);
+            if (configs.isDuplicateColumnsAsArray()) {
+                columns.stream()
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.<String>counting()))
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> {
+                        return e.getValue() > 1 ? Schema.array(DEFAULT_COLUMN_TYPE) : DEFAULT_COLUMN_TYPE;
+                    }))
+                    .forEach(schema::field);
+            } else {
+                columns.forEach(columnName -> schema.field(columnName, DEFAULT_COLUMN_TYPE));
             }
-        } else if (configs.isAutoGenerateColumnNames()) {
-                for (int i = 0; i < n; i++) {
-                    schema.field(AUTO_GENERATED_COLUMN_NAME_PREFIX + (i + 1), DEFAULT_COLUMN_TYPE);
-                }
-        } else {
-            throw new FilterException("Can't found valid configuration to determine schema for input value");
+            IntStream.range(0, columns.size()).forEach(i -> columnsTypesByIndex.put(i, schema.field(columns.get(i))));
+            return;
         }
-        return schema;
+
+        if (configs.isAutoGenerateColumnNames()) {
+            for (int i = 0; i < numColumns; i++) {
+                final String fieldName = AUTO_GENERATED_COLUMN_NAME_PREFIX + (i + 1);
+                schema.field(fieldName, DEFAULT_COLUMN_TYPE);
+                columnsTypesByIndex.put(i, schema.field(fieldName));
+            }
+            return;
+        }
+
+        throw new FilterException("Can't found valid configuration to determine schema for input value");
     }
 
-    private String[] splitFields(final String value) {
-        return value.split(configs.delimiter());
+    private String[] splitColumnValues(final String value) {
+        return pattern != null ? pattern.split(value) : value.split(configs.delimiter());
     }
 
-    private TypedStruct buildStructForFields(final String[] fieldValues, final StructSchema schema) {
-        List<TypedField> fields = schema.fields();
-        if (fieldValues.length > fields.size()) {
+    private TypedStruct buildStructForFields(final String[] fieldValues) {
+        if (fieldValues.length > columnsTypesByIndex.size()) {
             throw new FilterException(
-                "Error while reading delimited input row. Too large number of fields (" + fieldValues.length + ")");
+                    "Error while reading delimited input row. Too large number of fields (" + fieldValues.length + ")");
         }
 
         TypedStruct struct = TypedStruct.create();
@@ -141,9 +177,16 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
             if (configs.isTrimColumn()) {
                 fieldValue = fieldValue.trim();
             }
-            TypedField field = fields.get(i);
+            TypedField field = columnsTypesByIndex.get(i);
             final Type type = field.type();
-            struct = struct.put(field.name(), type, type.convert(fieldValue));
+            if (type == Type.ARRAY) {
+                if (!struct.exists(field.name())) {
+                    struct.put(field.name(), new ArrayList<>());
+                }
+                struct.getArray(field.name()).add(fieldValue); // it seems to be OK to use type conversion here
+            } else {
+                struct = struct.put(field.name(), type, type.convert(fieldValue));
+            }
         }
         return struct;
     }

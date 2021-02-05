@@ -44,6 +44,7 @@
 
     <module name="Header">
         <property name="headerFile" value="${basedir}/checkstyle/apache-header" />
+        <property name="ignoreLines" value="1, 2"/>
     </module>
 
     <module name="TreeWalker">

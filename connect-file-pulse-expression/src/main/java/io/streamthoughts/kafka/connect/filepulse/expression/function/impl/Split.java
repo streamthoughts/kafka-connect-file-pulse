@@ -28,6 +28,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionA
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
+import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -57,7 +58,7 @@ public class Split implements ExpressionFunction {
 
         final String regex = ((ValueExpression) args[1]).value().getString();
         Object regexArgument;
-        if (isFastSplit(regex)) {
+        if (StringUtils.isFastSplit(regex)) {
             regexArgument = regex;
         } else {
             regexArgument = Pattern.compile(regex);
@@ -86,21 +87,5 @@ public class Split implements ExpressionFunction {
             split = field.getString().split(regex.toString(), limit);
         }
         return TypedValue.array(Arrays.asList(split), Type.STRING);
-    }
-
-    /**
-     * @see String#split(String). 
-     */
-    private static boolean isFastSplit(final String regex) {
-        char ch = 0;
-        return
-            ((regex.length() == 1 && ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
-            (regex.length() == 2 &&
-                regex.charAt(0) == '\\' &&
-                (((ch = regex.charAt(1))-'0')|('9'-ch)) < 0 &&
-                ((ch-'a')|('z'-ch)) < 0 &&
-                ((ch-'A')|('Z'-ch)) < 0)) &&
-            (ch < Character.MIN_HIGH_SURROGATE ||
-             ch > Character.MAX_LOW_SURROGATE);
     }
 }

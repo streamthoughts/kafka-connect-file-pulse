@@ -38,6 +38,10 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
     public static final String READER_FIELD_TRIM_COLUMN_DOC               = "Remove the leading and trailing whitespaces from all columns.";
     public static final boolean READER_FIELD_TRIM_COLUMN_DEFAULT          = false;
 
+    public static final String READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG = "duplicateColumnsAsArray";
+    public static final String READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_DOC    = "Treat duplicate columns as an array. If false and a record contains duplicate columns an exception will be thrown.";
+    public static final String READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_DEFAULT= "false";
+
     public static final String READER_EXTRACT_COLUMN_NAME_CONFIG          = "extractColumnName";
     public static final String READER_EXTRACT_COLUMN_NAME_DOC             = "Define the field from which the schema should be detected (all columns will be of type 'withMessage')";
 
@@ -70,6 +74,10 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
 
     public boolean isAutoGenerateColumnNames() {
         return getBoolean(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG);
+    }
+
+    public boolean isDuplicateColumnsAsArray() {
+        return getBoolean(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG);
     }
 
     public StructSchema schema() {
@@ -113,6 +121,9 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
 
                 .define(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG, ConfigDef.Type.BOOLEAN, READER_AUTO_GENERATE_COLUMN_NAME_DEFAULT,
                         ConfigDef.Importance.HIGH, READER_AUTO_GENERATE_COLUMN_NAME_DOC)
+
+                .define(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG, ConfigDef.Type.BOOLEAN, READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_DEFAULT,
+                        ConfigDef.Importance.LOW, READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_DOC)
 
                 .define(READER_FIELD_TRIM_COLUMN_CONFIG, ConfigDef.Type.BOOLEAN, READER_FIELD_TRIM_COLUMN_DEFAULT,
                         ConfigDef.Importance.LOW, READER_FIELD_TRIM_COLUMN_DOC);

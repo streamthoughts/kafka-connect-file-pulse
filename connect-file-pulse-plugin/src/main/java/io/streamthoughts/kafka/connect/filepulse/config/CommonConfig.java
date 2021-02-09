@@ -18,9 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.ComposeOffsetStrategy;
-import io.streamthoughts.kafka.connect.filepulse.offset.OffsetStrategy;
-import io.streamthoughts.kafka.connect.filepulse.reader.RowFileInputReader;
+import io.streamthoughts.kafka.connect.filepulse.offset.DefaultOffsetPolicy;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
+import io.streamthoughts.kafka.connect.filepulse.fs.local.reader.RowFileInputReader;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.AbstractConfig;
@@ -41,11 +41,9 @@ public class CommonConfig extends AbstractConfig {
     public static final String FILE_READER_CLASS_CONFIG         = "task.reader.class";
     private static final String FILE_READER_CLASS_CONFIG_DOC    = "Class which is used by tasks to read an input file.";
 
-    public static final String OFFSET_STRATEGY_CONFIG           = "offset.strategy";
-    private static final String OFFSET_STRATEGY_DOC             = "A separated list of attributes, using '+' character as separator, " +
-                                                                  "to be used for uniquely identifying an input file; must be one of " +
-                                                                  "[name, path, lastModified, inode, hash] (e.g: name+hash). Note that order doesn't matter.";
-    private static final String OFFSET_STRATEGY_DEFAULT         = "path+name";
+    public static final String OFFSET_STRATEGY_CLASS_CONFIG     = "offset.policy.class";
+    private static final String OFFSET_STRATEGY_CLASS_DOC       = "Class which is used to determine the source partition and offset that uniquely identify a input record";
+    private static final String OFFSET_STRATEGY_CLASS_DEFAULT   = DefaultOffsetPolicy.class.getName();
 
     public static final String FILTERS_GROUP                    = "Filters";
     public static final String FILTER_CONFIG                    = "filters";
@@ -76,8 +74,8 @@ public class CommonConfig extends AbstractConfig {
                 .define(OUTPUT_TOPIC_CONFIG, ConfigDef.Type.STRING,
                         ConfigDef.Importance.HIGH, OUTPUT_TOPIC_DOC)
 
-                .define(OFFSET_STRATEGY_CONFIG, ConfigDef.Type.STRING, OFFSET_STRATEGY_DEFAULT,
-                        ConfigDef.Importance.HIGH, OFFSET_STRATEGY_DOC)
+                .define(OFFSET_STRATEGY_CLASS_CONFIG, ConfigDef.Type.CLASS, OFFSET_STRATEGY_CLASS_DEFAULT,
+                        ConfigDef.Importance.HIGH, OFFSET_STRATEGY_CLASS_DOC)
 
                 .define(FILTER_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
                         ConfigDef.Importance.HIGH, FILTER_DOC, FILTERS_GROUP, -1, ConfigDef.Width.NONE, FILTER_CONFIG)
@@ -89,8 +87,8 @@ public class CommonConfig extends AbstractConfig {
                         ConfigDef.Importance.HIGH, CommonClientConfigs.BOOTSTRAP_SERVERS_DOC);
     }
 
-    public OffsetStrategy offsetStrategy() {
-        return new ComposeOffsetStrategy(getString(OFFSET_STRATEGY_CONFIG));
+    public SourceOffsetPolicy getSourceOffsetPolicy() {
+        return this.getConfiguredInstance(OFFSET_STRATEGY_CLASS_CONFIG, SourceOffsetPolicy.class);
     }
 
     public String getTaskReporterTopic() {

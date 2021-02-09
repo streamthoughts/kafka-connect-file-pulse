@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class ConvertFilterTest {
         filter = new ConvertFilter();
         configs = new HashMap<>();
         context = FilterContextBuilder.newBuilder()
-                .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
+                .withMetadata(new GenericFileObjectMeta(null, "", 0L, 0L, null, null))
                 .withOffset(FileRecordOffset.invalid())
                 .build();
     }

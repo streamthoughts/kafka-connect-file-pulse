@@ -22,7 +22,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class InternalFilterContextTest {
     public void setUp() {
         context = (InternalFilterContext) FilterContextBuilder
                 .newBuilder()
-                .withMetadata(new SourceMetadata("fileName", "fileName", 0L, 1234L, 1L, 1L))
+                .withMetadata(new GenericFileObjectMeta(null, "fileName", 0L, 1234L, null, null))
                 .withOffset(FileRecordOffset.invalid())
                 .build();
 

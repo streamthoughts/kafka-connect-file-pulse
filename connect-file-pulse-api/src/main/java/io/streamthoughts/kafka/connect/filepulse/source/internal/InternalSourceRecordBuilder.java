@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.source.internal;
 
 import io.streamthoughts.kafka.connect.filepulse.source.InvalidRecordException;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.source.SourceRecord;
@@ -49,7 +49,7 @@ public class InternalSourceRecordBuilder {
 
     public SourceRecord build(final Map<String, ?> sourcePartition,
                               final Map<String, ?> sourceOffset,
-                              final SourceMetadata metadata,
+                              final FileObjectMeta metadata,
                               final String defaultTopic,
                               final Integer defaultPartition) {
         Objects.requireNonNull(sourcePartition, "sourcePartition cannot be null");

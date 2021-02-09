@@ -21,7 +21,8 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.internal.Environment;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import org.apache.kafka.connect.header.ConnectHeaders;
 
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class InternalFilterContext extends Environment implements FilterContext 
 
     private ConnectHeaders headers;
 
-    private SourceMetadata metadata;
+    private FileObjectMeta metadata;
 
     private FilterError exception;
 
@@ -56,7 +57,7 @@ public class InternalFilterContext extends Environment implements FilterContext 
     /**
      * Creates a new {@link InternalFilterContext} instance.
      *
-     * @param metadata  the {@link SourceMetadata} instance.
+     * @param metadata  the {@link LocalFileObjectMeta} instance.
      * @param offset    the {@link FileRecordOffset} instance.
      * @param topic     the topic to be used for source-record - may be {@code null}.
      * @param partition the partition to be used for source-record - may be {@code null}.
@@ -66,7 +67,7 @@ public class InternalFilterContext extends Environment implements FilterContext 
      * @param exception the record-source target topic (can be {@code null}).
      * @param variables the variables attached to this context.
      */
-    InternalFilterContext(final SourceMetadata metadata,
+    InternalFilterContext(final FileObjectMeta metadata,
                           final FileRecordOffset offset,
                           final String topic,
                           final Integer partition,
@@ -92,7 +93,7 @@ public class InternalFilterContext extends Environment implements FilterContext 
      * {@inheritDoc}
      */
     @Override
-    public SourceMetadata metadata() {
+    public FileObjectMeta metadata() {
         return metadata;
     }
 

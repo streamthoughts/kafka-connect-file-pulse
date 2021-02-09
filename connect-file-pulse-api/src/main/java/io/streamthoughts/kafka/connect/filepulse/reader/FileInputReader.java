@@ -21,15 +21,16 @@ package io.streamthoughts.kafka.connect.filepulse.reader;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import org.apache.kafka.common.Configurable;
 
+import java.net.URI;
 import java.util.Map;
 
 /**
- * Default interface to read an input file.
+ * A {@code FileInputReader} is the principal class used to read an input file/object.
  */
 public interface FileInputReader extends Configurable, AutoCloseable {
-
 
     /**
      * Configure this class with the given key-value pairs.
@@ -38,6 +39,22 @@ public interface FileInputReader extends Configurable, AutoCloseable {
      */
     @Override
     void configure(final Map<String, ?> configs);
+
+    /**
+     * Gets the metadata for the source object identified by the given {@link URI}.
+     *
+     * @param sourceURI   the {@link URI} of the source object.
+     * @return            a new {@link FileObjectMeta} instance.
+     */
+    FileObjectMeta readMetadata(final URI sourceURI);
+
+    /**
+     * Checks whether the source object identified by the given {@link URI} can be read.
+     *
+     * @param sourceURI   the {@link URI} of the source object.
+     * @return            the {@code true}.
+     */
+    boolean isReadable(final URI sourceURI);
 
     /**
      * Creates a new {@link FileInputIterator} instance.

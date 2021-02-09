@@ -20,9 +20,9 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.MultiRowFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.junit.Assert;
 import org.junit.Before;
@@ -73,7 +73,7 @@ public class MultiRowFilterTest {
         filter = new MultiRowFilter();
         configs = new HashMap<>();
         context = FilterContextBuilder.newBuilder()
-                .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
+                .withMetadata(new GenericFileObjectMeta(null, "", 0L, 0L, null, null))
                 .withOffset(FileRecordOffset.invalid())
                 .build();
     }

@@ -72,11 +72,11 @@ public class AbstractKafkaConnectTest {
     @ClassRule
     public static Network NETWORK = Network.newNetwork();
 
-    private static GenericContainer ZOOKEEPER = createZookeeperContainer();
+    private static final GenericContainer ZOOKEEPER = createZookeeperContainer();
 
-    private static GenericContainer BROKER = createKafkaBrokerContainer();
+    private static final GenericContainer BROKER = createKafkaBrokerContainer();
 
-    private static GenericContainer CONNECT = createConnectWorkerContainer();
+    private static final GenericContainer CONNECT = createConnectWorkerContainer();
 
     @BeforeClass
     public static void startContainers() {

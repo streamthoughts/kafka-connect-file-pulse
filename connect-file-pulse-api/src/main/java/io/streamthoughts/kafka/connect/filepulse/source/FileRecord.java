@@ -23,12 +23,17 @@ import org.apache.kafka.connect.source.SourceRecord;
 import java.util.Map;
 
 /**
- * A source file record.
+ * An object representing a single record value that was read from an input file.
  *
  * @param <T>   the record-value type.
  */
 public interface FileRecord<T> {
 
+    /**
+     * Gets the record value.
+     *
+     * @return  the value.
+     */
     T value();
 
     /**
@@ -43,7 +48,7 @@ public interface FileRecord<T> {
      *
      * @param sourcePartition   the source partition.
      * @param sourceOffset      the source offset.
-     * @param metadata          the {@link SourceMetadata} to be used.
+     * @param metadata          the {@link LocalFileObjectMeta} to be used.
      * @param defaultTopic      the default topic to be used.
      * @param defaultPartition  the default partition to be used.
      *
@@ -52,7 +57,7 @@ public interface FileRecord<T> {
     SourceRecord toSourceRecord(
             final Map<String, ?> sourcePartition,
             final Map<String, ?> sourceOffset,
-            final SourceMetadata metadata,
+            final FileObjectMeta metadata,
             final String defaultTopic,
             final Integer defaultPartition);
 }

@@ -38,7 +38,7 @@ public class Network {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            LOG.error("Cannot retrieve local hostname", e.getMessage());
+            LOG.error("Cannot retrieve local hostname: {}", e.getMessage());
         }
         return DEFAULT_LOCALHOST;
     }

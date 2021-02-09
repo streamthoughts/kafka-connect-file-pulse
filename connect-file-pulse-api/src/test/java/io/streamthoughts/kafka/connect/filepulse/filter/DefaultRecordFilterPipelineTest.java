@@ -23,7 +23,8 @@ import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.Test;
@@ -40,8 +41,8 @@ import static org.junit.Assert.fail;
 
 public class DefaultRecordFilterPipelineTest {
 
-    private SourceMetadata metadata = new SourceMetadata("", "", 0L, 0L, 0L, -1L);
-    private FileContext context = new FileContext(metadata);
+    private final FileObjectMeta source = new GenericFileObjectMeta(null, "", 0L, 0L, null, null);
+    private final FileContext context = new FileContext(source);
 
 
     @Test

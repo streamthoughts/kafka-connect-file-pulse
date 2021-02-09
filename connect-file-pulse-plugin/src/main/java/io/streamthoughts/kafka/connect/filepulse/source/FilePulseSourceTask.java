@@ -22,12 +22,10 @@ import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
-import io.streamthoughts.kafka.connect.filepulse.state.FileStateBackingStore;
+import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
+import io.streamthoughts.kafka.connect.filepulse.state.FileObjectBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreRegistry;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
-import io.streamthoughts.kafka.connect.filepulse.offset.OffsetManager;
-import io.streamthoughts.kafka.connect.filepulse.offset.SimpleOffsetManager;
-import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
@@ -52,9 +50,9 @@ public class FilePulseSourceTask extends SourceTask {
 
     private DefaultFileRecordsPollingConsumer consumer;
 
-    private OffsetManager offsetManager;
+    private SourceOffsetPolicy offsetPolicy;
 
-    private StateBackingStore<SourceFile> store;
+    private StateBackingStore<FileObject> store;
 
     private KafkaFileStateReporter reporter;
 
@@ -75,11 +73,11 @@ public class FilePulseSourceTask extends SourceTask {
     public void start(final Map<String, String> props) {
         LOG.info("Starting task");
         config =  new TaskConfig(props);
-        offsetManager = new SimpleOffsetManager(config.offsetStrategy());
+        offsetPolicy = config.getSourceOffsetPolicy();
         store = getStateStatesBackingStore();
         topic = config.topic();
         consumer = newFileRecordsPollingConsumer();
-        reporter = new KafkaFileStateReporter(store, offsetManager);
+        reporter = new KafkaFileStateReporter(store, offsetPolicy);
         consumer.setFileListener(reporter);
         consumer.addAll(config.files());
     }
@@ -91,16 +89,16 @@ public class FilePulseSourceTask extends SourceTask {
                 context,
                 config.reader(),
                 filter,
-                offsetManager,
+                offsetPolicy,
                 config.isReadCommittedFile());
     }
 
-    private StateBackingStore<SourceFile> getStateStatesBackingStore() {
+    private StateBackingStore<FileObject> getStateStatesBackingStore() {
         final String groupId = config.getTasksReporterGroupId();
         StateBackingStoreRegistry.instance().register(groupId, () -> {
             final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
             final String stateStoreTopic = config.getTaskReporterTopic();
-            FileStateBackingStore store = new FileStateBackingStore(stateStoreTopic, groupId, configs, true);
+            FileObjectBackingStore store = new FileObjectBackingStore(stateStoreTopic, groupId, configs, true);
             store.start();
             return store;
         });
@@ -148,16 +146,16 @@ public class FilePulseSourceTask extends SourceTask {
             reporter.notify(
                 contextToBeCommitted.metadata(),
                 contextToBeCommitted.offset(),
-                SourceStatus.READING);
+                FileObjectStatus.READING);
         }
     }
 
     private SourceRecord buildSourceRecord(final FileContext context,
                                            final FileRecord<?> record) {
-        final SourceMetadata metadata = context.metadata();
+        final FileObjectMeta metadata = context.metadata();
 
-        final Map<String, ?> sourcePartition = offsetManager.toPartitionMap(metadata);
-        final Map<String, ?> sourceOffsets = offsetManager.toOffsetMap(record.offset().toSourceOffset());
+        final Map<String, ?> sourcePartition = offsetPolicy.toPartitionMap(metadata);
+        final Map<String, ?> sourceOffsets = offsetPolicy.toOffsetMap(record.offset().toSourceOffset());
 
         return record.toSourceRecord(
             sourcePartition,

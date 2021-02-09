@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import io.streamthoughts.kafka.connect.filepulse.scanner.FileSystemScanner;
+import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemScanner;
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.connect.connector.ConnectorContext;
 import org.slf4j.Logger;

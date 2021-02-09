@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
 
 public class FileCleanupPolicyResultSet {
 
-    private final Collection<KeyValuePair<SourceFile, FileCleanupPolicyResult>> resultSet;
+    private final Collection<KeyValuePair<FileObject, FileCleanupPolicyResult>> resultSet;
 
     /**
      * Creates a new {@link FileCleanupPolicyResultSet} instance.
@@ -38,15 +38,15 @@ public class FileCleanupPolicyResultSet {
     }
 
 
-    public void add(final SourceFile source, FileCleanupPolicyResult result) {
+    public void add(final FileObject source, FileCleanupPolicyResult result) {
         Objects.requireNonNull(source, "source cannot be null");
         Objects.requireNonNull(result, "result cannot be null");
         resultSet.add(KeyValuePair.of(source, result));
     }
 
-    public void forEach(final BiConsumer<? super SourceFile, FileCleanupPolicyResult> action) {
+    public void forEach(final BiConsumer<? super FileObject, FileCleanupPolicyResult> action) {
         Objects.requireNonNull(action);
-        for (KeyValuePair<SourceFile, FileCleanupPolicyResult> kv : resultSet) {
+        for (KeyValuePair<FileObject, FileCleanupPolicyResult> kv : resultSet) {
             action.accept(kv.key, kv.value);
         }
     }

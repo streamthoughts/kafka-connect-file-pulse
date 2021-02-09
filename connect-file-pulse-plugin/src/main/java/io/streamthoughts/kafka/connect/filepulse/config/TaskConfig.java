@@ -18,10 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
@@ -123,8 +125,8 @@ public class TaskConfig extends CommonConfig {
         return this.getString(INTERNAL_REPORTER_GROUP_ID);
     }
 
-    public List<String> files() {
-        return this.getList(FILE_INPUT_PATHS_CONFIG);
+    public List<URI> files() {
+        return this.getList(FILE_INPUT_PATHS_CONFIG).stream().map(URI::create).collect(Collectors.toList());
     }
 
     public boolean isReadCommittedFile() {

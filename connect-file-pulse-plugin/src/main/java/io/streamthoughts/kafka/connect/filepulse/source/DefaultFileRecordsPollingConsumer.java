@@ -18,7 +18,18 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import java.io.File;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
+import io.streamthoughts.kafka.connect.filepulse.filter.FilterException;
+import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
+import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
+import org.apache.kafka.connect.source.SourceTaskContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URI;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,18 +37,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
-import io.streamthoughts.kafka.connect.filepulse.filter.FilterException;
-import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
-import io.streamthoughts.kafka.connect.filepulse.offset.OffsetManager;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
-import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-import org.apache.kafka.connect.source.SourceTaskContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static io.streamthoughts.kafka.connect.filepulse.source.FileInputIterable.isAlreadyCompleted;
 
@@ -52,7 +51,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
     private final boolean ignoreCommittedOffsets;
     private final FileInputReader reader;
     private final RecordFilterPipeline<FileRecord<TypedStruct>> pipeline;
-    private final OffsetManager offsetManager;
+    private final SourceOffsetPolicy offsetPolicy;
     private StateListener listener;
     private final SourceTaskContext taskContext;
     private final AtomicBoolean closed = new AtomicBoolean(false);
@@ -67,23 +66,23 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      * @param taskContext               the current task context.
      * @param reader                    the reader to be used.
      * @param pipeline                  the filter pipeline to apply on each records.
-     * @param offsetManager             the startPosition manager.
+     * @param offsetPolicy              the source offset/partition policy.
      * @param ignoreCommittedOffsets    flag to indicate if committed offsets should be ignored.
      */
     DefaultFileRecordsPollingConsumer(final SourceTaskContext taskContext,
                                       final FileInputReader reader,
                                       final RecordFilterPipeline<FileRecord<TypedStruct>> pipeline,
-                                      final OffsetManager offsetManager,
+                                      final SourceOffsetPolicy offsetPolicy,
                                       final boolean ignoreCommittedOffsets) {
         this.queue = new LinkedBlockingQueue<>();
         this.ignoreCommittedOffsets = ignoreCommittedOffsets;
         this.reader = reader;
         this.pipeline = pipeline;
-        this.offsetManager = offsetManager;
+        this.offsetPolicy = offsetPolicy;
         this.taskContext = taskContext;
     }
 
-    void addAll(final List<String> files) {
+    void addAll(final List<URI> files) {
         if (isClose()) {
             throw new IllegalStateException("Can't add new input files, consumer is closed");
         }
@@ -98,8 +97,8 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
         queue.addAll(iterables);
     }
 
-    private Function<String, FileInputIterable> toIterable() {
-        return file -> new FileInputIterable(new File(file), reader);
+    private Function<URI, FileInputIterable> toIterable() {
+        return uri -> new FileInputIterable(uri, reader);
     }
 
     private Predicate<FileInputIterable> excludeUnreadableAndNotify() {
@@ -108,7 +107,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             if (!valid) {
                 LOG.error(
                     "Invalid source, file doesn't exist or is not readable - ignore : {}",
-                    it.file().getAbsolutePath());
+                    it.metadata().stringURI());
                 listener.onInvalid(new FileContext(it.metadata()));
             }
             return valid;
@@ -136,7 +135,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      * {@inheritDoc}
      */
     @Override
-    public void seekTo(final SourceOffset offset) {
+    public void seekTo(final FileObjectOffset offset) {
         throw new UnsupportedOperationException();
     }
 
@@ -144,7 +143,6 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public RecordsIterable<FileRecord<TypedStruct>> next() {
         if (queue.isEmpty()) return RecordsIterable.empty();
 
@@ -251,28 +249,28 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             final FileInputIterable iterable
     ) {
         FileInputIterator<FileRecord<TypedStruct>> newIterator = null;
-        final SourceMetadata metadata = iterable.metadata();
+        final FileObjectMeta metadata = iterable.metadata();
         try {
             // Re-check if the file is still valid.
             if (!iterable.isValid()) {
                 LOG.error(
                     "File does not exist or is not readable, skip entry and continue '{}'",
-                    metadata.absolutePath());
+                    metadata.uri());
                 deleteFileQueueAndInvokeListener(new FileContext(metadata), null);
                 return null;
             }
 
-            final SourceOffset committedOffset;
+            final FileObjectOffset committedOffset;
             if (!ignoreCommittedOffsets) {
-                committedOffset = offsetManager.getOffsetFor(context, metadata).orElse(SourceOffset.empty());
+                committedOffset = offsetPolicy.getOffsetFor(context, metadata).orElse(FileObjectOffset.empty());
             } else {
-                committedOffset = SourceOffset.empty();
+                committedOffset = FileObjectOffset.empty();
             }
 
             if (!ignoreCommittedOffsets && isAlreadyCompleted(committedOffset, metadata)) {
                 LOG.warn(
                     "Detected source file already completed, skip entry and continue '{}'",
-                    metadata.absolutePath());
+                    metadata.uri());
                 deleteFileQueueAndInvokeListener(new FileContext(metadata, committedOffset), null);
             } else {
                 newIterator = iterable.open(committedOffset);

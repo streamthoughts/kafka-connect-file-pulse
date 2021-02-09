@@ -53,7 +53,7 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
     @Override
     public SourceRecord toSourceRecord(final Map<String, ?> sourcePartition,
                                        final Map<String, ?> sourceOffset,
-                                       final SourceMetadata metadata,
+                                       final FileObjectMeta metadata,
                                        final String defaultTopic,
                                        final Integer defaultPartition) {
         return internalSourceRecordBuilder.build(

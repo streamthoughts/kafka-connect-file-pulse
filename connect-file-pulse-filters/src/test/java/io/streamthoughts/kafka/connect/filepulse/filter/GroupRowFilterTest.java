@@ -21,7 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import io.streamthoughts.kafka.connect.filepulse.config.GroupRowFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +53,7 @@ public class GroupRowFilterTest {
         inputs.addAll(generate(KEY_2, KEY_2, 2));
 
         context = FilterContextBuilder.newBuilder()
-                .withMetadata(new SourceMetadata("", "", 0L, 0L, 0L, -1L))
+                .withMetadata(new GenericFileObjectMeta(null, "", 0L, 0L, null, null))
                 .withOffset(FileRecordOffset.invalid())
                 .build();
     }

@@ -18,13 +18,14 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 
 import java.util.List;
 
 /**
  * Policy for cleaning a batch of completed source files.
  */
-public interface BatchFileCleanupPolicy extends GenericFileCleanupPolicy<List<SourceFile>,FileCleanupPolicyResultSet> {
+public interface BatchFileCleanupPolicy
+        extends GenericFileCleanupPolicy<List<FileObject>,FileCleanupPolicyResultSet> {
 
 }

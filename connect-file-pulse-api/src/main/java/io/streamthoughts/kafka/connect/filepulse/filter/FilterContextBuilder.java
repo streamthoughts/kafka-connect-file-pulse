@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.TimestampedRecordOffset;
 import org.apache.kafka.connect.header.ConnectHeaders;
 
@@ -31,7 +31,7 @@ import java.util.Map;
 public class FilterContextBuilder {
 
     private FilterError exception;
-    private SourceMetadata metadata;
+    private FileObjectMeta metadata;
     private FileRecordOffset offset;
     private String topic;
     private Integer partition;
@@ -98,7 +98,7 @@ public class FilterContextBuilder {
         return this;
     }
 
-    FilterContextBuilder withMetadata(final SourceMetadata metadata) {
+    FilterContextBuilder withMetadata(final FileObjectMeta metadata) {
         this.metadata = metadata;
         return this;
     }

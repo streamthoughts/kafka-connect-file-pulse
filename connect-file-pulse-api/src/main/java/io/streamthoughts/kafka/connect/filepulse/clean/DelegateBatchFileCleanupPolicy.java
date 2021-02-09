@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 
 import java.util.List;
 import java.util.Map;
@@ -50,9 +50,9 @@ public class DelegateBatchFileCleanupPolicy implements BatchFileCleanupPolicy {
      * {@inheritDoc}
      */
     @Override
-    public FileCleanupPolicyResultSet apply(final List<SourceFile> sources) {
+    public FileCleanupPolicyResultSet apply(final List<FileObject> sources) {
         FileCleanupPolicyResultSet rs = new FileCleanupPolicyResultSet();
-        for (SourceFile source : sources) {
+        for (FileObject source : sources) {
             if (delegate.apply(source)) {
                 rs.add(source, FileCleanupPolicyResult.SUCCEED);
             } else {

@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.source.SourceFile;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class LogCleanupPolicy implements FileCleanupPolicy {
     /**
      * {@inheritDoc}
      */
-    public boolean onSuccess(final SourceFile source) {
+    public boolean onSuccess(final FileObject source) {
         LOG.info("Success : {}", source);
         return true;
     }
@@ -50,7 +50,7 @@ public class LogCleanupPolicy implements FileCleanupPolicy {
     /**
      * {@inheritDoc}
      */
-    public boolean onFailure(final SourceFile source) {
+    public boolean onFailure(final FileObject source) {
         LOG.info("Failure : {}", source);
         return true;
     }

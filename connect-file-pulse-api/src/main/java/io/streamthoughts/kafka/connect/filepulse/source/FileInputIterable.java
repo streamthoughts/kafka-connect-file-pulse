@@ -19,27 +19,26 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-
-import java.io.File;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<TypedStruct>>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileInputIterable.class);
 
-    private final File file;
+    private final URI source;
     private final FileInputReader reader;
-    private SourceMetadata metadata;
     private FileInputIterator<FileRecord<TypedStruct>> iterator;
+    private final FileObjectMeta metadata;
 
-    private AtomicBoolean isOpen = new AtomicBoolean(false);
+    private final AtomicBoolean isOpen = new AtomicBoolean(false);
 
     /**
      * Creates a new {@link FileInputIterable} instance.
@@ -47,12 +46,12 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<Ty
      * @param source the input source file.
      * @param reader the input source reader used to create a new {@link FileInputIterator}.
      */
-    FileInputIterable(final File source, final FileInputReader reader) {
+    FileInputIterable(final URI source, final FileInputReader reader) {
         Objects.requireNonNull(source, "source can't be null");
         Objects.requireNonNull(reader, "reader can't be null");
-        this.file = source;
+        this.source = source;
         this.reader = reader;
-        this.metadata = SourceMetadata.fromFile(source);
+        this.metadata = reader.readMetadata(source);
     }
 
     /**
@@ -61,7 +60,7 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<Ty
      * @param offset    the offset to seek the iterator.
      * @return a new {@link FileInputIterator} instance.
      */
-    public FileInputIterator<FileRecord<TypedStruct>> open(final SourceOffset offset) {
+    public FileInputIterator<FileRecord<TypedStruct>> open(final FileObjectOffset offset) {
         LOG.info("Opening new iterator for source : {}", metadata);
         iterator = reader.newIterator(new FileContext(metadata));
         iterator.seekTo(offset);
@@ -69,7 +68,7 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<Ty
         return iterator;
     }
 
-    public SourceMetadata metadata() {
+    public FileObjectMeta metadata() {
         return metadata;
     }
 
@@ -87,11 +86,7 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<Ty
     }
 
     boolean isValid() {
-        return file.exists() && file.canRead();
-    }
-
-    public File file() {
-        return file;
+        return reader.isReadable(source);
     }
 
     private void checkState() {
@@ -102,15 +97,15 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<Ty
 
     void close() {
         if (isOpen.get()) {
-            LOG.debug("Closing file {} ", file.getAbsolutePath());
+            LOG.debug("Closing iterator for source {} ", metadata().uri());
             iterator.close();
         }
     }
 
-    static boolean isAlreadyCompleted(final SourceOffset committedOffset,
-                                      final SourceMetadata metadata) {
+    static boolean isAlreadyCompleted(final FileObjectOffset committedOffset,
+                                      final FileObjectMeta metadata) {
         return committedOffset != null &&
-                committedOffset.position() >= metadata.size();
+                committedOffset.position() >= metadata.contentLength();
     }
 
 }

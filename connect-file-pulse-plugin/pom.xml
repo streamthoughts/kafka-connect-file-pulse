@@ -32,7 +32,7 @@
     <artifactId>kafka-connect-file-pulse-plugin</artifactId>
 
     <name>Kafka Connect Source File Pulse Plugin</name>
-    <description>Connect File Pulse is a multi-purpose source connector for streaming files from a local filesystem to Kafka.</description>
+    <description>Connect File Pulse is a multi-purpose source connector for streaming files from filesystems to Kafka.</description>
 
     <organization>
         <name>streamthoughts</name>
@@ -202,13 +202,19 @@
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-file-pulse-api</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-file-pulse-filters</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>kafka-connect-filepulse-local-fs</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -224,24 +230,8 @@
         </dependency>
 
         <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>kafka-connect-avro-converter</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>Saxon-HE</artifactId>
         </dependency>
 
         <!-- START test dependencies-->

@@ -22,13 +22,11 @@ import io.streamthoughts.kafka.connect.filepulse.Version;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
 import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
-import io.streamthoughts.kafka.connect.filepulse.offset.OffsetStrategy;
-import io.streamthoughts.kafka.connect.filepulse.offset.SimpleOffsetManager;
-import io.streamthoughts.kafka.connect.filepulse.scanner.FileSystemScanner;
-import io.streamthoughts.kafka.connect.filepulse.scanner.LocalFileSystemScanner;
-import io.streamthoughts.kafka.connect.filepulse.scanner.local.FSDirectoryWalker;
-import io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.CompositeFileListFilter;
-import io.streamthoughts.kafka.connect.filepulse.state.FileStateBackingStore;
+import io.streamthoughts.kafka.connect.filepulse.fs.CompositeFileListFilter;
+import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileSystemScanner;
+import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
+import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemScanner;
+import io.streamthoughts.kafka.connect.filepulse.state.FileObjectBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreRegistry;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import org.apache.kafka.common.config.ConfigDef;
@@ -39,11 +37,13 @@ import org.apache.kafka.connect.source.SourceConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * The FilePulseSourceConnector.
@@ -98,23 +98,22 @@ public class FilePulseSourceConnector extends SourceConnector {
         StateBackingStoreRegistry.instance().register(connectorGroupName, () -> {
             final String stateStoreTopic = config.getTaskReporterTopic();
             final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
-            return new FileStateBackingStore(stateStoreTopic, connectorGroupName, configs, false);
+            return new FileObjectBackingStore(stateStoreTopic, connectorGroupName, configs, false);
         });
 
-        final FSDirectoryWalker directoryScanner = this.config.directoryScanner();
-        directoryScanner.setFilter(new CompositeFileListFilter(config.filters()));
+        final FileSystemListing directoryScanner = this.config.fileSystemListing();
+        directoryScanner.setFilter(new CompositeFileListFilter(config.fileSystemListingFilter()));
 
         final FileCleanupPolicy cleaner = config.cleanupPolicy();
-        final OffsetStrategy strategy = config.offsetStrategy();
+        final SourceOffsetPolicy offsetPolicy = config.getSourceOffsetPolicy();
 
-        final StateBackingStore<SourceFile> store = StateBackingStoreRegistry.instance().get(connectorGroupName);
+        final StateBackingStore<FileObject> store = StateBackingStoreRegistry.instance().get(connectorGroupName);
         try {
-            scanner = new LocalFileSystemScanner(
-                config.scanDirectoryPath(),
+            scanner = new DefaultFileSystemScanner(
                 config.allowTasksReconfigurationAfterTimeoutMs(),
                 directoryScanner,
                 cleaner,
-                new SimpleOffsetManager(strategy),
+                offsetPolicy,
                 store);
 
             fsMonitorThread = new FileSystemMonitorThread(context, scanner, config.scanInternalMs());
@@ -148,7 +147,11 @@ public class FilePulseSourceConnector extends SourceConnector {
     @Override
     public List<Map<String, String>> taskConfigs(int maxTasks) {
         LOG.info("Creating new tasks configurations (maxTasks={})", maxTasks);
-        List<List<String>> groupFiles = scanner.partitionFilesAndGet(maxTasks);
+        List<List<String>> groupFiles = scanner
+            .partitionFilesAndGet(maxTasks)
+            .stream()
+            .map(l -> l.stream().map(URI::toString).collect(Collectors.toList()))
+            .collect(Collectors.toList());
 
         List<Map<String, String>> taskConfigs = new ArrayList<>(groupFiles.size());
         if (!groupFiles.isEmpty()) {

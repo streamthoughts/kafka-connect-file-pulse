@@ -65,5 +65,5 @@ public abstract class TimestampedRecordOffset implements FileRecordOffset {
      * {@inheritDoc}
      */
     @Override
-    public abstract SourceOffset toSourceOffset();
+    public abstract FileObjectOffset toSourceOffset();
 }

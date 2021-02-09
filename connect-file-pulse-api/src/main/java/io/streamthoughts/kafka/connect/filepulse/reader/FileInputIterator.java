@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
-import io.streamthoughts.kafka.connect.filepulse.source.SourceOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 
 import java.util.Iterator;
@@ -40,7 +40,7 @@ public interface FileInputIterator<T> extends Iterator<RecordsIterable<T>> {
      * Seeks iterator to the specified startPosition.
      * @param offset  the position from which to seek the iterator.
      */
-    void seekTo(final SourceOffset offset);
+    void seekTo(final FileObjectOffset offset);
 
     /**
      * Reads the next records from the iterator file.

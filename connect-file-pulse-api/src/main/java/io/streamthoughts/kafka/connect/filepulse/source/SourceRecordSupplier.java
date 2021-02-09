@@ -33,7 +33,7 @@ public interface SourceRecordSupplier {
      *
      * @param sourcePartition   the source partition.
      * @param sourceOffset      the source offset.
-     * @param metadata          the {@link SourceMetadata} to be used.
+     * @param metadata          the {@link LocalFileObjectMeta} to be used.
      * @param defaultTopic      the default topic to be used.
      * @param defaultPartition  the default partition to be used.
      * @param headers           the {@link ConnectHeaders} to be used.
@@ -42,7 +42,7 @@ public interface SourceRecordSupplier {
      */
     SourceRecord get(final Map<String, ?> sourcePartition,
                      final Map<String, ?> sourceOffset,
-                     final SourceMetadata metadata,
+                     final FileObjectMeta metadata,
                      final String defaultTopic,
                      final Integer defaultPartition,
                      final ConnectHeaders headers);

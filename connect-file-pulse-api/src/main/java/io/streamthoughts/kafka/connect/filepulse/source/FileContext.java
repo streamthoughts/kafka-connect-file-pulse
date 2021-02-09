@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import java.io.File;
 import java.util.Objects;
 
 /**
@@ -26,17 +25,17 @@ import java.util.Objects;
  */
 public class FileContext {
 
-    private final SourceMetadata metadata;
+    private final FileObjectMeta metadata;
 
-    private final SourceOffset offset;
+    private final FileObjectOffset offset;
 
     /**
      * Creates a new {@link FileContext} instance.
      *
      * @param metadata  the source metadata.
      */
-    public FileContext(final SourceMetadata metadata) {
-        this(metadata, SourceOffset.empty());
+    public FileContext(final FileObjectMeta metadata) {
+        this(metadata, FileObjectOffset.empty());
     }
 
     /**
@@ -45,8 +44,8 @@ public class FileContext {
      * @param metadata  the source metadata.
      * @param offset    teh source startPosition.
      */
-    public FileContext(final SourceMetadata metadata,
-                       final SourceOffset offset) {
+    public FileContext(final FileObjectMeta metadata,
+                       final FileObjectOffset offset) {
         Objects.requireNonNull(metadata, "metadata can't be null");
         Objects.requireNonNull(offset, "startPosition can't be null");
         this.metadata = metadata;
@@ -54,20 +53,11 @@ public class FileContext {
     }
 
     /**
-     * Returns this file.
-     *
-     * @return a new {@link File} instance.
-     */
-    public File file() {
-        return new File(metadata.absolutePath());
-    }
-
-    /**
      * Returns the metadata for this file.
      *
-     * @return the {@link SourceMetadata} instance.
+     * @return the {@link FileObjectMeta} instance.
      */
-    public SourceMetadata metadata() {
+    public FileObjectMeta metadata() {
         return metadata;
     }
 
@@ -76,11 +66,11 @@ public class FileContext {
      *
      * @return the {@link FileRecordOffset} instance.
      */
-    public SourceOffset offset() {
+    public FileObjectOffset offset() {
         return offset;
     }
     
-    public FileContext withOffset(final SourceOffset offset) {
+    public FileContext withOffset(final FileObjectOffset offset) {
         return new FileContext(metadata, offset);
     }
 

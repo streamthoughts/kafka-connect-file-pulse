@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 /**
- *
+ * An object representing the position of a {@link FileRecord}.
  */
 public interface FileRecordOffset {
 
@@ -33,6 +33,6 @@ public interface FileRecordOffset {
         };
     }
 
-    SourceOffset toSourceOffset();
+    FileObjectOffset toSourceOffset();
 
 }

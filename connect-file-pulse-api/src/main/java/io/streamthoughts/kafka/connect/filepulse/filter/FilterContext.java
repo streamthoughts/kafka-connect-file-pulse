@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import org.apache.kafka.connect.header.ConnectHeaders;
 
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public interface FilterContext {
 
-    SourceMetadata metadata();
+    FileObjectMeta metadata();
 
     FileRecordOffset offset();
 

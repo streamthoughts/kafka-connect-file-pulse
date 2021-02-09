@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceMetadata;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +102,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
     }
 
     private FilterContext getContextFor(final FileRecord<TypedStruct> record,
-                                        final SourceMetadata metadata) {
+                                        final FileObjectMeta metadata) {
         return FilterContextBuilder
             .newBuilder()
             .withMetadata(metadata)

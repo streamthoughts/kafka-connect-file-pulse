@@ -117,9 +117,9 @@ public class LocalFileObjectMeta extends GenericFileObjectMeta {
                 byte[] bytes = readStartingBytesFrom(f, 4096);
                 crc32.update(bytes);
                 crc32.update(longToBytes(f.length()));
-                return new ContentDigest(crc32.getValue(), "crc32");
+                return new ContentDigest(String.valueOf(crc32.getValue()), "crc32");
             }
-            return new ContentDigest(-1, "crc32");
+            return new ContentDigest("", "crc32");
         } catch (IOException e) {
             throw new ConnectFilePulseException(
                     "Error while computing CRC32 hash for file : " + f.getName() + " - " + e.getLocalizedMessage());

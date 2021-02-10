@@ -37,7 +37,6 @@ public class FileObjectSerdeTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-
     @Test
     public void should_serialize_and_deserialize_given_valid_object() throws IOException {
         FileObjectSerde serde = new FileObjectSerde();

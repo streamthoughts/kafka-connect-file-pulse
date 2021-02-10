@@ -37,7 +37,7 @@ public class DefaultOffsetPolicyTest {
             "test",
             0L,
             123L,
-            new FileObjectMeta.ContentDigest(789L, "dummy"),
+            new FileObjectMeta.ContentDigest("789", "dummy"),
             Collections.singletonMap(LocalFileObjectMeta.SYSTEM_FILE_INODE_META_KEY, "456L")
     );
 
@@ -67,7 +67,7 @@ public class DefaultOffsetPolicyTest {
     public void should_get_offset_based_on_hash() {
         Map<String, Object> result = new DefaultOffsetPolicy("HASH").toPartitionMap(metadata);
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals(789L, result.get("hash"));
+        Assert.assertEquals("789", result.get("hash"));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class DefaultOffsetPolicyTest {
         Map<String, Object> result = new DefaultOffsetPolicy("PATH+HASH").toPartitionMap(metadata);
         Assert.assertEquals(2, result.size());
         Assert.assertEquals("/tmp/path", result.get("path"));
-        Assert.assertEquals(789L, result.get("hash"));
+        Assert.assertEquals("789", result.get("hash"));
     }
 
     @Test

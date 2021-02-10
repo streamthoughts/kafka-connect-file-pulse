@@ -81,7 +81,7 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
         ConnectHeaders headers = new ConnectHeaders();
         headers.addString("connect.file.name", name());
         headers.addString("connect.file.uri", uri().toString());
-        headers.addLong("connect.file.hash.digest", contentDigest().digest());
+        headers.addString("connect.file.hash.digest", contentDigest().digest());
         headers.addString("connect.file.hash.algorithm", contentDigest().algorithm());
         headers.addLong("connect.file.contentLength", contentLength());
         headers.addLong("connect.file.lastModified", lastModified());
@@ -96,18 +96,18 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
     }
 
     class ContentDigest {
-        private final long digest;
+        private final String digest;
         private final String algorithm;
 
         @JsonCreator
-        public ContentDigest(@JsonProperty("digest") final long digest,
+        public ContentDigest(@JsonProperty("digest") final String digest,
                              @JsonProperty("algorithm") final String algorithm) {
-            this.digest = digest;
+            this.digest = Objects.requireNonNull(digest, "digest should not be null");;
             this.algorithm = Objects.requireNonNull(algorithm, "algorithm should not be null");
         }
 
         @JsonProperty("digest")
-        public long digest() {
+        public String digest() {
             return digest;
         }
 
@@ -121,7 +121,7 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
             if (this == o) return true;
             if (!(o instanceof ContentDigest)) return false;
             ContentDigest that = (ContentDigest) o;
-            return digest == that.digest &&
+            return Objects.equals(digest, that.digest) &&
                     Objects.equals(algorithm, that.algorithm);
         }
 

@@ -47,10 +47,8 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<Ty
      * @param reader the input source reader used to create a new {@link FileInputIterator}.
      */
     FileInputIterable(final URI source, final FileInputReader reader) {
-        Objects.requireNonNull(source, "source can't be null");
-        Objects.requireNonNull(reader, "reader can't be null");
-        this.source = source;
-        this.reader = reader;
+        this.source = Objects.requireNonNull(source, "source can't be null");;
+        this.reader = Objects.requireNonNull(reader, "reader can't be null");;
         this.metadata = reader.readMetadata(source);
     }
 
@@ -97,15 +95,13 @@ public class FileInputIterable implements Iterable<RecordsIterable<FileRecord<Ty
 
     void close() {
         if (isOpen.get()) {
-            LOG.debug("Closing iterator for source {} ", metadata().uri());
+            LOG.info("Closing iterator for source {} ", metadata().uri());
             iterator.close();
         }
     }
 
-    static boolean isAlreadyCompleted(final FileObjectOffset committedOffset,
-                                      final FileObjectMeta metadata) {
-        return committedOffset != null &&
-                committedOffset.position() >= metadata.contentLength();
+    static boolean isAlreadyCompleted(final FileObjectOffset committedOffset, final FileObjectMeta metadata) {
+        return committedOffset != null && committedOffset.position() >= metadata.contentLength();
     }
 
 }

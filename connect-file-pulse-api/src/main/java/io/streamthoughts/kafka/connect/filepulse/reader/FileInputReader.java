@@ -38,7 +38,9 @@ public interface FileInputReader extends Configurable, AutoCloseable {
      * @param configs the reader configuration.
      */
     @Override
-    void configure(final Map<String, ?> configs);
+    default void configure(final Map<String, ?> configs) {
+
+    }
 
     /**
      * Gets the metadata for the source object identified by the given {@link URI}.

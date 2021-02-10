@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.offset.DefaultOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
-import io.streamthoughts.kafka.connect.filepulse.fs.local.reader.RowFileInputReader;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.AbstractConfig;
@@ -69,7 +69,7 @@ public class CommonConfig extends AbstractConfig {
     static ConfigDef getConf() {
         return new ConfigDef()
                 .define(FILE_READER_CLASS_CONFIG, ConfigDef.Type.CLASS,
-                        RowFileInputReader.class, ConfigDef.Importance.HIGH,  FILE_READER_CLASS_CONFIG_DOC)
+                        LocalRowFileInputReader.class, ConfigDef.Importance.HIGH,  FILE_READER_CLASS_CONFIG_DOC)
 
                 .define(OUTPUT_TOPIC_CONFIG, ConfigDef.Type.STRING,
                         ConfigDef.Importance.HIGH, OUTPUT_TOPIC_DOC)

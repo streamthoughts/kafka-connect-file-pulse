@@ -103,7 +103,7 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
         public ContentDigest(@JsonProperty("digest") final String digest,
                              @JsonProperty("algorithm") final String algorithm) {
             this.digest = Objects.requireNonNull(digest, "digest should not be null");;
-            this.algorithm = Objects.requireNonNull(algorithm, "algorithm should not be null");
+            this.algorithm = Objects.requireNonNull(algorithm, "algorithm should not be null").toUpperCase();
         }
 
         @JsonProperty("digest")
@@ -132,10 +132,10 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
 
         @Override
         public String toString() {
-            return "ContentDigest{" +
+            return "[" +
                     "digest=" + digest +
                     ", algorithm='" + algorithm + '\'' +
-                    '}';
+                    ']';
         }
     }
 }

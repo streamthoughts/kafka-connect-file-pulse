@@ -21,7 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileListFilter;
-import io.streamthoughts.kafka.connect.filepulse.fs.local.LocalFSDirectoryListing;
+import io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Collections;

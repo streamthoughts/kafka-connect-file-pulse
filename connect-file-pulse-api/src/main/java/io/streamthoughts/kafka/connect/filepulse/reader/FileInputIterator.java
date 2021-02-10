@@ -28,7 +28,7 @@ import java.util.Iterator;
  *
  * @param <T> type of value.
  */
-public interface FileInputIterator<T> extends Iterator<RecordsIterable<T>> {
+public interface FileInputIterator<T> extends Iterator<RecordsIterable<T>>, AutoCloseable {
 
     /**
      * Gets the iterator context.

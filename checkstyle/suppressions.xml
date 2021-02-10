@@ -41,21 +41,10 @@
  */
  -->
     <suppress checks="LineLength" files="RecordFilter.java"/>
-    <suppress checks="LineLength" files="CommonFilterConfig.java"/>
-    <suppress checks="LineLength" files="DelimitedRowFilterConfig.java"/>
-    <suppress checks="LineLength" files="GroupRowFilterConfig.java"/>
     <suppress checks="LineLength" files="GrokPatternCompiler.java"/>
-    <suppress checks="LineLength" files="ConvertFilterConfig.java"/>
-    <suppress checks="LineLength" files="RenameFilterConfig.java"/>
-    <suppress checks="LineLength" files="GrokFilterConfig.java"/>
-    <suppress checks="LineLength" files="SplitFilterConfig.java"/>
-    <suppress checks="LineLength" files="RowFileInputReaderConfig.java"/>
-    <suppress checks="LineLength" files="ConnectorConfig.java"/>
-    <suppress checks="LineLength" files="TaskConfig.java"/>
-    <suppress checks="LineLength" files="CommonConfig.java"/>
     <suppress checks="LineLength" files="DefaultFileSystemScanner.java"/>
     <suppress checks="LineLength" files="ComposeOffsetStrategy.java"/>
-    <suppress checks="LineLength" files="DefaultOffsetPolicyConfig.java"/>
+    <suppress checks="LineLength" files=".*Config.java"/>
     <!-- Those classes are copy from kafka-connect api-->
     <suppress checks="LineLength" files="KafkaBasedLog.java"/>
     <suppress checks="NPathComplexity" files="KafkaBasedLog.java"/>

@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.internal;
 
+import java.util.Objects;
+
 public class StringUtils {
 
     /**
@@ -34,5 +36,9 @@ public class StringUtils {
                     ((ch-'A')|('Z'-ch)) < 0)) &&
                 (ch < Character.MIN_HIGH_SURROGATE ||
                         ch > Character.MAX_LOW_SURROGATE);
+    }
+
+    public static boolean isNotBlank(final String string) {
+        return !(Objects.isNull(string) || string.isBlank());
     }
 }

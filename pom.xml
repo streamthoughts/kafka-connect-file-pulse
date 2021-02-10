@@ -83,8 +83,6 @@
         <confluent.maven.repo>http://packages.confluent.io/maven/</confluent.maven.repo>
         <io.confluent.version>6.0.0</io.confluent.version>
         <org.apache.kafka.version>2.6.0</org.apache.kafka.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <junit.version>4.13.1</junit.version>
         <kafka.connect.maven.plugin.version>0.11.3</kafka.connect.maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -110,17 +108,11 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <inherited>true</inherited>
+                <version>3.8.1</version>
                 <configuration>
-                    <compilerArgs>
-                        <arg>-Xlint:all</arg>
-                        <!--<arg>-Werror</arg>-->
-                    </compilerArgs>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <release>11</release>
                 </configuration>
             </plugin>
 

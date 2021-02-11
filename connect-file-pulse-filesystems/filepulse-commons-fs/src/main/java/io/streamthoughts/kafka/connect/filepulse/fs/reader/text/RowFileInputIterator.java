@@ -49,7 +49,7 @@ public class RowFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
     /**
      * The minimum number of lines to read before returning records.
      */
-    private int minNumReadRecords = 0;
+    private int minNumReadRecords = 1;
 
     private long offsetLines = 0L;
 

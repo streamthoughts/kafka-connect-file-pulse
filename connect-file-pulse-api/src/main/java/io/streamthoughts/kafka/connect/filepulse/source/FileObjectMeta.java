@@ -81,12 +81,18 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
         ConnectHeaders headers = new ConnectHeaders();
         headers.addString("connect.file.name", name());
         headers.addString("connect.file.uri", uri().toString());
-        headers.addString("connect.file.hash.digest", contentDigest().digest());
-        headers.addString("connect.file.hash.algorithm", contentDigest().algorithm());
         headers.addLong("connect.file.contentLength", contentLength());
         headers.addLong("connect.file.lastModified", lastModified());
-        userDefinedMetadata().forEach( (k, v) -> headers.addString("connect.file." + k, v.toString()));
+        userDefinedMetadata().forEach( (k, v) -> {
+            if (v != null) {
+                headers.addString("connect.file." + k, v.toString());
+            }
+        });
         headers.addString("connect.task.hostname", Network.HOSTNAME);
+        if (contentDigest() != null) {
+            headers.addString("connect.file.hash.digest", contentDigest().digest());
+            headers.addString("connect.file.hash.algorithm", contentDigest().algorithm());
+        }
         return headers;
     }
 

@@ -100,7 +100,9 @@ public class DelegateFileInputIterator implements FileInputIterator<FileRecord<T
      */
     @Override
     public FileContext context() {
-        checkIsOpen();
+        if (iterator == null) {
+            throw new IllegalStateException("Iterator is not initialized for URI: " + objectURI);
+        }
         return iterator.context();
     }
 

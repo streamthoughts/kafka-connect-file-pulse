@@ -16,49 +16,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
+package io.streamthoughts.kafka.connect.filepulse.storage.aws.s3.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.Storage;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.avro.AvroDataStreamIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIteratorFactory;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
 import java.net.URI;
-import java.util.Objects;
 
-public class BytesArrayInputIteratorFactory implements FileInputIteratorFactory {
-
-    private final Storage storage;
-    private final IteratorManager iteratorManager;
-
-    /**
-     * Creates a new {@link BytesArrayInputIteratorFactory} instance.
-     *
-     * @param storage   the {@link Storage}.
-     */
-    public BytesArrayInputIteratorFactory(final Storage storage,
-                                          final IteratorManager iteratorManager) {
-        this.storage = Objects.requireNonNull(storage, "storage should not be null");
-        this.iteratorManager = Objects.requireNonNull(iteratorManager, "iteratorManager should not be null");
-    }
+/**
+ * The {@link AmazonS3AvroFileInputReader} can be used to created records from an AVRO file loaded from Amazon S3.
+ */
+public class AmazonS3AvroFileInputReader extends BaseAmazonS3InputReader {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public FileInputIterator<FileRecord<TypedStruct>> newIterator(final URI objectURI) {
+    protected FileInputIterator<FileRecord<TypedStruct>> newIterator(final URI objectURI,
+                                                                     final IteratorManager iteratorManager) {
 
         try {
-            return new BytesArrayInputIterator(
-                storage.getObjectMetadata(objectURI),
-                storage.getInputStream(objectURI),
-                iteratorManager
+            final FileObjectMeta metadata = storage().getObjectMetadata(objectURI);
+            return new AvroDataStreamIterator(
+                    metadata,
+                    iteratorManager,
+                    storage().getInputStream(objectURI)
             );
+
         } catch (Exception e) {
-            throw new ReaderException("Failed to create BytesArrayInputIterator for: " + objectURI, e);
+            throw new ReaderException("Failed to create AvroDataStreamIterator for: " + objectURI, e);
         }
     }
 }

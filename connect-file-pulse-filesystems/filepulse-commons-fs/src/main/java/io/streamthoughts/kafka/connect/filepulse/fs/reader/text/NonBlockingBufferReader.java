@@ -60,6 +60,8 @@ public class NonBlockingBufferReader implements AutoCloseable {
 
     private boolean isAutoFlushOnEOF = true;
 
+    private boolean isEOF = false;
+
     /**
      * Creates a new {@link NonBlockingBufferReader} instance.
      *
@@ -122,7 +124,12 @@ public class NonBlockingBufferReader implements AutoCloseable {
         this.isAutoFlushOnEOF = false;
     }
 
-    public List<TextBlock> readLines(final int minRecords, final boolean strict) throws IOException {
+    public List<TextBlock> readLines(final int minRecords,
+                                     final boolean strict) throws IOException {
+        if (minRecords <= 0) {
+            throw new IllegalArgumentException("minRecords should be > 0");
+        }
+
         // Unfortunately we can't just use readLine() because it blocks in an uninterruptible way.
         // Instead we have to manage splitting lines ourselves, using simple backoff when no new value
         // is available.
@@ -131,7 +138,10 @@ public class NonBlockingBufferReader implements AutoCloseable {
         int nread = 0;
 
         boolean maxNumRecordsNotReached = true;
-        while (reader.ready() && (records.isEmpty() || records.size() < minRecords)) {
+
+        while ( !(isEOF = !reader.ready() || nread == -1) &&
+                (records.isEmpty() || records.size() < minRecords)
+        ) {
             nread = reader.read(buffer, bufferOffset, buffer.length - bufferOffset);
             if (nread > 0) {
                 bufferOffset += nread;
@@ -144,22 +154,22 @@ public class NonBlockingBufferReader implements AutoCloseable {
             }
         }
 
-        final boolean isEOF = !reader.ready();
+        // If EOF is reached
+        if (isEOF) {
+            // Attempt to read valid lines from remaining bytes.
+            if (maxNumRecordsNotReached) {
+                fillWithBufferedLinesUntil(records, minRecords, true);
+            }
 
-        // When strict is true, we may reach end of file and still have valid lines in buffer.
-        if (isEOF && maxNumRecordsNotReached && strict) {
-            maxNumRecordsNotReached = fillWithBufferedLinesUntil(records, minRecords, true);
-        }
-
-        // If EOF and maximum number of records is not reached then
-        // attempt to flush remaining bytes as a single line.
-        if (isEOF && maxNumRecordsNotReached && remaining()) {
-            LOG.info("End of file reached - flushing remaining bytes from reader buffer ({}).", isAutoFlushOnEOF);
-            if (isAutoFlushOnEOF) {
-                final String line = new String(buffer, 0, bufferOffset);
-                records.add(new TextBlock(line, charset, offset, offset + bufferOffset, bufferOffset));
-                offset += bufferOffset;
-                bufferOffset = 0;
+            // Attempt to flush remaining bytes as a single line.
+            if (!strict && remaining()){
+                LOG.debug("EOF - flushing remaining bytes from reader buffer ({}).", isAutoFlushOnEOF);
+                if (isAutoFlushOnEOF) {
+                    final String line = new String(buffer, 0, bufferOffset);
+                    records.add(new TextBlock(line, charset, offset, offset + bufferOffset, bufferOffset));
+                    offset += bufferOffset;
+                    bufferOffset = 0;
+                }
             }
         }
         return records;
@@ -184,9 +194,9 @@ public class NonBlockingBufferReader implements AutoCloseable {
             if (line != null) {
                 records.add(line);
             }
+            maxNumRecordsNotReached = records.size() < minRecords;
             // when strict is true we should not try to extract more lines than the minimum requested.
-            maxNumRecordsNotReached = !strict || records.size() < minRecords;
-        } while (line != null && maxNumRecordsNotReached);
+        } while (line != null && (maxNumRecordsNotReached || !strict));
         return maxNumRecordsNotReached;
     }
 
@@ -202,7 +212,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
     public boolean hasNext() {
         try {
             boolean ready = reader.ready();
-            if (ready) return true;
+            if (ready && (!isEOF || stream.available() > 1)) return true;
             return remaining() && containsLine();
         } catch (IOException e) {
             LOG.error("Error while checking for remaining bytes to read: {}", e.getLocalizedMessage());

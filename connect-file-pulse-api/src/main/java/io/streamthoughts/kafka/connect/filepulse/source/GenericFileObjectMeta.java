@@ -24,6 +24,7 @@ import com.jsoniter.annotation.JsonProperty;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -74,7 +75,9 @@ public class GenericFileObjectMeta implements FileObjectMeta {
         this.contentLength = contentLength;
         this.lastModified = lastModified;
         this.contentDigest = contentDigest;
-        this.userDefinedMetadata = userDefinedMetadata;
+        this.userDefinedMetadata = userDefinedMetadata == null ?
+            new HashMap<>() :
+            userDefinedMetadata;
     }
 
     public void addUserDefinedMetadata(final String key, final Object value) {
@@ -166,17 +169,17 @@ public class GenericFileObjectMeta implements FileObjectMeta {
         private FileObjectMeta.ContentDigest contentDigest;
         private Map<String, Object> userDefinedMetadata;
 
-        public Builder withUri(URI uri) {
+        public Builder withUri(final URI uri) {
             this.uri = uri;
             return this;
         }
 
-        public Builder withName(String name) {
+        public Builder withName(final String name) {
             this.name = name;
             return this;
         }
 
-        public Builder withContentLength(long contentLength) {
+        public Builder withContentLength(final long contentLength) {
             this.contentLength = contentLength;
             return this;
         }
@@ -189,17 +192,17 @@ public class GenericFileObjectMeta implements FileObjectMeta {
             return this.withLastModified(instant.toEpochMilli());
         }
 
-        public Builder withLastModified(long lastModified) {
+        public Builder withLastModified(final long lastModified) {
             this.lastModified = lastModified;
             return this;
         }
 
-        public Builder withContentDigest(FileObjectMeta.ContentDigest contentDigest) {
+        public Builder withContentDigest(final FileObjectMeta.ContentDigest contentDigest) {
             this.contentDigest = contentDigest;
             return this;
         }
 
-        public Builder withUserDefinedMetadata(Map<String, Object> userDefinedMetadata) {
+        public Builder withUserDefinedMetadata(final Map<String, Object> userDefinedMetadata) {
             this.userDefinedMetadata = userDefinedMetadata;
             return this;
         }

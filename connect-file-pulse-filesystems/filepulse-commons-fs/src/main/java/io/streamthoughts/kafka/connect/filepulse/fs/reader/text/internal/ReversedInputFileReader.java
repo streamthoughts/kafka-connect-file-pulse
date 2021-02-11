@@ -147,7 +147,7 @@ public class ReversedInputFileReader implements AutoCloseable {
                 }
             } while (line != null && records.size() < minRecords);
 
-            // we did'nt find new row after reading fully buffer
+            // we didn't find new row after reading fully buffer
             if (records.isEmpty() && bufferOffset == 0) {
                 final int prevSize = bufferLength();
                 resizeBuffer(bufferLength() * 2);

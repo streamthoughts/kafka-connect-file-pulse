@@ -21,30 +21,24 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>kafka-connect-file-pulse-reactor</artifactId>
         <groupId>io.streamthoughts</groupId>
+        <artifactId>kafka-connect-filepulse-filesystems</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>kafka-connect-filepulse-filesystems</artifactId>
-
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>filepulse-commons-fs</module>
-        <module>filepulse-local-fs</module>
-        <module>filepulse-amazons3-fs</module>
-    </modules>
+    <artifactId>kafka-connect-filepulse-amazons3-fs</artifactId>
+    <description>Kafka Connect FilePulse - FileSystem - Support for Amazon S3</description>
 
     <properties>
-        <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
+        <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
+        <aws-java-sdk.version>1.11.952</aws-java-sdk.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-file-pulse-api</artifactId>
+            <artifactId>kafka-connect-filepulse-commons-fs</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -56,13 +50,22 @@
             <artifactId>connect-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-java-sdk.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
         </dependency>
+        <!-- START Test dependencies -->
+        <dependency>
+            <groupId>io.findify</groupId>
+            <artifactId>s3mock_2.11</artifactId>
+            <version>0.2.6</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- END Test dependencies -->
     </dependencies>
 
 </project>

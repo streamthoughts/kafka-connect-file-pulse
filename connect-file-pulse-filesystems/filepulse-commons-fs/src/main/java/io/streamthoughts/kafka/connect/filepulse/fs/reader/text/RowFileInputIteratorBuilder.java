@@ -19,9 +19,9 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
 import java.io.File;
@@ -36,7 +36,7 @@ public class RowFileInputIteratorBuilder {
 
     private Charset charset = StandardCharsets.UTF_8;
     private int minNumReadRecords = 1;
-    private FileContext context;
+    private FileObjectMeta metadata;
     private long waitMaxMs = 0;
     private int skipHeaders = 0;
     private int skipFooters = 0;
@@ -48,8 +48,8 @@ public class RowFileInputIteratorBuilder {
         return this;
     }
 
-    public RowFileInputIteratorBuilder withContext(final FileContext context) {
-        this.context = context;
+    public RowFileInputIteratorBuilder withMetadata(final FileObjectMeta metadata) {
+        this.metadata = metadata;
         return this;
     }
 
@@ -86,14 +86,14 @@ public class RowFileInputIteratorBuilder {
     public FileInputIterator<FileRecord<TypedStruct>> build() {
         FileInputIterator<FileRecord<TypedStruct>> iterator;
 
-        iterator = new RowFileInputIterator(context, readerSupplier.get(), iteratorManager)
+        iterator = new RowFileInputIterator(metadata, iteratorManager, readerSupplier.get())
                 .setMinNumReadRecords(minNumReadRecords)
                 .setMaxWaitMs(waitMaxMs);
 
         if (skipFooters > 0) {
             iterator = new RowFileWithFooterInputIterator(
                 skipFooters,
-                new File(context.metadata().uri()),
+                new File(metadata.uri()),
                 charset,
                 iterator
             );

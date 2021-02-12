@@ -26,11 +26,11 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IndexRecordOffset;
-import io.streamthoughts.kafka.connect.filepulse.reader.AbstractFileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
@@ -62,7 +62,7 @@ import java.util.stream.IntStream;
 import static io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord.DEFAULT_MESSAGE_FIELD;
 import static java.util.Collections.singletonList;
 
-public class XMLFileInputIterator extends AbstractFileInputIterator<TypedStruct> {
+public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> {
 
     private final XMLFileInputReaderConfig config;
 
@@ -78,9 +78,9 @@ public class XMLFileInputIterator extends AbstractFileInputIterator<TypedStruct>
 
     public XMLFileInputIterator(final XMLFileInputReaderConfig config,
                                 final IteratorManager iteratorManager,
-                                final FileContext context,
+                                final FileObjectMeta objectMeta,
                                 final InputStream stream) {
-        super(iteratorManager, context);
+        super(objectMeta, iteratorManager);
 
         this.config = config;
         System.setProperty(

@@ -21,15 +21,12 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -44,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig.FORCE_ARRAY_ON_FIELDS_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig.XPATH_QUERY_CONFIG;
@@ -222,13 +218,13 @@ public class XMLFileInputIteratorTest {
     private XMLFileInputIterator createXMLFileInputIterator(final XMLFileInputReaderConfig config,
                                                             final String xmlDocument) throws IOException {
         File file = testFolder.newFile();
-        FileContext context;
+        FileObjectMeta meta;
         try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
             bw.append(xmlDocument);
             bw.flush();
-            context = new FileContext(new LocalFileObjectMeta(file));
+            meta = new LocalFileObjectMeta(file);
         }
-        return new XMLFileInputIterator(config, new IteratorManager(), context, new FileInputStream(file));
+        return new XMLFileInputIterator(config, new IteratorManager(), meta, new FileInputStream(file));
     }
 
     private static void assertTopicPartitionObject(final TypedStruct struct,

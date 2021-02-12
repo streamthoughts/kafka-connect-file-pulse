@@ -18,17 +18,40 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
-public abstract class BaseLocalFileInputReader
-        extends AbstractFileInputReader
-        implements StorageAwareFileInputReader<LocalFileStorage> {
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 
-    private final LocalFileStorage storage = new LocalFileStorage();
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class LocalFileStorage implements Storage {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public LocalFileStorage storage() {
-        return storage;
+    public FileObjectMeta getObjectMetadata(final URI uri) {
+        return new LocalFileObjectMeta(new File(uri));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean exists(final URI uri) {
+        return Files.exists(Paths.get(uri));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FileInputStream getInputStream(final URI uri) throws FileNotFoundException {
+        return new FileInputStream(new File(uri));
+    }
+
 }

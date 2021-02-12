@@ -22,6 +22,8 @@ import com.jsoniter.annotation.JsonCreator;
 import com.jsoniter.annotation.JsonProperty;
 
 import java.net.URI;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,10 +31,26 @@ public class GenericFileObjectMeta implements FileObjectMeta {
 
     private final URI uri;
     private final String name;
-    private final long contentLength;
-    private final long lastModified;
+    private final Long contentLength;
+    private final Long lastModified;
     private final ContentDigest contentDigest;
     private final Map<String, Object> userDefinedMetadata;
+
+    /**
+     * Creates a new {@link GenericFileObjectMeta} instance.
+     *
+     * @param uri   the file object URI.
+     */
+    public GenericFileObjectMeta(final URI uri) {
+        this(
+            Objects.requireNonNull(uri, "uri should not be null"),
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+    }
 
     /**
      * Creates a new {@link GenericFileObjectMeta} instance.
@@ -47,8 +65,8 @@ public class GenericFileObjectMeta implements FileObjectMeta {
     @JsonCreator
     public GenericFileObjectMeta(@JsonProperty("uri") final URI uri,
                                  @JsonProperty("name") final String name,
-                                 @JsonProperty("contentLength") final long contentLength,
-                                 @JsonProperty("lastModified") final long lastModified,
+                                 @JsonProperty("contentLength") final Long contentLength,
+                                 @JsonProperty("lastModified") final Long lastModified,
                                  @JsonProperty("contentDigest") final ContentDigest contentDigest,
                                  @JsonProperty("userDefinedMetadata") final Map<String, Object> userDefinedMetadata) {
         this.uri = uri;
@@ -82,7 +100,7 @@ public class GenericFileObjectMeta implements FileObjectMeta {
      * {@inheritDoc}
      */
     @Override
-    public long contentLength() {
+    public Long contentLength() {
         return contentLength;
     }
 
@@ -90,7 +108,7 @@ public class GenericFileObjectMeta implements FileObjectMeta {
      * {@inheritDoc}
      */
     @Override
-    public long lastModified() {
+    public Long lastModified() {
         return lastModified;
     }
 
@@ -115,8 +133,8 @@ public class GenericFileObjectMeta implements FileObjectMeta {
         if (this == o) return true;
         if (!(o instanceof GenericFileObjectMeta)) return false;
         GenericFileObjectMeta that = (GenericFileObjectMeta) o;
-        return contentLength == that.contentLength &&
-                lastModified == that.lastModified &&
+        return  Objects.equals(contentLength, that.contentLength) &&
+                Objects.equals(lastModified, that.lastModified) &&
                 Objects.equals(uri, that.uri) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(contentDigest, that.contentDigest);
@@ -137,5 +155,64 @@ public class GenericFileObjectMeta implements FileObjectMeta {
                 ", contentDigest=" + contentDigest +
                 ", userDefinedMetadata=" + userDefinedMetadata +
                 ']';
+    }
+
+    public static class Builder {
+
+        private URI uri;
+        private String name;
+        private long contentLength;
+        private long lastModified;
+        private FileObjectMeta.ContentDigest contentDigest;
+        private Map<String, Object> userDefinedMetadata;
+
+        public Builder withUri(URI uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withContentLength(long contentLength) {
+            this.contentLength = contentLength;
+            return this;
+        }
+
+        public Builder withLastModified(final Date date) {
+            return withLastModified(date.toInstant());
+        }
+
+        public Builder withLastModified(final Instant instant) {
+            return this.withLastModified(instant.toEpochMilli());
+        }
+
+        public Builder withLastModified(long lastModified) {
+            this.lastModified = lastModified;
+            return this;
+        }
+
+        public Builder withContentDigest(FileObjectMeta.ContentDigest contentDigest) {
+            this.contentDigest = contentDigest;
+            return this;
+        }
+
+        public Builder withUserDefinedMetadata(Map<String, Object> userDefinedMetadata) {
+            this.userDefinedMetadata = userDefinedMetadata;
+            return this;
+        }
+
+        public GenericFileObjectMeta build() {
+            return new GenericFileObjectMeta(
+                uri,
+                name,
+                contentLength,
+                lastModified,
+                contentDigest,
+                userDefinedMetadata
+            );
+        }
     }
 }

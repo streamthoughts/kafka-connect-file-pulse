@@ -19,9 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.NonBlockingBufferReader;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.RowFileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
@@ -61,10 +59,11 @@ public class RowFileInputIteratorTest {
         try(BufferedWriter writer = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
             generateLines(writer);
         }
-        FileContext context = new FileContext(new LocalFileObjectMeta(file));
-
         final FileInputStream stream = new FileInputStream(file);
-        iterator = new RowFileInputIterator(context, new NonBlockingBufferReader(stream), new IteratorManager());
+        iterator = new RowFileInputIterator(
+            new LocalFileObjectMeta(file),
+            new IteratorManager(),
+            new NonBlockingBufferReader(stream));
     }
 
     @After

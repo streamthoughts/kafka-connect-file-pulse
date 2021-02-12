@@ -16,15 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.reader;
+package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class AbstractFileInputIterator<T> implements FileInputIterator<FileRecord<T>> {
+public abstract class ManagedFileInputIterator<T> implements FileInputIterator<FileRecord<T>> {
 
     private final AtomicBoolean closed;
 
@@ -33,22 +35,19 @@ public abstract class AbstractFileInputIterator<T> implements FileInputIterator<
      */
     private final IteratorManager iteratorManager;
 
-    /**
-     * The input-source context.
-     */
     protected FileContext context;
 
     /**
-     * Creates a new {@link AbstractFileInputIterator} instance.
+     * Creates a new {@link ManagedFileInputIterator} instance.
      *
-     * @param iteratorManager   the {@link IteratorManager} instance.
-     * @param context           the {@link FileContext} instance.
+     * @param objectMeta        The file's metadata.
+     * @param iteratorManager   The iterator manager.
      */
-    public AbstractFileInputIterator(final IteratorManager iteratorManager,
-                                     final FileContext context) {
+    public ManagedFileInputIterator(final FileObjectMeta objectMeta,
+                                    final IteratorManager iteratorManager) {
         this.iteratorManager =  Objects.requireNonNull(iteratorManager, "iteratorManager can't be null");
-        this.context = Objects.requireNonNull(context, "context can't be null");
-        closed = new AtomicBoolean(false);
+        this.closed = new AtomicBoolean(false);
+        this.context = new FileContext(objectMeta);
     }
 
     /**

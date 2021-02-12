@@ -16,12 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.reader;
+package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
+import java.net.URI;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractFileInputReader implements FileInputReader {
@@ -42,14 +44,18 @@ public abstract class AbstractFileInputReader implements FileInputReader {
      * {@inheritDoc}
      */
     @Override
-    public FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context) {
-        final FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(context, openIterators);
+    public FileInputIterator<FileRecord<TypedStruct>> newIterator(final URI objectURI) {
+        final FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(objectURI, openIterators);
         openIterators.addOpenIterator(iterator);
         return iterator;
     }
 
-    protected abstract FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context,
+    protected abstract FileInputIterator<FileRecord<TypedStruct>> newIterator(final URI objectURI,
                                                                               final IteratorManager iteratorManager);
+
+    protected IteratorManager iteratorManager() {
+        return openIterators;
+    }
 
     /**
      * {@inheritDoc}

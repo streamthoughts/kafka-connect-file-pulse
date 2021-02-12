@@ -16,19 +16,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.fs.reader;
+package io.streamthoughts.kafka.connect.filepulse.reader;
 
-public abstract class BaseLocalFileInputReader
-        extends AbstractFileInputReader
-        implements StorageAwareFileInputReader<LocalFileStorage> {
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
-    private final LocalFileStorage storage = new LocalFileStorage();
+import java.net.URI;
+
+/**
+ * A {@code FileInputIteratorFactory} can be used to get a new {@link FileInputIterator}.
+ */
+public interface FileInputIteratorFactory {
 
     /**
-     * {@inheritDoc}
+     * Creates a new {@link FileInputIterator} for the given object file.
+     *
+     * @param objectURI         the {@link URI} of the object file.
+     * @return                  a new {@link FileInputIterator}.
      */
-    @Override
-    public LocalFileStorage storage() {
-        return storage;
-    }
+    FileInputIterator<FileRecord<TypedStruct>> newIterator(final URI objectURI);
 }

@@ -19,11 +19,10 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.avro;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.internal.Silent;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
@@ -41,7 +40,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 public abstract class BaseAvroDataIteratorTest {
@@ -70,12 +68,12 @@ public abstract class BaseAvroDataIteratorTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     private File file;
-    private FileContext context;
+    private FileObjectMeta objectMeta;
 
     @Before
     public void setUp() throws IOException {
         file = testFolder.newFile();
-        context = new FileContext(new LocalFileObjectMeta(file));
+        objectMeta = new LocalFileObjectMeta(file);
         writeGenericRecords(
                 DEFAULT_TEST_SCHEMA,
                 DEFAULT_GENERIC_RECORD,
@@ -87,7 +85,7 @@ public abstract class BaseAvroDataIteratorTest {
     @Test
     public void should_read_given_multiple_avro_record() {
 
-        try (FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(context)) {
+        try (FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(objectMeta)) {
             Assert.assertTrue(iterator.hasNext());
             int records = 0;
             while (iterator.hasNext()) {
@@ -101,13 +99,13 @@ public abstract class BaseAvroDataIteratorTest {
     @Test
     public void should_seek_to_given_valid_position() {
         final FileRecordOffset offset;
-        try (FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(context)) {
+        try (FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(objectMeta)) {
             Assert.assertTrue(iterator.hasNext());
             RecordsIterable<FileRecord<TypedStruct>> next = iterator.next();
             offset = next.last().offset();
         }
 
-        try (FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(context)) {
+        try (FileInputIterator<FileRecord<TypedStruct>> iterator = newIterator(objectMeta)) {
             iterator.seekTo(offset.toSourceOffset());
             // Attemps to read remaining records.
             Assert.assertTrue(iterator.hasNext());
@@ -135,5 +133,5 @@ public abstract class BaseAvroDataIteratorTest {
         }
     }
 
-    abstract FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context);
+    abstract FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileObjectMeta objectMeta);
 }

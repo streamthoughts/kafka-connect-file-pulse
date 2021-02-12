@@ -20,11 +20,12 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.avro;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.internal.Silent;
-import io.streamthoughts.kafka.connect.filepulse.reader.AbstractFileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
@@ -39,7 +40,7 @@ import java.util.Objects;
 
 import static io.streamthoughts.kafka.connect.filepulse.internal.Silent.unchecked;
 
-public class AvroDataFileIterator extends AbstractFileInputIterator<TypedStruct> {
+public class AvroDataFileIterator extends ManagedFileInputIterator<TypedStruct> {
 
     private long recordsReadSinceLastSync = 0L;
 
@@ -53,10 +54,10 @@ public class AvroDataFileIterator extends AbstractFileInputIterator<TypedStruct>
      * @param iteratorManager the {@link IteratorManager} instance.
      * @param context         the {@link FileContext} instance.
      */
-    public AvroDataFileIterator(final IteratorManager iteratorManager,
-                                final FileContext context,
+    public AvroDataFileIterator(final FileObjectMeta objectMeta,
+                                final IteratorManager iteratorManager,
                                 final File avroFile) throws IOException {
-        super(iteratorManager, context);
+        super(objectMeta, iteratorManager);
         this.reader = new DataFileReader<>(avroFile, new GenericDatumReader<>());;
     }
 

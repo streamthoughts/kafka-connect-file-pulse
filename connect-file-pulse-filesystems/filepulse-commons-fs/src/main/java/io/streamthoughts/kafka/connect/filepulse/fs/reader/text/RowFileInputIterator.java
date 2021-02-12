@@ -19,11 +19,11 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.internal.TextBlock;
-import io.streamthoughts.kafka.connect.filepulse.reader.AbstractFileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
@@ -37,7 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct> {
+public class RowFileInputIterator extends ManagedFileInputIterator<TypedStruct> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RowFileInputIterator.class);
 
@@ -61,14 +61,14 @@ public class RowFileInputIterator extends AbstractFileInputIterator<TypedStruct>
      /**
      * Creates a new {@link RowFileInputIterator} instance.
      *
-     * @param context           the {@link FileContext}
+     * @param meta              the {@link FileObjectMeta}.
      * @param reader            the {@link NonBlockingBufferReader}.
      * @param iteratorManager   the {@link IteratorManager}.
      */
-    public RowFileInputIterator(final FileContext context,
-                                final NonBlockingBufferReader reader,
-                                final IteratorManager iteratorManager) {
-        super(iteratorManager, context);
+    public RowFileInputIterator(final FileObjectMeta meta,
+                                final IteratorManager iteratorManager,
+                                final NonBlockingBufferReader reader) {
+        super(meta, iteratorManager);
         this.reader = Objects.requireNonNull(reader, "reader can't be null");
         lastObservedRecords = Time.SYSTEM.milliseconds();
     }

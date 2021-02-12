@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Configuration for reading a file line by line.
  */
-public class RowFileInputReaderConfig extends AbstractConfig {
+public class RowFileInputIteratorConfig extends AbstractConfig {
 
     public static final String FILE_ENCODING_CONFIG            = "file.encoding";
     public static final String FILE_ENCODING_DOC               = "The text file encoding to use (default = UTF_8)";
@@ -54,10 +54,10 @@ public class RowFileInputReaderConfig extends AbstractConfig {
     public static final long READER_WAIT_MAX_MS__DEFAULT       = 0L;
 
     /**
-     * Creates a new {@link RowFileInputReaderConfig} instance.
+     * Creates a new {@link RowFileInputIteratorConfig} instance.
      * @param originals the reader configuration.
      */
-    public RowFileInputReaderConfig(final Map<String, ?> originals) {
+    public RowFileInputIteratorConfig(final Map<String, ?> originals) {
         super(configDef(), originals);
     }
 

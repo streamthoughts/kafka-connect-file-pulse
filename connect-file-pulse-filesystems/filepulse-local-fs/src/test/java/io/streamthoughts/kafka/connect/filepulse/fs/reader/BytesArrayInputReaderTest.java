@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class BytesArrayInputReaderTest {
 
@@ -48,7 +49,6 @@ public class BytesArrayInputReaderTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     private File file;
-    private FileContext context;
     private LocalBytesArrayInputReader reader;
 
     @Before
@@ -57,10 +57,10 @@ public class BytesArrayInputReaderTest {
         try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
              bw.append(TEST_VALUE);
              bw.flush();
-             context = new FileContext(new LocalFileObjectMeta(file));
          }
 
         reader = new LocalBytesArrayInputReader();
+        reader.configure(Collections.emptyMap());
     }
 
     @After
@@ -69,8 +69,8 @@ public class BytesArrayInputReaderTest {
     }
 
     @Test
-    public void shouldReaddAllBytes() {
-        FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(context);
+    public void should_readd_all_bytes() {
+        FileInputIterator<FileRecord<TypedStruct>> iterator = reader.newIterator(file.toURI());
         Assert.assertTrue(iterator.hasNext());
 
         FileRecord<TypedStruct> record = iterator.next().last();

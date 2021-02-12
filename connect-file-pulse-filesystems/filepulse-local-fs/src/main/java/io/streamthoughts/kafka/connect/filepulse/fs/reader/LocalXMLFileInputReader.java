@@ -19,18 +19,12 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputIterator;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputIteratorFactory;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
-import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.Map;
 
@@ -39,34 +33,27 @@ import java.util.Map;
  */
 public class LocalXMLFileInputReader extends BaseLocalFileInputReader {
 
-    private XMLFileInputReaderConfig configs;
+    private XMLFileInputIteratorFactory factory;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        this.configs = new XMLFileInputReaderConfig(configs);
+        super.configure(configs);
+        factory = new XMLFileInputIteratorFactory(
+            new XMLFileInputReaderConfig(configs),
+            storage(),
+            iteratorManager()
+        );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected FileInputIterator<FileRecord<TypedStruct>> newIterator(final FileContext context,
+    protected FileInputIterator<FileRecord<TypedStruct>> newIterator(final URI objectURI,
                                                                      final IteratorManager iteratorManager) {
-
-        final URI uri = context.metadata().uri();
-        try {
-            FileInputStream stream = new FileInputStream(new File(uri));
-            return new XMLFileInputIterator(
-                configs,
-                iteratorManager,
-                context,
-                stream
-            );
-        } catch (FileNotFoundException e) {
-            throw new ReaderException("Failed to open file: " + uri + ", file does not exist or is not accessible.");
-        }
+        return factory.newIterator(objectURI);
     }
 }

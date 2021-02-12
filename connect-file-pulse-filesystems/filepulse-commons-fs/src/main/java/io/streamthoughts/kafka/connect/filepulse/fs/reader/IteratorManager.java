@@ -16,14 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.reader;
+package io.streamthoughts.kafka.connect.filepulse.fs.reader;
+
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Default class to easily close all open {@link FileInputIterator} instances.
+ * The {@link IteratorManager} can be used to easily close all open {@link FileInputIterator} instances.
  */
 public class IteratorManager {
 

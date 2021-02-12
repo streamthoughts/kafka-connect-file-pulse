@@ -18,17 +18,30 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
-public abstract class BaseLocalFileInputReader
-        extends AbstractFileInputReader
-        implements StorageAwareFileInputReader<LocalFileStorage> {
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 
-    private final LocalFileStorage storage = new LocalFileStorage();
+import java.net.URI;
+
+public interface StorageAwareFileInputReader<T extends Storage> extends FileInputReader {
+
+    /**
+     * {@inheritDoc}
+     */
+    default FileObjectMeta getObjectMetadata(final URI objectURI) {
+        return storage().getObjectMetadata(objectURI);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public LocalFileStorage storage() {
-        return storage;
+    default boolean canBeRead(final URI objectURI) {
+        return storage().exists(objectURI);
     }
+
+    /**
+     * @return  the {@link Storage} attached to this reader.
+     */
+   T storage();
 }

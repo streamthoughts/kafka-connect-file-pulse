@@ -53,13 +53,13 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
      * @return the content-length of the source object.
      */
     @JsonProperty("contentLength")
-    long contentLength();
+    Long contentLength();
 
     /**
      * @return the creation date or the last modified date, whichever is the latest.
      */
     @JsonProperty("lastModified")
-    long lastModified();
+    Long lastModified();
 
     /**
      * @return the digest of the source object content.

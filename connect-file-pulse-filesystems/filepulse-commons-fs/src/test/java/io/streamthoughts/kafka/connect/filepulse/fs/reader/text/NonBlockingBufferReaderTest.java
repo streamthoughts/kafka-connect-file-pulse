@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.NonBlockingBufferReader;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.internal.TextBlock;
 import org.junit.Assert;
 import org.junit.Before;

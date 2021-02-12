@@ -20,11 +20,11 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.avro;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IndexRecordOffset;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.internal.Silent;
-import io.streamthoughts.kafka.connect.filepulse.reader.AbstractFileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
-public class AvroDataStreamIterator extends AbstractFileInputIterator<TypedStruct> {
+public class AvroDataStreamIterator extends ManagedFileInputIterator<TypedStruct> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AvroDataStreamIterator.class);
 
@@ -50,13 +50,14 @@ public class AvroDataStreamIterator extends AbstractFileInputIterator<TypedStruc
     /**
      * Creates a new {@link AvroDataStreamIterator} instance.
      *
-     * @param iteratorManager the {@link IteratorManager} instance.
-     * @param context         the {@link FileContext} instance.
+     * @param objectMeta        The file's metadata.
+     * @param iteratorManager   The iterator manager.
+     * @param stream            the file's input streams.
      */
-    public AvroDataStreamIterator(final IteratorManager iteratorManager,
-                                  final FileContext context,
+    public AvroDataStreamIterator(final FileObjectMeta objectMeta,
+                                  final IteratorManager iteratorManager,
                                   final InputStream stream) throws IOException {
-        super(iteratorManager, context);
+        super(objectMeta, iteratorManager);
         this.stream = new DataFileStream<>(stream, new GenericDatumReader<>());
     }
 

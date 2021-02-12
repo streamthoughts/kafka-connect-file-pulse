@@ -16,11 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.RowFileInputIteratorFactory;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.RowFileInputIteratorConfig;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
@@ -28,36 +27,27 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * The {@code RowFileInputReader} reads an input local file line by line.
+ * Send a single record containing file metadata.
  */
-public class LocalRowFileInputReader extends BaseLocalFileInputReader {
+public class LocalFileInputMetadataReader extends BaseLocalFileInputReader {
 
-    private RowFileInputIteratorFactory factory;
-
-    /**
-     * Creates a new {@link LocalRowFileInputReader} instance.
-     */
-    public LocalRowFileInputReader() {
-        super();
-    }
+    private FileInputMetadataIteratorFactory factory;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        this.factory = new RowFileInputIteratorFactory(
-            new RowFileInputIteratorConfig(configs),
-            storage(),
-            iteratorManager()
-        );
+        super.configure(configs);
+        this.factory = new FileInputMetadataIteratorFactory(storage());
     }
     /**
      * {@inheritDoc}
      */
     @Override
-    public FileInputIterator<FileRecord<TypedStruct>> newIterator(final URI objectURI,
-                                                                  final IteratorManager iteratorManager) {
-        return factory.newIterator(objectURI);
+    protected FileInputIterator<FileRecord<TypedStruct>> newIterator(final URI context,
+                                                                     final IteratorManager iteratorManager) {
+        return factory.newIterator(context);
     }
+
 }

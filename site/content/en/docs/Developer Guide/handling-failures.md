@@ -1,5 +1,5 @@
 ---
-date: 2020-08-12
+date: 2021-03-30
 title: "Handling Failures"
 linkTitle: "Handling Failures"
 weight: 70
@@ -30,7 +30,7 @@ Using `ignoreFailure=true` can be recommended for optional filters.
 
 ### Example
 
-In the below example, the he filter with alias Log4jGrokFilter will be skip in case of failure.
+In the below example, the filter with alias `Log4jGrokFilter` will be skip in case of failure.
 
 ```
 filters=Log4jGrokFilter
@@ -70,6 +70,6 @@ filters.Log4jGrokFilter.overwrite=message
 filters.Log4jGrokFilter.withOnFailure=AppendError
 
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
-filters.AppendError.field=errorMessage
-filters.AppendError.value="$error.message"
+filters.AppendError.field=$.errorMessage
+filters.AppendError.value={{ $error.message }}
 ```

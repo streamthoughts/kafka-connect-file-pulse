@@ -54,7 +54,7 @@ public class FailFilterTest {
     public void shouldThrownExceptionWhenConditionIsTrue() {
         configs.put(FailFilterConfig.MESSAGE_CONFIG, "Unexpected error");
         FailFilter filter = new FailFilter();
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         try {
             filter.apply(context, DEFAULT_DATA, false);
@@ -70,7 +70,7 @@ public class FailFilterTest {
     public void shouldEvaluateMessageExpression() {
         configs.put(FailFilterConfig.MESSAGE_CONFIG, "Unexpected error : {{ $value.message }}");
         FailFilter filter = new FailFilter();
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         try {
             filter.apply(context, DEFAULT_DATA, false);

@@ -53,7 +53,7 @@ public class DateFilterTest {
         configs.put(DateFilterConfig.DATE_TARGET_CONFIG, "$.timestamp");
         configs.put(DateFilterConfig.DATE_FORMATS_CONFIG, Collections.singletonList("yyyy-MM-dd'T'HH:mm:ss"));
 
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         TypedStruct struct = TypedStruct.create().put("date", "2001-07-04T12:08:56");
         List<TypedStruct> results = filter.apply(context, struct, false).collect();
 
@@ -69,7 +69,7 @@ public class DateFilterTest {
         configs.put(DateFilterConfig.DATE_TIMEZONE_CONFIG, "Europe/Paris");
         configs.put(DateFilterConfig.DATE_FORMATS_CONFIG, Collections.singletonList("yyyy-MM-dd'T'HH:mm:ss"));
 
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         TypedStruct struct = TypedStruct.create().put("date", "2001-07-04T14:08:56");
         List<TypedStruct> results = filter.apply(context, struct, false).collect();
 
@@ -85,7 +85,7 @@ public class DateFilterTest {
         configs.put(DateFilterConfig.DATE_LOCALE_CONFIG, "fr_FR");
         configs.put(DateFilterConfig.DATE_FORMATS_CONFIG, Collections.singletonList("EEEE, d MMMM yyyy HH:mm:ss"));
 
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         TypedStruct struct = TypedStruct.create().put("date", "mercredi, 4 juillet 2001 12:08:56");
         List<TypedStruct> results = filter.apply(context, struct, false).collect();
 

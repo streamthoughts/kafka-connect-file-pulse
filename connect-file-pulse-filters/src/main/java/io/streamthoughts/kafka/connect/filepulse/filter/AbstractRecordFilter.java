@@ -18,16 +18,17 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.FilterCondition;
-import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public abstract class AbstractRecordFilter<T extends AbstractRecordFilter> implements RecordFilter {
+public abstract class AbstractRecordFilter<T extends AbstractRecordFilter<T>> implements RecordFilter {
 
     private RecordFilterPipeline<FileRecord<TypedStruct>> failurePipeline;
 
@@ -45,11 +46,24 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter> imple
      * {@inheritDoc}
      */
     @Override
-    public void configure(final Map<String, ?> props) {
+    public void configure(final Map<String, ?> configs) {
+        // intentionally left blank
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configure(final Map<String, ?> props, final RecordFilterProvider provider) {
         final CommonFilterConfig config = new CommonFilterConfig(configDef(), props);
         condition = config.condition();
-        failurePipeline = config.onFailure();
         ignoreFailure = config.ignoreFailure();
+        if (!config.onFailure().isEmpty()) {
+            failurePipeline = new DefaultRecordFilterPipeline(config.onFailure().stream()
+                .map(provider::getRecordForAlias)
+                .collect(Collectors.toList()));
+        }
+        configure(props);
     }
 
     /**

@@ -36,6 +36,11 @@ public interface RecordFilter extends Configurable {
     @Override
     void configure(final Map<String, ?> configs);
 
+    default void configure(final Map<String, ?> configs,
+                           final RecordFilterProvider provider) {
+        configure(configs);
+    }
+
     /**
      * Configuration specification for this filter.
      *
@@ -114,5 +119,12 @@ public interface RecordFilter extends Configurable {
      */
     default boolean ignoreFailure() {
         return false;
+    }
+
+
+    @FunctionalInterface
+    static public interface RecordFilterProvider {
+
+        RecordFilter getRecordForAlias(final String alias);
     }
 }

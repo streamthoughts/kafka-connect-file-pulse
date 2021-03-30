@@ -56,7 +56,7 @@ public class AppendFilterTest {
     public void shouldSupportPropertyExpressionForValueConfig() {
         configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$.target");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         RecordsIterable<TypedStruct> output = filter.apply(context, STRUCT);
         Assert.assertNotNull(output);
@@ -68,7 +68,7 @@ public class AppendFilterTest {
     public void shouldSupportPropertyExpressionForFieldConfig() {
         configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$.target");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         RecordsIterable<TypedStruct> output = filter.apply(context, STRUCT);
         Assert.assertNotNull(output);
@@ -80,7 +80,7 @@ public class AppendFilterTest {
     public void shouldSupportSubstitutionExpressionForFieldConfig() {
         configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "{{ '$.'extract_array($.values,0) }}");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, EXPRESSION);
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         RecordsIterable<TypedStruct> output = filter.apply(context, STRUCT);
         Assert.assertNotNull(output);
@@ -92,7 +92,7 @@ public class AppendFilterTest {
     public void shouldSupportPropertyExpressionWithScopeForFieldConfig() {
         configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$topic");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "my-topic-{{ extract_array($.values,0) }}");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         filter.apply(context, STRUCT);
         Assert.assertEquals("my-topic-foo", context.topic());
     }
@@ -102,7 +102,7 @@ public class AppendFilterTest {
         configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$value.field");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "bar");
         configs.put(AppendFilterConfig.APPEND_OVERWRITE_CONFIG, "true");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         final TypedStruct input = TypedStruct.create().put("field", "foo");
         RecordsIterable<TypedStruct> results = filter.apply(context, input, false);
         Assert.assertEquals("bar", results.last().getString("field"));
@@ -113,7 +113,7 @@ public class AppendFilterTest {
         configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$value.field");
         configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "bar");
         configs.put(AppendFilterConfig.APPEND_OVERWRITE_CONFIG, "false");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         final TypedStruct input = TypedStruct.create().put("field", "foo");
         RecordsIterable<TypedStruct> results = filter.apply(context, input, false);
         Assert.assertEquals("[foo, bar]", results.last().getArray("field").toString());

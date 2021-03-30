@@ -46,7 +46,7 @@ public class MoveFilterTest {
 
         configs.put(MoveFilterConfig.FILTER_SOURCE_FIELD_CONFIG, "foo");
         configs.put(MoveFilterConfig.MOVE_TARGET_CONFIG, "bar");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct record = TypedStruct.create().insert("foo", "dummy-value");
         List<TypedStruct> results = filter.apply(null, record, false).collect();
@@ -63,7 +63,7 @@ public class MoveFilterTest {
 
         configs.put(MoveFilterConfig.FILTER_SOURCE_FIELD_CONFIG, "foo.bar");
         configs.put(MoveFilterConfig.MOVE_TARGET_CONFIG, "bar");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct record = TypedStruct.create().insert("foo.bar", "dummy-value");
         List<TypedStruct> results = filter.apply(null, record, false).collect();
@@ -80,7 +80,7 @@ public class MoveFilterTest {
 
         configs.put(MoveFilterConfig.FILTER_SOURCE_FIELD_CONFIG, "foo.bar");
         configs.put(MoveFilterConfig.MOVE_TARGET_CONFIG, "bar.foo");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct record = TypedStruct.create().insert("foo.bar", "dummy-value");
         List<TypedStruct> results = filter.apply(null, record, false).collect();

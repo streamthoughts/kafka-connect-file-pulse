@@ -18,19 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
-import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
-import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.ExpressionFilterCondition;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.FilterCondition;
-import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.errors.ConnectException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -91,25 +84,9 @@ public class CommonFilterConfig extends AbstractConfig {
         return getBoolean(IGNORE_FAILURE_CONFIG);
     }
 
-    public RecordFilterPipeline<FileRecord<TypedStruct>> onFailure() {
-        final List<String> filterAliases = getList(ON_FAILURE_CONFIG);
-
-        if (filterAliases == null) return null;
-
-        final List<RecordFilter> filters = new ArrayList<>(filterAliases.size());
-        for (String alias : filterAliases) {
-            final String prefix = "filters." + alias + ".";
-            try {
-                final RecordFilter filter = getClass(prefix + "type")
-                        .asSubclass(RecordFilter.class)
-                        .getDeclaredConstructor().newInstance();
-                filter.configure(originalsWithPrefix(prefix));
-                filters.add(filter);
-            } catch (Exception e) {
-                throw new ConnectException(e);
-            }
-        }
-        return filters.isEmpty() ? null : new DefaultRecordFilterPipeline(filters);
+    public List<String> onFailure() {
+        final List<String> aliases = getList(ON_FAILURE_CONFIG);
+        return aliases == null ? Collections.emptyList() : aliases;
     }
 
     public static ConfigDef withOverwrite(final ConfigDef def) {

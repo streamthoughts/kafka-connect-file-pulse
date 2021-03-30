@@ -82,7 +82,7 @@ public class MultiRowFilterTest {
     public void shouldMatchMultiLinesGivenNegateParamsEqualsToFalse() {
         configs.put(MultiRowFilterConfig.MULTI_ROW_NEGATE_CONFIG, "false");
         configs.put(MultiRowFilterConfig.MULTI_ROW_PATTERN_CONFIG, "^[\\t]");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         List<TypedStruct> output = new LinkedList<>();
         Iterator<TypedStruct> iterator = generates().iterator();
@@ -96,7 +96,7 @@ public class MultiRowFilterTest {
     public void shouldMatchMultiLinesGivenNegateParamsEqualsToTrue() {
         configs.put(MultiRowFilterConfig.MULTI_ROW_NEGATE_CONFIG, "true");
         configs.put(MultiRowFilterConfig.MULTI_ROW_PATTERN_CONFIG, "^\\[INFO|ERROR\\]");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         List<TypedStruct> output = new LinkedList<>();
         Iterator<TypedStruct> iterator = generates().iterator();

@@ -44,7 +44,7 @@ public class SplitFilterTest {
     public void should_split_given_existing_field() {
 
         configs.put(SplitFilterConfig.MUTATE_SPLIT_CONFIG, "foo");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct record = TypedStruct.create().put("foo", "val0,val1,val2");
         List<TypedStruct> results = filter.apply(null, record, false).collect();
@@ -56,7 +56,7 @@ public class SplitFilterTest {
     public void should_split_given_existing_path() {
 
         configs.put(SplitFilterConfig.MUTATE_SPLIT_CONFIG, "foo.bar");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct record = TypedStruct.create().insert("foo.bar", "val0,val1,val2");
         List<TypedStruct> results = filter.apply(null, record, false).collect();

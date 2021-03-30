@@ -45,7 +45,7 @@ public class RenameFilterTest {
 
         configs.put(RenameFilterConfig.RENAME_FIELD_CONFIG, "foo");
         configs.put(RenameFilterConfig.RENAME_TARGET_CONFIG, "bar");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct record = TypedStruct.create().put("foo", "dummy-value");
         List<TypedStruct> results = filter.apply(null, record, false).collect();
@@ -62,7 +62,7 @@ public class RenameFilterTest {
 
         configs.put(RenameFilterConfig.RENAME_FIELD_CONFIG, "foo.bar");
         configs.put(RenameFilterConfig.RENAME_TARGET_CONFIG, "foo");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct record = TypedStruct.create().insert("foo.bar", "dummy-value");
         List<TypedStruct> results = filter.apply(null, record, false).collect();

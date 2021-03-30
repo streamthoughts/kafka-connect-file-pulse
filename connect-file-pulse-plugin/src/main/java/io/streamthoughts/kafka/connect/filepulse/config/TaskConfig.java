@@ -20,9 +20,12 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
@@ -37,14 +40,14 @@ import org.apache.kafka.connect.errors.ConnectException;
  */
 public class TaskConfig extends CommonConfig {
 
-    public static final String FILE_INPUT_PATHS_CONFIG          = "file.input.paths";
-    private static final String FILE_INPUT_PATHS_DOC            = "The list of files task must proceed.";
+    public static final String FILE_INPUT_PATHS_CONFIG = "file.input.paths";
+    private static final String FILE_INPUT_PATHS_DOC = "The list of files task must proceed.";
 
     private static final String OMIT_READ_COMMITTED_FILE_CONFIG = "ignore.committed.offsets";
-    private static final String OMIT_READ_COMMITTED_FILE_DOC    = "Boolean indicating whether offsets check has to be performed, to avoid multiple (default : false)";
+    private static final String OMIT_READ_COMMITTED_FILE_DOC = "Boolean indicating whether offsets check has to be performed, to avoid multiple (default : false)";
 
-    public static final String INTERNAL_REPORTER_GROUP_ID       = "internal.kafka.reporter.id";
-    private static final String INTERNAL_REPORTER_GROUP_ID_DOC  = "Reporter identifier to be used by tasks and connector to report and monitor file progression";
+    public static final String INTERNAL_REPORTER_GROUP_ID = "internal.kafka.reporter.id";
+    private static final String INTERNAL_REPORTER_GROUP_ID_DOC = "Reporter identifier to be used by tasks and connector to report and monitor file progression";
 
     private final EnrichedConnectorConfig enrichedConfig;
 
@@ -60,6 +63,7 @@ public class TaskConfig extends CommonConfig {
 
     /**
      * Creates a new {@link TaskConfig} instance.
+     *
      * @param originals the original configs.
      */
     public TaskConfig(final Map<String, String> originals) {
@@ -68,6 +72,7 @@ public class TaskConfig extends CommonConfig {
 
     /**
      * Creates a new {@link TaskConfig} instance.
+     *
      * @param configDef the configuration definition.
      * @param originals the original configs.
      */
@@ -91,34 +96,64 @@ public class TaskConfig extends CommonConfig {
         }
 
         final ConfigDef newDef = new ConfigDef(baseConfigDef);
-        LinkedHashSet<?> uniqueFilterAliases = new LinkedHashSet<>((List<?>) filterAliases);
-        for (Object o : uniqueFilterAliases) {
-            if (!(o instanceof String)) {
-                throw new ConfigException("Item in " + filterAliases + " property is not of type string");
-            }
-            String alias = (String) o;
-            final String prefix = FILTER_CONFIG + "." + alias + ".";
-            final String group = FILTERS_GROUP + ": " + alias;
-            int orderInGroup = 0;
 
-            final String filterTypeConfig = prefix + "type";
-            final ConfigDef.Validator typeValidator = (name, value) -> getConfigDefFromFilter(filterTypeConfig, (Class) value);
-            newDef.define(filterTypeConfig, ConfigDef.Type.CLASS, ConfigDef.NO_DEFAULT_VALUE, typeValidator, ConfigDef.Importance.HIGH,
-                    "Class for the '" + alias + "' filter.", group, orderInGroup++, ConfigDef.Width.LONG, "Filter type for " + alias);
+        LinkedHashSet<String> uniqueFilterAliases = new LinkedHashSet<>();
+        lookupAllFilterAliases(props, (List<?>) filterAliases, uniqueFilterAliases);
 
-            final ConfigDef filterConfigDef;
-            try {
-                final String className = props.get(filterTypeConfig);
-                final Class<?> cls = (Class<?>) ConfigDef.parseType(filterTypeConfig, className, ConfigDef.Type.CLASS);
-                filterConfigDef = getConfigDefFromFilter(filterTypeConfig, cls);
-            } catch (ConfigException e) {
-                continue;
-            }
-
-            newDef.embed(prefix, group, orderInGroup, filterConfigDef);
-        }
+        uniqueFilterAliases.forEach(alias -> addConfigDefForFilter(props, newDef, alias));
 
         return newDef;
+    }
+
+    private static void lookupAllFilterAliases(final Map<String, String> props,
+                                               final Collection<?> filterAliases,
+                                               final LinkedHashSet<String> accumulator) {
+        for (Object alias : filterAliases) {
+            if (!(alias instanceof String)) {
+                throw new ConfigException("Item in " + filterAliases + " property is not of type string");
+            }
+            accumulator.add((String) alias);
+            final String failure = props.get(FILTER_CONFIG + "." + alias + "." + CommonFilterConfig.ON_FAILURE_CONFIG);
+            if (failure != null && !failure.isEmpty()) {
+                final Set<String> filters = Arrays.stream(failure
+                        .split(","))
+                        .map(String::trim)
+                        .collect(Collectors.toSet());
+                lookupAllFilterAliases(props, filters, accumulator);
+            }
+        }
+    }
+
+    private static void addConfigDefForFilter(final Map<String, String> props,
+                                              final ConfigDef newDef,
+                                              final String alias) {
+        final String prefix = FILTER_CONFIG + "." + alias + ".";
+        final String group = FILTERS_GROUP + ":" + alias;
+        int orderInGroup = 0;
+
+        final String filterTypeConfig = prefix + "type";
+        final ConfigDef.Validator typeValidator = (name, value) -> getConfigDefFromFilter(filterTypeConfig, (Class<?>) value);
+        newDef.define(filterTypeConfig,
+                ConfigDef.Type.CLASS,
+                ConfigDef.NO_DEFAULT_VALUE,
+                typeValidator,
+                ConfigDef.Importance.HIGH,
+                "Class for the '" + alias + "' filter.",
+                group,
+                orderInGroup++,
+                ConfigDef.Width.LONG,
+                "Filter type for " + alias
+        );
+
+        final ConfigDef filterConfigDef;
+        try {
+            final String className = props.get(filterTypeConfig);
+            final Class<?> cls = (Class<?>) ConfigDef.parseType(filterTypeConfig, className, ConfigDef.Type.CLASS);
+            filterConfigDef = getConfigDefFromFilter(filterTypeConfig, cls);
+        } catch (ConfigException e) {
+            return;
+        }
+        newDef.embed(prefix, group, orderInGroup, filterConfigDef);
     }
 
     public String getTasksReporterGroupId() {
@@ -143,22 +178,24 @@ public class TaskConfig extends CommonConfig {
 
     public List<RecordFilter> filters() {
         final List<String> filterAliases = getList(FILTER_CONFIG);
-
         final List<RecordFilter> filters = new ArrayList<>(filterAliases.size());
         for (String alias : filterAliases) {
-            final String prefix = FILTER_CONFIG + "." + alias + ".";
-            try {
-                final RecordFilter filter = getClass(prefix + "type")
-                        .asSubclass(RecordFilter.class)
-                        .getDeclaredConstructor().newInstance();
-                filter.configure(originalsWithPrefix(prefix));
-                filters.add(filter);
-            } catch (Exception e) {
-                throw new ConnectException(e);
-            }
+            filters.add(filterByAlias(alias));
         }
-
         return filters;
+    }
+
+    public RecordFilter filterByAlias(final String alias) {
+        final String prefix = FILTER_CONFIG + "." + alias + ".";
+        try {
+            final RecordFilter filter = getClass(prefix + "type")
+                    .asSubclass(RecordFilter.class)
+                    .getDeclaredConstructor().newInstance();
+            filter.configure(originalsWithPrefix(prefix), this::filterByAlias);
+            return filter;
+        } catch (Exception e) {
+            throw new ConnectException("Failed to create filter with alias '" + alias + "'", e);
+        }
     }
 
     /**
@@ -191,6 +228,7 @@ public class TaskConfig extends CommonConfig {
 
         /**
          * Creates a new {@link EnrichedConnectorConfig} instance.
+         *
          * @param configDef the configuration definition.
          * @param props     the original configurations.
          */

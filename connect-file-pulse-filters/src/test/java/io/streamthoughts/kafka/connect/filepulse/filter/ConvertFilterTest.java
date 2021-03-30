@@ -54,7 +54,7 @@ public class ConvertFilterTest {
     public void should_convert_value_given_valid_field() {
         configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field");
         configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "boolean");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct struct = TypedStruct.create().put("field", "yes");
         List<TypedStruct> results = filter.apply(context, struct, false).collect();
@@ -71,7 +71,7 @@ public class ConvertFilterTest {
     public void should_convert_value_given_valid_path() {
         configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field.child");
         configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "boolean");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct struct = TypedStruct.create().insert("field.child", "yes");
         List<TypedStruct> results = filter.apply(context, struct, false).collect();
@@ -89,7 +89,7 @@ public class ConvertFilterTest {
         configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field");
         configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "boolean");
         configs.put(ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG, "false");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         filter.apply(context, TypedStruct.create(), false).collect();
     }
 
@@ -98,7 +98,7 @@ public class ConvertFilterTest {
         configs.put(ConvertFilterConfig.CONVERT_FIELD_CONFIG, "field");
         configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "integer");
         configs.put(ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG, "false");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct struct = TypedStruct.create().insert("field", "dummy");
         filter.apply(context, struct, false).collect();
@@ -110,7 +110,7 @@ public class ConvertFilterTest {
         configs.put(ConvertFilterConfig.CONVERT_TO_CONFIG, "integer");
         configs.put(ConvertFilterConfig.CONVERT_DEFAULT_CONFIG, "-1");
         configs.put(ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG, "false");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         TypedStruct struct = TypedStruct.create().insert("field", "dummy");
         List<TypedStruct> results = filter.apply(context, struct, false).collect();

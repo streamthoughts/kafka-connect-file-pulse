@@ -18,27 +18,19 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.merger.DefaultTypeValueMerger;
 import io.streamthoughts.kafka.connect.filepulse.data.merger.TypeValueMerger;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter> extends AbstractRecordFilter<T> {
+public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter<T>> extends AbstractRecordFilter<T> {
 
-    private TypeValueMerger merger = new DefaultTypeValueMerger();
+    private final TypeValueMerger merger = new DefaultTypeValueMerger();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void configure(final Map<String, ?> props) {
-        super.configure(props);
-    }
 
     /**
      * {@inheritDoc}

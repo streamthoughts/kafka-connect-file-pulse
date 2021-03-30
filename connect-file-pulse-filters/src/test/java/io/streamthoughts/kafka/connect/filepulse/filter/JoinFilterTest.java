@@ -55,7 +55,7 @@ public class JoinFilterTest {
         configs.put(JoinFilterConfig.JOIN_FIELD_CONFIG, "$.array");
         configs.put(JoinFilterConfig.JOIN_SEPARATOR_CONFIG, "|");
 
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         final TypedStruct struct = TypedStruct.create().put("array", Arrays.asList("one", "two", "three", "four"));
 
         RecordsIterable<TypedStruct> filtered = filter.apply(context, struct, false);
@@ -73,7 +73,7 @@ public class JoinFilterTest {
         configs.put(JoinFilterConfig.JOIN_TARGET_CONFIG, "$.joined");
         configs.put(JoinFilterConfig.JOIN_SEPARATOR_CONFIG, "|");
 
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         final TypedStruct struct = TypedStruct.create().put("array", Arrays.asList("one", "two", "three", "four"));
 
         RecordsIterable<TypedStruct> filtered = filter.apply(context, struct, false);
@@ -88,7 +88,7 @@ public class JoinFilterTest {
     @Test(expected = DataException.class)
     public void shouldThrowDataExceptionGivenNonArrayField() {
         configs.put(JoinFilterConfig.JOIN_FIELD_CONFIG, "array");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         filter.apply(context, TypedStruct.create().put("array","dummy"), false);
     }
 

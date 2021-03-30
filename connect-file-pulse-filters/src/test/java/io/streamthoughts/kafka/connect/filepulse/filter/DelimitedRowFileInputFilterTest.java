@@ -56,7 +56,7 @@ public class DelimitedRowFileInputFilterTest {
 
     @Test
     public void should_auto_generate_schema_given_no_schema_field() {
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         RecordsIterable<TypedStruct> output = filter.apply(null, DEFAULT_STRUCT, false);
         Assert.assertNotNull(output);
         Assert.assertEquals(1, output.size());
@@ -70,7 +70,7 @@ public class DelimitedRowFileInputFilterTest {
     @Test
     public void should_extract_column_names_from_given_field() {
         configs.put(READER_EXTRACT_COLUMN_NAME_CONFIG, "headers");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         RecordsIterable<TypedStruct> output = filter.apply(null, DEFAULT_STRUCT, false);
         Assert.assertNotNull(output);
         Assert.assertEquals(1, output.size());
@@ -85,7 +85,7 @@ public class DelimitedRowFileInputFilterTest {
     public void should_extract_repeated_columns_names_from_given_field() {
         configs.put(READER_EXTRACT_COLUMN_NAME_CONFIG, "headers");
         configs.put(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG, "true");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         final TypedStruct input = TypedStruct.create()
                 .put("message", "value1;value2-1;value2-2;value2-3;value3;value2-4")
@@ -106,7 +106,7 @@ public class DelimitedRowFileInputFilterTest {
     public void should_fail_given_repeated_columns_names_and_duplicate_not_allowed() {
         configs.put(READER_EXTRACT_COLUMN_NAME_CONFIG, "headers");
         configs.put(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG, "false");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
 
         final TypedStruct input = TypedStruct.create()
                 .put("message", "value1;value2-1;value2-2;value2-3;value3;value2-4")
@@ -119,7 +119,7 @@ public class DelimitedRowFileInputFilterTest {
     @Test
     public void should_use_configured_schema() {
         configs.put(READER_FIELD_COLUMNS_CONFIG, "c1:STRING;c2:INTEGER;c3:BOOLEAN");
-        filter.configure(configs);
+        filter.configure(configs, alias -> null);
         RecordsIterable<TypedStruct> output = filter.apply(null, DEFAULT_STRUCT, false);
         Assert.assertNotNull(output);
         Assert.assertEquals(1, output.size());

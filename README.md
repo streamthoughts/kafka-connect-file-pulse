@@ -40,7 +40,7 @@ Connect FilePulse provides a set of built-in features for streaming local files 
 * Parsing and transforming data using built-in or custom processing filters.
 * Error handler definition
 * Monitoring files while they are being written into Kafka
-* Support plugeable strategies to cleanup up completed files
+* Support pluggable strategies to clean up completed files
 * Etc.
 
 ## 🙏 Show your support
@@ -50,7 +50,7 @@ Please 🌟 this repository to support us!
 
 ## 🏁 How to get started ?
 
-The best way to learn Connect File Pulse is to follow the step by step [Getting Started](https://streamthoughts.github.io/kafka-connect-file-pulse/docs/getting-started/).
+The best way to learn Kafka Connect File Pulse is to follow the step by step [Getting Started](https://streamthoughts.github.io/kafka-connect-file-pulse/docs/getting-started/).
 
 If you want to read about using Connect File Pulse, the full documentation can be found [here](https://streamthoughts.github.io/kafka-connect-file-pulse/)
 
@@ -72,7 +72,7 @@ Any feedback, bug reports and PRs are greatly appreciated! See our [guideline](.
 
 ## Licence
 
-Copyright 2019-2020 StreamThoughts.
+Copyright 2019-2021 StreamThoughts.
 
 Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

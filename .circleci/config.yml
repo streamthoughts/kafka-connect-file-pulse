@@ -6,7 +6,7 @@ version: 2.1
 executors:
   default-executor:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202008-01
   node-executor:
     docker:
       - image: circleci/node:latest

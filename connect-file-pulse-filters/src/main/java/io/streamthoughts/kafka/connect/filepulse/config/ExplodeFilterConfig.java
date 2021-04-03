@@ -25,6 +25,8 @@ import java.util.Map;
 
 public class ExplodeFilterConfig extends CommonFilterConfig {
 
+    private static final String FILTER_EXPLODE = "EXPLODE_FILTER";
+
     /**
      * Creates a new {@link ExplodeFilterConfig} instance.
      *
@@ -34,14 +36,10 @@ public class ExplodeFilterConfig extends CommonFilterConfig {
         super(configDef(), originals);
     }
 
-    public String source() {
-        return getString(CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG);
-    }
-
     public static ConfigDef configDef() {
-        ConfigDef def = CommonFilterConfig.configDef();
-        CommonFilterConfig.withOverwrite(def);
-        CommonFilterConfig.withSource(def);
-        return def;
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(withOverwrite(FILTER_EXPLODE, filterGroupCounter++))
+                .define(withSource(FILTER_EXPLODE, filterGroupCounter++));
     }
 }

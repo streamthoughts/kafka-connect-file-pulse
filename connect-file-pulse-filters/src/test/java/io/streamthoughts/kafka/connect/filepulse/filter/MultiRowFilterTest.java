@@ -24,6 +24,7 @@ import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
+import io.streamthoughts.kafka.connect.transform.GrokConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class MultiRowFilterTest {
 
     private Map<String, String> configs;
 
-    private static List<List<String>> INPUTS = new ArrayList<List<String>>() {{
+    private static final List<List<String>> INPUTS = new ArrayList<>() {{
         add(Collections.singletonList("[INFO] dummy log 1"));
         add(Collections.singletonList("[INFO] dummy log 2"));
         add(Arrays.asList("[ERROR] java.lang.RuntimeException: Big Error", "\tStackTrace-1", "\tStackTrace-2"));
@@ -55,7 +56,7 @@ public class MultiRowFilterTest {
         add(Arrays.asList("[ERROR] java.lang.RuntimeException: Second Big Error", "\tStackTrace-3", "\tStackTrace-4"));
     }};
 
-    private static List<String> EXPECTED = INPUTS.stream()
+    private static final List<String> EXPECTED = INPUTS.stream()
             .map(ml -> String.join(MultiRowFilterConfig.MULTI_ROW_LINE_SEPARATOR_DEFAULT, ml))
             .collect(Collectors.toList());
 
@@ -81,7 +82,7 @@ public class MultiRowFilterTest {
     @Test
     public void shouldMatchMultiLinesGivenNegateParamsEqualsToFalse() {
         configs.put(MultiRowFilterConfig.MULTI_ROW_NEGATE_CONFIG, "false");
-        configs.put(MultiRowFilterConfig.MULTI_ROW_PATTERN_CONFIG, "^[\\t]");
+        configs.put(GrokConfig.GROK_PATTERN_CONFIG, "^[\\t]");
         filter.configure(configs, alias -> null);
 
         List<TypedStruct> output = new LinkedList<>();
@@ -95,7 +96,7 @@ public class MultiRowFilterTest {
     @Test
     public void shouldMatchMultiLinesGivenNegateParamsEqualsToTrue() {
         configs.put(MultiRowFilterConfig.MULTI_ROW_NEGATE_CONFIG, "true");
-        configs.put(MultiRowFilterConfig.MULTI_ROW_PATTERN_CONFIG, "^\\[INFO|ERROR\\]");
+        configs.put(GrokConfig.GROK_PATTERN_CONFIG, "^\\[INFO|ERROR\\]");
         filter.configure(configs, alias -> null);
 
         List<TypedStruct> output = new LinkedList<>();

@@ -20,13 +20,13 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.config.MultiRowFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.pattern.GrokMatcher;
-import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternCompiler;
-import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternResolver;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
+import io.streamthoughts.kafka.connect.transform.pattern.GrokMatcher;
+import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternCompiler;
+import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternResolver;
 import org.apache.kafka.common.config.ConfigDef;
 import org.joni.Matcher;
 import org.joni.Option;
@@ -41,13 +41,9 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
 
     private static final String DEFAULT_SOURCE_FIELD = "message";
 
-    private MultiRowFilterConfig configs;
-
     private String separator;
 
     private boolean negate;
-
-    private GrokPatternCompiler compiler;
 
     private GrokMatcher matcher;
 
@@ -61,16 +57,16 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
     @Override
     public void configure(final Map<String, ?> configs) {
         super.configure(configs);
-        this.configs = new MultiRowFilterConfig(configs);
+        MultiRowFilterConfig configs1 = new MultiRowFilterConfig(configs);
 
-        compiler = new GrokPatternCompiler(
-            new GrokPatternResolver(
-                this.configs.patternDefinitions(),
-                this.configs.patternsDir()),
-            true);
-        matcher = compiler.compile(this.configs.pattern());
-        separator = this.configs.separator();
-        negate = this.configs.negate();
+        GrokPatternCompiler compiler = new GrokPatternCompiler(
+                new GrokPatternResolver(
+                        configs1.patternDefinitions(),
+                        configs1.patternsDir()),
+                true);
+        matcher = compiler.compile(configs1.pattern());
+        separator = configs1.separator();
+        negate = configs1.negate();
     }
 
     /**

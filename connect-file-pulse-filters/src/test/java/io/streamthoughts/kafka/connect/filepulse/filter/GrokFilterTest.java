@@ -18,12 +18,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.config.GrokFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.transform.GrokConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class GrokFilterTest {
 
     @Test
     public void testGivenDefaultProperties() {
-        configs.put(GrokFilterConfig.GROK_ROW_PATTERN_CONFIG, GROK_NAMED_CAPTURED_PATTERN);
+        configs.put(GrokConfig.GROK_PATTERN_CONFIG, GROK_NAMED_CAPTURED_PATTERN);
         filter.configure(configs, alias -> null);
         List<TypedStruct> results = filter.apply(null, DATA, false).collect();
 
@@ -64,7 +65,7 @@ public class GrokFilterTest {
 
     @Test
     public void testGivenOverwriteProperty() {
-        configs.put(GrokFilterConfig.GROK_ROW_PATTERN_CONFIG, GROK_NAMED_CAPTURED_PATTERN);
+        configs.put(GrokConfig.GROK_PATTERN_CONFIG, GROK_NAMED_CAPTURED_PATTERN);
         configs.put(CommonFilterConfig.FILTER_OVERWRITE_CONFIG, "message");
         filter.configure(configs, alias -> null);
         List<TypedStruct> results = filter.apply(null, DATA, false).collect();
@@ -78,7 +79,7 @@ public class GrokFilterTest {
 
     @Test(expected = FilterException.class)
     public void testGivenNotMatchingInput() {
-        configs.put(GrokFilterConfig.GROK_ROW_PATTERN_CONFIG, GROK_NAMED_CAPTURED_PATTERN);
+        configs.put(GrokConfig.GROK_PATTERN_CONFIG, GROK_NAMED_CAPTURED_PATTERN);
         configs.put(CommonFilterConfig.FILTER_OVERWRITE_CONFIG, "message");
         filter.configure(configs, alias -> null);
         filter.apply(null, TypedStruct.create().put("message", "BAD INPUT"), false);
@@ -86,9 +87,9 @@ public class GrokFilterTest {
 
     @Test
     public void testGivenPatternWithNoGroupWhenCapturedNameOnlyIsFalse() {
-        configs.put(GrokFilterConfig.GROK_ROW_PATTERN_CONFIG, GROK_PATTERN);
+        configs.put(GrokConfig.GROK_PATTERN_CONFIG, GROK_PATTERN);
         configs.put(CommonFilterConfig.FILTER_OVERWRITE_CONFIG, "message");
-        configs.put(GrokFilterConfig.GROK_ROW_NAMED_CAPTURES_ONLY_CONFIG, "false");
+        configs.put(GrokConfig.GROK_NAMED_CAPTURES_ONLY_CONFIG, "false");
         filter.configure(configs, alias -> null);
         List<TypedStruct> results = filter.apply(null, DATA, false).collect();
 

@@ -76,14 +76,14 @@
         </dependency>
 
         <dependency>
-            <groupId>com.jsoniter</groupId>
-            <artifactId>jsoniter</artifactId>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>kafka-connect-transform-grok</artifactId>
+            <version>1.1.0</version>
         </dependency>
 
         <dependency>
-            <groupId>org.jruby.joni</groupId>
-            <artifactId>joni</artifactId>
-            <version>${org.jruby.joni.version}</version>
+            <groupId>com.jsoniter</groupId>
+            <artifactId>jsoniter</artifactId>
         </dependency>
 
         <!-- START test dependencies-->

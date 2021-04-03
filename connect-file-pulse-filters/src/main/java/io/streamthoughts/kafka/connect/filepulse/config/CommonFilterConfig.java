@@ -25,28 +25,32 @@ import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CommonFilterConfig extends AbstractConfig {
 
-    public static final String ON_FAILURE_CONFIG          = "withOnFailure";
-    public static final String ON_FAILURE_DOC             = "List of filters aliases to apply on each value after failure (order is important).";
+    private static final String GROUP_FILTER = "FILTER";
 
-    public static final String CONDITION_CONFIG           = "if";
-    public static final String CONDITION_DOC              = "Condition to apply the filter on the current record.";
+    public static final String ON_FAILURE_CONFIG = "withOnFailure";
+    public static final String ON_FAILURE_DOC = "List of filters aliases to apply on each value after failure (order is important).";
 
-    public static final String CONDITION_NOT_CONFIG       = "invert";
-    public static final String CONDITION_NOT_DOC          = "Invert the boolean value return from the filter condition.";
+    public static final String CONDITION_CONFIG = "if";
+    public static final String CONDITION_DOC = "Condition to apply the filter on the current record.";
 
-    public static final String IGNORE_FAILURE_CONFIG      = "ignoreFailure";
-    public static final String IGNORE_FAILURE_DOC         = "Ignore failure and continue pipeline filters";
+    public static final String CONDITION_NOT_CONFIG = "invert";
+    public static final String CONDITION_NOT_DOC = "Invert the boolean value return from the filter condition.";
 
-    public static final String FILTER_OVERWRITE_CONFIG    = "overwrite";
-    public static final String FILTER_OVERWRITE_DOC       = "The fields to overwrite.";
+    public static final String IGNORE_FAILURE_CONFIG = "ignoreFailure";
+    public static final String IGNORE_FAILURE_DOC = "Ignore failure and continue pipeline filters";
+
+    public static final String FILTER_OVERWRITE_CONFIG = "overwrite";
+    public static final String FILTER_OVERWRITE_DOC = "The fields to overwrite.";
 
     public static final String FILTER_SOURCE_FIELD_CONFIG = "source";
-    private static final String FILTER_SOURCE_FIELD_DOC   = "The input field on which to apply the filter (default: message).";
+    private static final String FILTER_SOURCE_FIELD_DOC = "The input field on which to apply the filter (default: message).";
 
     /**
      * Creates a new {@link CommonFilterConfig} instance.
@@ -54,7 +58,7 @@ public class CommonFilterConfig extends AbstractConfig {
      * @param originals the originals configuration.
      */
     public CommonFilterConfig(final Map<?, ?> originals) {
-        super(configDef() , originals);
+        super(configDef(), originals);
     }
 
     /**
@@ -77,7 +81,7 @@ public class CommonFilterConfig extends AbstractConfig {
 
         ExpressionFilterCondition condition = new ExpressionFilterCondition(strCondition);
 
-        return revert ? FilterCondition.revert(condition) : condition ;
+        return revert ? FilterCondition.revert(condition) : condition;
     }
 
     public boolean ignoreFailure() {
@@ -89,25 +93,96 @@ public class CommonFilterConfig extends AbstractConfig {
         return aliases == null ? Collections.emptyList() : aliases;
     }
 
-    public static ConfigDef withOverwrite(final ConfigDef def) {
-        return def.define(CommonFilterConfig.FILTER_OVERWRITE_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
-                ConfigDef.Importance.HIGH, CommonFilterConfig.FILTER_OVERWRITE_DOC);
+    public Set<String> overwrite() {
+        return new HashSet<>(getList(CommonFilterConfig.FILTER_OVERWRITE_CONFIG));
     }
 
-    public static ConfigDef withSource(final ConfigDef def) {
-        return def.define(CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG, ConfigDef.Type.STRING, TypedFileRecord.DEFAULT_MESSAGE_FIELD,
-                ConfigDef.Importance.HIGH, CommonFilterConfig.FILTER_SOURCE_FIELD_DOC);
+    public String source() {
+        return getString(CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG);
+    }
+
+    public static ConfigDef.ConfigKey withOverwrite(final String group, final int groupCounter) {
+        return new ConfigDef.ConfigKey(
+                CommonFilterConfig.FILTER_OVERWRITE_CONFIG,
+                ConfigDef.Type.LIST,
+                Collections.emptyList(),
+                null,
+                ConfigDef.Importance.HIGH,
+                CommonFilterConfig.FILTER_OVERWRITE_DOC,
+                group,
+                groupCounter,
+                ConfigDef.Width.NONE,
+                CommonFilterConfig.FILTER_OVERWRITE_CONFIG,
+                Collections.<String>emptyList(),
+                null,
+                true
+        );
+    }
+
+    public static ConfigDef.ConfigKey withSource(final String group, final int groupCounter) {
+        return new ConfigDef.ConfigKey(
+                CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG,
+                ConfigDef.Type.STRING,
+                TypedFileRecord.DEFAULT_MESSAGE_FIELD,
+                new ConfigDef.NonEmptyString(),
+                ConfigDef.Importance.HIGH,
+                CommonFilterConfig.FILTER_SOURCE_FIELD_DOC,
+                group,
+                groupCounter,
+                ConfigDef.Width.NONE,
+                CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG,
+                Collections.<String>emptyList(),
+                null,
+                true
+        );
     }
 
     public static ConfigDef configDef() {
+        int filterGroupCounter = 0;
         return new ConfigDef()
-                .define(ON_FAILURE_CONFIG, ConfigDef.Type.LIST, null,
-                        ConfigDef.Importance.HIGH, ON_FAILURE_DOC)
-                .define(IGNORE_FAILURE_CONFIG, ConfigDef.Type.BOOLEAN, false,
-                        ConfigDef.Importance.HIGH, IGNORE_FAILURE_DOC)
-                .define(CONDITION_NOT_CONFIG, ConfigDef.Type.BOOLEAN, false,
-                        ConfigDef.Importance.HIGH, CONDITION_NOT_DOC)
-                .define(CONDITION_CONFIG, ConfigDef.Type.STRING, null,
-                        ConfigDef.Importance.HIGH, CONDITION_DOC);
+                .define(
+                        ON_FAILURE_CONFIG,
+                        ConfigDef.Type.LIST,
+                        null,
+                        ConfigDef.Importance.HIGH,
+                        ON_FAILURE_DOC,
+                        GROUP_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        ON_FAILURE_CONFIG
+                )
+                .define(
+                        IGNORE_FAILURE_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.HIGH,
+                        IGNORE_FAILURE_DOC,
+                        GROUP_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        IGNORE_FAILURE_CONFIG
+                )
+                .define(
+                        CONDITION_NOT_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.HIGH,
+                        CONDITION_NOT_DOC,
+                        GROUP_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        CONDITION_NOT_CONFIG
+                )
+                .define(
+                        CONDITION_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.HIGH,
+                        CONDITION_DOC,
+                        GROUP_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        CONDITION_CONFIG
+                );
     }
 }

@@ -119,7 +119,7 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
      */
     @Override
     protected Set<String> overwrite() {
-        if (config.overwrite()) {
+        if (config.isOverwritten()) {
             return Collections.singleton(target);
         }
         return Collections.emptySet();

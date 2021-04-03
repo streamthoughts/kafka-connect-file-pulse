@@ -26,11 +26,13 @@ import java.util.Map;
 
 public class SplitFilterConfig extends CommonFilterConfig {
 
-    public static final String MUTATE_SPLIT_CONFIG      = "split";
-    private static final String MUTATE_SPLIT_DOC        = "The comma-separated list of fields to split";
+    private static final String GROUP_SPLIT_FILTER = "SPLIT_FILTER";
 
-    public static final String MUTATE_SPLIT_SEP_CONFIG  = "separator";
-    private static final String MUTATE_SPLIT_SEP_DOC    = "The separator used for splitting a message field's value to array (default separator : ',')";
+    public static final String MUTATE_SPLIT_CONFIG = "split";
+    private static final String MUTATE_SPLIT_DOC = "The comma-separated list of fields to split";
+
+    public static final String MUTATE_SPLIT_SEP_CONFIG = "separator";
+    private static final String MUTATE_SPLIT_SEP_DOC = "The separator used for splitting a message field's value to array (default separator : ',')";
 
 
     private static final List<Object> DEFAULT_VALUE = Collections.emptyList();
@@ -54,10 +56,28 @@ public class SplitFilterConfig extends CommonFilterConfig {
     }
 
     public static ConfigDef configDef() {
-        return CommonFilterConfig.configDef()
-                .define(MUTATE_SPLIT_SEP_CONFIG, ConfigDef.Type.STRING, ",",
-                        ConfigDef.Importance.HIGH, MUTATE_SPLIT_SEP_DOC)
-                .define(MUTATE_SPLIT_CONFIG, ConfigDef.Type.LIST, DEFAULT_VALUE,
-                        ConfigDef.Importance.HIGH, MUTATE_SPLIT_DOC);
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(
+                        MUTATE_SPLIT_SEP_CONFIG,
+                        ConfigDef.Type.STRING, ",",
+                        ConfigDef.Importance.HIGH,
+                        MUTATE_SPLIT_SEP_DOC,
+                        GROUP_SPLIT_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        MUTATE_SPLIT_SEP_CONFIG
+                )
+                .define(
+                        MUTATE_SPLIT_CONFIG,
+                        ConfigDef.Type.LIST,
+                        DEFAULT_VALUE,
+                        ConfigDef.Importance.HIGH,
+                        MUTATE_SPLIT_DOC,
+                        GROUP_SPLIT_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        MUTATE_SPLIT_CONFIG
+                );
     }
 }

@@ -18,41 +18,34 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.config.GrokFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.pattern.GrokMatcher;
-import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPattern;
-import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternCompiler;
-import io.streamthoughts.kafka.connect.filepulse.pattern.GrokPatternResolver;
-import io.streamthoughts.kafka.connect.filepulse.pattern.GrokSchemaBuilder;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
+import io.streamthoughts.kafka.connect.transform.pattern.GrokMatcher;
+import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternCompiler;
+import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternResolver;
 import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
-import org.joni.Matcher;
-import org.joni.NameEntry;
-import org.joni.Option;
-import org.joni.Regex;
-import org.joni.Region;
+import org.apache.kafka.connect.data.SchemaBuilder;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
 
-    private GrokFilterConfig configs;
+    private GrokFilterConfig config;
 
     private GrokPatternCompiler compiler;
 
-    private List<GrokMatcher> patterns;
-
-    private Schema schema;
+    private List<GrokMatcher> matchPatterns;
 
     /**
      * {@inheritDoc}
@@ -60,14 +53,16 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
     @Override
     public void configure(final Map<String, ?> props) {
         super.configure(props);
-        configs = new GrokFilterConfig(props);
+        config = new GrokFilterConfig(props);
+
         compiler = new GrokPatternCompiler(
-                new GrokPatternResolver(
-                        configs.patternDefinitions(),
-                        configs.patternsDir()),
-                        configs.namedCapturesOnly());
-        patterns = Collections.singletonList(compiler.compile(configs.pattern()));
-        schema = GrokSchemaBuilder.buildSchemaForGrok(patterns);
+                new GrokPatternResolver(config.grok().patternDefinitions(), config.grok().patternsDir()),
+                config.grok().namedCapturesOnly());
+
+        matchPatterns = config.grok().patterns()
+                .stream()
+                .map(pattern -> compiler.compile(pattern))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -75,7 +70,7 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
      */
     @Override
     public ConfigDef configDef() {
-        return GrokFilterConfig.configDef();
+        return CommonFilterConfig.configDef();
     }
 
     /**
@@ -85,23 +80,28 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
     protected RecordsIterable<TypedStruct> apply(final FilterContext context,
                                                  final TypedStruct record) throws FilterException {
 
-        final String value = record.getString(configs.source());
+        final String value = record.getString(config.source());
 
         if (value == null) return null;
 
-        final TypedStruct struct = TypedStruct.create();
-
         final byte[] bytes = value.getBytes();
-        for (GrokMatcher grok : patterns) {
-            final Regex regex = grok.regex();
-            final Matcher matcher = regex.matcher(bytes);
-            int result = matcher.search(0, bytes.length, Option.DEFAULT);
-            if (result != -1) {
-                extractAndPutFieldsTo(struct, regex, matcher, bytes, grok);
-                return RecordsIterable.of(struct);
+
+        List<SchemaAndNamedCaptured> allNamedCaptured = new ArrayList<>(matchPatterns.size());
+
+        for (GrokMatcher matcher : matchPatterns) {
+            final Map<String, Object> captured = matcher.captures(bytes);
+            if (captured != null) {
+                allNamedCaptured.add(new SchemaAndNamedCaptured(matcher.schema(), captured));
+                if (config.grok().breakOnFirstPattern()) break;
             }
         }
-        throw new FilterException("Can not matches grok pattern on value : " + value);
+
+        if (allNamedCaptured.isEmpty()) {
+            throw new FilterException("Supplied Grok patterns does not match input data: " + value);
+        }
+
+        final Schema schema = mergeToSchema(allNamedCaptured);
+        return RecordsIterable.of(mergeToStruct(allNamedCaptured, schema));
     }
 
     /**
@@ -109,63 +109,63 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
      */
     @Override
     protected Set<String> overwrite() {
-        return configs.overwrite();
+        return config.overwrite();
     }
 
-    private void extractAndPutFieldsTo(final TypedStruct struct,
-                                       final Regex regex,
-                                       final Matcher matcher,
-                                       final byte[] bytes,
-                                       final GrokMatcher grok) {
-        final Region region = matcher.getEagerRegion();
-        for (Iterator<NameEntry> entry = regex.namedBackrefIterator(); entry.hasNext(); ) {
-            NameEntry e = entry.next();
-            final String field = GrokSchemaBuilder.getStringFieldName(e);
-            final GrokPattern pattern = grok.getGrokPattern(field);
-            final Type type = pattern != null ? pattern.type() : Type.STRING;
-            List<Object> objects = extractValuesForEntry(region, e, bytes, type);
-            append(struct, field, objects, type);
+    private Schema mergeToSchema(final List<SchemaAndNamedCaptured> allNamedCaptured) {
+        if (allNamedCaptured.size() == 1) return allNamedCaptured.get(0).schema();
+
+        final Map<String, Schema> fields = new HashMap<>();
+        for (SchemaAndNamedCaptured namedCaptured : allNamedCaptured) {
+            final Schema schema = namedCaptured.schema();
+            schema.fields().forEach(f -> {
+                final Schema fieldSchema = fields.containsKey(f.name()) ? SchemaBuilder.array(f.schema()) : f.schema();
+                fields.put(f.name(), fieldSchema);
+            });
+        }
+        SchemaBuilder schema = SchemaBuilder.struct();
+        fields.forEach(schema::field);
+        return schema.build();
+    }
+
+    private TypedStruct mergeToStruct(final List<SchemaAndNamedCaptured> allNamedCaptured,
+                                      final Schema schema) {
+        final Map<String, TypedValue> fields = new HashMap<>();
+        for (SchemaAndNamedCaptured schemaAndNamedCaptured : allNamedCaptured) {
+            schemaAndNamedCaptured.namedCaptured().forEach((name, value) -> {
+                final Field field = schema.field(name);
+                if (field.schema().type() == Schema.Type.ARRAY) {
+                    fields.computeIfAbsent(name, k -> {
+                        final Schema valueSchema = field.schema().valueSchema();
+                        return TypedValue.array(new ArrayList<>(), Type.forConnectSchemaType(valueSchema.type()));
+                    }).getArray().add(value);
+                } else
+                    fields.put(name, TypedValue.of(value, Type.forConnectSchemaType(field.schema().type())));
+            });
+        }
+        final TypedStruct struct = TypedStruct.create();
+        fields.forEach(struct::put);
+        return struct;
+    }
+
+    private static final class SchemaAndNamedCaptured {
+
+        private final Schema schema;
+        private final Map<String, Object> namedCaptured;
+
+        public SchemaAndNamedCaptured(final Schema schema,
+                                      final Map<String, Object> namedCaptured) {
+            this.schema = schema;
+            this.namedCaptured = namedCaptured;
+        }
+
+        public Schema schema() {
+            return schema;
+        }
+
+        public Map<String, Object> namedCaptured() {
+            return namedCaptured;
         }
     }
 
-    private void append(final TypedStruct struct,
-                        final String field,
-                        final List<Object> values,
-                        final Type type) {
-        if (struct.has(field)) {
-            if (struct.field(field).type() == Type.ARRAY) {
-                struct.getArray(field).addAll(values);
-            } else {
-                final List<Object> list = new LinkedList<>();
-                list.add(struct.get(field).value());
-                list.addAll(values);
-                struct.put(field, type, list);
-            }
-        } else if (values.size() > 1) {
-            struct.put(field, type, values);
-        } else if (values.size() == 1) {
-            struct.put(field, type, values.get(0));
-        }
-    }
-
-    private List<Object> extractValuesForEntry(final Region region,
-                                               final NameEntry e,
-                                               final byte[] bytes,
-                                               final Type target) {
-        final List<Object> values = new ArrayList<>(e.getBackRefs().length);
-        for (int i = 0; i < e.getBackRefs().length; i++) {
-            int capture = e.getBackRefs()[i];
-            int begin = region.beg[capture];
-            int end = region.end[capture];
-
-            if (begin > -1 && end > -1) {
-                Object value = new String(bytes, begin, end - begin, StandardCharsets.UTF_8);
-                if (target != null) {
-                    value = target.convert(value);
-                }
-                values.add(value);
-            }
-        }
-        return values;
-    }
 }

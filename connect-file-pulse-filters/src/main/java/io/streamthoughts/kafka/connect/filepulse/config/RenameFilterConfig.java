@@ -24,14 +24,16 @@ import java.util.Map;
 
 public class RenameFilterConfig extends CommonFilterConfig {
 
-    public static final String RENAME_FIELD_CONFIG    = "field";
-    private static final String RENAME_FIELD_DOC      = "The field to rename";
+    private static final String GROUP_RENAME_FILTER = "RENAME_FILTER";
 
-    public static final String RENAME_TARGET_CONFIG   = "target";
-    private static final String RENAME_TARGET_DOC     = "The target name";
+    public static final String RENAME_FIELD_CONFIG = "field";
+    private static final String RENAME_FIELD_DOC = "The field to rename";
 
-    public static final String RENAME_IGNORE_MISSING_CONFIG  = "ignoreMissing";
-    private static final String RENAME_IGNORE_MISSING_DOC    = "If true and field does not exist the filter will be apply successfully without modifying the value. If field is null the schema will be modified.";
+    public static final String RENAME_TARGET_CONFIG = "target";
+    private static final String RENAME_TARGET_DOC = "The target name";
+
+    public static final String RENAME_IGNORE_MISSING_CONFIG = "ignoreMissing";
+    private static final String RENAME_IGNORE_MISSING_DOC = "If true and field does not exist the filter will be apply successfully without modifying the value. If field is null the schema will be modified.";
 
     /**
      * Creates a new {@link RenameFilterConfig} instance.
@@ -56,15 +58,41 @@ public class RenameFilterConfig extends CommonFilterConfig {
     }
 
     public static ConfigDef configDef() {
-        return CommonFilterConfig.configDef()
-                .define(RENAME_FIELD_CONFIG, ConfigDef.Type.STRING,
-                    ConfigDef.Importance.HIGH, RENAME_FIELD_DOC)
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(
+                        RENAME_FIELD_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        RENAME_FIELD_DOC,
+                        GROUP_RENAME_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        RENAME_FIELD_CONFIG
+                )
 
-                .define(RENAME_TARGET_CONFIG, ConfigDef.Type.STRING,
-                    ConfigDef.Importance.HIGH, RENAME_TARGET_DOC)
+                .define(
+                        RENAME_TARGET_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        RENAME_TARGET_DOC,
+                        GROUP_RENAME_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        RENAME_TARGET_CONFIG
+                )
 
-                .define(RENAME_IGNORE_MISSING_CONFIG, ConfigDef.Type.BOOLEAN, true,
-                    ConfigDef.Importance.HIGH, RENAME_IGNORE_MISSING_DOC);
+                .define(
+                        RENAME_IGNORE_MISSING_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        true,
+                        ConfigDef.Importance.HIGH,
+                        RENAME_IGNORE_MISSING_DOC,
+                        GROUP_RENAME_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        RENAME_IGNORE_MISSING_CONFIG
+                );
 
     }
 }

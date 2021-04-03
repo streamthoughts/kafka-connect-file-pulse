@@ -18,30 +18,15 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import io.streamthoughts.kafka.connect.transform.GrokConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class GrokFilterConfig extends CommonFilterConfig {
 
-    public static final String GROK_ROW_PATTERN_CONFIG             = "match";
-    private static final String GROK_ROW_PATTERN_DOC               = "The Grok pattern to matches.";
-
-    public static final String GROK_ROW_PATTERN_DEFINITIONS_CONFIG = "patternDefinitions";
-    private static final String GROK_ROW_PATTERN_DEFINITIONS_DOC   = "Custom pattern definitions";
-
-    public static final String GROK_ROW_PATTERNS_DIR_CONFIG        = "patternsDir";
-    private static final String GROK_ROW_PATTERNS_DIR_DOC          = "List of user-defined pattern directories";
-
-    public static final String GROK_ROW_NAMED_CAPTURES_ONLY_CONFIG = "namedCapturesOnly";
-    private static final String GROK_ROW_NAMED_CAPTURES_ONLY_DOC   = "If true, only store named captures from grok (default=true).";
+    private final GrokConfig grok;
+    public static final String GROK_FILTER = "GROK_FILTER";
 
     /**
      * Creates a new {@link GrokFilterConfig} instance.
@@ -49,64 +34,36 @@ public class GrokFilterConfig extends CommonFilterConfig {
      * @param originals the originals configuration.
      */
     public GrokFilterConfig(final Map<String, ?> originals) {
-        super(configDef(), originals);
+        super(configDef() , originals);
+        grok = new GrokConfig(originals);
     }
 
-    public String pattern() {
-        return this.getString(GROK_ROW_PATTERN_CONFIG);
-    }
-
-    public Set<String> overwrite() {
-        return new HashSet<>(this.getList(CommonFilterConfig.FILTER_OVERWRITE_CONFIG));
-    }
-
-    public String source() {
-        return this.getString(CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG);
-    }
-
-    public List<String> patternDefinitions() {
-        return this.getList(GROK_ROW_PATTERN_DEFINITIONS_CONFIG);
-    }
-
-    public boolean namedCapturesOnly() {
-        return this.getBoolean(GROK_ROW_NAMED_CAPTURES_ONLY_CONFIG);
-    }
-
-    public Collection<File> patternsDir() {
-        return this.getList(GROK_ROW_PATTERNS_DIR_CONFIG)
-                .stream()
-                .map(File::new)
-                .collect(Collectors.toList());
+    public GrokConfig grok() {
+        return grok;
     }
 
     public static ConfigDef configDef() {
-        ConfigDef def = CommonFilterConfig.configDef();
-        withPattern(def);
-        withNamedCapturesOnly(def);
-        withPatternsDir(def);
-        withPatternDefinitions(def);
-        CommonFilterConfig.withSource(def);
-        CommonFilterConfig.withOverwrite(def);
+        int filterGroupCounter = 0;
+        final ConfigDef def = new ConfigDef(CommonFilterConfig.configDef())
+                .define(withSource(GROK_FILTER, filterGroupCounter++))
+                .define(withOverwrite(GROK_FILTER, filterGroupCounter++));
+        for (ConfigDef.ConfigKey configKey : GrokConfig.configDef().configKeys().values()) {
+            def.define(new ConfigDef.ConfigKey(
+                    configKey.name,
+                    configKey.type,
+                    configKey.defaultValue,
+                    configKey.validator,
+                    configKey.importance,
+                    configKey.documentation,
+                    GROK_FILTER,
+                    filterGroupCounter++,
+                    configKey.width,
+                    configKey.displayName,
+                    configKey.dependents,
+                    null,
+                    true
+            ));
+        }
         return def;
-    }
-
-    static ConfigDef withPattern(final ConfigDef def) {
-        return def.define(GROK_ROW_PATTERN_CONFIG, ConfigDef.Type.STRING,
-                ConfigDef.Importance.HIGH, GROK_ROW_PATTERN_DOC);
-    }
-
-    static ConfigDef withNamedCapturesOnly(final ConfigDef def) {
-        return def.define(GROK_ROW_NAMED_CAPTURES_ONLY_CONFIG, ConfigDef.Type.BOOLEAN, true,
-                ConfigDef.Importance.MEDIUM, GROK_ROW_NAMED_CAPTURES_ONLY_DOC);
-    }
-
-    static ConfigDef withPatternsDir(final ConfigDef def) {
-        return def.define(GROK_ROW_PATTERNS_DIR_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
-                ConfigDef.Importance.MEDIUM, GROK_ROW_PATTERNS_DIR_DOC);
-    }
-
-    static ConfigDef withPatternDefinitions(final ConfigDef def) {
-        return  def.define(GROK_ROW_PATTERN_DEFINITIONS_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
-                ConfigDef.Importance.MEDIUM, GROK_ROW_PATTERN_DEFINITIONS_DOC);
     }
 }

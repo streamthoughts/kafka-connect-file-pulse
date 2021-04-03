@@ -24,13 +24,15 @@ import java.util.Map;
 
 public class MoveFilterConfig extends CommonFilterConfig {
 
+    private static final String GROUP_MOVE = "MOVE_FILTER";
+
     public static final String MOVE_TARGET_CONFIG = "target";
     private static final String MOVE_TARGET_DOC = "The target path (support dot-notation)";
 
     public static final String MOVE_IGNORE_MISSING_CONFIG = "ignoreMissing";
     private static final String MOVE_IGNORE_MISSING_DOC = "If true and field does not exist the filter will be " +
-                                                          "apply successfully without modifying the value. " +
-                                                          "If field is null the  will be modified.";
+            "apply successfully without modifying the value. " +
+            "If field is null the  will be modified.";
 
     /**
      * Creates a new {@link MoveFilterConfig} instance.
@@ -54,13 +56,22 @@ public class MoveFilterConfig extends CommonFilterConfig {
     }
 
     public static ConfigDef configDef() {
-        ConfigDef configDef =
-        CommonFilterConfig.configDef()
-            .define(MOVE_TARGET_CONFIG, ConfigDef.Type.STRING,
-                ConfigDef.Importance.HIGH, MOVE_TARGET_DOC)
-            .define(MOVE_IGNORE_MISSING_CONFIG, ConfigDef.Type.BOOLEAN, true,
-                ConfigDef.Importance.HIGH, MOVE_IGNORE_MISSING_DOC);
-        return withSource(configDef);
-
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(withOverwrite(GROUP_MOVE, filterGroupCounter++))
+                .define(withSource(GROUP_MOVE, filterGroupCounter++))
+                .define(
+                        MOVE_TARGET_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        MOVE_TARGET_DOC
+                )
+                .define(
+                        MOVE_IGNORE_MISSING_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        true,
+                        ConfigDef.Importance.HIGH,
+                        MOVE_IGNORE_MISSING_DOC
+                );
     }
 }

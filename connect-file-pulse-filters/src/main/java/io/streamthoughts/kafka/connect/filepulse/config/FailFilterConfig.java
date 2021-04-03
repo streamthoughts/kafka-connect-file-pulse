@@ -24,11 +24,14 @@ import java.util.Map;
 
 public class FailFilterConfig extends CommonFilterConfig {
 
+    private static final String GROUP_FAIL_FILTER = "FAIL_FILTER";
+
     public static final String MESSAGE_CONFIG = "message";
     public static final String MESSAGE_DOC = "The error message thrown by the filter.";
 
     /**
      * Creates a new {@link FailFilterConfig} instance.
+     *
      * @param originals the configuration.
      */
     public FailFilterConfig(final Map<?, ?> originals) {
@@ -40,7 +43,17 @@ public class FailFilterConfig extends CommonFilterConfig {
     }
 
     public static ConfigDef configDef() {
-        return CommonFilterConfig.configDef()
-                .define(MESSAGE_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, MESSAGE_DOC);
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(
+                        MESSAGE_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        MESSAGE_DOC,
+                        GROUP_FAIL_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        MESSAGE_CONFIG
+                );
     }
 }

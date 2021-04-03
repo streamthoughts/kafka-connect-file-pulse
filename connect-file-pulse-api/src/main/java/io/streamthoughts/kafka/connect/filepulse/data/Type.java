@@ -221,7 +221,7 @@ public enum Type {
 
     public static Type forConnectSchemaType(final Schema.Type schemaType) {
         for (Type type : Type.values()) {
-            if (type.schemaType.equals(schemaType)) {
+            if (type != Type.NULL && type.schemaType.equals(schemaType)) {
                 return type;
             }
         }

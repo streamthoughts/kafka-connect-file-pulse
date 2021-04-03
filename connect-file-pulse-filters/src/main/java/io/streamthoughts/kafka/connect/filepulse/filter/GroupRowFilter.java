@@ -34,15 +34,13 @@ import java.util.Objects;
 
 public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
 
-    private GroupRowFilterConfig configs;
-
     private List<String> fields;
 
     private String target;
 
     private int maxBufferedRecords;
 
-    private List<TypedStruct> buffered = new LinkedList<>();
+    private final List<TypedStruct> buffered = new LinkedList<>();
 
     private int lastObservedKey = -1;
 
@@ -54,10 +52,12 @@ public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
     @Override
     public void configure(final Map<String, ?> configs) {
         super.configure(configs);
-        this.configs = new GroupRowFilterConfig(configs);
-        this.fields = this.configs.fields();
-        this.target = this.configs.target();
-        this.maxBufferedRecords = this.configs.maxBufferedRecords();
+
+        final GroupRowFilterConfig config = new GroupRowFilterConfig(configs);
+
+        this.fields = config.fields();
+        this.target = config.target();
+        this.maxBufferedRecords = config.maxBufferedRecords();
     }
 
     /**

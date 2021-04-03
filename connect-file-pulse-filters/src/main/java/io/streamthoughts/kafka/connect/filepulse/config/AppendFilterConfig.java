@@ -26,6 +26,8 @@ import java.util.Map;
 
 public class AppendFilterConfig extends CommonFilterConfig {
 
+    private static final String GROUP_APPEND = "APPEND_FILTER";
+
     public static final String APPEND_FIELD_CONFIG = "field";
     public static final String APPEND_FIELD_DOC = "The field to append";
 
@@ -48,7 +50,7 @@ public class AppendFilterConfig extends CommonFilterConfig {
         return ExpressionParsers.parseExpression(getString(APPEND_FIELD_CONFIG));
     }
 
-    public boolean overwrite() {
+    public boolean isOverwritten() {
         return getBoolean(APPEND_OVERWRITE_CONFIG);
     }
 
@@ -57,14 +59,40 @@ public class AppendFilterConfig extends CommonFilterConfig {
     }
 
     public static ConfigDef configDef() {
-        return CommonFilterConfig.configDef()
-                 .define(APPEND_FIELD_CONFIG, ConfigDef.Type.STRING,
-                    ConfigDef.Importance.HIGH, APPEND_FIELD_DOC)
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(
+                        APPEND_FIELD_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        APPEND_FIELD_DOC,
+                        GROUP_APPEND,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        APPEND_FIELD_CONFIG
+                )
 
-                .define(APPEND_OVERWRITE_CONFIG, ConfigDef.Type.BOOLEAN, false,
-                        ConfigDef.Importance.HIGH, APPEND_OVERWRITE_DOC)
+                .define(
+                        APPEND_OVERWRITE_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.HIGH,
+                        APPEND_OVERWRITE_DOC,
+                        GROUP_APPEND,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        APPEND_OVERWRITE_CONFIG
+                )
 
-                .define(APPEND_VALUE_CONFIG, ConfigDef.Type.STRING,
-                    ConfigDef.Importance.HIGH, APPEND_VALUE_DOC);
+                .define(
+                        APPEND_VALUE_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        APPEND_VALUE_DOC,
+                        GROUP_APPEND,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        APPEND_VALUE_CONFIG
+                );
     }
 }

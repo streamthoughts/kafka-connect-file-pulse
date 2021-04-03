@@ -29,6 +29,8 @@ import java.util.Map;
 
 public class DateFilterConfig extends CommonFilterConfig {
 
+    private static final String GROUP_FILTER_DATE = "DATE_FILTER";
+
     public static final String DATE_FIELD_CONFIG = "field";
     private static final String DATE_FIELD_DOC = "The field to get the date from.";
 
@@ -76,17 +78,60 @@ public class DateFilterConfig extends CommonFilterConfig {
     }
 
     public static ConfigDef configDef() {
-        return CommonFilterConfig.configDef()
-                .define(DATE_TIMEZONE_CONFIG, ConfigDef.Type.STRING, null,
-                        ConfigDef.Importance.HIGH, DATE_TIMEZONE_DOC)
-                .define(DATE_LOCALE_CONFIG, ConfigDef.Type.STRING,  null,
-                        ConfigDef.Importance.HIGH, DATE_LOCALE_DOC)
-                .define(DATE_FIELD_CONFIG, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, DATE_FIELD_DOC)
-                .define(DATE_TARGET_CONFIG, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, DATE_TARGET_DOC)
-                .define(DATE_FORMATS_CONFIG, ConfigDef.Type.LIST,
-                        ConfigDef.Importance.HIGH, DATE_FORMAT_DOC);
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(
+                        DATE_TIMEZONE_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.HIGH,
+                        DATE_TIMEZONE_DOC,
+                        GROUP_FILTER_DATE,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        DATE_TIMEZONE_CONFIG
+                )
+                .define(
+                        DATE_LOCALE_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.HIGH,
+                        DATE_LOCALE_DOC,
+                        GROUP_FILTER_DATE,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        DATE_LOCALE_CONFIG
+                )
+                .define(
+                        DATE_FIELD_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        DATE_FIELD_DOC,
+                        GROUP_FILTER_DATE,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        DATE_FIELD_CONFIG
+                )
+                .define(
+                        DATE_TARGET_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        DATE_TARGET_DOC,
+                        GROUP_FILTER_DATE,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        DATE_TARGET_CONFIG
+                )
+                .define(
+                        DATE_FORMATS_CONFIG,
+                        ConfigDef.Type.LIST,
+                        ConfigDef.Importance.HIGH,
+                        DATE_FORMAT_DOC,
+                        GROUP_FILTER_DATE,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        DATE_FORMATS_CONFIG
+                );
 
     }
 }

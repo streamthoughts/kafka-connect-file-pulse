@@ -25,8 +25,10 @@ import java.util.Map;
 
 public class ExcludeFilterConfig extends CommonFilterConfig {
 
-    public static final String EXCLUDE_FIELDS_CONFIG    = "fields";
-    private static final String EXCLUDE_FIELDS_DOC      = "The comma-separated list of field names to exclude";
+    private static final String GROUP_EXCLUDE_FILTER = "EXCLUDE_FILTER";
+
+    public static final String EXCLUDE_FIELDS_CONFIG = "fields";
+    private static final String EXCLUDE_FIELDS_DOC = "The comma-separated list of field names to exclude";
 
     /**
      * Creates a new {@link RenameFilterConfig} instance.
@@ -43,8 +45,18 @@ public class ExcludeFilterConfig extends CommonFilterConfig {
     }
 
     public static ConfigDef configDef() {
-        return CommonFilterConfig.configDef()
-                .define(EXCLUDE_FIELDS_CONFIG, ConfigDef.Type.LIST, ConfigDef.Importance.HIGH, EXCLUDE_FIELDS_DOC);
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(
+                        EXCLUDE_FIELDS_CONFIG,
+                        ConfigDef.Type.LIST,
+                        ConfigDef.Importance.HIGH,
+                        EXCLUDE_FIELDS_DOC,
+                        GROUP_EXCLUDE_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        EXCLUDE_FIELDS_CONFIG
+                );
 
     }
 }

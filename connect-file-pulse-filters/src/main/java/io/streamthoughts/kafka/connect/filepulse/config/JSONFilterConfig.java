@@ -22,29 +22,30 @@ import org.apache.kafka.common.config.ConfigDef;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class JSONFilterConfig extends CommonFilterConfig {
 
-    public static final String JSON_TARGET_CONFIG        = "target";
-    public static final String JSON_TARGET_DOC           = "The target field to put the parsed JSON value (optional)";
+    private static final String JSON_FILTER = "JSON_FILTER";
 
-    public static final String JSON_MERGE_CONFIG         = "merge";
-    public static final String JSON_MERGE_DOC            = "A boolean that specifies whether to merge the JSON " +
-                                                    "object into the top level of the input record (default: false).";
+    public static final String JSON_TARGET_CONFIG = "target";
+    public static final String JSON_TARGET_DOC = "The target field to put the parsed JSON value (optional)";
 
-    public static final String JSON_EXPLODE_ARRAY_CONFIG   = "explode.array";
-    public static final String JSON_EXPLODE_ARRAY_DOC      = "A boolean that specifies whether to explode arrays " +
+    public static final String JSON_MERGE_CONFIG = "merge";
+    public static final String JSON_MERGE_DOC = "A boolean that specifies whether to merge the JSON " +
+            "object into the top level of the input record (default: false).";
+
+    public static final String JSON_EXPLODE_ARRAY_CONFIG = "explode.array";
+    public static final String JSON_EXPLODE_ARRAY_DOC = "A boolean that specifies whether to explode arrays " +
             "                                       into separate records (default: false)";
 
-    public static final String JSON_SOURCE_CHARSET_CONFIG  = "source.charset";
-    public static final String JSON_SOURCE_CHARSET_DOC     = "The charset to be used for reading the source " +
+    public static final String JSON_SOURCE_CHARSET_CONFIG = "source.charset";
+    public static final String JSON_SOURCE_CHARSET_DOC = "The charset to be used for reading the source " +
             "                                       field (default: UTF-8)";
 
     /**
      * Creates a new {@link JSONFilterConfig} instance.
+     *
      * @param originals the originals configuration.
      */
     public JSONFilterConfig(final Map<?, ?> originals) {
@@ -72,23 +73,54 @@ public class JSONFilterConfig extends CommonFilterConfig {
         return name == null ? StandardCharsets.UTF_8 : Charset.forName(name);
     }
 
-    public Set<String> overwrite() {
-        return new HashSet<>(getList(CommonFilterConfig.FILTER_OVERWRITE_CONFIG));
-    }
-
     public static ConfigDef configDef() {
-        ConfigDef def = CommonFilterConfig.configDef()
-            .define(JSON_TARGET_CONFIG, ConfigDef.Type.STRING, null,
-                ConfigDef.Importance.HIGH, JSON_TARGET_DOC)
-            .define(JSON_SOURCE_CHARSET_CONFIG, ConfigDef.Type.STRING, null,
-                ConfigDef.Importance.MEDIUM, JSON_SOURCE_CHARSET_DOC)
-            .define(JSON_EXPLODE_ARRAY_CONFIG, ConfigDef.Type.BOOLEAN, false,
-                ConfigDef.Importance.MEDIUM, JSON_EXPLODE_ARRAY_DOC)
-            .define(JSON_MERGE_CONFIG, ConfigDef.Type.BOOLEAN, false,
-                ConfigDef.Importance.MEDIUM, JSON_MERGE_DOC);
-        CommonFilterConfig.withOverwrite(def);
-        CommonFilterConfig.withSource(def);
-
-        return def;
+        int filterGroupCounter = 0;
+        return new ConfigDef(CommonFilterConfig.configDef())
+                .define(withOverwrite(JSON_FILTER, filterGroupCounter++))
+                .define(withSource(JSON_FILTER, filterGroupCounter++))
+                .define(
+                        JSON_TARGET_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.HIGH,
+                        JSON_TARGET_DOC,
+                        JSON_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        JSON_TARGET_CONFIG
+                )
+                .define(
+                        JSON_SOURCE_CHARSET_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.MEDIUM,
+                        JSON_SOURCE_CHARSET_DOC,
+                        JSON_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        JSON_SOURCE_CHARSET_CONFIG
+                )
+                .define(
+                        JSON_EXPLODE_ARRAY_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.MEDIUM,
+                        JSON_EXPLODE_ARRAY_DOC,
+                        JSON_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        JSON_EXPLODE_ARRAY_CONFIG
+                )
+                .define(
+                        JSON_MERGE_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.MEDIUM,
+                        JSON_MERGE_DOC,
+                        JSON_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        JSON_MERGE_CONFIG
+                );
     }
 }

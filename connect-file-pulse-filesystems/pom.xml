@@ -35,6 +35,7 @@
         <module>filepulse-commons-fs</module>
         <module>filepulse-local-fs</module>
         <module>filepulse-amazons3-fs</module>
+        <module>filepulse-azure-blob-storage-fs</module>
     </modules>
 
     <properties>

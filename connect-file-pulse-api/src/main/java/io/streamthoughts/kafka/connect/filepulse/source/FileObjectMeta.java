@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * An object regrouping metadata about an input ile manipulate by the connector.
+ * An object regrouping metadata about an input file manipulate by the connector.
  */
 public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta> {
 

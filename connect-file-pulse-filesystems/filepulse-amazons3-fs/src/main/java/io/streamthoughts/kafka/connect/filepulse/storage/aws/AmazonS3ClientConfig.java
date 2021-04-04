@@ -134,7 +134,7 @@ public class AmazonS3ClientConfig extends AbstractConfig {
                         GROUP_AWS,
                         awsGroupCounter++,
                         ConfigDef.Width.NONE,
-                        AWS_S3_BUCKET_NAME_CONFIG
+                        AWS_S3_BUCKET_PREFIX_CONFIG
                 )
 
                 .define(

@@ -23,9 +23,9 @@ import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
 import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.CompositeFileListFilter;
-import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileSystemScanner;
+import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileSystemMonitor;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
-import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemScanner;
+import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemMonitor;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreRegistry;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
@@ -64,7 +64,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private ConnectorConfig config;
 
-    private FileSystemScanner scanner;
+    private FileSystemMonitor scanner;
 
     private String connectorGroupName;
 
@@ -109,7 +109,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
         final StateBackingStore<FileObject> store = StateBackingStoreRegistry.instance().get(connectorGroupName);
         try {
-            scanner = new DefaultFileSystemScanner(
+            scanner = new DefaultFileSystemMonitor(
                 config.allowTasksReconfigurationAfterTimeoutMs(),
                 directoryScanner,
                 cleaner,
@@ -148,7 +148,7 @@ public class FilePulseSourceConnector extends SourceConnector {
     public List<Map<String, String>> taskConfigs(int maxTasks) {
         LOG.info("Creating new tasks configurations (maxTasks={})", maxTasks);
         List<List<String>> groupFiles = scanner
-            .partitionFilesAndGet(maxTasks)
+            .partitionFilesAndGet(maxTasks, config.getMaxScheduledFiles())
             .stream()
             .map(l -> l.stream().map(URI::toString).collect(Collectors.toList()))
             .collect(Collectors.toList());
@@ -164,13 +164,13 @@ public class FilePulseSourceConnector extends SourceConnector {
             }
             for(int i = 0; i < groupFiles.size(); i++) {
                 LOG.info(
-                    "Created config for task_id={} with '{}' source files (task_config_gen={}).",
+                    "Created config for task_id={} with '{}' object files (task_config_gen={}).",
                     i,
                     groupFiles.get(i).size(),
                     taskConfigsGen);
             }
         } else {
-            LOG.warn("Failed to create new task configs - no source files found.");
+            LOG.warn("Failed to create new task configs - no object files found.");
         }
         return taskConfigs;
     }

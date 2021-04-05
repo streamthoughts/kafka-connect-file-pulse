@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemScanner;
+import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemMonitor;
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.connect.connector.ConnectorContext;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class FileSystemMonitorThread extends Thread {
     private final CountDownLatch waitingLatch;
     private final long scanIntervalMs;
 
-    private final FileSystemScanner scanner;
+    private final FileSystemMonitor scanner;
 
     /**
      * Creates a new {@link FileSystemMonitorThread} instance.
@@ -51,7 +51,7 @@ public class FileSystemMonitorThread extends Thread {
      * @param scanner the file system scanner.
      */
     FileSystemMonitorThread(final ConnectorContext context,
-                            final FileSystemScanner scanner,
+                            final FileSystemMonitor scanner,
                             final long scanIntervalMs) {
         super(FileSystemMonitorThread.class.getSimpleName());
         Objects.requireNonNull(context,"context can't be null");
@@ -72,22 +72,28 @@ public class FileSystemMonitorThread extends Thread {
     @Override
     public void run() {
         try {
-            LOG.info("Starting thread monitoring filesystem.");
+            LOG.info("Starting filesystem monitoring thread (scanIntervalMs={}", scanIntervalMs);
             while (shutdownLatch.getCount() > 0) {
                 long started = Time.SYSTEM.milliseconds();
                 try {
-                    scanner.scan(context);
+                    scanner.invoke(context);
+                    LOG.info(
+                        "Completed filesystem monitoring iteration in {} ms",
+                        Time.SYSTEM.milliseconds() - started
+                    );
                 } catch (Exception e) {
-                    LOG.error("Unexpected error while scanning file system.", e);
+                    LOG.error("Unexpected error while monitoring filesystem.", e);
                     context.raiseError(e);
                     throw e;
                 }
 
-                long timeout = Math.abs(scanIntervalMs - (Time.SYSTEM.milliseconds() - started));
-                LOG.info("Waiting {} ms to scan for new files.", timeout);
-                boolean shuttingDown = shutdownLatch.await(timeout, TimeUnit.MILLISECONDS);
-                if (shuttingDown) {
-                    return;
+                long timeout = Math.max(0, scanIntervalMs - (Time.SYSTEM.milliseconds() - started));
+                if (timeout > 0) {
+                    LOG.info("Waiting {} ms to monitor filesystem for new object files.", timeout);
+                    boolean shuttingDown = shutdownLatch.await(timeout, TimeUnit.MILLISECONDS);
+                    if (shuttingDown) {
+                        return;
+                    }
                 }
             }
         } catch (InterruptedException e) {

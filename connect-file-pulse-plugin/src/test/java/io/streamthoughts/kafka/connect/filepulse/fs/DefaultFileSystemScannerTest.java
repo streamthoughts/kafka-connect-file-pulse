@@ -90,9 +90,9 @@ public class DefaultFileSystemScannerTest {
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
 
         final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
-        DefaultFileSystemScanner scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
+        DefaultFileSystemMonitor scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
 
-        scanner.scan(new MockConnectorContext());
+        scanner.invoke(new MockConnectorContext());
 
         List<List<URI>> result = scanner.partitionFilesAndGet(1);
         assertNotNull(result);
@@ -117,9 +117,9 @@ public class DefaultFileSystemScannerTest {
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
         final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
         final MockFileCleaner cleaner = new MockFileCleaner(true);
-        DefaultFileSystemScanner scanner = newFsMonitorThread(cleaner, ds, store);
+        DefaultFileSystemMonitor scanner = newFsMonitorThread(cleaner, ds, store);
 
-        scanner.scan(new MockConnectorContext());
+        scanner.invoke(new MockConnectorContext());
 
         Assert.assertEquals(1, cleaner.getSucceed().size());
         Assert.assertEquals(sources.get(0).toURI(), cleaner.getSucceed().get(0).uri());
@@ -140,9 +140,9 @@ public class DefaultFileSystemScannerTest {
 
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
         final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
-        DefaultFileSystemScanner scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
+        DefaultFileSystemMonitor scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
 
-        scanner.scan(new MockConnectorContext());
+        scanner.invoke(new MockConnectorContext());
 
         List<List<URI>> groupedFiles = scanner.partitionFilesAndGet(1);
         assertNotNull(groupedFiles);
@@ -169,9 +169,9 @@ public class DefaultFileSystemScannerTest {
 
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
         final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
-        DefaultFileSystemScanner scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
+        DefaultFileSystemMonitor scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
 
-        scanner.scan(new MockConnectorContext());
+        scanner.invoke(new MockConnectorContext());
 
         List<List<URI>> groupedFiles = scanner.partitionFilesAndGet(1);
         assertNotNull(groupedFiles);
@@ -190,11 +190,14 @@ public class DefaultFileSystemScannerTest {
 
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
         final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
-        final DefaultFileSystemScanner scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
+        final DefaultFileSystemMonitor scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
 
         MockConnectorContext context = new MockConnectorContext();
-        scanner.scan(context);
-        scanner.scan(context);
+        scanner.invoke(context);
+
+        scanner.partitionFilesAndGet(1); // Get files to simulate a scheduled.
+
+        scanner.invoke(context);
 
         assertEquals(1, ds.times());
     }
@@ -206,10 +209,10 @@ public class DefaultFileSystemScannerTest {
         final InMemoryStateBackingStore<FileObject> store = new InMemoryStateBackingStore<>(state);
         final MockFileCleaner cleaner = new MockFileCleaner(true);
         final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner();
-        final DefaultFileSystemScanner scanner = newFsMonitorThread(cleaner, ds, store);
+        final DefaultFileSystemMonitor scanner = newFsMonitorThread(cleaner, ds, store);
 
         ds.put(INPUT_FILES.getInputPathsFor(0, 1));
-        scanner.scan(new MockConnectorContext());
+        scanner.invoke(new MockConnectorContext());
 
         Assert.assertEquals(0, cleaner.getSucceed().size());
         Assert.assertEquals(0, cleaner.getFailed().size());
@@ -221,7 +224,7 @@ public class DefaultFileSystemScannerTest {
         store.listener.onStateUpdate(OFFSET_MANAGER.toPartitionJson(failed.metadata()), failed);
 
         ds.put(INPUT_FILES.getInputPathsFor(0, 1, 2, 3));
-        scanner.scan(new MockConnectorContext());
+        scanner.invoke(new MockConnectorContext());
 
         assertEquals(2, ds.times());
 
@@ -232,10 +235,10 @@ public class DefaultFileSystemScannerTest {
         Assert.assertEquals(INPUT_FILES.metadataFor(1).uri(), cleaner.getFailed().get(0).uri());
     }
 
-    private DefaultFileSystemScanner newFsMonitorThread(final MockFileCleaner cleaner,
+    private DefaultFileSystemMonitor newFsMonitorThread(final MockFileCleaner cleaner,
                                                         final FileSystemListing scanner,
                                                         final StateBackingStore<FileObject> store) {
-        return new DefaultFileSystemScanner(
+        return new DefaultFileSystemMonitor(
                 Long.MAX_VALUE,
                 scanner,
                 cleaner,

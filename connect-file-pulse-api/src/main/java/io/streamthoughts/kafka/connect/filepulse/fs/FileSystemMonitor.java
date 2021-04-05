@@ -24,24 +24,34 @@ import java.net.URI;
 import java.util.List;
 
 /**
- * A {@link FileSystemScanner} is responsible to scan a specific file system
- * for new files to stream into Kafka;
+ * A {@code FileSystemMonitor} is responsible for scanning a specific file system for new files to stream into Kafka.
  */
-public interface FileSystemScanner {
+public interface FileSystemMonitor {
 
     /**
-     * Run a single file system scan using the specified context.
+     * Run a single filesystem scan using the specified context.
      * @param context   the connector context.
      */
-    void scan(final ConnectorContext context);
+    void invoke(final ConnectorContext context);
 
     /**
      * Gets newest files found during last scan partitioned for the specified number of groups.
      *
-     * @param maxGroups the maximum number of groups.
+     * @param maxGroups          the maximum number of groups.
+     * @return                   list of files to execute.
+     */
+   default List<List<URI>> partitionFilesAndGet(final int maxGroups) {
+       return partitionFilesAndGet(maxGroups, Integer.MAX_VALUE);
+   }
+
+    /**
+     * Gets newest files found during last scan partitioned for the specified number of groups.
+     *
+     * @param maxGroups          the maximum number of groups.
+     * @param maxFilesToSchedule the maximum number of files to scheduled.
      * @return          list of files to execute.
      */
-    List<List<URI>> partitionFilesAndGet(final int maxGroups);
+    List<List<URI>> partitionFilesAndGet(final int maxGroups, int maxFilesToSchedule);
 
     /**
      * Close underlying I/O resources.

@@ -37,6 +37,10 @@ public class ConnectorConfig extends CommonConfig {
     public static final String FS_LISTING_FILTERS_CONFIG      = "fs.listing.filters";
     private static final String FS_SCAN_FILTERS_DOC           = "Filters classes which are used to apply list input files.";
 
+    public static final String MAX_SCHEDULED_FILES_CONFIG     = "max.scheduled.files";
+    public static final String MAX_SCHEDULED_FILES_DOC        = "Maximum number of files that can be schedules to tasks.";
+    public static final int MAX_SCHEDULED_FILES_DEFAULT       = 1000;
+
     public static final String ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_CONFIG = "allow.tasks.reconfiguration.after.timeout.ms";
     public static final String ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_DOC = "Specifies the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed.";
 
@@ -65,23 +69,60 @@ public class ConnectorConfig extends CommonConfig {
 
     public static ConfigDef getConf() {
         return CommonConfig.getConf()
-                .define(FS_LISTING_CLASS_CONFIG, ConfigDef.Type.CLASS,
-                        LocalFSDirectoryListing.class, ConfigDef.Importance.HIGH, FS_LISTING_CLASS_DOC)
+                .define(
+                        FS_LISTING_CLASS_CONFIG,
+                        ConfigDef.Type.CLASS,
+                        LocalFSDirectoryListing.class,
+                        ConfigDef.Importance.HIGH,
+                        FS_LISTING_CLASS_DOC
+                )
 
-                .define(FS_LISTING_FILTERS_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
-                        ConfigDef.Importance.MEDIUM, FS_SCAN_FILTERS_DOC)
+                .define(
+                        FS_LISTING_FILTERS_CONFIG,
+                        ConfigDef.Type.LIST,
+                        Collections.emptyList(),
+                        ConfigDef.Importance.MEDIUM,
+                        FS_SCAN_FILTERS_DOC
+                )
 
-                .define(FS_SCAN_INTERVAL_MS_CONFIG, ConfigDef.Type.LONG, FS_SCAN_INTERVAL_MS_DEFAULT,
-                        ConfigDef.Importance.HIGH, FS_SCAN_INTERVAL_MS_DOC)
+                .define(
+                        FS_SCAN_INTERVAL_MS_CONFIG,
+                        ConfigDef.Type.LONG,
+                        FS_SCAN_INTERVAL_MS_DEFAULT,
+                        ConfigDef.Importance.HIGH,
+                        FS_SCAN_INTERVAL_MS_DOC
+                )
 
-                .define(FILE_CLEANER_CLASS_CONFIG,
-                        ConfigDef.Type.CLASS, ConfigDef.Importance.HIGH, FILE_CLEANER_CLASS_DOC)
+                .define(
+                        FILE_CLEANER_CLASS_CONFIG,
+                        ConfigDef.Type.CLASS,
+                        ConfigDef.Importance.HIGH,
+                        FILE_CLEANER_CLASS_DOC
+                )
 
-                .define(ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_CONFIG, ConfigDef.Type.LONG, Long.MAX_VALUE,
-                        ConfigDef.Importance.MEDIUM, ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_DOC)
+                .define(
+                        ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_CONFIG,
+                        ConfigDef.Type.LONG,
+                        Long.MAX_VALUE,
+                        ConfigDef.Importance.MEDIUM,
+                        ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_DOC
+                )
 
-                .define(INTERNAL_REPORTER_GROUP_ID, ConfigDef.Type.STRING, null,
-                        ConfigDef.Importance.MEDIUM, INTERNAL_REPORTER_GROUP_ID_DOC);
+                .define(
+                        INTERNAL_REPORTER_GROUP_ID,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.MEDIUM,
+                        INTERNAL_REPORTER_GROUP_ID_DOC
+                )
+
+                .define(
+                        MAX_SCHEDULED_FILES_CONFIG,
+                        ConfigDef.Type.INT,
+                        MAX_SCHEDULED_FILES_DEFAULT,
+                        ConfigDef.Importance.MEDIUM,
+                        MAX_SCHEDULED_FILES_DOC
+                );
     }
 
     public Long allowTasksReconfigurationAfterTimeoutMs() {
@@ -90,6 +131,10 @@ public class ConnectorConfig extends CommonConfig {
 
     public String getTasksReporterGroupId() {
         return getString(INTERNAL_REPORTER_GROUP_ID);
+    }
+
+    public int getMaxScheduledFiles() {
+        return getInt(MAX_SCHEDULED_FILES_CONFIG);
     }
 
     public FileCleanupPolicy cleanupPolicy() {

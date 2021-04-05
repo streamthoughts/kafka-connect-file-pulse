@@ -42,7 +42,7 @@
  -->
     <suppress checks="LineLength" files="RecordFilter.java"/>
     <suppress checks="LineLength" files="GrokPatternCompiler.java"/>
-    <suppress checks="LineLength" files="DefaultFileSystemScanner.java"/>
+    <suppress checks="LineLength" files="DefaultFileSystemMonitor.java"/>
     <suppress checks="LineLength" files="ComposeOffsetStrategy.java"/>
     <suppress checks="LineLength" files=".*Config.java"/>
     <!-- Those classes are copy from kafka-connect api-->

@@ -10,7 +10,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>kafka-filepulse-azure-blob-storage-fs</artifactId>
+    <artifactId>kafka-connect-filepulse-azure-storage-fs</artifactId>
 
     <description>Kafka Connect FilePulse - FileSystem - Support for Azure Blob Storage</description>
 

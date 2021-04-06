@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.storage.azure.blob;
 
 import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
@@ -38,6 +37,10 @@ import java.util.stream.Collectors;
 
 import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
 
+/**
+ * The {@code AzureBlobStorageFileSystemListing} that can be used for listing objects
+ * that exist in a specific Azure Blob Storage container.
+ */
 public class AzureBlobStorageFileSystemListing implements FileSystemListing {
 
     private static final Logger LOG = LoggerFactory.getLogger(AzureBlobStorageFileSystemListing.class);
@@ -46,6 +49,9 @@ public class AzureBlobStorageFileSystemListing implements FileSystemListing {
     private AzureBlobStorage storage;
     private AzureBlobStorageClientConfig config;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void configure(final Map<String, ?> configs) {
         this.config = new AzureBlobStorageClientConfig(configs);
@@ -53,6 +59,9 @@ public class AzureBlobStorageFileSystemListing implements FileSystemListing {
                 AzureBlobStorageClientUtils.createBlobContainerClient(config));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<FileObjectMeta> listObjects() {
         BlobContainerClient blobContainerClient = storage.getBlobContainerClient();
@@ -79,6 +88,9 @@ public class AzureBlobStorageFileSystemListing implements FileSystemListing {
         return filter == null ? fileObjectMetaList : filter.filterFiles(fileObjectMetaList);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setFilter(FileListFilter filter) {
         this.filter = filter;

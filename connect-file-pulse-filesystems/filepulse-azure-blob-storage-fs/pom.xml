@@ -10,9 +10,8 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>io.streamthoughts</groupId>
     <artifactId>kafka-filepulse-azure-blob-storage-fs</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+
     <description>Kafka Connect FilePulse - FileSystem - Support for Azure Blob Storage</description>
 
     <properties>

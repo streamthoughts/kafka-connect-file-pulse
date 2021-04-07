@@ -33,7 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A BufferedReader wrapper to read lines in non-blocking way.
+ * A {@link BufferedReader} wrapper to read lines in non-blocking way.
  */
 public class NonBlockingBufferReader implements AutoCloseable {
 
@@ -134,12 +134,12 @@ public class NonBlockingBufferReader implements AutoCloseable {
         // Instead we have to manage splitting lines ourselves, using simple backoff when no new value
         // is available.
         final List<TextBlock> records = new LinkedList<>();
-        // Number of bytes read during last iteration.
-        int nread = 0;
 
         boolean maxNumRecordsNotReached = true;
 
-        while ( !(isEOF = !reader.ready() || nread == -1) &&
+        // Number of bytes read during last iteration.
+        int nread = 0;
+        while ( !(isEOF = nread == -1) &&
                 (records.isEmpty() || records.size() < minRecords)
         ) {
             nread = reader.read(buffer, bufferOffset, buffer.length - bufferOffset);
@@ -211,8 +211,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
 
     public boolean hasNext() {
         try {
-            boolean ready = reader.ready();
-            if (ready && (!isEOF || stream.available() > 1)) return true;
+            if (!isEOF || stream.available() > 1) return true;
             return remaining() && containsLine();
         } catch (IOException e) {
             LOG.error("Error while checking for remaining bytes to read: {}", e.getLocalizedMessage());

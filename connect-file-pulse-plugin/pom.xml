@@ -229,6 +229,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>kafka-connect-filepulse-google-cloud-storage-fs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <scope>provided</scope>

@@ -3863,6 +3863,101 @@ filters.TagSecurityException.values=SecurityAlert
     
     <item>
       <title>Docs: Handling Failures</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</link>
+      <pubDate>Tue, 30 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The connector provides some mechanisms to handle failures while executing filters.&lt;/p&gt;
+&lt;p&gt;By default, the filters chain will immediately failed after an exception is thrown.
+But, you can also configure each filter to either ignore errors or to branch to a sub filters-chain.&lt;/p&gt;
+&lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;withOnFailure&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;List of filters aliases to apply on each data after failure (order is important).&lt;/td&gt;
+&lt;td&gt;list&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;ignoreFailure&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Ignore failure and continue pipeline filters&lt;/td&gt;
+&lt;td&gt;boolean&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;false&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;ignoring-failure&#34;&gt;Ignoring failure&lt;/h2&gt;
+&lt;p&gt;By setting the property &lt;code&gt;ignoreFailure&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt;, the filter will be ignored if an exception is thrown.&lt;/p&gt;
+&lt;p&gt;In that case, the exception is written to the output logs and current data record is simply forwarded to the next filter in the chain.&lt;/p&gt;
+&lt;p&gt;Using &lt;code&gt;ignoreFailure=true&lt;/code&gt; can be recommended for optional filters.&lt;/p&gt;
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+&lt;p&gt;In the below example, the filter with alias &lt;code&gt;Log4jGrokFilter&lt;/code&gt; will be skip in case of failure.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;filters=Log4jGrokFilter
+
+filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
+filters.Log4jGrokFilter.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+filters.Log4jGrokFilter.source=message
+filters.Log4jGrokFilter.ignoreFailure=true
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;defining-error-filter-chain&#34;&gt;Defining error filter chain&lt;/h2&gt;
+&lt;p&gt;A more sophisticated way to handle failures is to define a sub filters-chain on each concern filters.&lt;/p&gt;
+&lt;p&gt;Sub-filter chains can be defined using the property &lt;code&gt;withOnFailure&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;accessing-exception-data&#34;&gt;Accessing exception data&lt;/h3&gt;
+&lt;p&gt;Within an error filter chain, some additional fields are available to each filter context.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Predefined Fields / ScEL&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;$error.message&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The error message&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;$error.filter&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The failed filter name&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;example1&#34;&gt;Example&lt;/h3&gt;
+&lt;p&gt;In the below example, an &lt;code&gt;errorMessage&lt;/code&gt; field is added to the record value if the filter with alias Log4jGrokFilter fails.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;filters=Log4jGrokFilter
+
+filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
+filters.Log4jGrokFilter.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+filters.Log4jGrokFilter.source=message
+filters.Log4jGrokFilter.overwrite=message
+filters.Log4jGrokFilter.withOnFailure=AppendError
+
+filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.AppendError.field=$.errorMessage
+filters.AppendError.value={{ $error.message }}
+&lt;/code&gt;&lt;/pre&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Handling Failures</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/handling-failures/</link>
       <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
       
@@ -3962,101 +4057,6 @@ filters.AppendError.value=&amp;quot;$error.message&amp;quot;
       <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.5.x/developer-guide/handling-failures/</guid>
-      <description>
-        
-        
-        &lt;p&gt;The connector provides some mechanisms to handle failures while executing filters.&lt;/p&gt;
-&lt;p&gt;By default, the filters chain will immediately failed after an exception is thrown.
-But, you can also configure each filter to either ignore errors or to branch to a sub filters-chain.&lt;/p&gt;
-&lt;h2 id=&#34;configuration&#34;&gt;Configuration&lt;/h2&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;th&gt;Type&lt;/th&gt;
-&lt;th&gt;Default&lt;/th&gt;
-&lt;th&gt;Importance&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;withOnFailure&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;List of filters aliases to apply on each data after failure (order is important).&lt;/td&gt;
-&lt;td&gt;list&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;ignoreFailure&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Ignore failure and continue pipeline filters&lt;/td&gt;
-&lt;td&gt;boolean&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;false&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;ignoring-failure&#34;&gt;Ignoring failure&lt;/h2&gt;
-&lt;p&gt;By setting the property &lt;code&gt;ignoreFailure&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt;, the filter will be ignored if an exception is thrown.&lt;/p&gt;
-&lt;p&gt;In that case, the exception is written to the output logs and current data record is simply forwarded to the next filter in the chain.&lt;/p&gt;
-&lt;p&gt;Using &lt;code&gt;ignoreFailure=true&lt;/code&gt; can be recommended for optional filters.&lt;/p&gt;
-&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
-&lt;p&gt;In the below example, the he filter with alias Log4jGrokFilter will be skip in case of failure.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;filters=Log4jGrokFilter
-
-filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
-filters.Log4jGrokFilter.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
-filters.Log4jGrokFilter.source=message
-filters.Log4jGrokFilter.ignoreFailure=true
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;defining-error-filter-chain&#34;&gt;Defining error filter chain&lt;/h2&gt;
-&lt;p&gt;A more sophisticated way to handle failures is to define a sub filters-chain on each concern filters.&lt;/p&gt;
-&lt;p&gt;Sub-filter chains can be defined using the property &lt;code&gt;withOnFailure&lt;/code&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;accessing-exception-data&#34;&gt;Accessing exception data&lt;/h3&gt;
-&lt;p&gt;Within an error filter chain, some additional fields are available to each filter context.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Predefined Fields / ScEL&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;th&gt;Type&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;$error.message&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The error message&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;$error.filter&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The failed filter name&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;example1&#34;&gt;Example&lt;/h3&gt;
-&lt;p&gt;In the below example, an &lt;code&gt;errorMessage&lt;/code&gt; field is added to the record value if the filter with alias Log4jGrokFilter fails.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;filters=Log4jGrokFilter
-
-filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
-filters.Log4jGrokFilter.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
-filters.Log4jGrokFilter.source=message
-filters.Log4jGrokFilter.overwrite=message
-filters.Log4jGrokFilter.withOnFailure=AppendError
-
-filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
-filters.AppendError.field=errorMessage
-filters.AppendError.value=&amp;quot;$error.message&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: Handling Failures</title>
-      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</link>
-      <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</guid>
       <description>
         
         
@@ -5520,7 +5520,7 @@ filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;format&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;formats&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;List of the expected date formats.&lt;/td&gt;
 &lt;td&gt;list&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
@@ -5531,7 +5531,7 @@ filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
 &lt;h3 id=&#34;examples2&#34;&gt;Examples&lt;/h3&gt;
 &lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.MyDateFilter.field=&amp;quot;$.date&amp;quot;
 filters.MyDateFilter.target=&amp;quot;$.timestamp&amp;quot;
-filters.MyDateFilter.format=&amp;quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss&amp;quot;
+filters.MyDateFilter.formats=&amp;quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Input&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;record&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;

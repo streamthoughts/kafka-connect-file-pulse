@@ -1045,7 +1045,7 @@ filters.TagSecurityException.values=SecurityAlert
     <item>
       <title>Docs: Handling Failures</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</link>
-      <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 30 Mar 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</guid>
       <description>
@@ -1087,7 +1087,7 @@ But, you can also configure each filter to either ignore errors or to branch to 
 &lt;p&gt;In that case, the exception is written to the output logs and current data record is simply forwarded to the next filter in the chain.&lt;/p&gt;
 &lt;p&gt;Using &lt;code&gt;ignoreFailure=true&lt;/code&gt; can be recommended for optional filters.&lt;/p&gt;
 &lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
-&lt;p&gt;In the below example, the he filter with alias Log4jGrokFilter will be skip in case of failure.&lt;/p&gt;
+&lt;p&gt;In the below example, the filter with alias &lt;code&gt;Log4jGrokFilter&lt;/code&gt; will be skip in case of failure.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;filters=Log4jGrokFilter
 
 filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
@@ -1131,8 +1131,8 @@ filters.Log4jGrokFilter.overwrite=message
 filters.Log4jGrokFilter.withOnFailure=AppendError
 
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
-filters.AppendError.field=errorMessage
-filters.AppendError.value=&amp;quot;$error.message&amp;quot;
+filters.AppendError.field=$.errorMessage
+filters.AppendError.value={{ $error.message }}
 &lt;/code&gt;&lt;/pre&gt;
       </description>
     </item>
@@ -1450,7 +1450,7 @@ filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;format&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;formats&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;List of the expected date formats.&lt;/td&gt;
 &lt;td&gt;list&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
@@ -1461,7 +1461,7 @@ filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
 &lt;h3 id=&#34;examples2&#34;&gt;Examples&lt;/h3&gt;
 &lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.MyDateFilter.field=&amp;quot;$.date&amp;quot;
 filters.MyDateFilter.target=&amp;quot;$.timestamp&amp;quot;
-filters.MyDateFilter.format=&amp;quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss&amp;quot;
+filters.MyDateFilter.formats=&amp;quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Input&lt;/strong&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;
   &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;&amp;#34;record&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;{&lt;/span&gt;

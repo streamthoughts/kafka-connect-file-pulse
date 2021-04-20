@@ -199,14 +199,14 @@ The `DateFilter` converts a field's value containing a date to a unix epoch time
 | `target` | The target field.    | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
 | `timezone` | The timezone to use for parsing date.  | string | *UTC* | high |
 | `locale` | The locale to use for parsing date. | string | *en_EN* | high |
-| `format` | List of the expected date formats. | list | *-* | high |
+| `formats` | List of the expected date formats. | list | *-* | high |
 
 ### Examples
         
 ```properties
 filters.MyDateFilter.field="$.date"
 filters.MyDateFilter.target="$.timestamp"
-filters.MyDateFilter.format="yyyy-MM-dd'T'HH:mm:ss"
+filters.MyDateFilter.formats="yyyy-MM-dd'T'HH:mm:ss"
 ```
 
 **Input**

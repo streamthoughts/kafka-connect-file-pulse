@@ -22,9 +22,9 @@ import com.jsoniter.JsonIterator;
 import com.jsoniter.output.EncodingMode;
 import com.jsoniter.output.JsonStream;
 import com.jsoniter.spi.JsoniterSpi;
-import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSerde;
 import org.apache.kafka.common.errors.SerializationException;
 
@@ -47,12 +47,16 @@ public class FileObjectSerde implements StateSerde<FileObject> {
      * {@inheritDoc}
      */
     @Override
-    public byte[] serialize(final FileObject state) {
-        if (state == null) {
+    public byte[] serialize(final FileObject object) {
+        if (object == null) {
             return null;
         }
-        String serialized = JsonStream.serialize(state);
-        return serialized.getBytes(StandardCharsets.UTF_8);
+        try {
+            String serialized = JsonStream.serialize(object);
+            return serialized.getBytes(StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            throw new SerializationException("Failed to serialized object '" + object + "'", e);
+        }
     }
 
     /**
@@ -64,7 +68,7 @@ public class FileObjectSerde implements StateSerde<FileObject> {
         try {
             return iterator.read(FileObject.class);
         } catch (IOException e) {
-            throw new SerializationException();
+            throw new SerializationException(e);
         }
     }
 }

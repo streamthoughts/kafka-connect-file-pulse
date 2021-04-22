@@ -29,7 +29,7 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import java.net.URI;
 
 /**
- * The {@link AmazonS3AvroFileInputReader} can be used to created records from an AVRO file loaded from Amazon S3.
+ * The {@code AmazonS3AvroFileInputReader} can be used to created records from an AVRO file loaded from Amazon S3.
  */
 public class AmazonS3AvroFileInputReader extends BaseAmazonS3InputReader {
 

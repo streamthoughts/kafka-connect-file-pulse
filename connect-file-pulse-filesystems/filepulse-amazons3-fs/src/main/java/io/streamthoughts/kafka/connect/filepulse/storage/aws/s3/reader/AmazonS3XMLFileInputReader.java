@@ -29,7 +29,7 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * The {@link AmazonS3XMLFileInputReader} can be used to created records from an XML file loaded from Amazon S3.
+ * The {@code AmazonS3XMLFileInputReader} can be used to created records from an XML file loaded from Amazon S3.
  */
 public class AmazonS3XMLFileInputReader extends BaseAmazonS3InputReader {
 

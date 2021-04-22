@@ -10,6 +10,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
+    <name>Kafka Connect Source File Pulse Google Cloud Storage FS</name>
     <artifactId>kafka-connect-filepulse-google-cloud-storage-fs</artifactId>
 
     <description>Kafka Connect FilePulse - FileSystem - Support for Google Cloud Storage</description>
@@ -19,22 +20,22 @@
     </properties>
 
     <dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>libraries-bom</artifactId>
-      <version>19.2.1</version>
-      <type>pom</type>
-      <scope>import</scope>
-    </dependency>
-  </dependencies>
-</dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>19.2.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
-	      <dependency>
-    <groupId>com.google.cloud</groupId>
-    <artifactId>google-cloud-storage</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-filepulse-commons-fs</artifactId>

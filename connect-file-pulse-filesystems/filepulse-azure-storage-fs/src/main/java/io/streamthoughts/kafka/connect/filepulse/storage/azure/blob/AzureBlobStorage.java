@@ -21,66 +21,106 @@ package io.streamthoughts.kafka.connect.filepulse.storage.azure.blob;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
 import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.models.BlobItem;
+import com.azure.storage.blob.models.BlobProperties;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.Storage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Arrays;
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class AzureBlobStorage implements Storage {
 
+    private static final String AZURE_BLOB_STORAGE_METADATA_PREFIX = "azure.blob.storage.";
+
+    private static final Logger LOG = LoggerFactory.getLogger(AzureBlobStorage.class);
+
     private final BlobContainerClient containerClient;
 
-    public AzureBlobStorage(BlobContainerClient blobContainerClient) {
+    public AzureBlobStorage(final BlobContainerClient blobContainerClient) {
         this.containerClient = blobContainerClient;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public FileObjectMeta getObjectMetadata(URI uri) {
-        BlobClient blobClient = getBlobClient(uri);
+    public FileObjectMeta getObjectMetadata(final URI uri) {
+        final BlobClient client = getBlobClient(uri);
+        return getObjectMetadata(client);
+    }
+
+    GenericFileObjectMeta getObjectMetadata(final BlobClient client) {
+        final String blobUrl = client.getBlobUrl();
+        final URI uri;
+        try {
+            uri = new URI(blobUrl);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Failed to build blob URI from '" + blobUrl + "'", e);
+        }
+
+        final HashMap<String, Object> userDefinedMetadata = new HashMap<>();
+        userDefinedMetadata.put(withMetadataPrefix("account"), containerClient.getAccountName());
+        userDefinedMetadata.put(withMetadataPrefix("blobUrl"), blobUrl);
+
+        final BlobProperties properties = client.getProperties();
+
+        Optional.ofNullable(properties.getCreationTime()).ifPresent(it ->
+                userDefinedMetadata.put(withMetadataPrefix("creationTime"), it.toInstant().toEpochMilli()));
+        Optional.ofNullable(properties.getContentEncoding()).ifPresent(it ->
+                userDefinedMetadata.put(withMetadataPrefix("contentEncoding"), it));
+        Optional.ofNullable(properties.getContentType()).ifPresent(it ->
+                userDefinedMetadata.put(withMetadataPrefix("contentType"), it));
+
+        properties.getMetadata()
+            .entrySet()
+            .stream()
+            .filter(e -> e.getValue() != null)
+            .forEach(e -> userDefinedMetadata.put(withMetadataPrefix(e.getKey()), e.getValue()));
 
         return new GenericFileObjectMeta.Builder()
                 .withUri(uri)
-                .withName(blobClient.getBlobName())
-                .withContentLength(blobClient.getProperties().getBlobSize())
-                .withLastModified(blobClient.getProperties().getLastModified().toInstant())
-                .withContentDigest(
-                        new FileObjectMeta.ContentDigest(
-                                Arrays.toString(blobClient.getProperties().getContentMd5()), "MD5"))
-                .withUserDefinedMetadata(new HashMap<>(blobClient.getProperties().getMetadata()))
+                .withName(client.getBlobName())
+                .withContentLength(properties.getBlobSize())
+                .withLastModified(properties.getLastModified().toInstant().toEpochMilli())
+                .withContentDigest(null)
+                .withUserDefinedMetadata(userDefinedMetadata)
                 .build();
     }
 
-    public FileObjectMeta getObjectMetadata(BlobItem blobItem, URI uri) {
-        return new GenericFileObjectMeta.Builder()
-                .withUri(uri)
-                .withName(blobItem.getName())
-                .withContentLength(blobItem.getProperties().getContentLength())
-                .withLastModified(blobItem.getProperties().getLastModified().toInstant())
-                .withContentDigest(
-                        new FileObjectMeta.ContentDigest(
-                                Arrays.toString(blobItem.getProperties().getContentMd5()), "MD5"))
-                .withUserDefinedMetadata(new HashMap<>(blobItem.getMetadata()))
-                .build();
+    @NotNull
+    private static String withMetadataPrefix(final String account) {
+        return AZURE_BLOB_STORAGE_METADATA_PREFIX + account;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean exists(URI uri) {
         return getBlobClient(uri).exists();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public InputStream getInputStream(URI uri) {
+    public InputStream getInputStream(final URI uri) {
         return getBlobClient(uri).openInputStream();
     }
 
-    private BlobClient getBlobClient(URI uri) {
-        return containerClient
-                .getBlobClient(new BlobClientBuilder().endpoint(uri.toString()).buildClient().getBlobName());
+    private BlobClient getBlobClient(final URI uri) {
+        final String blobName = new BlobClientBuilder()
+                .endpoint(uri.toString())
+                .buildClient()
+                .getBlobName();
+        return containerClient.getBlobClient(blobName);
     }
 
     public BlobContainerClient getBlobContainerClient() {

@@ -18,22 +18,25 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.storage.azure.blob;
 
+import com.azure.core.http.rest.PagedIterable;
+import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.models.BlobItem;
+import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import io.streamthoughts.kafka.connect.filepulse.storage.azure.AzureBlobStorageClientConfig;
-import io.streamthoughts.kafka.connect.filepulse.storage.azure.AzureBlobStorageClientUtils;
+import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
 
@@ -45,18 +48,19 @@ public class AzureBlobStorageFileSystemListing implements FileSystemListing {
 
     private static final Logger LOG = LoggerFactory.getLogger(AzureBlobStorageFileSystemListing.class);
 
+    public static final Duration DEFAULT_TIME = null;
+
     private FileListFilter filter;
     private AzureBlobStorage storage;
-    private AzureBlobStorageClientConfig config;
+    private AzureBlobStorageConfig config;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        this.config = new AzureBlobStorageClientConfig(configs);
-        storage = new AzureBlobStorage(
-                AzureBlobStorageClientUtils.createBlobContainerClient(config));
+        this.config = new AzureBlobStorageConfig(configs);
+        this.storage = new AzureBlobStorage(AzureBlobStorageClientUtils.createBlobContainerClient(config));
     }
 
     /**
@@ -64,35 +68,52 @@ public class AzureBlobStorageFileSystemListing implements FileSystemListing {
      */
     @Override
     public Collection<FileObjectMeta> listObjects() {
-        BlobContainerClient blobContainerClient = storage.getBlobContainerClient();
-        ListBlobsOptions options = new ListBlobsOptions();
-        if (isNotBlank(config.getAzureBlobStoragePrefix()))
-            options.setPrefix(config.getAzureBlobStoragePrefix());
-        List<FileObjectMeta> fileObjectMetaList = blobContainerClient.listBlobs(options, null)
-                .stream()
-                .map(blobItem -> {
-                    // URI construction, as the azure sdk sucks...
-                    String blobUrl = blobContainerClient.getBlobClient(blobItem.getName()).getBlobUrl();
-                    URI uri = null;
-                    try {
-                        uri = new URI(blobUrl);
-                    } catch (URISyntaxException e) {
-                        LOG.error(
-                                "Failed to construct the blob URI from the given URL : '{}'. ",
-                                blobUrl,
-                                e
-                        );
-                    }
-                    return storage.getObjectMetadata(blobItem, uri);
-                }).collect(Collectors.toList());
+        LOG.debug("Listing objects in container '{}' using prefix '{}'",
+                config.getContainerName(),
+                config.getPrefix()
+        );
+        final BlobContainerClient blobContainerClient = storage.getBlobContainerClient();
+        final ListBlobsOptions options = new ListBlobsOptions()
+            .setDetails(new BlobListDetails()
+                .setRetrieveMetadata(true)
+            );
+
+        if (isNotBlank(config.getPrefix())) {
+            options.setPrefix(config.getPrefix());
+        }
+
+        final PagedIterable<BlobItem> blobItems = blobContainerClient.listBlobs(options, DEFAULT_TIME);
+        final List<FileObjectMeta> fileObjectMetaList = new LinkedList<>();
+        for (final BlobItem item : blobItems) {
+            LOG.debug("Find BlobItem with name '{}'", item.getName());
+            final Boolean prefix = item.isPrefix();
+            if (prefix != null && prefix) {
+                LOG.info("Ignored virtual directory prefix: '{}'", item.getName());
+            } else {
+                final BlobClient blobClient = blobContainerClient.getBlobClient(item.getName());
+                if (isDirectory(blobClient)) {
+                    LOG.info("Ignored virtual directory prefix: '{}'", item.getName());
+                } else {
+                    final GenericFileObjectMeta objectMetadata = storage.getObjectMetadata(blobClient);
+                    fileObjectMetaList.add(objectMetadata);
+                }
+            }
+        }
         return filter == null ? fileObjectMetaList : filter.filterFiles(fileObjectMetaList);
+    }
+
+    private Boolean isDirectory(final BlobClient blobClient) {
+        return Optional.ofNullable(blobClient.getProperties()
+                .getMetadata().get("hdi_isfolder"))
+                .map(Boolean::parseBoolean)
+                .orElse(false);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setFilter(FileListFilter filter) {
+    public void setFilter(final FileListFilter filter) {
         this.filter = filter;
     }
 }

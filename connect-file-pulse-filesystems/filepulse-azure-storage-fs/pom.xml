@@ -10,20 +10,29 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
+    <name>Kafka Connect Source File Pulse Azure Storage FS</name>
     <artifactId>kafka-connect-filepulse-azure-storage-fs</artifactId>
 
     <description>Kafka Connect FilePulse - FileSystem - Support for Azure Blob Storage</description>
 
     <properties>
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
-        <azure-storage-blob.version>12.6.0</azure-storage-blob.version>
+        <azure.storage.blob.version>12.11.0</azure.storage.blob.version>
+        <azure.identity.version>1.2.5</azure.identity.version>
+        <azure.storage.file.datalake>12.4.1</azure.storage.file.datalake>
+        <azure.stora.version>1.2.5</azure.stora.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
-            <version>${azure-storage-blob.version}</version>
+            <version>${azure.storage.blob.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-identity</artifactId>
+            <version>${azure.identity.version}</version>
         </dependency>
         <dependency>
             <groupId>io.streamthoughts</groupId>

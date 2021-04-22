@@ -77,7 +77,7 @@ public class RowFileInputIteratorFactory implements FileInputIteratorFactory {
                         br.disableAutoFlush();
                         return br;
                     } catch (Exception e) {
-                        throw new ReaderException("Failed to get input stream for: " + objectMetadata);
+                        throw new ReaderException("Failed to get InputStream for object: " + objectMetadata, e);
                     }
                 })
                 .build();

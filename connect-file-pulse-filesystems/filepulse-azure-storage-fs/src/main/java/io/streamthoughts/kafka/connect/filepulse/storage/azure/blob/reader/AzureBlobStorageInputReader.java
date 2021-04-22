@@ -20,8 +20,8 @@ package io.streamthoughts.kafka.connect.filepulse.storage.azure.blob.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.AbstractFileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.StorageAwareFileInputReader;
-import io.streamthoughts.kafka.connect.filepulse.storage.azure.AzureBlobStorageClientConfig;
-import io.streamthoughts.kafka.connect.filepulse.storage.azure.AzureBlobStorageClientUtils;
+import io.streamthoughts.kafka.connect.filepulse.storage.azure.blob.AzureBlobStorageConfig;
+import io.streamthoughts.kafka.connect.filepulse.storage.azure.blob.AzureBlobStorageClientUtils;
 import io.streamthoughts.kafka.connect.filepulse.storage.azure.blob.AzureBlobStorage;
 import io.streamthoughts.kafka.connect.filepulse.storage.azure.blob.AzureBlobStorageFileSystemListing;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public abstract class AzureBlobStorageInputReader extends AbstractFileInputReade
             LOG.info("Create new AZ Storage Client from the properties passed through the connector's configuration");
             storage = new AzureBlobStorage(
                     AzureBlobStorageClientUtils.createBlobContainerClient(
-                            new AzureBlobStorageClientConfig(configs)));
+                            new AzureBlobStorageConfig(configs)));
         }
     }
 

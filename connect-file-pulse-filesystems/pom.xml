@@ -66,5 +66,4 @@
             <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
-
 </project>

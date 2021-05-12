@@ -48,9 +48,9 @@ This example starts a new connector instance to parse the Kafka Connect containe
 **1 ) Start a new connector instance**
 
 ```bash
-$ curl -sSL $GITHUB_REPO_MASTER/config/connect-file-pulse-quickstart-log4j.json -o connect-file-pulse-quickstart-log4j.json
+$ curl -sSL $GITHUB_REPO_MASTER/examples/connect-file-pulse-quickstart-log4j.json -o connect-file-pulse-quickstart-log4j.json
  
-$ curl -sX POST http://localhost:8083/connectors \
+$ curl -sX PUT http://localhost:8083/connectors/connect-file-pulse-quickstart-log4j/config \
 -d @connect-file-pulse-quickstart-log4j.json \
 --header "Content-Type: application/json" | jq
 ```
@@ -110,9 +110,9 @@ This example starts a new connector instance that parse a CSV file and filter ro
 **1 ) Start a new connector instance**
 
 ```bash
-$ curl -sSL $GITHUB_REPO_MASTER/config/connect-file-pulse-quickstart-csv.json -o connect-file-pulse-quickstart-csv.json
+$ curl -sSL $GITHUB_REPO_MASTER/examples/connect-file-pulse-quickstart-csv.json -o connect-file-pulse-quickstart-csv.json
 
-$ curl -sX POST http://localhost:8083/connectors \
+$ curl -sX PUT http://localhost:8083/connectors/connect-file-pulse-quickstart-csv/config \
 -d @connect-file-pulse-quickstart-csv.json \
 --header "Content-Type: application/json" | jq
 ```
@@ -120,7 +120,7 @@ $ curl -sX POST http://localhost:8083/connectors \
 **2 ) Copy example csv file into container**
 
 ```bash
-$ curl -sSL $GITHUB_REPO_MASTER/examples/quickstart-musics-dataset.csv -o quickstart-musics-dataset.csv
+$ curl -sSL $GITHUB_REPO_MASTER/datasets/quickstart-musics-dataset.csv -o quickstart-musics-dataset.csv
 $ docker exec -it connect mkdir -p /tmp/kafka-connect/examples
 $ docker cp quickstart-musics-dataset.csv connect://tmp/kafka-connect/examples/quickstart-musics-dataset.csv
 ```

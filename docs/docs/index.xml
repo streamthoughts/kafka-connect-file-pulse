@@ -374,6 +374,176 @@ file compatible with &lt;a href=&#34;https://docs.confluent.io/current/connect/m
     </item>
     
     <item>
+      <title>Docs: Configuration</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</link>
+      <pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;commons-configuration&#34;&gt;Commons configuration&lt;/h2&gt;
+&lt;p&gt;Whatever the kind of files you are processing a connector should always be configured with the below properties.
+These configurations are described in detail in subsequent chapters.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Properties for listing and cleaning object files (&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-listing/&#34;&gt;FileSystemListing&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;fs.listing.class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Class which is used to list eligible files from the scanned file system.&lt;/td&gt;
+&lt;td&gt;class&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;fs.listing.filters&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Filters use to list eligible input files&lt;/td&gt;
+&lt;td&gt;list&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;fs.listing.interval.ms&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Time interval (in milliseconds) at wish to scan input directory&lt;/td&gt;
+&lt;td&gt;long&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;10000&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;fs.cleanup.policy.class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The fully qualified name of the class which is used to cleanup files&lt;/td&gt;
+&lt;td&gt;class&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;max.scheduled.files&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Maximum number of files that can be schedules to tasks.&lt;/td&gt;
+&lt;td&gt;long&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;1000&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Properties for transforming object file record(&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/&#34;&gt;Filters Chain Definition&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;filters&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;List of filters aliases to apply on each data (order is important)&lt;/td&gt;
+&lt;td&gt;list&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Properties for reading object file record(&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/&#34;&gt;FileReaders&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;task.reader.class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The fully qualified name of the class which is used by tasks to read input files&lt;/td&gt;
+&lt;td&gt;class&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;offset.strategy&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;A separated list of attributes, using &lt;code&gt;+&lt;/code&gt;  as a character separator, to be used for uniquely identifying an input file; must be one of [&lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;inode&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;] (e.g: &lt;code&gt;name+hash&lt;/code&gt;). Note that order doesn&#39;t matter.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;path+name&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;topic&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The default output topic to write&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;high&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;Properties for synchronizing Connector and Tasks&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;internal.kafka.reporter.topic&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Name of the internal topic used by tasks and connector to report and monitor file progression.&lt;/td&gt;
+&lt;td&gt;class&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;connect-file-pulse-status&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;internal.kafka.reporter.bootstrap.servers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;prior-to-connect-filepulse-13x-deprecated&#34;&gt;Prior to Connect FilePulse 1.3.x (deprecated)&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;internal.kafka.reporter.id&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The reporter identifier to be used by tasks and connector to report and monitor file progression (default null). This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility (when set, must be unique for each connect instance).&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Basic Configuration</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/configuration/</link>
       <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
@@ -756,133 +926,6 @@ Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
     
     <item>
       <title>Docs: Basic Configuration</title>
-      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</link>
-      <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</guid>
-      <description>
-        
-        
-        &lt;h2 id=&#34;commons-configuration&#34;&gt;Commons configuration&lt;/h2&gt;
-&lt;p&gt;Whatever the kind of files you are processing a connector should always be configured with the below properties.
-Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;th&gt;Type&lt;/th&gt;
-&lt;th&gt;Default&lt;/th&gt;
-&lt;th&gt;Importance&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.scanner.class&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The fully qualified name of the class which is used to scan file system&lt;/td&gt;
-&lt;td&gt;class&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.cleanup.policy.class&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The fully qualified name of the class which is used to cleanup files&lt;/td&gt;
-&lt;td&gt;class&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.scan.directory.path&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The input directory to scan&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.scan.interval.ms&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Time interval (in milliseconds) at wish to scan input directory&lt;/td&gt;
-&lt;td&gt;long&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;10000&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.scan.filters&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Filters use to list eligible input files&lt;/td&gt;
-&lt;td&gt;list&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;filters&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;List of filters aliases to apply on each data (order is important)&lt;/td&gt;
-&lt;td&gt;list&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;internal.kafka.reporter.topic&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Name of the internal topic used by tasks and connector to report and monitor file progression.&lt;/td&gt;
-&lt;td&gt;class&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;connect-file-pulse-status&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;internal.kafka.reporter.bootstrap.servers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;task.reader.class&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The fully qualified name of the class which is used by tasks to read input files&lt;/td&gt;
-&lt;td&gt;class&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;offset.strategy&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;A separated list of attributes, using &lt;code&gt;+&lt;/code&gt;  as a character separator, to be used for uniquely identifying an input file; must be one of [&lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;inode&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;] (e.g: &lt;code&gt;name+hash&lt;/code&gt;). Note that order doesn&#39;t matter.&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;path+name&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;topic&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The default output topic to write&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;prior-to-connect-filepulse-13x-deprecated&#34;&gt;Prior to Connect FilePulse 1.3.x (deprecated)&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;th&gt;Type&lt;/th&gt;
-&lt;th&gt;Default&lt;/th&gt;
-&lt;th&gt;Importance&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;internal.kafka.reporter.id&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The reporter identifier to be used by tasks and connector to report and monitor file progression (default null). This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility (when set, must be unique for each connect instance).&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: Basic Configuration</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.3.x/developer-guide/configuration/</link>
       <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
       
@@ -1004,6 +1047,261 @@ Those configuration are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: FileSystem Listing</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link>
+      <pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Kafka Connect FilePulse periodically lists object files that may be streamed into Kafka using the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java&#34;&gt;FileSystemListing&lt;/a&gt;&lt;br&gt;
+configured in the connector&#39;s configuration.&lt;/p&gt;
+&lt;p&gt;NOTE: The &lt;code&gt;FileSystemListing&lt;/code&gt; is invoked by a background-threads which is started by te &lt;code&gt;FilePulseSourceConnector&lt;/code&gt; class.&lt;/p&gt;
+&lt;p&gt;Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3FileSystemListing&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageFileSystemListing&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsFileSystemListing&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalFSDirectoryListing&lt;/code&gt; (default)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;local-filesystem-default&#34;&gt;Local Filesystem (default)&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;LocalFSDirectoryListing&lt;/code&gt; class can be used for listing files that exist in a local filesystem directory.&lt;/p&gt;
+&lt;h4 id=&#34;how-to-use-it-&#34;&gt;How to use it ?&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing&lt;/code&gt;&lt;/p&gt;
+&lt;h4 id=&#34;configuration&#34;&gt;Configuration&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;fs.listing.directory.path&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The input directory to scan&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;fs.listing.recursive.enabled&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Flag indicating whether local directory should be recursively scanned&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;boolean&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;true&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;amazon-s3&#34;&gt;Amazon S3&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;AmazonS3FileSystemListing&lt;/code&gt; class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p&gt;
+&lt;h4 id=&#34;how-to-use-it-1&#34;&gt;How to use it ?&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.AmazonS3FileSystemListing&lt;/code&gt;&lt;/p&gt;
+&lt;h4 id=&#34;configuration1&#34;&gt;Configuration&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;aws.access.key.id&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;AWS Access Key ID AWS&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;aws.secret.access.key&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;AWS Secret Access Key&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;aws.secret.session.token&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;AWS Secret Session Token&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;aws.s3.region&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The AWS S3 Region, e.g. us-east-1&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Regions.DEFAULT_REGION.getName()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;aws.s3.path.style.access.enabled&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Configures the client to use path-style access for all requests.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;aws.s3.bucket.name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The name of the Amazon S3 bucket.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;aws.s3.bucket.prefix&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The prefix to be used for restricting the listing of the objects in the bucket&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;aws.credentials.provider.class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;LOW&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;google-cloud-storage&#34;&gt;Google Cloud Storage&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;GcsFileSystemListing&lt;/code&gt; class can be used for listing objects that exist in a specific Google Cloud Storage bucket.&lt;/p&gt;
+&lt;h4 id=&#34;how-to-use-it-2&#34;&gt;How to use it ?&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.gcp.GcsFileSystemListing&lt;/code&gt;&lt;/p&gt;
+&lt;h4 id=&#34;configuration2&#34;&gt;Configuration&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;gcs.credentials.path&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The path to GCP credentials file. Cannot be set when &lt;code&gt;GCS_CREDENTIALS_JSON_CONFIG&lt;/code&gt; is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code&gt;GOOGLE_APPLICATION_CREDENTIALS&lt;/code&gt;.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;gcs.credentials.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The GCP credentials as JSON string. Cannot be set when &lt;code&gt;GCS_CREDENTIALS_PATH_CONFIG&lt;/code&gt; is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code&gt;GOOGLE_APPLICATION_CREDENTIALS&lt;/code&gt;.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;gcs.bucket.name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The GCS bucket name to download the object files from.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;gcs.blobs.filter.prefix&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The prefix to be used for filtering blobs  whose names begin with it.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;azure-blob-storage&#34;&gt;Azure Blob Storage&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;AzureBlobStorageConfig&lt;/code&gt; class can be used for listing objects that exist in a specific Azure Storage Container.&lt;/p&gt;
+&lt;h4 id=&#34;how-to-use-it-3&#34;&gt;How to use it ?&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.azure.storage.AzureBlobStorageConfig&lt;/code&gt;&lt;/p&gt;
+&lt;h4 id=&#34;configuration3&#34;&gt;Configuration&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;azure.storage.connection.string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Azure storage account connection string.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;azure.storage.account.name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The Azure storage account name.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;azure.storage.account.key&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The Azure storage account key.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;azure.storage.container.name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The Azure storage container name.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;azure.storage.blob.prefix&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The prefix to be used for restricting the listing of the blobs in the container.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;td&gt;MEDIUM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;filtering-input-files&#34;&gt;Filtering input files&lt;/h2&gt;
+&lt;p&gt;You can configure one or more &lt;code&gt;FileFilter&lt;/code&gt; that will be used to determine if a file should be scheduled for processing or ignored.
+All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
+At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p&gt;
+&lt;p&gt;FilePulse packs with the following built-in filters :&lt;/p&gt;
+&lt;h3 id=&#34;ignorehiddenfilefilter&#34;&gt;IgnoreHiddenFileFilter&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;IgnoreHiddenFileFilter&lt;/code&gt; can be used to filter hidden files from being read.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Configuration example&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;lastmodifiedfilefilter&#34;&gt;LastModifiedFileFilter&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;LastModifiedFileFilter&lt;/code&gt; can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
+# The last modified time for a file can be accepted (default: 5000)
+file.filter.minimum.age.ms=10000
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;regexfilefilter&#34;&gt;RegexFileFilter&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;RegexFileFilter&lt;/code&gt; can be used to filter files that do not match the specified regex.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
+# The regex pattern used to matches input files
+file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt; will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path&#34;&gt;Files#probeContentType&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;The connector supports the following content types :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;GZIP&lt;/strong&gt; : &lt;code&gt;application/x-gzip&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TAR&lt;/strong&gt; : &lt;code&gt;application/x-tar&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ZIP&lt;/strong&gt; : &lt;code&gt;application/x-zip-compressed&lt;/code&gt; or &lt;code&gt;application/zip&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
       </description>
     </item>
@@ -1299,108 +1597,6 @@ file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
       <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.6.x/developer-guide/scanning-files/</guid>
-      <description>
-        
-        
-        &lt;p&gt;The connector must be configured with a specific &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java&#34;&gt;FSDirectoryWalker&lt;/a&gt;&lt;br&gt;
-that will be responsible for scanning an input directory to find files eligible to be streamed in Kafka.&lt;/p&gt;
-&lt;p&gt;The default &lt;code&gt;FSDirectoryWalker&lt;/code&gt; implementation is :&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;FilePulseSourceConnector&lt;/code&gt; periodically triggers a file system scan of the directory specified in the &lt;code&gt;input.directory.path&lt;/code&gt;
-connector property. Scan is executed in a background-thread invoking the configured &lt;code&gt;FSDirectoryWalker&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;configuring-directory-scan-using-localfsdirectorywalker&#34;&gt;Configuring Directory Scan (using &lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt;)&lt;/h2&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;th&gt;Type&lt;/th&gt;
-&lt;th&gt;Default&lt;/th&gt;
-&lt;th&gt;Importance&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.scanner.class&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The class used to scan file system&lt;/td&gt;
-&lt;td&gt;class&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.scan.directory.path&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The input directory to scan&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.scan.interval.ms&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Time interval in milliseconds at wish the input directory is scanned&lt;/td&gt;
-&lt;td&gt;long&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;10000&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.scan.filters&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The comma-separated list of fully qualified class names of the filter-filters to be uses to list eligible input files&lt;/td&gt;
-&lt;td&gt;list&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;fs.recursive.scan.enable&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Boolean indicating whether local directory should be recursively scanned&lt;/td&gt;
-&lt;td&gt;boolean&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;true&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;allow.tasks.reconfiguration.after.timeout.ms&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Specifies the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed&lt;/td&gt;
-&lt;td&gt;long&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;Long.MAX_VALUE&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;filtering-input-files&#34;&gt;Filtering input files&lt;/h2&gt;
-&lt;p&gt;You can configure one or more &lt;code&gt;FileFilter&lt;/code&gt; that will be used to determine if a file should be scheduled for processing or ignored.
-All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
-At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p&gt;
-&lt;p&gt;FilePulse packs with the following built-in filters :&lt;/p&gt;
-&lt;h3 id=&#34;ignorehiddenfilefilter&#34;&gt;IgnoreHiddenFileFilter&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;IgnoreHiddenFileFilter&lt;/code&gt; can be used to filter hidden files from being read.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Configuration example&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;lastmodifiedfilefilter&#34;&gt;LastModifiedFileFilter&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;LastModifiedFileFilter&lt;/code&gt; can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
-# The last modified time for a file can be accepted (default: 5000)
-file.filter.minimum.age.ms=10000
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;regexfilefilter&#34;&gt;RegexFileFilter&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;RegexFileFilter&lt;/code&gt; can be used to filter files that do not match the specified regex.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
-# The regex pattern used to matches input files
-file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt; will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path&#34;&gt;Files#probeContentType&lt;/a&gt;)&lt;/p&gt;
-&lt;p&gt;The connector supports the following content types :&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;GZIP&lt;/strong&gt; : &lt;code&gt;application/x-gzip&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;TAR&lt;/strong&gt; : &lt;code&gt;application/x-tar&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;ZIP&lt;/strong&gt; : &lt;code&gt;application/x-zip-compressed&lt;/code&gt; or &lt;code&gt;application/zip&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: Scanning Files</title>
-      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/</link>
-      <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/</guid>
       <description>
         
         

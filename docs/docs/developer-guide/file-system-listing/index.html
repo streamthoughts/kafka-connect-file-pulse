@@ -20,25 +20,25 @@
 <link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-192x192.png" sizes="192x192">
 
-<title>Scanning Files | Kafka Connect File Pulse</title><meta property="og:title" content="Scanning Files" />
-<meta property="og:description" content="The commons configuration for Connect File Pulse.
+<title>FileSystem Listing | Kafka Connect File Pulse</title><meta property="og:title" content="FileSystem Listing" />
+<meta property="og:description" content="The common configurations for Connect File Pulse.
 " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/" />
-<meta property="article:published_time" content="2020-05-25T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-11-11T22:34:27+01:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
-<meta itemprop="name" content="Scanning Files">
-<meta itemprop="description" content="The commons configuration for Connect File Pulse.
+<meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/" />
+<meta property="article:published_time" content="2021-05-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-05-12T16:41:58+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta itemprop="name" content="FileSystem Listing">
+<meta itemprop="description" content="The common configurations for Connect File Pulse.
 ">
-<meta itemprop="datePublished" content="2020-05-25T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-11-11T22:34:27&#43;01:00" />
-<meta itemprop="wordCount" content="372">
+<meta itemprop="datePublished" content="2021-05-12T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-05-12T16:41:58&#43;02:00" />
+<meta itemprop="wordCount" content="649">
 
 
 
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Scanning Files"/>
-<meta name="twitter:description" content="The commons configuration for Connect File Pulse.
+<meta name="twitter:title" content="FileSystem Listing"/>
+<meta name="twitter:description" content="The common configurations for Connect File Pulse.
 "/>
 
 
@@ -289,13 +289,13 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-configuration" href="/kafka-connect-file-pulse/docs/developer-guide/configuration/">Basic Configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-configuration" href="/kafka-connect-file-pulse/docs/developer-guide/configuration/">Configuration</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kafka-connect-file-pulse-docs-developer-guide-scanning-files" href="/kafka-connect-file-pulse/docs/developer-guide/scanning-files/">Scanning Files</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kafka-connect-file-pulse-docs-developer-guide-file-system-listing" href="/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/">FileSystem Listing</a>
       
       
       
@@ -1591,8 +1591,8 @@
 
 
 
-<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/edit/master/site/content/en/docs/Developer%20Guide/scanning-files.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new?title=Scanning%20Files" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/edit/master/site/content/en/docs/Developer%20Guide/file-system-listing.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new?title=FileSystem%20Listing" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 
 <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -1606,7 +1606,14 @@
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#configuring-directory-scan-using-localfsdirectorywalker">Configuring Directory Scan (using LocalFSDirectoryWalker)</a></li>
+    <li>
+      <ul>
+        <li><a href="#local-filesystem-default">Local Filesystem (default)</a></li>
+        <li><a href="#amazon-s3">Amazon S3</a></li>
+        <li><a href="#google-cloud-storage">Google Cloud Storage</a></li>
+        <li><a href="#azure-blob-storage">Azure Blob Storage</a></li>
+      </ul>
+    </li>
     <li><a href="#filtering-input-files">Filtering input files</a>
       <ul>
         <li><a href="#ignorehiddenfilefilter">IgnoreHiddenFileFilter</a></li>
@@ -1653,7 +1660,7 @@
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/scanning-files/">Scanning Files</a>
+	<a href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/">FileSystem Listing</a>
 </li>
 
 	</ol>
@@ -1661,16 +1668,24 @@
 
             
 <div class="td-content">
-	<h1>Scanning Files</h1>
-    <div class="lead">The commons configuration for Connect File Pulse.</div>
+	<h1>FileSystem Listing</h1>
+    <div class="lead">The common configurations for Connect File Pulse.</div>
 	       
-	<p>The connector must be configured with a specific <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java">FSDirectoryWalker</a><br>
-that will be responsible for scanning an input directory to find files eligible to be streamed in Kafka.</p>
-<p>The default <code>FSDirectoryWalker</code> implementation is :</p>
-<p><code>io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker</code>.</p>
-<p>The <code>FilePulseSourceConnector</code> periodically triggers a file system scan of the directory specified in the <code>input.directory.path</code>
-connector property. Scan is executed in a background-thread invoking the configured <code>FSDirectoryWalker</code>.</p>
-<h2 id="configuring-directory-scan-using-localfsdirectorywalker">Configuring Directory Scan (using <code>LocalFSDirectoryWalker</code>)</h2>
+	<p>Kafka Connect FilePulse periodically lists object files that may be streamed into Kafka using the <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing</a><br>
+configured in the connector's configuration.</p>
+<p>NOTE: The <code>FileSystemListing</code> is invoked by a background-threads which is started by te <code>FilePulseSourceConnector</code> class.</p>
+<p>Currently, Kafka Connect FilePulse supports the following implementations:</p>
+<ul>
+<li><code>AmazonS3FileSystemListing</code></li>
+<li><code>AzureBlobStorageFileSystemListing</code></li>
+<li><code>GcsFileSystemListing</code></li>
+<li><code>LocalFSDirectoryListing</code> (default)</li>
+</ul>
+<h3 id="local-filesystem-default">Local Filesystem (default)</h3>
+<p>The <code>LocalFSDirectoryListing</code> class can be used for listing files that exist in a local filesystem directory.</p>
+<h4 id="how-to-use-it-">How to use it ?</h4>
+<p><code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing</code></p>
+<h4 id="configuration">Configuration</h4>
 <table>
 <thead>
 <tr>
@@ -1683,46 +1698,191 @@ connector property. Scan is executed in a background-thread invoking the configu
 </thead>
 <tbody>
 <tr>
-<td><code>fs.scanner.class</code></td>
-<td>The class used to scan file system</td>
-<td>class</td>
-<td><em>io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker</em></td>
-<td>medium</td>
-</tr>
-<tr>
-<td><code>fs.scan.directory.path</code></td>
+<td><code>fs.listing.directory.path</code></td>
 <td>The input directory to scan</td>
-<td>string</td>
-<td><em>-</em></td>
-<td>high</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
 </tr>
 <tr>
-<td><code>fs.scan.interval.ms</code></td>
-<td>Time interval in milliseconds at wish the input directory is scanned</td>
-<td>long</td>
-<td><em>10000</em></td>
-<td>high</td>
+<td><code>fs.listing.recursive.enabled</code></td>
+<td>Flag indicating whether local directory should be recursively scanned</td>
+<td><code>boolean</code></td>
+<td><code>true</code></td>
+<td>MEDIUM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="amazon-s3">Amazon S3</h3>
+<p>The <code>AmazonS3FileSystemListing</code> class can be used for listing objects that exist in a specific Amazon S3 bucket.</p>
+<h4 id="how-to-use-it-1">How to use it ?</h4>
+<p><code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.AmazonS3FileSystemListing</code></p>
+<h4 id="configuration1">Configuration</h4>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>aws.access.key.id</code></td>
+<td>AWS Access Key ID AWS</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
 </tr>
 <tr>
-<td><code>fs.scan.filters</code></td>
-<td>The comma-separated list of fully qualified class names of the filter-filters to be uses to list eligible input files</td>
-<td>list</td>
-<td><em>-</em></td>
-<td>medium</td>
+<td><code>aws.secret.access.key</code></td>
+<td>AWS Secret Access Key</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
 </tr>
 <tr>
-<td><code>fs.recursive.scan.enable</code></td>
-<td>Boolean indicating whether local directory should be recursively scanned</td>
-<td>boolean</td>
-<td><em>true</em></td>
-<td>medium</td>
+<td><code>aws.secret.session.token</code></td>
+<td>AWS Secret Session Token</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
 </tr>
 <tr>
-<td><code>allow.tasks.reconfiguration.after.timeout.ms</code></td>
-<td>Specifies the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed</td>
-<td>long</td>
-<td><em>Long.MAX_VALUE</em></td>
-<td>medium</td>
+<td><code>aws.s3.region</code></td>
+<td>The AWS S3 Region, e.g. us-east-1</td>
+<td><code>string</code></td>
+<td><code>Regions.DEFAULT_REGION.getName()</code></td>
+<td>MEDIUM</td>
+</tr>
+<tr>
+<td><code>aws.s3.path.style.access.enabled</code></td>
+<td>Configures the client to use path-style access for all requests.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>MEDIUM</td>
+</tr>
+<tr>
+<td><code>aws.s3.bucket.name</code></td>
+<td>The name of the Amazon S3 bucket.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><code>aws.s3.bucket.prefix</code></td>
+<td>The prefix to be used for restricting the listing of the objects in the bucket</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>MEDIUM</td>
+</tr>
+<tr>
+<td><code>aws.credentials.provider.class</code></td>
+<td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.</td>
+<td><code>class</code></td>
+<td><code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider</code></td>
+<td>LOW</td>
+</tr>
+</tbody>
+</table>
+<h3 id="google-cloud-storage">Google Cloud Storage</h3>
+<p>The <code>GcsFileSystemListing</code> class can be used for listing objects that exist in a specific Google Cloud Storage bucket.</p>
+<h4 id="how-to-use-it-2">How to use it ?</h4>
+<p><code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.gcp.GcsFileSystemListing</code></p>
+<h4 id="configuration2">Configuration</h4>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gcs.credentials.path</code></td>
+<td>The path to GCP credentials file. Cannot be set when <code>GCS_CREDENTIALS_JSON_CONFIG</code> is provided. If no credentials is specified the client library will look for credentials via the environment variable <code>GOOGLE_APPLICATION_CREDENTIALS</code>.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><code>gcs.credentials.json</code></td>
+<td>The GCP credentials as JSON string. Cannot be set when <code>GCS_CREDENTIALS_PATH_CONFIG</code> is provided. If no credentials is specified the client library will look for credentials via the environment variable <code>GOOGLE_APPLICATION_CREDENTIALS</code>.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><code>gcs.bucket.name</code></td>
+<td>The GCS bucket name to download the object files from.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><code>gcs.blobs.filter.prefix</code></td>
+<td>The prefix to be used for filtering blobs  whose names begin with it.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>MEDIUM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="azure-blob-storage">Azure Blob Storage</h3>
+<p>The <code>AzureBlobStorageConfig</code> class can be used for listing objects that exist in a specific Azure Storage Container.</p>
+<h4 id="how-to-use-it-3">How to use it ?</h4>
+<p><code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.azure.storage.AzureBlobStorageConfig</code></p>
+<h4 id="configuration3">Configuration</h4>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>azure.storage.connection.string</code></td>
+<td>Azure storage account connection string.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><code>azure.storage.account.name</code></td>
+<td>The Azure storage account name.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><code>azure.storage.account.key</code></td>
+<td>The Azure storage account key.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><code>azure.storage.container.name</code></td>
+<td>The Azure storage container name.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>MEDIUM</td>
+</tr>
+<tr>
+<td><code>azure.storage.blob.prefix</code></td>
+<td>The prefix to be used for restricting the listing of the blobs in the container.</td>
+<td><code>string</code></td>
+<td>-</td>
+<td>MEDIUM</td>
 </tr>
 </tbody>
 </table>
@@ -1756,7 +1916,7 @@ file.filter.regex.pattern=&quot;\\.log$&quot;
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified November 11, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/af2b6db1fbb686ab4bb1444dfefcbc171fda5743">docs(site): add missing configuration (af2b6db)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 12, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/aff6274d3ff43a20ee182457516305741ab08836">docs(site): update for preparing next release (aff6274)</a>
 </div>
 </div>
 

@@ -30,16 +30,12 @@ import java.util.Map;
 
 public class ConnectorConfig extends CommonConfig {
 
-    // Settings for the DefaultFileSystemScanner class
+    /* Settings for DefaultFileSystemMonitor */
     public static final String FS_LISTING_CLASS_CONFIG        = "fs.listing.class";
     private static final String FS_LISTING_CLASS_DOC          = "Class which is used to list eligible files from the scanned file system.";
 
     public static final String FS_LISTING_FILTERS_CONFIG      = "fs.listing.filters";
     private static final String FS_SCAN_FILTERS_DOC           = "Filters classes which are used to apply list input files.";
-
-    public static final String MAX_SCHEDULED_FILES_CONFIG     = "max.scheduled.files";
-    public static final String MAX_SCHEDULED_FILES_DOC        = "Maximum number of files that can be schedules to tasks.";
-    public static final int MAX_SCHEDULED_FILES_DEFAULT       = 1000;
 
     public static final String ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_CONFIG = "allow.tasks.reconfiguration.after.timeout.ms";
     public static final String ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_DOC = "Specifies the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed.";
@@ -47,10 +43,15 @@ public class ConnectorConfig extends CommonConfig {
     public static final String FILE_CLEANER_CLASS_CONFIG      = "fs.cleanup.policy.class";
     public static final String FILE_CLEANER_CLASS_DOC         = "The class used to cleanup files that have been processed by tasks.";
 
-    // Settings for the FileSystemMonitorThread
-    public static final String FS_SCAN_INTERVAL_MS_CONFIG     = "fs.scan.interval.ms";
-    private static final String FS_SCAN_INTERVAL_MS_DOC       = "The time interval, in milliseconds, in which the connector invokes the scan of the filesystem.";
-    private static final long FS_SCAN_INTERVAL_MS_DEFAULT     = 10000L;
+    /* Settings for FileSystemMonitorThread */
+    public static final String FS_LISTING_INTERVAL_MS_CONFIG  = "fs.listing.interval.ms";
+    private static final String FS_LISTING_INTERVAL_MS_DOC    = "The time interval, in milliseconds, in which the connector invokes the scan of the filesystem.";
+    private static final long FS_LISTING_INTERVAL_MS_DEFAULT  = 10000L;
+
+    /* Settings for FilePulseSourceConnector */
+    public static final String MAX_SCHEDULED_FILES_CONFIG     = "max.scheduled.files";
+    public static final String MAX_SCHEDULED_FILES_DOC        = "Maximum number of files that can be schedules to tasks.";
+    public static final int MAX_SCHEDULED_FILES_DEFAULT       = 1000;
 
     @Deprecated
     public static final String INTERNAL_REPORTER_GROUP_ID       = "internal.kafka.reporter.id";
@@ -86,11 +87,11 @@ public class ConnectorConfig extends CommonConfig {
                 )
 
                 .define(
-                        FS_SCAN_INTERVAL_MS_CONFIG,
+                        FS_LISTING_INTERVAL_MS_CONFIG,
                         ConfigDef.Type.LONG,
-                        FS_SCAN_INTERVAL_MS_DEFAULT,
+                        FS_LISTING_INTERVAL_MS_DEFAULT,
                         ConfigDef.Importance.HIGH,
-                        FS_SCAN_INTERVAL_MS_DOC
+                        FS_LISTING_INTERVAL_MS_DOC
                 )
 
                 .define(
@@ -146,7 +147,7 @@ public class ConnectorConfig extends CommonConfig {
     }
 
     public long scanInternalMs() {
-        return this.getLong(FS_SCAN_INTERVAL_MS_CONFIG);
+        return this.getLong(FS_LISTING_INTERVAL_MS_CONFIG);
     }
 
     public List<FileListFilter> fileSystemListingFilter() {

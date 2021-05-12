@@ -42,25 +42,25 @@ public class FileSystemMonitorThread extends Thread {
     private final CountDownLatch waitingLatch;
     private final long scanIntervalMs;
 
-    private final FileSystemMonitor scanner;
+    private final FileSystemMonitor monitor;
 
     /**
      * Creates a new {@link FileSystemMonitorThread} instance.
      *
      * @param context the connector context.
-     * @param scanner the file system scanner.
+     * @param monitor the file system monitor.
      */
     FileSystemMonitorThread(final ConnectorContext context,
-                            final FileSystemMonitor scanner,
+                            final FileSystemMonitor monitor,
                             final long scanIntervalMs) {
         super(FileSystemMonitorThread.class.getSimpleName());
         Objects.requireNonNull(context,"context can't be null");
-        Objects.requireNonNull(scanner,"scanner can't be null");
+        Objects.requireNonNull(monitor,"monitor can't be null");
         if (scanIntervalMs < 0) {
             throw new IllegalArgumentException("Invalid Argument - scanInternalMs cannot be inferior to 0");
         }
         this.context = context;
-        this.scanner = scanner;
+        this.monitor = monitor;
         this.scanIntervalMs = scanIntervalMs;
         this.shutdownLatch = new CountDownLatch(1);
         this.waitingLatch = new CountDownLatch(1);
@@ -76,7 +76,7 @@ public class FileSystemMonitorThread extends Thread {
             while (shutdownLatch.getCount() > 0) {
                 long started = Time.SYSTEM.milliseconds();
                 try {
-                    scanner.invoke(context);
+                    monitor.invoke(context);
                     LOG.info(
                         "Completed filesystem monitoring iteration in {} ms",
                         Time.SYSTEM.milliseconds() - started

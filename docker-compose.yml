@@ -45,7 +45,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 
   connect-file-pulse:
-    image: streamthoughts/kafka-connect-file-pulse:latest
+    image: streamthoughts/kafka-connect-file-pulse:2.0.0-RC1
     container_name: connect
     depends_on:
     - cp-broker
@@ -74,8 +74,8 @@ services:
       # kafka-connect-file-pulse is installed as a confluent-hub component
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components/"
       CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
-      CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
+      # CONNECT_LOG4J_LOGGERS: io.streamthoughts=DEBUG,org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
       # Uncomment for debugging the connector during development cycle
-      # KAFKA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n"
+      KAFKA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n"
     volumes:
       - ./connect-data:/tmp/connect-data        

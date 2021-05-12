@@ -26,15 +26,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 public class GZipCodec implements CodecHandler {
 
-    private static Logger LOG = LoggerFactory.getLogger(GZipCodec.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GZipCodec.class);
 
     private static final Set<String> MIME_TYPES = new HashSet<>();
 
@@ -57,8 +59,11 @@ public class GZipCodec implements CodecHandler {
     public boolean canRead(final File file) {
         Objects.requireNonNull(file, "file can't be null");
         try {
-            final String type = Files.probeContentType(file.toPath());
-            return MIME_TYPES.contains(type);
+            final Optional<String> contentType = Optional.ofNullable(Files.probeContentType(file.toPath()));
+            return contentType.map(s -> Arrays.stream(s.split(";"))
+                    .map(String::trim)
+                    .anyMatch(MIME_TYPES::contains))
+                    .orElse(false);
         } catch (IOException e) {
             LOG.warn("Unexpected error occurred while proving content-type for file : {}", file.getAbsolutePath());
             return false;

@@ -37,7 +37,7 @@ import java.util.Set;
 
 public class TarballCodec implements CodecHandler {
 
-    private static Logger LOG = LoggerFactory.getLogger(GZipCodec.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GZipCodec.class);
 
     private static final String TAR_GZ_SUFFIX = ".tar.gz";
 

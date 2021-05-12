@@ -27,9 +27,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -60,8 +62,11 @@ public class ZipCodec implements CodecHandler {
     public boolean canRead(final File file) {
         Objects.requireNonNull(file, "file can't be null");
         try {
-            final String type = Files.probeContentType(file.toPath());
-            return MIME_TYPES.contains(type);
+            final Optional<String> contentType = Optional.ofNullable(Files.probeContentType(file.toPath()));
+            return contentType.map(s -> Arrays.stream(s.split(";"))
+                    .map(String::trim)
+                    .anyMatch(MIME_TYPES::contains))
+                    .orElse(false);
         } catch (IOException e) {
             LOG.warn("Unexpected error occurred while proving content-type for file : {}", file.getAbsolutePath());
             return false;

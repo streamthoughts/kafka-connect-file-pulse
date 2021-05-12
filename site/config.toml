@@ -143,6 +143,10 @@ no = 'Sorry to hear that. Please <a href="https://github.com/streamthoughts/kafk
   version = "v1.5.x"
   url = "/kafka-connect-file-pulse/v1-5/docs"
 
+[[params.versions]]
+  version = "v1.6.x"
+  url = "/kafka-connect-file-pulse/v1-6/docs"
+
 # As of Hugo 0.60
 [markup]
   [markup.goldmark]

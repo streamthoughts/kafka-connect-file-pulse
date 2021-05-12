@@ -4,7 +4,7 @@ title: "FileSystem Listing"
 linkTitle: "FileSystem Listing"
 weight: 30
 description: >
-  The common configurations for Connect File Pulse.
+  Learn how to configure Connect FilePulse for listing files from local or remote storage system.
 ---
 
 The `FilePulseSourceConnector` periodically lists object files that may be streamed into Kafka using the [FileSystemListing](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java)  
@@ -75,10 +75,10 @@ The `GcsFileSystemListing` class can be used for listing objects that exist in a
 
 | Configuration                           |   Description               |   Type    |   Default |   Importance  |
 | ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
-`gcs.credentials.path` | The path to GCP credentials file. Cannot be set when `GCS_CREDENTIALS_JSON_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | - | HIGH
-`gcs.credentials.json` | The GCP credentials as JSON string. Cannot be set when `GCS_CREDENTIALS_PATH_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | - | HIGH
-`gcs.bucket.name`      | The GCS bucket name to download the object files from. | `string` | - | HIGH
-`gcs.blobs.filter.prefix` | The prefix to be used for filtering blobs  whose names begin with it. | `string` | - | MEDIUM
+|`gcs.credentials.path` | The path to GCP credentials file. Cannot be set when `GCS_CREDENTIALS_JSON_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | - | HIGH
+|`gcs.credentials.json` | The GCP credentials as JSON string. Cannot be set when `GCS_CREDENTIALS_PATH_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | - | HIGH
+|`gcs.bucket.name`      | The GCS bucket name to download the object files from. | `string` | - | HIGH
+|`gcs.blobs.filter.prefix` | The prefix to be used for filtering blobs  whose names begin with it. | `string` | - | MEDIUM
 
 ### Azure Blob Storage
 
@@ -92,11 +92,11 @@ The `AzureBlobStorageConfig` class can be used for listing objects that exist in
 
 | Configuration                           |   Description               |   Type    |   Default |   Importance  |
 | ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
-`azure.storage.connection.string` | Azure storage account connection string. | `string` | - | HIGH
-`azure.storage.account.name` | The Azure storage account name. | `string` | - | HIGH
-`azure.storage.account.key`  | The Azure storage account key. | `string` | - | HIGH
-`azure.storage.container.name` | The Azure storage container name. | `string` | - | MEDIUM
-`azure.storage.blob.prefix` | The prefix to be used for restricting the listing of the blobs in the container. | `string` | - | MEDIUM
+|`azure.storage.connection.string` | Azure storage account connection string. | `string` | - | HIGH
+|`azure.storage.account.name` | The Azure storage account name. | `string` | - | HIGH
+|`azure.storage.account.key`  | The Azure storage account key. | `string` | - | HIGH
+|`azure.storage.container.name` | The Azure storage container name. | `string` | - | MEDIUM
+|`azure.storage.blob.prefix` | The prefix to be used for restricting the listing of the blobs in the container. | `string` | - | MEDIUM
     
 ## Filtering input files
 
@@ -113,7 +113,7 @@ The `IgnoreHiddenFileFilter` can be used to filter hidden files from being read.
 **Configuration example**
 
 ```properties
-fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
 ```
 
 ### LastModifiedFileFilter
@@ -121,7 +121,7 @@ fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.I
 The `LastModifiedFileFilter` can be used to filter files that have been modified to recently based on their last modified date property.
 
 ```properties
-fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
 # The last modified time for a file can be accepted (default: 5000)
 file.filter.minimum.age.ms=10000
 ```
@@ -131,7 +131,7 @@ file.filter.minimum.age.ms=10000
 The `RegexFileFilter` can be used to filter files that do not match the specified regex.
 
 ```properties
-fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
 # The regex pattern used to matches input files
 file.filter.regex.pattern="\\.log$"
 ```

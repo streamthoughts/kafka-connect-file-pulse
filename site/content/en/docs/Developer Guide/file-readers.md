@@ -4,11 +4,13 @@ title: "File Readers"
 linkTitle: "File Readers"
 weight: 40
 description: >
-  The common configuration for Connect File Pulse.
+  Learn how to configure Connect FIlePulse for a specific file format.
 ---
 
 The `FilePulseSourceTask` uses the [FileInputReader](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java).
-configured in the connector's configuration for reading object files.
+configured in the connector's configuration for reading object files (i.e., `tasks.reader.class`).
+
+
 
 Currently, Connect FilePulse provides the following `FileInputReader` implementations : 
 

@@ -31,8 +31,7 @@ public interface SourceOffsetPolicy extends Configurable {
      * {@inheritDoc}
      */
     @Override
-    default void configure(final Map<String, ?> configs) {
-    }
+    default void configure(final Map<String, ?> configs) { }
 
     /**
      * Retrieves the position for the specified context and metadata.

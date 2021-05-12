@@ -30,56 +30,86 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta.SYSTEM_FILE_INODE_META_KEY;
 
-public class DefaultOffsetPolicy extends AbstractSourceOffsetPolicy {
+public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
 
     private static final String FILEPATH_FIELD = "path";
     private static final String FILENAME_FIELD = "name";
-    private static final String URI_FIELD      = "uri";
-    private static final String INODE_FIELD    = "inode";
-    private static final String HASH_FIELD     = "hash";
+    private static final String URI_FIELD = "uri";
+    private static final String INODE_FIELD = "inode";
+    private static final String HASH_FIELD = "hash";
     private static final String MODIFIED_FIELD = "lastmodified";
 
     private final static Map<String, GenericOffsetPolicy> ATTRIBUTES = new HashMap<>();
 
-    static  {
-        ATTRIBUTES.put(FILENAME_FIELD, new GenericOffsetPolicy(FILENAME_FIELD,1, FileObjectMeta::name));
-        ATTRIBUTES.put(FILEPATH_FIELD, new GenericOffsetPolicy(FILEPATH_FIELD, 2,  source -> {
-            return new File(source.uri()).getParentFile().getAbsolutePath();
-        }));
-        ATTRIBUTES.put(HASH_FIELD, new GenericOffsetPolicy(HASH_FIELD, 3, source -> {
-            return source.contentDigest().digest();
-        }));
-        ATTRIBUTES.put(MODIFIED_FIELD, new GenericOffsetPolicy(MODIFIED_FIELD, 4, FileObjectMeta::lastModified));
-        ATTRIBUTES.put(URI_FIELD, new GenericOffsetPolicy(URI_FIELD, 5, FileObjectMeta::stringURI));
-        ATTRIBUTES.put(INODE_FIELD, new GenericOffsetPolicy(INODE_FIELD, 6, source -> {
-            final String inode = (String)source.userDefinedMetadata().get(SYSTEM_FILE_INODE_META_KEY);
-            if (inode == null) {
-                throw new ConnectFilePulseException(
-                    "Unix-inode is not supported. " +
-                    "Consider configuring a different 'offset-strategy' [path, name, hash, name, uri]");
-            }
-            return inode;
-        }));
+    static {
+        int priority = 1;
+        ATTRIBUTES.put(
+                FILENAME_FIELD,
+                new GenericOffsetPolicy(
+                        FILENAME_FIELD,
+                        priority++,
+                        FileObjectMeta::name)
+        );
+        ATTRIBUTES.put(
+                FILEPATH_FIELD,
+                new GenericOffsetPolicy(
+                        FILEPATH_FIELD,
+                        priority++,
+                        source -> new File(source.uri()).getParentFile().getAbsolutePath())
+        );
+        ATTRIBUTES.put(
+                HASH_FIELD,
+                new GenericOffsetPolicy(
+                        HASH_FIELD,
+                        priority++,
+                        source -> source.contentDigest().digest())
+        );
+        ATTRIBUTES.put(
+                MODIFIED_FIELD,
+                new GenericOffsetPolicy(
+                        MODIFIED_FIELD,
+                        priority++,
+                        FileObjectMeta::lastModified)
+        );
+        ATTRIBUTES.put(
+                URI_FIELD,
+                new GenericOffsetPolicy(
+                        URI_FIELD,
+                        priority++,
+                        FileObjectMeta::stringURI)
+        );
+        ATTRIBUTES.put(
+                INODE_FIELD,
+                new GenericOffsetPolicy(
+                        INODE_FIELD,
+                        priority++,
+                        source -> Optional
+                            .ofNullable((String) source.userDefinedMetadata().get(SYSTEM_FILE_INODE_META_KEY))
+                            .orElseThrow(() -> {
+                                throw new ConnectFilePulseException(
+                                    "Unix-inode is not supported. " +
+                                    "Consider configuring a different value for " +
+                                    "'" + DefaultSourceOffsetPolicyConfig.OFFSET_ATTRIBUTES_STRING_CONFIG + "' " +
+                                    "[path, name, hash, name, uri]"
+                                );
+                            }))
+        );
     }
 
     protected final List<GenericOffsetPolicy> policies = new LinkedList<>();
 
     private String offsetAttributesString;
 
-    /**
-     * Creates a new {@link DefaultOffsetPolicy} instance.
-     */
-    public DefaultOffsetPolicy() {
-    }
 
     @VisibleForTesting
-    DefaultOffsetPolicy(final String offsetStrategyString) {
-        this.offsetAttributesString = offsetStrategyString;
-        parseConfig(offsetStrategyString);
+    DefaultSourceOffsetPolicy(final String offsetAttributesString) {
+        this.offsetAttributesString = offsetAttributesString;
+        parseConfig(offsetAttributesString);
     }
 
     /**
@@ -87,7 +117,7 @@ public class DefaultOffsetPolicy extends AbstractSourceOffsetPolicy {
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        offsetAttributesString = new DefaultOffsetPolicyConfig(configs).offsets();
+        offsetAttributesString = new DefaultSourceOffsetPolicyConfig(configs).offsets();
         parseConfig(offsetAttributesString);
     }
 
@@ -140,6 +170,7 @@ public class DefaultOffsetPolicy extends AbstractSourceOffsetPolicy {
             return Integer.compare(this.priority, that.priority);
         }
     }
+
     /**
      * {@inheritDoc}
      */

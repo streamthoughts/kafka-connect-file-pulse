@@ -12,6 +12,13 @@ description: >
 Whatever the kind of files you are processing a connector should always be configured with the below properties.
 These configurations are described in detail in subsequent chapters.
 
+**Common Kafka Connect properties**
+
+| Configuration |   Description |   Type    |   Default |   Importance  |
+| --------------| --------------|-----------| --------- | ------------- |
+| `topic` | The default output topic to write | string | *-* | high |
+| `tasks.max` | The maximum number of tasks that should be created for this connector.  | string | *-* | high |
+
 **Properties for listing and cleaning object files ([FileSystemListing](/kafka-connect-file-pulse/docs/developer-guide/file-listing/))**
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
@@ -32,9 +39,11 @@ These configurations are described in detail in subsequent chapters.
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `task.reader.class` | The fully qualified name of the class which is used by tasks to read input files | class | *io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader* | HIGH |
-| `offset.strategy` | A separated list of attributes, using `+`  as a character separator, to be used for uniquely identifying an input file; must be one of [`name`, `path`, `lastModified`, `inode`, `hash`] (e.g: `name+hash`). Note that order doesn't matter.| `string` | *path+name* | HIGH |
-| `topic` | The default output topic to write | string | *-* | high |
+| `tasks.reader.class` | The fully qualified name of the class which is used by tasks to read input files | class | *io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader* | HIGH |
+
+**Properties for uniquely identifying object files and records ([FileReaders](/kafka-connect-file-pulse/docs/developer-guide/file-readers/))**
+
+| `offset.policy.class` | Class which is used to determine the source partition and offset that uniquely identify a input record | `class` | *io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy* | HIGH |
 
 **Properties for synchronizing Connector and Tasks**
 
@@ -48,3 +57,9 @@ These configurations are described in detail in subsequent chapters.
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
 |`internal.kafka.reporter.id` | The reporter identifier to be used by tasks and connector to report and monitor file progression (default null). This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility (when set, must be unique for each connect instance). | string | *-* | HIGH |
+
+A separated list of attributes, using `+`  as a character separator, to be used for uniquely identifying an input file; must be one of [`name`, `path`, `lastModified`, `inode`, `hash`] (e.g: `name+hash`). Note that order doesn't matter.
+
+## Examples
+
+Some configuration examples are available [here](https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples).

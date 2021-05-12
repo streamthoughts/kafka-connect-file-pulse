@@ -43,36 +43,36 @@ public class DefaultOffsetPolicyTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_illegal_argument_given_empty_strategy() {
-        new DefaultOffsetPolicy("").toPartitionMap(metadata);
+        new DefaultSourceOffsetPolicy("").toPartitionMap(metadata);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_illegal_argument_given_unknown_strategy() {
-        new DefaultOffsetPolicy("dummy").toPartitionMap(metadata);
+        new DefaultSourceOffsetPolicy("dummy").toPartitionMap(metadata);
     }
 
     @Test(expected = NullPointerException.class)
     public void should_throw_npe_given_unknown_strategy() {
-        new DefaultOffsetPolicy(null).toPartitionMap(metadata);
+        new DefaultSourceOffsetPolicy(null).toPartitionMap(metadata);
     }
 
     @Test
     public void should_get_offset_based_on_path() {
-        Map<String, Object> result = new DefaultOffsetPolicy("PATH").toPartitionMap(metadata);
+        Map<String, Object> result = new DefaultSourceOffsetPolicy("PATH").toPartitionMap(metadata);
         Assert.assertEquals(1, result.size());
         Assert.assertEquals("/tmp/path", result.get("path"));
     }
 
     @Test
     public void should_get_offset_based_on_hash() {
-        Map<String, Object> result = new DefaultOffsetPolicy("HASH").toPartitionMap(metadata);
+        Map<String, Object> result = new DefaultSourceOffsetPolicy("HASH").toPartitionMap(metadata);
         Assert.assertEquals(1, result.size());
         Assert.assertEquals("789", result.get("hash"));
     }
 
     @Test
     public void should_get_offset_based_on_modified() {
-        Map<String, Object> result = new DefaultOffsetPolicy("LASTMODIFIED").toPartitionMap(metadata);
+        Map<String, Object> result = new DefaultSourceOffsetPolicy("LASTMODIFIED").toPartitionMap(metadata);
         Assert.assertEquals(1, result.size());
         Assert.assertEquals(123L, result.get("lastmodified"));
 
@@ -80,7 +80,7 @@ public class DefaultOffsetPolicyTest {
 
     @Test
     public void should_get_offset_based_on_name() {
-        Map<String, Object> result = new DefaultOffsetPolicy("NAME").toPartitionMap(metadata);
+        Map<String, Object> result = new DefaultSourceOffsetPolicy("NAME").toPartitionMap(metadata);
         Assert.assertEquals(1, result.size());
         Assert.assertEquals("test", result.get("name"));
 
@@ -88,7 +88,7 @@ public class DefaultOffsetPolicyTest {
 
     @Test
     public void should_get_composed_offset_based_on_path_and_hash() {
-        Map<String, Object> result = new DefaultOffsetPolicy("PATH+HASH").toPartitionMap(metadata);
+        Map<String, Object> result = new DefaultSourceOffsetPolicy("PATH+HASH").toPartitionMap(metadata);
         Assert.assertEquals(2, result.size());
         Assert.assertEquals("/tmp/path", result.get("path"));
         Assert.assertEquals("789", result.get("hash"));
@@ -96,13 +96,13 @@ public class DefaultOffsetPolicyTest {
 
     @Test
     public void should_support_strategies_in_any_order() {
-        final String o1 = new DefaultOffsetPolicy("PATH+HASH").toPartitionMap(metadata)
+        final String o1 = new DefaultSourceOffsetPolicy("PATH+HASH").toPartitionMap(metadata)
                 .entrySet()
                 .stream()
                 .map(e -> e.getKey() + "=" + e.getValue())
                 .collect(Collectors.joining(","));
 
-        final String o2 = new DefaultOffsetPolicy("HASH+PATH").toPartitionMap(metadata)
+        final String o2 = new DefaultSourceOffsetPolicy("HASH+PATH").toPartitionMap(metadata)
                 .entrySet()
                 .stream()
                 .map(e -> e.getKey() + "=" + e.getValue())

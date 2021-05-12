@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import io.streamthoughts.kafka.connect.filepulse.offset.DefaultOffsetPolicy;
+import io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -35,23 +35,23 @@ import java.util.Map;
  */
 public class CommonConfig extends AbstractConfig {
 
-    public static final String OUTPUT_TOPIC_CONFIG              = "topic";
-    private static final String OUTPUT_TOPIC_DOC                = "The Kafka topic to write the value to.";
+    public static final String OUTPUT_TOPIC_CONFIG = "topic";
+    private static final String OUTPUT_TOPIC_DOC = "The Kafka topic to write the value to.";
 
-    public static final String FILE_READER_CLASS_CONFIG         = "task.reader.class";
-    private static final String FILE_READER_CLASS_CONFIG_DOC    = "Class which is used by tasks to read an input file.";
+    public static final String FILE_READER_CLASS_CONFIG = "tasks.reader.class";
+    private static final String FILE_READER_CLASS_CONFIG_DOC = "Class which is used by tasks to read an input file.";
 
-    public static final String OFFSET_STRATEGY_CLASS_CONFIG     = "offset.policy.class";
-    private static final String OFFSET_STRATEGY_CLASS_DOC       = "Class which is used to determine the source partition and offset that uniquely identify a input record";
-    private static final String OFFSET_STRATEGY_CLASS_DEFAULT   = DefaultOffsetPolicy.class.getName();
+    public static final String OFFSET_STRATEGY_CLASS_CONFIG = "offset.policy.class";
+    private static final String OFFSET_STRATEGY_CLASS_DOC = "Class which is used to determine the source partition and offset that uniquely identify a input record";
+    private static final String OFFSET_STRATEGY_CLASS_DEFAULT = DefaultSourceOffsetPolicy.class.getName();
 
-    public static final String FILTERS_GROUP                    = "Filters";
-    public static final String FILTER_CONFIG                    = "filters";
-    private static final String FILTER_DOC                      = "List of filters aliases to apply on each value (order is important).";
+    public static final String FILTERS_GROUP = "Filters";
+    public static final String FILTER_CONFIG = "filters";
+    private static final String FILTER_DOC = "List of filters aliases to apply on each value (order is important).";
 
-    public static final String TASKS_REPORTER_TOPIC             = "internal.kafka.reporter.topic";
-    private static final String TASKS_REPORTER_TOPIC_DOC        = "Topic name which is used to report file states.";
-    private static final String TASKS_REPORTER_TOPIC_DEFAULT    = "connect-file-pulse-status";
+    public static final String TASKS_REPORTER_TOPIC = "internal.kafka.reporter.topic";
+    private static final String TASKS_REPORTER_TOPIC_DOC = "Topic name which is used to report file states.";
+    private static final String TASKS_REPORTER_TOPIC_DEFAULT = "connect-file-pulse-status";
 
 
     public static final String INTERNAL_REPORTER_CLUSTER_BOOTSTRAP_SERVER = "internal.kafka.reporter.bootstrap.servers";
@@ -68,23 +68,55 @@ public class CommonConfig extends AbstractConfig {
 
     static ConfigDef getConf() {
         return new ConfigDef()
-                .define(FILE_READER_CLASS_CONFIG, ConfigDef.Type.CLASS,
-                        LocalRowFileInputReader.class, ConfigDef.Importance.HIGH,  FILE_READER_CLASS_CONFIG_DOC)
+                .define(
+                        FILE_READER_CLASS_CONFIG,
+                        ConfigDef.Type.CLASS,
+                        LocalRowFileInputReader.class,
+                        ConfigDef.Importance.HIGH,
+                        FILE_READER_CLASS_CONFIG_DOC
+                )
 
-                .define(OUTPUT_TOPIC_CONFIG, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, OUTPUT_TOPIC_DOC)
+                .define(
+                        OUTPUT_TOPIC_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        OUTPUT_TOPIC_DOC
+                )
 
-                .define(OFFSET_STRATEGY_CLASS_CONFIG, ConfigDef.Type.CLASS, OFFSET_STRATEGY_CLASS_DEFAULT,
-                        ConfigDef.Importance.HIGH, OFFSET_STRATEGY_CLASS_DOC)
+                .define(
+                        OFFSET_STRATEGY_CLASS_CONFIG,
+                        ConfigDef.Type.CLASS,
+                        OFFSET_STRATEGY_CLASS_DEFAULT,
+                        ConfigDef.Importance.LOW,
+                        OFFSET_STRATEGY_CLASS_DOC
+                )
 
-                .define(FILTER_CONFIG, ConfigDef.Type.LIST, Collections.emptyList(),
-                        ConfigDef.Importance.HIGH, FILTER_DOC, FILTERS_GROUP, -1, ConfigDef.Width.NONE, FILTER_CONFIG)
+                .define(
+                        FILTER_CONFIG,
+                        ConfigDef.Type.LIST,
+                        Collections.emptyList(),
+                        ConfigDef.Importance.HIGH,
+                        FILTER_DOC,
+                        FILTERS_GROUP,
+                        -1,
+                        ConfigDef.Width.NONE,
+                        FILTER_CONFIG
+                )
 
-                .define(TASKS_REPORTER_TOPIC, ConfigDef.Type.STRING, TASKS_REPORTER_TOPIC_DEFAULT,
-                        ConfigDef.Importance.HIGH, TASKS_REPORTER_TOPIC_DOC)
+                .define(
+                        TASKS_REPORTER_TOPIC,
+                        ConfigDef.Type.STRING,
+                        TASKS_REPORTER_TOPIC_DEFAULT,
+                        ConfigDef.Importance.HIGH,
+                        TASKS_REPORTER_TOPIC_DOC
+                )
 
-                .define(INTERNAL_REPORTER_CLUSTER_BOOTSTRAP_SERVER, ConfigDef.Type.STRING,
-                        ConfigDef.Importance.HIGH, CommonClientConfigs.BOOTSTRAP_SERVERS_DOC);
+                .define(
+                        INTERNAL_REPORTER_CLUSTER_BOOTSTRAP_SERVER,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        CommonClientConfigs.BOOTSTRAP_SERVERS_DOC
+                );
     }
 
     public SourceOffsetPolicy getSourceOffsetPolicy() {

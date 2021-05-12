@@ -24,29 +24,37 @@ import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
 
-public class DefaultOffsetPolicyConfig extends AbstractConfig {
+public class DefaultSourceOffsetPolicyConfig extends AbstractConfig {
 
-    public static final String OFFSET_STRATEGY_CONFIG = "offset.strategy";
-    private static final String OFFSET_STRATEGY_DOC = "A separated list of attributes, using '+' character as separator, " +
-            "to be used for uniquely identifying an input file; must be one of " +
-            "[name, path, lastModified, inode, hash] (e.g: name+hash). Note that order doesn't matter.";
-    private static final String OFFSET_STRATEGY_DEFAULT = "path+name";
+    public static final String OFFSET_ATTRIBUTES_STRING_CONFIG = "offset.attributes.string";
+
+    private static final String OFFSET_ATTRIBUTES_STRING_DOC = "A separated list of attributes, using '+' character as separator, " +
+            "to be used for uniquely identifying an object file; must be one of " +
+            "[name, path, lastModified, inode, hash, uri] (e.g: name+hash). Note that order doesn't matter.";
+
+    private static final String OFFSET_ATTRIBUTES_STRING_DEFAULT = "path+name";
 
     /**
      * Creates a new {@link ConnectorConfig} instance.
+     *
      * @param originals the originals configuration.
      */
-    public DefaultOffsetPolicyConfig(final Map<?, ?> originals) {
+    public DefaultSourceOffsetPolicyConfig(final Map<?, ?> originals) {
         super(getConf(), originals);
     }
 
     public static ConfigDef getConf() {
         return new ConfigDef()
-            .define(OFFSET_STRATEGY_CONFIG, ConfigDef.Type.STRING, OFFSET_STRATEGY_DEFAULT,
-                    ConfigDef.Importance.HIGH, OFFSET_STRATEGY_DOC);
+            .define(
+                OFFSET_ATTRIBUTES_STRING_CONFIG,
+                ConfigDef.Type.STRING,
+                OFFSET_ATTRIBUTES_STRING_DEFAULT,
+                ConfigDef.Importance.HIGH,
+                OFFSET_ATTRIBUTES_STRING_DOC
+            );
     }
 
     public String offsets() {
-        return getString(OFFSET_STRATEGY_CONFIG);
+        return getString(OFFSET_ATTRIBUTES_STRING_CONFIG);
     }
 }

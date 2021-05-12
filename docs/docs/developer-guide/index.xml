@@ -232,9 +232,8 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
       <description>
         
         
-        &lt;p&gt;Kafka Connect FilePulse periodically lists object files that may be streamed into Kafka using the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java&#34;&gt;FileSystemListing&lt;/a&gt;&lt;br&gt;
+        &lt;p&gt;The &lt;code&gt;FilePulseSourceConnector&lt;/code&gt; periodically lists object files that may be streamed into Kafka using the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java&#34;&gt;FileSystemListing&lt;/a&gt;&lt;br&gt;
 configured in the connector&#39;s configuration.&lt;/p&gt;
-&lt;p&gt;NOTE: The &lt;code&gt;FileSystemListing&lt;/code&gt; is invoked by a background-threads which is started by te &lt;code&gt;FilePulseSourceConnector&lt;/code&gt; class.&lt;/p&gt;
 &lt;p&gt;Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;AmazonS3FileSystemListing&lt;/code&gt;&lt;/li&gt;
@@ -274,10 +273,18 @@ configured in the connector&#39;s configuration.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;h3 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;LocalFSDirectoryListing&lt;/code&gt; will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path&#34;&gt;Files#probeContentType&lt;/a&gt;)
+Supported content-types are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;GZIP&lt;/strong&gt; : &lt;code&gt;application/x-gzip&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TAR&lt;/strong&gt; : &lt;code&gt;application/x-tar&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ZIP&lt;/strong&gt; : &lt;code&gt;application/x-zip-compressed&lt;/code&gt; or &lt;code&gt;application/zip&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3 id=&#34;amazon-s3&#34;&gt;Amazon S3&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;AmazonS3FileSystemListing&lt;/code&gt; class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p&gt;
 &lt;h4 id=&#34;how-to-use-it-1&#34;&gt;How to use it ?&lt;/h4&gt;
-&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.AmazonS3FileSystemListing&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing&lt;/code&gt;&lt;/p&gt;
 &lt;h4 id=&#34;configuration1&#34;&gt;Configuration&lt;/h4&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -351,7 +358,7 @@ configured in the connector&#39;s configuration.&lt;/p&gt;
 &lt;h3 id=&#34;google-cloud-storage&#34;&gt;Google Cloud Storage&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;GcsFileSystemListing&lt;/code&gt; class can be used for listing objects that exist in a specific Google Cloud Storage bucket.&lt;/p&gt;
 &lt;h4 id=&#34;how-to-use-it-2&#34;&gt;How to use it ?&lt;/h4&gt;
-&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.gcp.GcsFileSystemListing&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.GcsFileSystemListing&lt;/code&gt;&lt;/p&gt;
 &lt;h4 id=&#34;configuration2&#34;&gt;Configuration&lt;/h4&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -397,7 +404,7 @@ configured in the connector&#39;s configuration.&lt;/p&gt;
 &lt;h3 id=&#34;azure-blob-storage&#34;&gt;Azure Blob Storage&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;AzureBlobStorageConfig&lt;/code&gt; class can be used for listing objects that exist in a specific Azure Storage Container.&lt;/p&gt;
 &lt;h4 id=&#34;how-to-use-it-3&#34;&gt;How to use it ?&lt;/h4&gt;
-&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.azure.storage.AzureBlobStorageConfig&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageConfig&lt;/code&gt;&lt;/p&gt;
 &lt;h4 id=&#34;configuration3&#34;&gt;Configuration&lt;/h4&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -452,7 +459,7 @@ configured in the connector&#39;s configuration.&lt;/p&gt;
 All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
 At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p&gt;
 &lt;p&gt;FilePulse packs with the following built-in filters :&lt;/p&gt;
-&lt;h3 id=&#34;ignorehiddenfilefilter&#34;&gt;IgnoreHiddenFileFilter&lt;/h3&gt;
+&lt;h3 id=&#34;ignorehiddenfilefilter-only-supported-by-localfsdirectorylisting&#34;&gt;IgnoreHiddenFileFilter (only supported by &lt;code&gt;LocalFSDirectoryListing&lt;/code&gt;)&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;IgnoreHiddenFileFilter&lt;/code&gt; can be used to filter hidden files from being read.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Configuration example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
@@ -466,33 +473,54 @@ file.filter.minimum.age.ms=10000
 &lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
 # The regex pattern used to matches input files
 file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;LocalFSDirectoryWalker&lt;/code&gt; will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path&#34;&gt;Files#probeContentType&lt;/a&gt;)&lt;/p&gt;
-&lt;p&gt;The connector supports the following content types :&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;GZIP&lt;/strong&gt; : &lt;code&gt;application/x-gzip&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;TAR&lt;/strong&gt; : &lt;code&gt;application/x-tar&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;ZIP&lt;/strong&gt; : &lt;code&gt;application/x-zip-compressed&lt;/code&gt; or &lt;code&gt;application/zip&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
+&lt;/code&gt;&lt;/pre&gt;
       </description>
     </item>
     
     <item>
       <title>Docs: File Readers</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link>
-      <pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid>
       <description>
         
         
-        &lt;p&gt;The connector can be configured with a specific &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java&#34;&gt;FileInputReader&lt;/a&gt;.
-The FileInputReader is used by tasks to read scheduled source files.&lt;/p&gt;
+        &lt;p&gt;The &lt;code&gt;FilePulseSourceTask&lt;/code&gt; uses the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java&#34;&gt;FileInputReader&lt;/a&gt;.
+configured in the connector&#39;s configuration for reading object files.&lt;/p&gt;
+&lt;p&gt;Currently, Connect FilePulse provides the following &lt;code&gt;FileInputReader&lt;/code&gt; implementations :&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Amazon S3&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.reader&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Azure Blob Storage&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageBytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageRowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Google Cloud Storage&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;GcsAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsBytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsRowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Local Filesystem&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;LocalAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalBytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalRowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;rowfileinputreader-default&#34;&gt;RowFileInputReader (default)&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;RowFileInputReader&lt;/code&gt; reads files from the local file system line by line.
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RowFileInputReader&lt;/code&gt;s can be used to read files line by line.
 This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.&lt;/p&gt;
-&lt;p&gt;The following provides usage information for &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.reader.RowFileInputReader&lt;/code&gt; (&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/RowFileInputReader.java&#34;&gt;source code&lt;/a&gt;)&lt;/p&gt;
 &lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -549,15 +577,12 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;bytesarrayinputreader&#34;&gt;BytesArrayInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;BytesArrayInputReader&lt;/code&gt; create a single byte array record from a source file.&lt;/p&gt;
-&lt;p&gt;The following provides usage information for &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.reader.BytesArrayInputReader&lt;/code&gt; (&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/BytesArrayInputReader.java&#34;&gt;source code&lt;/a&gt;)&lt;/p&gt;
-&lt;h2 id=&#34;avrofileinputreader&#34;&gt;AvroFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;AvroFileInputReader&lt;/code&gt; is used to read Avro files.&lt;/p&gt;
-&lt;p&gt;The following provides usage information for &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.reader.AvroFileInputReader&lt;/code&gt; (&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/AvroFileInputReader.java&#34;&gt;source code&lt;/a&gt;)&lt;/p&gt;
-&lt;h2 id=&#34;xmlfileinputreader&#34;&gt;XMLFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;XMLFileInputReader&lt;/code&gt; is used to read XML files.&lt;/p&gt;
-&lt;p&gt;The following provides usage information for &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReader&lt;/code&gt; (&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/XMLFileInputReader.java&#34;&gt;source code&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&#34;xbytesarrayinputreader&#34;&gt;xBytesArrayInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RBytesArrayInputReader&lt;/code&gt;s create a single byte array record from a source file.&lt;/p&gt;
+&lt;h2 id=&#34;xavrofileinputreader&#34;&gt;xAvroFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RAvroFileInputReader&lt;/code&gt;s can be used to read Avro files.&lt;/p&gt;
+&lt;h2 id=&#34;xxmlfileinputreader&#34;&gt;xXMLFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RXMLFileInputReader&lt;/code&gt;s can be used to read XML files.&lt;/p&gt;
 &lt;h3 id=&#34;configuration1&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -593,9 +618,9 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;fileinputmetadatareader&#34;&gt;FileInputMetadataReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt; is used to send a single record per file containing metadata (i.e: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc)&lt;/p&gt;
-&lt;p&gt;The following provides usage information for &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.reader.FileInputMetadataReader&lt;/code&gt; (&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputMetadataReader.java&#34;&gt;source code&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&#34;xmetadatafileinputreader&#34;&gt;xMetadataFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata (i.e: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc)
+s&lt;/p&gt;
 
       </description>
     </item>

@@ -21,24 +21,24 @@
 <link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-192x192.png" sizes="192x192">
 
 <title>File Readers | Kafka Connect File Pulse</title><meta property="og:title" content="File Readers" />
-<meta property="og:description" content="The commons configuration for Connect File Pulse.
+<meta property="og:description" content="The common configuration for Connect File Pulse.
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/" />
-<meta property="article:published_time" content="2020-08-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-12-22T13:42:38+01:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2021-05-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-05-12T17:59:44+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="File Readers">
-<meta itemprop="description" content="The commons configuration for Connect File Pulse.
+<meta itemprop="description" content="The common configuration for Connect File Pulse.
 ">
-<meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-12-22T13:42:38&#43;01:00" />
-<meta itemprop="wordCount" content="299">
+<meta itemprop="datePublished" content="2021-05-12T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-05-12T17:59:44&#43;02:00" />
+<meta itemprop="wordCount" content="293">
 
 
 
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="File Readers"/>
-<meta name="twitter:description" content="The commons configuration for Connect File Pulse.
+<meta name="twitter:description" content="The common configuration for Connect File Pulse.
 "/>
 
 
@@ -1611,14 +1611,14 @@
         <li><a href="#configuration">Configuration</a></li>
       </ul>
     </li>
-    <li><a href="#bytesarrayinputreader">BytesArrayInputReader</a></li>
-    <li><a href="#avrofileinputreader">AvroFileInputReader</a></li>
-    <li><a href="#xmlfileinputreader">XMLFileInputReader</a>
+    <li><a href="#xbytesarrayinputreader">xBytesArrayInputReader</a></li>
+    <li><a href="#xavrofileinputreader">xAvroFileInputReader</a></li>
+    <li><a href="#xxmlfileinputreader">xXMLFileInputReader</a>
       <ul>
         <li><a href="#configuration1">Configuration</a></li>
       </ul>
     </li>
-    <li><a href="#fileinputmetadatareader">FileInputMetadataReader</a></li>
+    <li><a href="#xmetadatafileinputreader">xMetadataFileInputReader</a></li>
   </ul>
 </nav>
 
@@ -1666,14 +1666,43 @@
             
 <div class="td-content">
 	<h1>File Readers</h1>
-    <div class="lead">The commons configuration for Connect File Pulse.</div>
+    <div class="lead">The common configuration for Connect File Pulse.</div>
 	       
-	<p>The connector can be configured with a specific <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader</a>.
-The FileInputReader is used by tasks to read scheduled source files.</p>
+	<p>The <code>FilePulseSourceTask</code> uses the <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader</a>.
+configured in the connector's configuration for reading object files.</p>
+<p>Currently, Connect FilePulse provides the following <code>FileInputReader</code> implementations :</p>
+<p><strong>Amazon S3</strong></p>
+<p>package: <code>io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.reader</code></p>
+<p><strong>Azure Blob Storage</strong></p>
+<p>package: <code>io.streamthoughts.kafka.connect.filepulse.fs.reader</code></p>
+<ul>
+<li><code>AzureBlobStorageAvroFileInputReader</code></li>
+<li><code>AzureBlobStorageBytesFileInputReader</code></li>
+<li><code>AzureBlobStorageRowFileInputReader</code></li>
+<li><code>AzureBlobStorageXMLFileInputReader</code></li>
+<li><code>AzureBlobStorageMetadataFileInputReader</code></li>
+</ul>
+<p><strong>Google Cloud Storage</strong></p>
+<p>package: <code>io.streamthoughts.kafka.connect.filepulse.fs.reader</code></p>
+<ul>
+<li><code>GcsAvroFileInputReader</code></li>
+<li><code>GcsBytesFileInputReader</code></li>
+<li><code>GcsRowFileInputReader</code></li>
+<li><code>GcsXMLFileInputReader</code></li>
+<li><code>GcsMetadataFileInputReader</code></li>
+</ul>
+<p><strong>Local Filesystem</strong></p>
+<p>package: <code>io.streamthoughts.kafka.connect.filepulse.fs.reader</code></p>
+<ul>
+<li><code>LocalAvroFileInputReader</code></li>
+<li><code>LocalBytesFileInputReader</code></li>
+<li><code>LocalRowFileInputReader</code></li>
+<li><code>LocalXMLFileInputReader</code></li>
+<li><code>LocalMetadataFileInputReader</code></li>
+</ul>
 <h2 id="rowfileinputreader-default">RowFileInputReader (default)</h2>
-<p>The <code>RowFileInputReader</code> reads files from the local file system line by line.
+<p>The <code>&lt;PREFIX&gt;RowFileInputReader</code>s can be used to read files line by line.
 This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.</p>
-<p>The following provides usage information for <code>io.streamthoughts.kafka.connect.filepulse.reader.RowFileInputReader</code> (<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/RowFileInputReader.java">source code</a>)</p>
 <h3 id="configuration">Configuration</h3>
 <table>
 <thead>
@@ -1730,15 +1759,12 @@ This reader creates one record per row. It should be used for reading delimited 
 </tr>
 </tbody>
 </table>
-<h2 id="bytesarrayinputreader">BytesArrayInputReader</h2>
-<p>The <code>BytesArrayInputReader</code> create a single byte array record from a source file.</p>
-<p>The following provides usage information for <code>io.streamthoughts.kafka.connect.filepulse.reader.BytesArrayInputReader</code> (<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/BytesArrayInputReader.java">source code</a>)</p>
-<h2 id="avrofileinputreader">AvroFileInputReader</h2>
-<p>The <code>AvroFileInputReader</code> is used to read Avro files.</p>
-<p>The following provides usage information for <code>io.streamthoughts.kafka.connect.filepulse.reader.AvroFileInputReader</code> (<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/AvroFileInputReader.java">source code</a>)</p>
-<h2 id="xmlfileinputreader">XMLFileInputReader</h2>
-<p>The <code>XMLFileInputReader</code> is used to read XML files.</p>
-<p>The following provides usage information for <code>io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReader</code> (<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/XMLFileInputReader.java">source code</a>)</p>
+<h2 id="xbytesarrayinputreader">xBytesArrayInputReader</h2>
+<p>The <code>&lt;PREFIX&gt;RBytesArrayInputReader</code>s create a single byte array record from a source file.</p>
+<h2 id="xavrofileinputreader">xAvroFileInputReader</h2>
+<p>The <code>&lt;PREFIX&gt;RAvroFileInputReader</code>s can be used to read Avro files.</p>
+<h2 id="xxmlfileinputreader">xXMLFileInputReader</h2>
+<p>The <code>&lt;PREFIX&gt;RXMLFileInputReader</code>s can be used to read XML files.</p>
 <h3 id="configuration1">Configuration</h3>
 <table>
 <thead>
@@ -1774,13 +1800,13 @@ This reader creates one record per row. It should be used for reading delimited 
 </tr>
 </tbody>
 </table>
-<h2 id="fileinputmetadatareader">FileInputMetadataReader</h2>
-<p>The <code>FileInputMetadataReader</code> is used to send a single record per file containing metadata (i.e: <code>name</code>, <code>path</code>, <code>hash</code>, <code>lastModified</code>, <code>size</code>, etc)</p>
-<p>The following provides usage information for <code>io.streamthoughts.kafka.connect.filepulse.reader.FileInputMetadataReader</code> (<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputMetadataReader.java">source code</a>)</p>
+<h2 id="xmetadatafileinputreader">xMetadataFileInputReader</h2>
+<p>The <code>FileInputMetadataReader</code>s can be used to send a single record per file containing metadata (i.e: <code>name</code>, <code>path</code>, <code>hash</code>, <code>lastModified</code>, <code>size</code>, etc)
+s</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified December 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/3bccb869925ba0517be8d81aa648900c9e0cf204">docs(site): add configuration for readers (3bccb86)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 12, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/aa664c74750e0aaa9816db2a8325d71df90cfb4f">refactor(filesystems): rellocate package and update docs (aa664c7)</a>
 </div>
 </div>
 

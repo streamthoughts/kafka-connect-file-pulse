@@ -1,21 +1,55 @@
 ---
-date: 2020-08-12
+date: 2021-05-12
 title: "File Readers"
 linkTitle: "File Readers"
 weight: 40
 description: >
-  The commons configuration for Connect File Pulse.
+  The common configuration for Connect File Pulse.
 ---
 
-The connector can be configured with a specific [FileInputReader](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java).
-The FileInputReader is used by tasks to read scheduled source files.
+The `FilePulseSourceTask` uses the [FileInputReader](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java).
+configured in the connector's configuration for reading object files.
+
+Currently, Connect FilePulse provides the following `FileInputReader` implementations : 
+
+**Amazon S3**
+
+package: `io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.reader`
+
+**Azure Blob Storage**
+
+package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
+
+* `AzureBlobStorageAvroFileInputReader`
+* `AzureBlobStorageBytesFileInputReader`
+* `AzureBlobStorageRowFileInputReader`
+* `AzureBlobStorageXMLFileInputReader`
+* `AzureBlobStorageMetadataFileInputReader`
+
+**Google Cloud Storage**
+
+package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
+
+* `GcsAvroFileInputReader`
+* `GcsBytesFileInputReader`
+* `GcsRowFileInputReader`
+* `GcsXMLFileInputReader`
+* `GcsMetadataFileInputReader`
+
+**Local Filesystem**
+
+package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
+
+* `LocalAvroFileInputReader`
+* `LocalBytesFileInputReader`
+* `LocalRowFileInputReader`
+* `LocalXMLFileInputReader`
+* `LocalMetadataFileInputReader`
 
 ## RowFileInputReader (default)
 
-The `RowFileInputReader` reads files from the local file system line by line.
+The `<PREFIX>RowFileInputReader`s can be used to read files line by line.
 This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.
-
-The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.RowFileInputReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/RowFileInputReader.java))
 
 ### Configuration
 
@@ -28,23 +62,17 @@ The following provides usage information for `io.streamthoughts.kafka.connect.fi
 |`skip.footers` | The number of rows to be skipped at the end of file. | `Integer` | `0` | Medium | 
 |`read.max.wait.ms` | The maximum time to wait in milliseconds for more bytes after hitting end of file. | `Long` | `0` | Medium | 
 
-## BytesArrayInputReader
+## xBytesArrayInputReader
 
-The `BytesArrayInputReader` create a single byte array record from a source file.
+The `<PREFIX>RBytesArrayInputReader`s create a single byte array record from a source file.
 
-The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.BytesArrayInputReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/BytesArrayInputReader.java))
+## xAvroFileInputReader
 
-## AvroFileInputReader
+The `<PREFIX>RAvroFileInputReader`s can be used to read Avro files.
 
-The `AvroFileInputReader` is used to read Avro files.
+## xXMLFileInputReader
 
-The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.AvroFileInputReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/AvroFileInputReader.java))
-
-## XMLFileInputReader
-
-The `XMLFileInputReader` is used to read XML files.
-
-The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.XMLFileInputReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/XMLFileInputReader.java))
+The `<PREFIX>RXMLFileInputReader`s can be used to read XML files.
 
 ### Configuration
 
@@ -54,8 +82,7 @@ The following provides usage information for `io.streamthoughts.kafka.connect.fi
 |`xpath.result.type` | The expected result type for the XPath expression in [NODESET, STRING] | `String` | `NODESET` | High | 
 |`force.array.on.fields` | The comma-separated list of fields for which an array-type must be forced | `List` | `-` | High |                                                
 
-## FileInputMetadataReader
+## xMetadataFileInputReader
 
-The `FileInputMetadataReader` is used to send a single record per file containing metadata (i.e: `name`, `path`, `hash`, `lastModified`, `size`, etc)
-
-The following provides usage information for `io.streamthoughts.kafka.connect.filepulse.reader.FileInputMetadataReader` ([source code](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputMetadataReader.java))
+The `FileInputMetadataReader`s can be used to send a single record per file containing metadata (i.e: `name`, `path`, `hash`, `lastModified`, `size`, etc)
+s

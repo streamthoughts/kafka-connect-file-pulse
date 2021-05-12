@@ -7,10 +7,8 @@ description: >
   The common configurations for Connect File Pulse.
 ---
 
-Kafka Connect FilePulse periodically lists object files that may be streamed into Kafka using the [FileSystemListing](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java)  
+The `FilePulseSourceConnector` periodically lists object files that may be streamed into Kafka using the [FileSystemListing](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java)  
 configured in the connector's configuration.
-
-NOTE: The `FileSystemListing` is invoked by a background-threads which is started by te `FilePulseSourceConnector` class.
 
 Currently, Kafka Connect FilePulse supports the following implementations: 
 
@@ -34,13 +32,23 @@ The `LocalFSDirectoryListing` class can be used for listing files that exist in 
 | `fs.listing.directory.path`             | The input directory to scan | `string`  |     -     |    HIGH       |
 | `fs.listing.recursive.enabled`          | Flag indicating whether local directory should be recursively scanned | `boolean` | `true` | MEDIUM |
 
+
+### Supported File types
+
+The `LocalFSDirectoryListing` will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : [Files#probeContentType](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path))
+Supported content-types are:
+
+* **GZIP** : `application/x-gzip`
+* **TAR** : `application/x-tar`
+* **ZIP** : `application/x-zip-compressed` or `application/zip`
+
 ### Amazon S3
 
 The `AmazonS3FileSystemListing` class can be used for listing objects that exist in a specific Amazon S3 bucket.
 
 #### How to use it ?
 
-`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.AmazonS3FileSystemListing`
+`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing`
 
 #### Configuration
 
@@ -61,7 +69,7 @@ The `GcsFileSystemListing` class can be used for listing objects that exist in a
 
 #### How to use it ?
 
-`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.gcp.GcsFileSystemListing`
+`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.GcsFileSystemListing`
 
 #### Configuration
 
@@ -78,7 +86,7 @@ The `AzureBlobStorageConfig` class can be used for listing objects that exist in
 
 #### How to use it ?
 
-`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.azure.storage.AzureBlobStorageConfig`
+`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageConfig`
 
 #### Configuration
 
@@ -98,7 +106,7 @@ At the next scan, previously filtered files will be evaluated again to determine
 
 FilePulse packs with the following built-in filters :
 
-### IgnoreHiddenFileFilter
+### IgnoreHiddenFileFilter (only supported by `LocalFSDirectoryListing`)
 
 The `IgnoreHiddenFileFilter` can be used to filter hidden files from being read.
 
@@ -127,13 +135,3 @@ fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.R
 # The regex pattern used to matches input files
 file.filter.regex.pattern="\\.log$"
 ```
-
-## Supported File types
-
-`LocalFSDirectoryWalker` will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : [Files#probeContentType](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path))
-
-The connector supports the following content types :
-
-* **GZIP** : `application/x-gzip`
-* **TAR** : `application/x-tar`
-* **ZIP** : `application/x-zip-compressed` or `application/zip`

@@ -8166,10 +8166,7 @@ filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 &lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;grokfilter&#34;&gt;GrokFilter&lt;/h2&gt;
 &lt;p&gt;The following provides usage information for : &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;GrokFilter&lt;/code&gt; allows you to parse unstructured data like applications logs to extract structured and meaningful data fields.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Regular Expressions&lt;/strong&gt;
-Grok are built on top of on regular expressions, so you can use any regular expressions as well to define your own patterns.&lt;/p&gt;
-&lt;p&gt;Internally, FilePulse uses the regular expression library is &lt;a href=&#34;https://github.com/jruby/joni&#34;&gt;Joni&lt;/a&gt;
-, a Java port of &lt;a href=&#34;https://github.com/kkos/oniguruma&#34;&gt;Oniguruma&lt;/a&gt; regexp library.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;GrokFilter&lt;/code&gt;is based on: &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-transform-grok&#34;&gt;https://github.com/streamthoughts/kafka-connect-transform-grok&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;configuration8&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -8190,7 +8187,7 @@ Grok are built on top of on regular expressions, so you can use any regular expr
 &lt;td&gt;high&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;matches&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;pattern&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;The Grok pattern to match.&lt;/td&gt;
 &lt;td&gt;string&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
@@ -8228,7 +8225,7 @@ Grok are built on top of on regular expressions, so you can use any regular expr
 &lt;/table&gt;
 &lt;h3 id=&#34;examples8&#34;&gt;Examples&lt;/h3&gt;
 &lt;p&gt;The following example shows the usage of &lt;strong&gt;GrokFilter&lt;/strong&gt; to parse and extract fields from application log message.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.ParseLog4jLog.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+&lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;filters.ParseLog4jLog.pattern=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
 filters.ParseLog4jLog.overwrite=&amp;quot;message&amp;quot;
 filters.ParseLog4jLog.source=&amp;quot;message&amp;quot;
 filters.ParseLog4jLog.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&amp;quot;

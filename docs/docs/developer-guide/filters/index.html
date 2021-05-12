@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/" />
 <meta property="article:published_time" content="2020-09-10T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-04-20T13:21:12-05:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2021-05-12T22:40:37+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
 <meta itemprop="datePublished" content="2020-09-10T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-04-20T13:21:12-05:00" />
-<meta itemprop="wordCount" content="2163">
+<meta itemprop="dateModified" content="2021-05-12T22:40:37&#43;02:00" />
+<meta itemprop="wordCount" content="2126">
 
 
 
@@ -2308,10 +2308,7 @@ filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 </code></pre><h2 id="grokfilter">GrokFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter</code>.</p>
 <p>The <code>GrokFilter</code> allows you to parse unstructured data like applications logs to extract structured and meaningful data fields.</p>
-<p><strong>Regular Expressions</strong>
-Grok are built on top of on regular expressions, so you can use any regular expressions as well to define your own patterns.</p>
-<p>Internally, FilePulse uses the regular expression library is <a href="https://github.com/jruby/joni">Joni</a>
-, a Java port of <a href="https://github.com/kkos/oniguruma">Oniguruma</a> regexp library.</p>
+<p>The <code>GrokFilter</code>is based on: <a href="https://github.com/streamthoughts/kafka-connect-transform-grok">https://github.com/streamthoughts/kafka-connect-transform-grok</a></p>
 <h3 id="configuration8">Configuration</h3>
 <table>
 <thead>
@@ -2332,7 +2329,7 @@ Grok are built on top of on regular expressions, so you can use any regular expr
 <td>high</td>
 </tr>
 <tr>
-<td><code>matches</code></td>
+<td><code>pattern</code></td>
 <td>The Grok pattern to match.</td>
 <td>string</td>
 <td><em>-</em></td>
@@ -2370,7 +2367,7 @@ Grok are built on top of on regular expressions, so you can use any regular expr
 </table>
 <h3 id="examples8">Examples</h3>
 <p>The following example shows the usage of <strong>GrokFilter</strong> to parse and extract fields from application log message.</p>
-<pre><code class="language-properties" data-lang="properties">filters.ParseLog4jLog.match=&quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&quot;
+<pre><code class="language-properties" data-lang="properties">filters.ParseLog4jLog.pattern=&quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&quot;
 filters.ParseLog4jLog.overwrite=&quot;message&quot;
 filters.ParseLog4jLog.source=&quot;message&quot;
 filters.ParseLog4jLog.type=&quot;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&quot;
@@ -2711,7 +2708,7 @@ filters.MySplitterFilter.separator=,
 </code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified April 20, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7d2ddaca44360ad4ccae8edd4a2adba5710a5660">docs(site): fix DateFilter formats config (7d2ddac)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 12, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/cabdd4c6b346fb89482cb159eef7bcc3a309f1d4">docs(site): fix GrokFilter configuration, update README (cabdd4c)</a>
 </div>
 </div>
 

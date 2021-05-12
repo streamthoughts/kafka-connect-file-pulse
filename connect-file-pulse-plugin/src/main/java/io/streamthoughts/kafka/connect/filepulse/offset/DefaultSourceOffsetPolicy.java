@@ -105,7 +105,16 @@ public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
 
     private String offsetAttributesString;
 
+    /**
+     * Creates a new {@link DefaultSourceOffsetPolicy} instance.
+     */
+    public DefaultSourceOffsetPolicy() { }
 
+    /**
+     * Creates a new {@link DefaultSourceOffsetPolicy} instance.
+     *
+     * @param offsetAttributesString    {@code offset.attributes.string}
+     */
     @VisibleForTesting
     DefaultSourceOffsetPolicy(final String offsetAttributesString) {
         this.offsetAttributesString = offsetAttributesString;

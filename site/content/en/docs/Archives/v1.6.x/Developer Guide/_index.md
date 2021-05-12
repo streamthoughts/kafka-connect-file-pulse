@@ -1,5 +1,5 @@
 ---
-date: 2021-05-21
+date: 2020-05-21
 title: "Developer Guide"
 linkTitle: "Developer Guide"
 weight: 20
@@ -9,6 +9,5 @@ description: >
 
 The Developer Guide section helps you learn about the functionalities of the File Pulse Connector and the concepts 
 File Pulse uses to process and transform your data, and helps you obtain a deeper understanding of how File Pulse Connector works.
-
 
 

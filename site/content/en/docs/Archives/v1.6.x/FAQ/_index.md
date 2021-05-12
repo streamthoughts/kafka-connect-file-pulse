@@ -21,7 +21,7 @@ Note, that some duplicates maybe written into Kafka.
 
 Connect File Pulse has some features which are similar to the ones provided by Logstash [codecs](https://www.elastic.co/guide/en/logstash/current/codec-plugins.html)/[filters](https://www.elastic.co/guide/en/logstash/current/filter-plugins.html). Filters like GrokFilter are actually strongly inspired from Logstash. For example you can use it to parse non-structured data like application logs.
 
-However, Connect File Pulse has not to be originally designed to collect dynamic application log files.
+However, Connect File Pulse has not be originally designed to collect dynamic application log files.
 
 ## Is FilePulse connector support SASL/SSL authentication mechanisms and can be deployed on Confluent Cloud ?
 
@@ -30,7 +30,7 @@ to synchronize the Connector instance and the Tasks that process files. For doin
 will create both a producer and consumer clients that you must configured when running the connector with a secured Kafka Cluster.
 
 To override the default configuration for the internal consumer and producer clients, 
-you can use one of the following override prefixes :
+you can used one of the following override prefixes :
 
 * `internal.kafka.reporter.consumer.<consumer_property>`
 * `internal.kafka.reporter.producer.<producer_property>`

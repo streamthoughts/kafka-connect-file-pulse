@@ -390,19 +390,15 @@ The following provides usage information for : `io.streamthoughts.kafka.connect.
 
 The `GrokFilter` allows you to parse unstructured data like applications logs to extract structured and meaningful data fields.
 
-**Regular Expressions**
-Grok are built on top of on regular expressions, so you can use any regular expressions as well to define your own patterns.
-
-Internally, FilePulse uses the regular expression library is [Joni](https://github.com/jruby/joni)
-, a Java port of [Oniguruma](https://github.com/kkos/oniguruma) regexp library.
+The `GrokFilter`is based on: https://github.com/streamthoughts/kafka-connect-transform-grok
 
 ### Configuration
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
 | `namedCapturesOnly` | If true, only store named captures from grok. | boolean | *true* | high |
-| `matches` | The Grok pattern to match. | string | *-* | high |
-| `overwrite` | The fields to overwrite.    | list | medium |
+| `pattern` | The Grok pattern to match. | string | *-* | high |
+| `overwrite` | The fields to overwrite.  | list | medium |
 | `patternDefinitions` | Custom pattern definitions. | list | *-* | low |
 | `patternsDir` | List of user-defined pattern directories | string | *-* | low |
 | `source` | The input field on which to apply the filter  | string | *message* | medium |
@@ -412,7 +408,7 @@ Internally, FilePulse uses the regular expression library is [Joni](https://gith
 The following example shows the usage of **GrokFilter** to parse and extract fields from application log message.
 
 ```properties
-filters.ParseLog4jLog.match="%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}"
+filters.ParseLog4jLog.pattern="%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}"
 filters.ParseLog4jLog.overwrite="message"
 filters.ParseLog4jLog.source="message"
 filters.ParseLog4jLog.type="io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter"

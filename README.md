@@ -32,11 +32,12 @@ Connect File Pulse is inspired by the features provided by **Elasticsearch** and
 
 ## 🚀 Key Features Overview
 
-Connect FilePulse provides a set of built-in features for streaming local files into Kafka. This includes, among other things:
+Connect FilePulse provides a set of built-in features for streaming files from multiple filesystems into Kafka. This includes, among other things:
 
 * Support for recursive scanning of local directories.
-* Reading and writing files into Kafka line by line.
+* Support for reading files from Amazon S3, Azure Storage and Google Cloud Storage.
 * Support multiple input file formats (e.g: CSV, JSON, AVRO, XML).
+* Support for Grok expressions.
 * Parsing and transforming data using built-in or custom processing filters.
 * Error handler definition
 * Monitoring files while they are being written into Kafka

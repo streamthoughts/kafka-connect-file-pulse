@@ -1,33 +1,95 @@
 ---
-date: 2020-05-25
-title: "FileSystemListing"
-linkTitle: "FileListing"
+date: 2021-05-12
+title: "FileSystem Listing"
+linkTitle: "FileSystem Listing"
 weight: 30
 description: >
-  The commons configuration for Connect File Pulse.
+  The common configurations for Connect File Pulse.
 ---
 
-The connector must be configured with a specific [FSDirectoryWalker](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java)  
-that will be responsible for scanning an input directory to find files eligible to be streamed in Kafka.
+Kafka Connect FilePulse periodically lists object files that may be streamed into Kafka using the [FileSystemListing](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java)  
+configured in the connector's configuration.
 
-The default `FSDirectoryWalker` implementation is :
+NOTE: The `FileSystemListing` is invoked by a background-threads which is started by te `FilePulseSourceConnector` class.
 
-`io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker`.
+Currently, Kafka Connect FilePulse supports the following implementations: 
 
-The `FilePulseSourceConnector` periodically triggers a file system scan of the directory specified in the `input.directory.path` 
-connector property. Scan is executed in a background-thread invoking the configured `FSDirectoryWalker`.
+* `AmazonS3FileSystemListing`
+* `AzureBlobStorageFileSystemListing`
+* `GcsFileSystemListing`
+* `LocalFSDirectoryListing` (default)
 
-## Configuring Directory Scan (using `LocalFSDirectoryWalker`)
+### Local Filesystem (default)
 
-| Configuration |   Description |   Type    |   Default |   Importance  |
-| --------------| --------------|-----------| --------- | ------------- |
-|`fs.scanner.class` | The class used to scan file system | class | *io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker* | medium |
-|`fs.scan.directory.path` | The input directory to scan | string | *-* | high |
-|`fs.scan.interval.ms` | Time interval in milliseconds at wish the input directory is scanned | long | *10000* | high |
-|`fs.scan.filters` | The comma-separated list of fully qualified class names of the filter-filters to be uses to list eligible input files| list | *-* | medium |
-|`fs.recursive.scan.enable` | Boolean indicating whether local directory should be recursively scanned | boolean | *true* | medium |
-|`allow.tasks.reconfiguration.after.timeout.ms` | Specifies the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed | long | *Long.MAX_VALUE* | medium |
+The `LocalFSDirectoryListing` class can be used for listing files that exist in a local filesystem directory.
 
+#### How to use it ?
+
+`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing`
+
+#### Configuration
+
+| Configuration                           |   Description               |   Type    |  Default  |   Importance  |
+| ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
+| `fs.listing.directory.path`             | The input directory to scan | `string`  |     -     |    HIGH       |
+| `fs.listing.recursive.enabled`          | Flag indicating whether local directory should be recursively scanned | `boolean` | `true` | MEDIUM |
+
+### Amazon S3
+
+The `AmazonS3FileSystemListing` class can be used for listing objects that exist in a specific Amazon S3 bucket.
+
+#### How to use it ?
+
+`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.AmazonS3FileSystemListing`
+
+#### Configuration
+
+| Configuration                           |   Description               |   Type    |   Default |   Importance  |
+| ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
+| `aws.access.key.id` | AWS Access Key ID AWS | `string` | - | HIGH |
+| `aws.secret.access.key` | AWS Secret Access Key | `string` | - | HIGH |
+| `aws.secret.session.token` | AWS Secret Session Token | `string` | - | HIGH |
+| `aws.s3.region` | The AWS S3 Region, e.g. us-east-1 | `string` | `Regions.DEFAULT_REGION.getName()` | MEDIUM |
+| `aws.s3.path.style.access.enabled` | Configures the client to use path-style access for all requests. | `string` | - | MEDIUM |
+| `aws.s3.bucket.name` | The name of the Amazon S3 bucket.| `string` | - | HIGH |
+| `aws.s3.bucket.prefix` | The prefix to be used for restricting the listing of the objects in the bucket| `string` | - | MEDIUM |
+| `aws.credentials.provider.class` | The AWSCredentialsProvider to use if no access key id and secret access key is configured. | `class` | `com.amazonaws.auth.EnvironmentVariableCredentialsProvider` | LOW |
+    
+### Google Cloud Storage
+
+The `GcsFileSystemListing` class can be used for listing objects that exist in a specific Google Cloud Storage bucket.
+
+#### How to use it ?
+
+`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.gcp.GcsFileSystemListing`
+
+#### Configuration
+
+| Configuration                           |   Description               |   Type    |   Default |   Importance  |
+| ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
+`gcs.credentials.path` | The path to GCP credentials file. Cannot be set when `GCS_CREDENTIALS_JSON_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | - | HIGH
+`gcs.credentials.json` | The GCP credentials as JSON string. Cannot be set when `GCS_CREDENTIALS_PATH_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | - | HIGH
+`gcs.bucket.name`      | The GCS bucket name to download the object files from. | `string` | - | HIGH
+`gcs.blobs.filter.prefix` | The prefix to be used for filtering blobs  whose names begin with it. | `string` | - | MEDIUM
+
+### Azure Blob Storage
+
+The `AzureBlobStorageConfig` class can be used for listing objects that exist in a specific Azure Storage Container.
+
+#### How to use it ?
+
+`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.azure.storage.AzureBlobStorageConfig`
+
+#### Configuration
+
+| Configuration                           |   Description               |   Type    |   Default |   Importance  |
+| ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
+`azure.storage.connection.string` | Azure storage account connection string. | `string` | - | HIGH
+`azure.storage.account.name` | The Azure storage account name. | `string` | - | HIGH
+`azure.storage.account.key`  | The Azure storage account key. | `string` | - | HIGH
+`azure.storage.container.name` | The Azure storage container name. | `string` | - | MEDIUM
+`azure.storage.blob.prefix` | The prefix to be used for restricting the listing of the blobs in the container. | `string` | - | MEDIUM
+    
 ## Filtering input files
 
 You can configure one or more `FileFilter` that will be used to determine if a file should be scheduled for processing or ignored. 

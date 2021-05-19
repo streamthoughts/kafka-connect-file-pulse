@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/" />
-<meta property="article:published_time" content="2020-05-22T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-22T23:53:16+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2021-05-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-05-19T23:43:45+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Tracking File Status">
 <meta itemprop="description" content="Learn how Connect FilePulse tracks the processing of each input file.
 ">
-<meta itemprop="datePublished" content="2020-05-22T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-22T23:53:16&#43;02:00" />
-<meta itemprop="wordCount" content="387">
+<meta itemprop="datePublished" content="2021-05-19T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-05-19T23:43:45&#43;02:00" />
+<meta itemprop="wordCount" content="367">
 
 
 
@@ -1742,21 +1742,14 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 </thead>
 <tbody>
 <tr>
-<td><code>internal.kafka.reporter.topic</code></td>
+<td><code>tasks.file.status.storage.topic</code></td>
 <td>Name of the internal topic used by tasks and connector to report and monitor file progression.</td>
 <td>class</td>
 <td><em>connect-file-pulse-status</em></td>
 <td>high</td>
 </tr>
 <tr>
-<td><code>internal.kafka.reporter.id</code></td>
-<td>Group id the internal topic used by tasks and connector to report and monitor file progression</td>
-<td>string</td>
-<td><em>-</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>internal.kafka.reporter.bootstrap.servers</code></td>
+<td><code>tasks.file.status.storage.bootstrap.servers</code></td>
 <td>Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector).</td>
 <td>string</td>
 <td><em>-</em></td>
@@ -1768,13 +1761,13 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 <p>To override the default configuration for the internal consumer and producer clients used for reporting states,
 you can used one of the following override prefixes :</p>
 <ul>
-<li><code>internal.kafka.reporter.consumer.&lt;consumer_property&gt;</code></li>
-<li><code>internal.kafka.reporter.producer.&lt;producer_property&gt;</code></li>
+<li><code>tasks.file.status.storage.consumer.&lt;consumer_property&gt;</code></li>
+<li><code>tasks.file.status.storage.producer.&lt;producer_property&gt;</code></li>
 </ul>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 22, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/107726955d237dc23a2248075564fdcb0732cfd0">fix(site): fix typo and bad config property (1077269)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified May 19, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5c88877905711ceefd99f9506324db92dac5e64d">feat(plugin): add InMemoryStateBackingStore for tracking status of file objects (#138) (5c88877)</a>
 </div>
 </div>
 

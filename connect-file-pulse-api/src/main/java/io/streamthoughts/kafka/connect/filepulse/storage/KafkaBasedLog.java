@@ -105,7 +105,7 @@ public class KafkaBasedLog<K, V> {
         this.state = States.CREATED;
     }
 
-    public synchronized void start(final boolean producerOnly) {
+    public synchronized void start(final boolean consumerEnabled) {
         if (state != States.CREATED) {
             throw new IllegalStateException("Cannot restart KafkaBasedLog due to state being " + state +")");
         }
@@ -113,7 +113,7 @@ public class KafkaBasedLog<K, V> {
         try {
             initializer.run();
             producer = createProducer();
-            if (!producerOnly) {
+            if (consumerEnabled) {
                 consumer = createConsumer();
 
                 List<TopicPartition> partitions = new ArrayList<>();

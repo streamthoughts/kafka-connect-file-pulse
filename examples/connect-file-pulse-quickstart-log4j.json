@@ -15,11 +15,12 @@
   "fs.listing.filters": "io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter",
   "fs.listing.interval.ms": "10000",
   "file.filter.regex.pattern":".*\\.log$",
-  "internal.kafka.reporter.bootstrap.servers": "broker:29092",
-  "internal.kafka.reporter.topic": "connect-file-pulse-status",
   "offset.attributes.string": "name",
   "read.max.wait.ms": "5000",
   "topic": "connect-file-pulse-quickstart-log4j",
   "tasks.reader.class": "io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader",
+  "tasks.file.status.storage.class": "io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore",
+  "tasks.file.status.storage.bootstrap.servers": "broker:29092",
+  "tasks.file.status.storage.topic": "connect-file-pulse-status",
   "tasks.max": 1
 }

@@ -26,8 +26,8 @@ import io.streamthoughts.kafka.connect.filepulse.fs.CompositeFileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileSystemMonitor;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemMonitor;
-import io.streamthoughts.kafka.connect.filepulse.state.FileObjectBackingStore;
-import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreRegistry;
+import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStoreManager;
+import io.streamthoughts.kafka.connect.filepulse.state.internal.OpaqueMemoryResource;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
@@ -44,6 +44,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC;
+import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_NAME_CONFIG;
 
 /**
  * The FilePulseSourceConnector.
@@ -62,11 +65,13 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private FileSystemMonitorThread fsMonitorThread;
 
-    private ConnectorConfig config;
+    private ConnectorConfig connectorConfig;
 
     private FileSystemMonitor scanner;
 
     private String connectorGroupName;
+
+    private OpaqueMemoryResource<StateBackingStore<FileObject>> sharedStore;
 
     /**
      * {@inheritDoc}
@@ -81,42 +86,34 @@ public class FilePulseSourceConnector extends SourceConnector {
      */
     @Override
     public void start(final Map<String, String> props) {
-        final String connectName = props.get(CONNECT_NAME_CONFIG);
-        LOG.info("Configuring connector : {}", connectName);
+        connectorGroupName = props.get(CONNECT_NAME_CONFIG);
+        LOG.info("Configuring connector : {}", connectorGroupName);
         try {
-            configProperties = props;
-            config = new ConnectorConfig(props);
+            configProperties = new HashMap<>(props);
+            configProperties.put(TASKS_FILE_STATUS_STORAGE_NAME_CONFIG, connectorGroupName);
+            configProperties.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC, "false");
+            connectorConfig = new ConnectorConfig(configProperties);
         } catch (ConfigException e) {
-            throw new ConnectException("Couldn't init FilePulseSourceConnector due to configuration error", e);
+            throw new ConnectException("Failed to initialize FilePulseSourceConnector due to configuration error", e);
         }
 
-        // FilePulse connectors deployed before 1.3.x used the 'internal.kafka.reporter.id'
-        // property for tracking file processing. Newer version directly use the connector 'name' property.
-        // To guarantee backward-compatibility with prior version, we need to use the
-        // 'internal.kafka.reporter.id' property if provided.
-        connectorGroupName = config.getTasksReporterGroupId() != null ? config.getTasksReporterGroupId() : connectName;
-        StateBackingStoreRegistry.instance().register(connectorGroupName, () -> {
-            final String stateStoreTopic = config.getTaskReporterTopic();
-            final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
-            return new FileObjectBackingStore(stateStoreTopic, connectorGroupName, configs, false);
-        });
+        initSharedStateBackingStore(connectorConfig, connectorGroupName);
 
-        final FileSystemListing directoryScanner = this.config.fileSystemListing();
-        directoryScanner.setFilter(new CompositeFileListFilter(config.fileSystemListingFilter()));
+        final FileSystemListing directoryScanner = this.connectorConfig.fileSystemListing();
+        directoryScanner.setFilter(new CompositeFileListFilter(connectorConfig.fileSystemListingFilter()));
 
-        final FileCleanupPolicy cleaner = config.cleanupPolicy();
-        final SourceOffsetPolicy offsetPolicy = config.getSourceOffsetPolicy();
+        final FileCleanupPolicy cleaner = connectorConfig.cleanupPolicy();
+        final SourceOffsetPolicy offsetPolicy = connectorConfig.getSourceOffsetPolicy();
 
-        final StateBackingStore<FileObject> store = StateBackingStoreRegistry.instance().get(connectorGroupName);
         try {
             scanner = new DefaultFileSystemMonitor(
-                config.allowTasksReconfigurationAfterTimeoutMs(),
-                directoryScanner,
-                cleaner,
-                offsetPolicy,
-                store);
-
-            fsMonitorThread = new FileSystemMonitorThread(context, scanner, config.scanInternalMs());
+                    connectorConfig.allowTasksReconfigurationAfterTimeoutMs(),
+                    directoryScanner,
+                    cleaner,
+                    offsetPolicy,
+                    sharedStore.getResource()
+            );
+            fsMonitorThread = new FileSystemMonitorThread(context, scanner, connectorConfig.scanInternalMs());
             fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {
                 LOG.info("Uncaught error from file system monitoring thread [{}]", t.getName(), e);
                 throw new ConnectException(e);
@@ -124,10 +121,10 @@ public class FilePulseSourceConnector extends SourceConnector {
             fsMonitorThread.start();
         } catch (Exception e) {
             LOG.error(
-                "Closing resources due to an error thrown during initialization of connector {} ",
-                connectorGroupName
+                    "Closing resources due to an error thrown during initialization of connector {} ",
+                    connectorGroupName
             );
-            StateBackingStoreRegistry.instance().release(connectorGroupName);
+            closeSharedStateBackingStore();
             if (fsMonitorThread != null) fsMonitorThread.shutdown(0L);
             throw e;
         }
@@ -148,26 +145,25 @@ public class FilePulseSourceConnector extends SourceConnector {
     public List<Map<String, String>> taskConfigs(int maxTasks) {
         LOG.info("Creating new tasks configurations (maxTasks={})", maxTasks);
         List<List<String>> groupFiles = scanner
-            .partitionFilesAndGet(maxTasks, config.getMaxScheduledFiles())
-            .stream()
-            .map(l -> l.stream().map(URI::toString).collect(Collectors.toList()))
-            .collect(Collectors.toList());
+                .partitionFilesAndGet(maxTasks, connectorConfig.getMaxScheduledFiles())
+                .stream()
+                .map(l -> l.stream().map(URI::toString).collect(Collectors.toList()))
+                .collect(Collectors.toList());
 
         List<Map<String, String>> taskConfigs = new ArrayList<>(groupFiles.size());
         if (!groupFiles.isEmpty()) {
             final long taskConfigsGen = taskConfigsGeneration.getAndIncrement();
             for (List<String> group : groupFiles) {
                 final Map<String, String> taskProps = new HashMap<>(configProperties);
-                taskProps.put(TaskConfig.INTERNAL_REPORTER_GROUP_ID, connectorGroupName);
-                taskProps.put(TaskConfig.FILE_INPUT_PATHS_CONFIG, String.join(",", group));
+                taskProps.put(TaskConfig.FILE_OBJECT_URIS_CONFIG, String.join(",", group));
                 taskConfigs.add(taskProps);
             }
-            for(int i = 0; i < groupFiles.size(); i++) {
+            for (int i = 0; i < groupFiles.size(); i++) {
                 LOG.info(
-                    "Created config for task_id={} with '{}' object files (task_config_gen={}).",
-                    i,
-                    groupFiles.get(i).size(),
-                    taskConfigsGen);
+                        "Created config for task_id={} with '{}' object files (task_config_gen={}).",
+                        i,
+                        groupFiles.get(i).size(),
+                        taskConfigsGen);
             }
         } else {
             LOG.warn("Failed to create new task configs - no object files found.");
@@ -182,12 +178,12 @@ public class FilePulseSourceConnector extends SourceConnector {
     public void stop() {
         LOG.info("Stopping connector");
         fsMonitorThread.shutdown();
+        closeSharedStateBackingStore();
         try {
-            StateBackingStoreRegistry.instance().release(connectorGroupName);
             fsMonitorThread.join(MAX_TIMEOUT);
         } catch (InterruptedException ignore) {
+            LOG.info("Connector stopped");
         }
-        LOG.info("Connector stopped");
     }
 
     /**
@@ -196,5 +192,29 @@ public class FilePulseSourceConnector extends SourceConnector {
     @Override
     public ConfigDef config() {
         return ConnectorConfig.getConf();
+    }
+
+    private void initSharedStateBackingStore(final ConnectorConfig config, final String connectorGroupName) {
+        try {
+            sharedStore = FileObjectStateBackingStoreManager.INSTANCE
+                    .getOrCreateSharedStore(
+                            connectorGroupName,
+                            config::getStateBackingStore,
+                            new Object()
+                    );
+        } catch (Exception exception) {
+            throw new ConnectException(
+                    "Failed to create shared StateBackingStore for group '" + connectorGroupName + "'.",
+                    exception
+            );
+        }
+    }
+
+    private void closeSharedStateBackingStore() {
+        try {
+            sharedStore.close();
+        } catch (Exception exception) {
+            LOG.error("Failed to shared StateBackingStore '{}'", connectorGroupName);
+        }
     }
 }

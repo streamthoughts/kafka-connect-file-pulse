@@ -40,25 +40,29 @@ import org.apache.kafka.connect.errors.ConnectException;
  */
 public class TaskConfig extends CommonConfig {
 
-    public static final String FILE_INPUT_PATHS_CONFIG = "file.input.paths";
-    private static final String FILE_INPUT_PATHS_DOC = "The list of files task must proceed.";
+    public static final String FILE_OBJECT_URIS_CONFIG = "file.object.uris";
+    private static final String FILE_OBJECT_URIS_DOC = "The list of files task must proceed.";
 
     private static final String OMIT_READ_COMMITTED_FILE_CONFIG = "ignore.committed.offsets";
     private static final String OMIT_READ_COMMITTED_FILE_DOC = "Boolean indicating whether offsets check has to be performed, to avoid multiple (default : false)";
-
-    public static final String INTERNAL_REPORTER_GROUP_ID = "internal.kafka.reporter.id";
-    private static final String INTERNAL_REPORTER_GROUP_ID_DOC = "Reporter identifier to be used by tasks and connector to report and monitor file progression";
 
     private final EnrichedConnectorConfig enrichedConfig;
 
     static ConfigDef getConf() {
         return CommonConfig.getConf()
-                .define(INTERNAL_REPORTER_GROUP_ID, ConfigDef.Type.STRING, null,
-                        ConfigDef.Importance.MEDIUM, INTERNAL_REPORTER_GROUP_ID_DOC)
-                .define(FILE_INPUT_PATHS_CONFIG, ConfigDef.Type.LIST,
-                        ConfigDef.Importance.HIGH, FILE_INPUT_PATHS_DOC)
-                .define(OMIT_READ_COMMITTED_FILE_CONFIG, ConfigDef.Type.BOOLEAN, false,
-                        ConfigDef.Importance.HIGH, OMIT_READ_COMMITTED_FILE_DOC);
+                .define(
+                        FILE_OBJECT_URIS_CONFIG,
+                        ConfigDef.Type.LIST,
+                        ConfigDef.Importance.HIGH,
+                        FILE_OBJECT_URIS_DOC
+                )
+                .define(
+                        OMIT_READ_COMMITTED_FILE_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.HIGH,
+                        OMIT_READ_COMMITTED_FILE_DOC
+                );
     }
 
     /**
@@ -156,12 +160,8 @@ public class TaskConfig extends CommonConfig {
         newDef.embed(prefix, group, orderInGroup, filterConfigDef);
     }
 
-    public String getTasksReporterGroupId() {
-        return this.getString(INTERNAL_REPORTER_GROUP_ID);
-    }
-
     public List<URI> files() {
-        return this.getList(FILE_INPUT_PATHS_CONFIG).stream().map(URI::create).collect(Collectors.toList());
+        return this.getList(FILE_OBJECT_URIS_CONFIG).stream().map(URI::create).collect(Collectors.toList());
     }
 
     public boolean isReadCommittedFile() {
@@ -173,7 +173,7 @@ public class TaskConfig extends CommonConfig {
     }
 
     public FileInputReader reader() {
-        return getConfiguredInstance(CommonConfig.FILE_READER_CLASS_CONFIG, FileInputReader.class);
+        return getConfiguredInstance(CommonConfig.TASKS_FILE_READER_CLASS_CONFIG, FileInputReader.class);
     }
 
     public List<RecordFilter> filters() {

@@ -14,11 +14,12 @@
   "fs.listing.class": "io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing",
   "fs.listing.directory.path": "/tmp/kafka-connect/examples/",
   "fs.listing.interval.ms": "10000",
-  "internal.kafka.reporter.bootstrap.servers": "broker:29092",
-  "internal.kafka.reporter.topic": "connect-file-pulse-status",
   "offset.attributes.string": "name+hash",
   "skip.headers": "1",
   "topic": "connect-file-pulse-quickstart-csv",
   "tasks.reader.class": "io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader",
+  "tasks.file.status.storage.class": "io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore",
+  "tasks.file.status.storage.bootstrap.servers": "broker:29092",
+  "tasks.file.status.storage.topic": "connect-file-pulse-status",
   "tasks.max": 1
 }

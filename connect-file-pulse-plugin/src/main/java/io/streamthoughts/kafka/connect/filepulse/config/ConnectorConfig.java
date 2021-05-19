@@ -53,13 +53,6 @@ public class ConnectorConfig extends CommonConfig {
     public static final String MAX_SCHEDULED_FILES_DOC        = "Maximum number of files that can be schedules to tasks.";
     public static final int MAX_SCHEDULED_FILES_DEFAULT       = 1000;
 
-    @Deprecated
-    public static final String INTERNAL_REPORTER_GROUP_ID       = "internal.kafka.reporter.id";
-    @Deprecated
-    private static final String INTERNAL_REPORTER_GROUP_ID_DOC  =
-            "(Deprecated) The reporter identifier to be used by tasks and connector to report and monitor file progression (default null)." +
-            "This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility.";
-
     /**
      * Creates a new {@link ConnectorConfig} instance.
      * @param originals the originals configuration.
@@ -110,14 +103,6 @@ public class ConnectorConfig extends CommonConfig {
                 )
 
                 .define(
-                        INTERNAL_REPORTER_GROUP_ID,
-                        ConfigDef.Type.STRING,
-                        null,
-                        ConfigDef.Importance.MEDIUM,
-                        INTERNAL_REPORTER_GROUP_ID_DOC
-                )
-
-                .define(
                         MAX_SCHEDULED_FILES_CONFIG,
                         ConfigDef.Type.INT,
                         MAX_SCHEDULED_FILES_DEFAULT,
@@ -128,10 +113,6 @@ public class ConnectorConfig extends CommonConfig {
 
     public Long allowTasksReconfigurationAfterTimeoutMs() {
         return getLong(ALLOW_TASKS_RECONFIG_AFTER_TIMEOUT_MS_CONFIG);
-    }
-
-    public String getTasksReporterGroupId() {
-        return getString(INTERNAL_REPORTER_GROUP_ID);
     }
 
     public int getMaxScheduledFiles() {

@@ -23,17 +23,21 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.state.FileObjectBackingStore;
-import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreRegistry;
+import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStoreManager;
+import io.streamthoughts.kafka.connect.filepulse.state.internal.OpaqueMemoryResource;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
+import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC;
 
 /**
  * The FilePulseSourceTask.
@@ -42,9 +46,11 @@ public class FilePulseSourceTask extends SourceTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilePulseSourceTask.class);
 
+    private static final String CONNECT_NAME_CONFIG = "name";
+
     private static final Integer NO_PARTITION = null;
 
-    public TaskConfig config;
+    public TaskConfig taskConfig;
 
     private String topic;
 
@@ -52,11 +58,13 @@ public class FilePulseSourceTask extends SourceTask {
 
     private SourceOffsetPolicy offsetPolicy;
 
-    private StateBackingStore<FileObject> store;
-
     private KafkaFileStateReporter reporter;
 
     private volatile FileContext contextToBeCommitted;
+
+    private OpaqueMemoryResource<StateBackingStore<FileObject>> sharedStore;
+
+    private String connectorGroupName;
 
     /**
      * {@inheritDoc}
@@ -72,38 +80,32 @@ public class FilePulseSourceTask extends SourceTask {
     @Override
     public void start(final Map<String, String> props) {
         LOG.info("Starting task");
-        config =  new TaskConfig(props);
-        offsetPolicy = config.getSourceOffsetPolicy();
-        store = getStateStatesBackingStore();
-        topic = config.topic();
+
+        final Map<String, String> configProperties = new HashMap<>(props);
+        configProperties.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC, "true");
+        taskConfig = new TaskConfig(configProperties);
+
+        connectorGroupName = props.get(CONNECT_NAME_CONFIG);
+        initSharedStateBackingStore(connectorGroupName);
+
+        offsetPolicy = taskConfig.getSourceOffsetPolicy();
+        topic = taskConfig.topic();
+
+        reporter = new KafkaFileStateReporter(sharedStore.getResource(), offsetPolicy);
         consumer = newFileRecordsPollingConsumer();
-        reporter = new KafkaFileStateReporter(store, offsetPolicy);
         consumer.setFileListener(reporter);
-        consumer.addAll(config.files());
+        consumer.addAll(taskConfig.files());
     }
 
     @SuppressWarnings("unchecked")
     private DefaultFileRecordsPollingConsumer newFileRecordsPollingConsumer() {
-        final RecordFilterPipeline filter = new DefaultRecordFilterPipeline(config.filters());
+        final RecordFilterPipeline filter = new DefaultRecordFilterPipeline(taskConfig.filters());
         return new DefaultFileRecordsPollingConsumer(
                 context,
-                config.reader(),
+                taskConfig.reader(),
                 filter,
                 offsetPolicy,
-                config.isReadCommittedFile());
-    }
-
-    private StateBackingStore<FileObject> getStateStatesBackingStore() {
-        final String groupId = config.getTasksReporterGroupId();
-        StateBackingStoreRegistry.instance().register(groupId, () -> {
-            final Map<String, Object> configs = config.getInternalKafkaReporterConfig();
-            final String stateStoreTopic = config.getTaskReporterTopic();
-            FileObjectBackingStore store = new FileObjectBackingStore(stateStoreTopic, groupId, configs, true);
-            store.start();
-            return store;
-        });
-
-        return StateBackingStoreRegistry.instance().get(groupId);
+                taskConfig.isReadCommittedFile());
     }
 
     /**
@@ -177,10 +179,32 @@ public class FilePulseSourceTask extends SourceTask {
                 consumer.close();
                 notify();
             }
-            if (store != null) {
-                StateBackingStoreRegistry.instance().release(config.getTasksReporterGroupId());
-            }
+            closeSharedStateBackingStore();
         }
         LOG.info("Task stopped.");
+    }
+
+    private void initSharedStateBackingStore(final String connectorGroupName) {
+        try {
+            sharedStore = FileObjectStateBackingStoreManager.INSTANCE
+                    .getOrCreateSharedStore(
+                            connectorGroupName,
+                            taskConfig::getStateBackingStore,
+                            new Object()
+                    );
+        } catch (Exception exception) {
+            throw new ConnectException(
+                    "Failed to create shared StateBackingStore for group '" + connectorGroupName + "'.",
+                    exception
+            );
+        }
+    }
+
+    private void closeSharedStateBackingStore() {
+        try {
+            sharedStore.close();
+        } catch (Exception exception) {
+            LOG.error("Failed to shared StateBackingStore '{}'", connectorGroupName);
+        }
     }
 }

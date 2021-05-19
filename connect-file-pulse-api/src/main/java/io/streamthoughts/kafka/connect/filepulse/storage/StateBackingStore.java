@@ -21,7 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.storage;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public interface StateBackingStore<T> {
+public interface StateBackingStore<T> extends AutoCloseable {
 
     /**
      * Start dependent services (if needed)
@@ -100,6 +100,14 @@ public interface StateBackingStore<T> {
      * @param listener non-null listener
      */
     void setUpdateListener(final UpdateListener<T> listener);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void close() {
+        stop();
+    }
 
     interface UpdateListener<T> {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -19,28 +19,21 @@
 package io.streamthoughts.kafka.connect.filepulse.state;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-import io.streamthoughts.kafka.connect.filepulse.storage.KafkaStateBackingStore;
+import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
+import org.apache.kafka.common.Configurable;
+import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
 
-/**
- */
-public class FileObjectBackingStore extends KafkaStateBackingStore<FileObject> {
-
-    private static final String KEY_PREFIX = "connect-file-pulse";
+public interface FileObjectStateBackingStore extends StateBackingStore<FileObject>, Configurable {
 
     /**
-     * Creates a new {@link FileObjectBackingStore} instance.
-     *
-     * @param store          the state store name.
-     * @param groupId        the group attached to the backing store.
-     * @param configs        the configuration.
-     * @param isProducerOnly is the backing store only used for writing data.
+     * {@inheritDoc}
      */
-    public FileObjectBackingStore(final String store,
-                                  final String groupId,
-                                  final Map<String, ?> configs,
-                                  final boolean isProducerOnly) {
-        super(store, KEY_PREFIX, groupId, configs, new FileObjectSerde(), isProducerOnly);
+    @Override
+    default void configure(final Map<String, ?> configs) { }
+
+    default ConfigDef configDef() {
+        return new ConfigDef();
     }
 }

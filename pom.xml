@@ -29,9 +29,7 @@
     <version>2.0.0-SNAPSHOT</version>
 
     <name>Kafka Connect Source File Pulse Reactor</name>
-    <description>Connect File Pulse is a multi-purpose source connector for streaming files from a local filesystem to
-        Kafka.
-    </description>
+    <description>Connect File Pulse is a multi-purpose source connector for streaming files from a local filesystem to Kafka.</description>
 
     <modules>
         <module>connect-file-pulse-api</module>

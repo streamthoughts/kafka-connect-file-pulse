@@ -46,7 +46,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
     private final Map<String, T> states = new HashMap<>();
     private final StateSerde<T> serde;
     private final String keyPrefix;
-    private final boolean isProducerOnly;
+    private final boolean consumerEnabled;
     private States status = States.CREATED;
     private StateBackingStore.UpdateListener<T> updateListener;
 
@@ -64,13 +64,13 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
                                   final String groupId,
                                   final Map<String, ?> configs,
                                   final StateSerde<T> serde,
-                                  final boolean isProducerOnly) {
+                                  final boolean consumerEnabled) {
         KafkaBasedLogFactory factory = new KafkaBasedLogFactory(configs);
         this.configLog = factory.make(topic, new ConsumeCallback());
         this.groupId = groupId;
         this.serde = serde;
         this.keyPrefix = keyPrefix;
-        this.isProducerOnly = isProducerOnly;
+        this.consumerEnabled = consumerEnabled;
     }
 
     synchronized States getState() {
@@ -92,7 +92,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
         LOG.info("Starting {}", getBackingStoreName());
         // Before startup, callbacks are *not* invoked. You can grab a snapshot after starting -- just take care that
         // updates can continue to occur in the background
-        configLog.start(isProducerOnly);
+        configLog.start(consumerEnabled);
         setState(States.STARTED);
         LOG.info("Started {}", getBackingStoreName());
     }
@@ -252,9 +252,10 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
             offset.set(record.offset() + 1);
 
             final byte[] value = record.value();
-            if (record.key().startsWith(keyPrefix)) {
+            final String key = record.key();
 
-                String[] groupAndState = record.key().substring(keyPrefix.length()).split("\\.", 2);
+            if (key != null && key.startsWith(keyPrefix)) {
+                String[] groupAndState = key.substring(keyPrefix.length()).split("\\.", 2);
                 String recordGroup = groupAndState[0];
                 String stateName = groupAndState[1];
                 if (recordGroup.equals(groupId)) {
@@ -289,10 +290,10 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
                     }
                 } else {
                     LOG.trace("Discarding state update value - not belong to group {} : {}", groupId,
-                            record.key());
+                            key);
                 }
             } else {
-                LOG.warn("Discarding state update value with invalid key : {}", record.key());
+                LOG.warn("Discarding state update value with invalid key : {}", key);
             }
         }
     }

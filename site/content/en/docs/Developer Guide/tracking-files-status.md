@@ -1,5 +1,5 @@
 ---
-date: 2020-05-22
+date: 2021-05-19
 title: "Tracking File Status"
 linkTitle: "Tracking File Status"
 weight: 90
@@ -81,14 +81,13 @@ Source file can be in the following states :
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-|`internal.kafka.reporter.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | high |
-|`internal.kafka.reporter.id` | Group id the internal topic used by tasks and connector to report and monitor file progression | string | *-* | high |
-|`internal.kafka.reporter.bootstrap.servers` | Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector). | string | *-* | high |
+|`tasks.file.status.storage.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | high |
+|`tasks.file.status.storage.bootstrap.servers` | Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector). | string | *-* | high |
 
 ## Override Internal Consumer/Producer Configuration
 
 To override the default configuration for the internal consumer and producer clients used for reporting states, 
 you can used one of the following override prefixes :
 
-* `internal.kafka.reporter.consumer.<consumer_property>`
-* `internal.kafka.reporter.producer.<producer_property>`
+* `tasks.file.status.storage.consumer.<consumer_property>`
+* `tasks.file.status.storage.producer.<producer_property>`

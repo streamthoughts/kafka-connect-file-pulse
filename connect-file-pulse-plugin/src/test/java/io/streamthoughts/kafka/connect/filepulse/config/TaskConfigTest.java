@@ -30,10 +30,9 @@ public class TaskConfigTest {
 
     @Test
     public void should_configure_filter_given_on_failure() {
-        final TaskConfig config = new TaskConfig(new HashMap<String, String>() {{
+        final TaskConfig config = new TaskConfig(new HashMap<>() {{
             put(CommonConfig.OUTPUT_TOPIC_CONFIG, "Test");
-            put(CommonConfig.INTERNAL_REPORTER_CLUSTER_BOOTSTRAP_SERVER, "dummy:1234");
-            put(TaskConfig.FILE_INPUT_PATHS_CONFIG, "/tmp");
+            put(TaskConfig.FILE_OBJECT_URIS_CONFIG, "/tmp");
             put(CommonConfig.FILTER_CONFIG, "Test");
             put(CommonConfig.FILTER_CONFIG + ".Test.type", AppendFilter.class.getName());
             put(CommonConfig.FILTER_CONFIG + ".Test." + AppendFilterConfig.APPEND_FIELD_CONFIG, "field");

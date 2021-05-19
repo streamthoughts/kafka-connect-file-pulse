@@ -49,16 +49,18 @@ These configurations are described in detail in subsequent chapters.
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `internal.kafka.reporter.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | HIGH |
-| `internal.kafka.reporter.bootstrap.servers` |A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster. | string | *-* | HIGH |
+| `tasks.file.status.storage.class` | The FileObjectStateBackingStore class to be used for storing status state of file objects. | `Class` | `io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore` | HIGH
 
-### Prior to Connect FilePulse 1.3.x (deprecated)
+**Available implementations are :**
+* `io.streamthoughts.kafka.connect.filepulse.state.InMemoryStateBackingStore`
+* `io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore`
+
+**Properties for configuring the `KafkaFileObjectStateBackingStore` class**
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-|`internal.kafka.reporter.id` | The reporter identifier to be used by tasks and connector to report and monitor file progression (default null). This property must only be set for users that have run a connector in version prior to 1.3.x to ensure backward-compatibility (when set, must be unique for each connect instance). | string | *-* | HIGH |
-
-A separated list of attributes, using `+`  as a character separator, to be used for uniquely identifying an input file; must be one of [`name`, `path`, `lastModified`, `inode`, `hash`] (e.g: `name+hash`). Note that order doesn't matter.
+| `tasks.file.status.storage.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | HIGH |
+| `tasks.file.status.storage.bootstrap.servers` | A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster. | string | *-* | HIGH |
 
 ## Examples
 

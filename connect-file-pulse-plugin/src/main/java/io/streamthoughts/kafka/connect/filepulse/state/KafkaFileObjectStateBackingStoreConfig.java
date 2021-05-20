@@ -25,8 +25,11 @@ import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
+
+    private static final String GROUP = "KafkaFileObjectStateBackingStore";
 
     public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_CONFIG = "tasks.file.status.storage.topic";
     private static final String TASKS_FILE_STATUS_STORAGE_TOPIC_DOC = "The topic name which is used to report file states.";
@@ -39,6 +42,12 @@ public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
 
     public static final String TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG = "tasks.file.status.storage.consumer.enabled";
     public static final String TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC = "Boolean to indicate if the storage should consume the status topic.";
+
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_CONFIG = "tasks.file.status.storage.topic.partitions";
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_DOC = "The number of partitions to be used for the status storage topic.";
+
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_CONFIG = "tasks.file.status.storage.topic.replication.factor";
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_DOC = "The replication factor to be used for the status storage topic.";
 
     /**
      * Creates a new {@link KafkaFileObjectStateBackingStoreConfig} instance.
@@ -82,33 +91,80 @@ public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
         return this.originalsWithPrefix("tasks.file.status.storage.producer.");
     }
 
+    Optional<Integer> getTopicPartitions() {
+        return Optional.ofNullable(getInt(TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_CONFIG));
+    }
+
+    Optional<Short> getReplicationFactor() {
+        return Optional.ofNullable(getShort(TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_CONFIG));
+    }
+
     static ConfigDef configDef() {
+        int groupCounter = 0;
         return new ConfigDef()
                 .define(
                         TASKS_FILE_STATUS_STORAGE_TOPIC_CONFIG,
                         ConfigDef.Type.STRING,
                         TASKS_FILE_STATUS_STORAGE_TOPIC_DEFAULT,
                         ConfigDef.Importance.HIGH,
-                        TASKS_FILE_STATUS_STORAGE_TOPIC_DOC
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_CONFIG
                 )
                 .define(
                         TASKS_FILE_STATUS_STORAGE_BOOTSTRAP_SERVERS_CONFIG,
                         ConfigDef.Type.STRING,
                         ConfigDef.Importance.HIGH,
-                        CommonClientConfigs.BOOTSTRAP_SERVERS_DOC
+                        CommonClientConfigs.BOOTSTRAP_SERVERS_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_FILE_STATUS_STORAGE_BOOTSTRAP_SERVERS_CONFIG
+                )
+                .define(
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_CONFIG,
+                        ConfigDef.Type.SHORT,
+                        null,
+                        ConfigDef.Importance.MEDIUM,
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_CONFIG
+                )
+                .define(
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_CONFIG,
+                        ConfigDef.Type.INT,
+                        null,
+                        ConfigDef.Importance.MEDIUM,
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_CONFIG
                 )
                 .define(
                         TASKS_FILE_STATUS_STORAGE_NAME_CONFIG,
                         ConfigDef.Type.STRING,
                         ConfigDef.Importance.HIGH,
-                        TASKS_FILE_STATUS_STORAGE_NAME_DOC
+                        TASKS_FILE_STATUS_STORAGE_NAME_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_FILE_STATUS_STORAGE_NAME_CONFIG
                 )
                 .define(
                         TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG,
                         ConfigDef.Type.BOOLEAN,
                         true,
                         ConfigDef.Importance.HIGH,
-                        TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC
+                        TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG
                 );
 
     }

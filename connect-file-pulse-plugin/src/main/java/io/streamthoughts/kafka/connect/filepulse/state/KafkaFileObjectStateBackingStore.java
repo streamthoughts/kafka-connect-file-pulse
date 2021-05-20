@@ -21,14 +21,27 @@ package io.streamthoughts.kafka.connect.filepulse.state;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.storage.KafkaStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.CreateTopicsResult;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.config.TopicConfig;
+import org.apache.kafka.common.errors.TopicExistsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
  */
 public class KafkaFileObjectStateBackingStore implements FileObjectStateBackingStore {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaFileObjectStateBackingStore.class);
 
     private static final String KEY_PREFIX = "connect-file-pulse";
 
@@ -48,6 +61,35 @@ public class KafkaFileObjectStateBackingStore implements FileObjectStateBackingS
                 new FileObjectSerde(),
                 config.getTaskStorageConsumerEnabled()
         );
+
+        try (AdminClient client = AdminClient.create(config.getTaskStorageConfigs())) {
+            Map<String, String> topicConfig = new HashMap<>();
+            topicConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
+            final NewTopic newTopic = new NewTopic(
+                config.getTaskStorageTopic(),
+                config.getTopicPartitions(),
+                config.getReplicationFactor()
+            ).configs(topicConfig);
+            createTopic(client, newTopic);
+        }
+    }
+
+    private void createTopic(final AdminClient adminClient, final NewTopic topic) {
+        try {
+            LOG.info("Attempt to create new topic '{}'", topic);
+            CreateTopicsResult result = adminClient.createTopics(List.of(topic));
+            KafkaFuture<Void> future = result.all();
+            future.get();
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof TopicExistsException) {
+                LOG.debug("Failed to created topic '{}'. Topic already exists.", topic);
+            } else {
+                LOG.warn("Failed to create topic '{}'", topic, e);
+            }
+        } catch (InterruptedException e) {
+            LOG.warn("Failed to create topic '{}'", topic, e);
+        }
     }
 
     /**

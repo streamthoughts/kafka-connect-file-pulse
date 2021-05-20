@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.state;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import org.apache.kafka.common.Configurable;
-import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Map;
 
@@ -32,8 +31,4 @@ public interface FileObjectStateBackingStore extends StateBackingStore<FileObjec
      */
     @Override
     default void configure(final Map<String, ?> configs) { }
-
-    default ConfigDef configDef() {
-        return new ConfigDef();
-    }
 }

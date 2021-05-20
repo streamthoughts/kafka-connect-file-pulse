@@ -21,6 +21,8 @@ package io.streamthoughts.kafka.connect.filepulse.state;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,11 +32,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * In-memory {@link StateBackingStore} implementation.
  */
-public class InMemoryFileObjectStateBackingStore implements StateBackingStore<FileObject> {
+public class InMemoryFileObjectStateBackingStore implements FileObjectStateBackingStore {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryFileObjectStateBackingStore.class);
 
     private final ConcurrentHashMap<String, FileObject> objects = new ConcurrentHashMap<>();
 
-    private UpdateListener<FileObject> listener;
+    private StateBackingStore.UpdateListener<FileObject> listener;
 
     private final AtomicBoolean started = new AtomicBoolean(false);
 
@@ -82,18 +86,19 @@ public class InMemoryFileObjectStateBackingStore implements StateBackingStore<Fi
      * {@inheritDoc}
      */
     @Override
-    public void putAsync(final String name, final FileObject state) {
-        put(name, state);
+    public void putAsync(final String name, final FileObject object) {
+        put(name, object);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void put(final String name, final FileObject state) {
-        objects.put(name, state);
+    public void put(final String name, final FileObject object) {
+        LOG.debug("Put object in store with key={}, object={}", name, object);
+        objects.put(name, object);
         if (listener != null) {
-            listener.onStateUpdate(name, state);
+            listener.onStateUpdate(name, object);
         }
     }
 
@@ -102,6 +107,7 @@ public class InMemoryFileObjectStateBackingStore implements StateBackingStore<Fi
      */
     @Override
     public void remove(final String name) {
+        LOG.debug("Remove object in store with key={}", name);
         objects.remove(name);
         if (listener != null) {
             listener.onStateRemove(name);

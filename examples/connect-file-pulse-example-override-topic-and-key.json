@@ -10,7 +10,7 @@
   "filters.ParseDelimitedRow.extractColumnName": "headers",
   "filters.ParseDelimitedRow.trimColumn": "true",
   "filters.ParseDelimitedRow.type": "io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter",
-  "fs.cleanup.policy.class": "io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy",
+  "fs.cleanup.policy.class": "io.streamthoughts.kafka.connect.filepulse.fs.clean.LogCleanupPolicy",
   "fs.listing.class": "io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing",
   "fs.listing.directory.path": "/tmp/kafka-connect/examples/",
   "fs.listing.interval.ms": "10000",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,12 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
+package io.streamthoughts.kafka.connect.filepulse.fs.clean;
+
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalFileStorage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,6 +59,7 @@ public class DeleteCleanupPolicyTest {
     @Test
     public void should_delete_source_file_given_completed_source() {
         DeleteCleanupPolicy policy = new DeleteCleanupPolicy();
+        policy.setStorage(new LocalFileStorage());
         policy.configure(Collections.emptyMap());
 
         Boolean result = policy.apply(source.withStatus(FileObjectStatus.COMPLETED));
@@ -67,6 +70,7 @@ public class DeleteCleanupPolicyTest {
     @Test
     public void should_delete_source_file_given_failed_source() {
         DeleteCleanupPolicy policy = new DeleteCleanupPolicy();
+        policy.setStorage(new LocalFileStorage());
         policy.configure(Collections.emptyMap());
 
         Boolean result = policy.apply(source.withStatus(FileObjectStatus.FAILED));

@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.codec.CodecHandler;
 import io.streamthoughts.kafka.connect.filepulse.fs.codec.CodecManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalFileStorage;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import org.apache.kafka.connect.errors.ConnectException;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * The {@code LocalFSDirectoryListing} can be used for listing files that exist in an local input directory.
  */
-public class LocalFSDirectoryListing implements FileSystemListing {
+public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStorage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalFSDirectoryListing.class);
 
@@ -83,7 +84,7 @@ public class LocalFSDirectoryListing implements FileSystemListing {
      */
     @Override
     public Collection<FileObjectMeta> listObjects() throws IllegalArgumentException {
-        List<File> files = listEligibleFiles(new File(config.scanDirectoryPath()));
+        List<File> files = listEligibleFiles(new File(config.listingDirectoryPath()));
         return this.filter != null ? this.filter.filterFiles(toSourceObjects(files)) : toSourceObjects(files);
     }
 
@@ -160,7 +161,14 @@ public class LocalFSDirectoryListing implements FileSystemListing {
      */
     @Override
     public String toString() {
-        return "[directory.path=" + config.scanDirectoryPath() + "]";
+        return "[directory.path=" + config.listingDirectoryPath() + "]";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LocalFileStorage storage() {
+        return new LocalFileStorage();
+    }
 }

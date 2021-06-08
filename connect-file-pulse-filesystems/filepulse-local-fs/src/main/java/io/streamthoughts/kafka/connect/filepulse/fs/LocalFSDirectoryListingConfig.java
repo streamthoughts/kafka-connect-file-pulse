@@ -27,8 +27,8 @@ import java.util.Map;
 public class LocalFSDirectoryListingConfig extends AbstractConfig {
 
 
-    public static final String FS_SCAN_DIRECTORY_PATH_CONFIG    = "fs.listing.directory.path";
-    public static final String FS_SCAN_DIRECTORY_PATH_DOC       = "The input directory to scan";
+    public static final String FS_LISTING_DIRECTORY_PATH = "fs.listing.directory.path";
+    public static final String FS_LISTING_DIRECTORY_DOC = "The input directory to scan";
 
     public static final String FS_RECURSIVE_SCAN_ENABLE_CONFIG  = "fs.listing.recursive.enabled";
     private static final String FS_RECURSIVE_SCAN_ENABLE_DOC    = "Boolean indicating whether local directory " +
@@ -36,11 +36,20 @@ public class LocalFSDirectoryListingConfig extends AbstractConfig {
 
     public static ConfigDef getConf() {
         return new ConfigDef()
-            .define(FS_SCAN_DIRECTORY_PATH_CONFIG, ConfigDef.Type.STRING,
-                    ConfigDef.Importance.HIGH, FS_SCAN_DIRECTORY_PATH_DOC)
+            .define(
+                    FS_LISTING_DIRECTORY_PATH,
+                    ConfigDef.Type.STRING,
+                    ConfigDef.Importance.HIGH,
+                    FS_LISTING_DIRECTORY_DOC
+            )
                 
-            .define(FS_RECURSIVE_SCAN_ENABLE_CONFIG, ConfigDef.Type.BOOLEAN, true,
-                    ConfigDef.Importance.MEDIUM, FS_RECURSIVE_SCAN_ENABLE_DOC);
+            .define(
+                    FS_RECURSIVE_SCAN_ENABLE_CONFIG,
+                    ConfigDef.Type.BOOLEAN,
+                    true,
+                    ConfigDef.Importance.MEDIUM,
+                    FS_RECURSIVE_SCAN_ENABLE_DOC
+            );
     }
 
     /**
@@ -55,7 +64,7 @@ public class LocalFSDirectoryListingConfig extends AbstractConfig {
         return getBoolean(FS_RECURSIVE_SCAN_ENABLE_CONFIG);
     }
 
-    public String scanDirectoryPath() {
-        return this.getString(FS_SCAN_DIRECTORY_PATH_CONFIG);
+    public String listingDirectoryPath() {
+        return this.getString(FS_LISTING_DIRECTORY_PATH);
     }
 }

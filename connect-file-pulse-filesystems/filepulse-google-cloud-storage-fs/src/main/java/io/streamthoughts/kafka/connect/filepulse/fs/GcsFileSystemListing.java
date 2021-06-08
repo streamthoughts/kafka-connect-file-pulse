@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class GcsFileSystemListing implements FileSystemListing {
+public class GcsFileSystemListing implements FileSystemListing<GcsStorage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(GcsFileSystemListing.class);
 
@@ -111,5 +111,13 @@ public class GcsFileSystemListing implements FileSystemListing {
     @Override
     public void setFilter(final FileListFilter filter) {
         this.filter = filter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GcsStorage storage() {
+        return new GcsStorage(gcsClient);
     }
 }

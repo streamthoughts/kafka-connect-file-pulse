@@ -18,14 +18,14 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import com.azure.core.http.rest.Response;
+import com.azure.core.util.Context;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobClientBuilder;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.BlobProperties;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.Storage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,10 +79,10 @@ public class AzureBlobStorage implements Storage {
                 userDefinedMetadata.put(withMetadataPrefix("contentType"), it));
 
         properties.getMetadata()
-            .entrySet()
-            .stream()
-            .filter(e -> e.getValue() != null)
-            .forEach(e -> userDefinedMetadata.put(withMetadataPrefix(e.getKey()), e.getValue()));
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue() != null)
+                .forEach(e -> userDefinedMetadata.put(withMetadataPrefix(e.getKey()), e.getValue()));
 
         return new GenericFileObjectMeta.Builder()
                 .withUri(uri)
@@ -94,7 +94,6 @@ public class AzureBlobStorage implements Storage {
                 .build();
     }
 
-    @NotNull
     private static String withMetadataPrefix(final String account) {
         return AZURE_BLOB_STORAGE_METADATA_PREFIX + account;
     }
@@ -103,8 +102,39 @@ public class AzureBlobStorage implements Storage {
      * {@inheritDoc}
      */
     @Override
-    public boolean exists(URI uri) {
+    public boolean exists(final URI uri) {
         return getBlobClient(uri).exists();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean delete(final URI uri) {
+        final Response<Void> response = getBlobClient(uri).deleteWithResponse(
+                null,
+                null, null,
+                Context.NONE
+        );
+        final boolean succeed = response.getStatusCode() == 200;
+        if (!succeed) {
+            LOG.debug(
+                    "Failed to delete object file from AzureBlogStorage: "
+                            + "uri={}, "
+                            + "returned status code={}",
+                    uri,
+                    response.getStatusCode()
+            );
+        }
+        return succeed;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean move(final URI source, final URI dest) {
+        throw new UnsupportedOperationException();
     }
 
     /**

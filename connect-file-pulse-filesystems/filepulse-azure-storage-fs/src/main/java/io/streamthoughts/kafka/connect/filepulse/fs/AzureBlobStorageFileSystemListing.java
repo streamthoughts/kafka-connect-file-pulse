@@ -42,7 +42,7 @@ import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isN
  * The {@code AzureBlobStorageFileSystemListing} that can be used for listing objects
  * that exist in a specific Azure Blob Storage container.
  */
-public class AzureBlobStorageFileSystemListing implements FileSystemListing {
+public class AzureBlobStorageFileSystemListing implements FileSystemListing<AzureBlobStorage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AzureBlobStorageFileSystemListing.class);
 
@@ -113,5 +113,13 @@ public class AzureBlobStorageFileSystemListing implements FileSystemListing {
     @Override
     public void setFilter(final FileListFilter filter) {
         this.filter = filter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AzureBlobStorage storage() {
+        return storage;
     }
 }

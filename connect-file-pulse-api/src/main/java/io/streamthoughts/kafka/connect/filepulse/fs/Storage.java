@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.fs.reader;
+package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import org.apache.kafka.common.Configurable;
@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 
+/**
+ * The {@link Storage} class represents the principal interface to access and manipulate a object files.
+ */
 public interface Storage extends Configurable {
 
     /**
@@ -47,6 +50,23 @@ public interface Storage extends Configurable {
      * @return       {@code true} if the object exist, otherwise {@code false}.
      */
     boolean exists(final URI uri);
+
+    /**
+     * Deletes the object file from this storage.
+     *
+     * @param uri   the file object {@link URI}.
+     * @return      {@code true} if the object has been removed successfully, otherwise {@code false}.
+     */
+    boolean delete(final URI uri);
+
+    /**
+     * Moves the object file from this storage.
+     *
+     * @param source    the {@link URI} of the source file object.
+     * @param dest      the {@link URI} of the file object destination.
+     * @return          {@code true} if the object file has been moved successfully, otherwise {@code false}.
+     */
+    boolean move(final URI source, final URI dest);
 
     /**
      * Gets a {@link InputStream} for the given object.

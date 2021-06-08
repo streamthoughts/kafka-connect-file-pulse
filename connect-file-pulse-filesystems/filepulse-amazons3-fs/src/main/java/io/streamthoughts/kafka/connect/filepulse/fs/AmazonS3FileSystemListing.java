@@ -41,7 +41,7 @@ import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isN
 /**
  * The {@code AmazonS3FileSystemListing} that can be used for listing objects that exist in a specific Amazon S3 bucket.
  */
-public class AmazonS3FileSystemListing implements FileSystemListing {
+public class AmazonS3FileSystemListing implements FileSystemListing<AmazonS3Storage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AmazonS3FileSystemListing.class);
 
@@ -128,12 +128,19 @@ public class AmazonS3FileSystemListing implements FileSystemListing {
         return filter == null ? objectMetaList : filter.filterFiles(objectMetaList);
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void setFilter(final FileListFilter filter) {
         this.filter = filter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AmazonS3Storage storage() {
+        return s3Storage;
     }
 }

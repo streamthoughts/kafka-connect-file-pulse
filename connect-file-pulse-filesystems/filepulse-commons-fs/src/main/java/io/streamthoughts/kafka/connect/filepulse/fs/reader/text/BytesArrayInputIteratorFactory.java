@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.Storage;
+import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIteratorFactory;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;

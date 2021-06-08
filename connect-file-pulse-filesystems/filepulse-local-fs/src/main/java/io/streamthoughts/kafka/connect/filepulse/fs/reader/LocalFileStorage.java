@@ -18,17 +18,30 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
+import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.IOUtils.createParentIfNotExists;
+
+/**
+ * A {@link Storage} implementation for manging files on local file-system.
+ */
 public class LocalFileStorage implements Storage {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LocalFileStorage.class);
 
     /**
      * {@inheritDoc}
@@ -44,6 +57,51 @@ public class LocalFileStorage implements Storage {
     @Override
     public boolean exists(final URI uri) {
         return Files.exists(Paths.get(uri));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean delete(final URI uri) {
+        try {
+            Files.deleteIfExists(Paths.get(uri));
+            LOG.debug("Removed object file successfully: {}", uri);
+        } catch (IOException e) {
+            LOG.error("Failed to remove object file: {}", uri, e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean move(final URI source, final URI dest) {
+        final Path sourcePath = Paths.get(source);
+        final Path destPath = Paths.get(dest);
+        try {
+            LOG.info("Moving file {} to {}", source, dest);
+            createParentIfNotExists(destPath);
+            Files.move(sourcePath, destPath, StandardCopyOption.ATOMIC_MOVE);
+            LOG.info("File {} moved successfully", source);
+        } catch (IOException outer) {
+            try {
+                Files.move(sourcePath, destPath, StandardCopyOption.REPLACE_EXISTING);
+                LOG.debug(
+                        "Non-atomic move of {} to {} succeeded after atomic move failed due to {}",
+                        source,
+                        destPath,
+                        outer.getMessage()
+                );
+            } catch (IOException inner) {
+                inner.addSuppressed(outer);
+                LOG.error("Error while moving file {}", source, inner);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

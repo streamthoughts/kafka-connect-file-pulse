@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,16 +16,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.clean;
-
-import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-
-import java.util.List;
+package io.streamthoughts.kafka.connect.filepulse.fs;
 
 /**
- * Policy for cleaning a batch of completed source files.
+ * The {@link StorageProvider} can be used for accessing underlying {@link Storage}.
+ *
+ * @param <T>   the storage type.
  */
-public interface BatchFileCleanupPolicy
-        extends GenericFileCleanupPolicy<List<FileObject>, FileCleanupPolicyResultSet> {
+public interface StorageProvider<T extends Storage> {
+
+    /**
+     * @return  the {@link Storage} attached to this reader.
+     */
+    T storage();
 
 }

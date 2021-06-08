@@ -73,7 +73,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
     private final static Comparator<FileObjectMeta> BY_LAST_MODIFIED =
             Comparator.comparingLong(FileObjectMeta::lastModified);
 
-    private final FileSystemListing fsListing;
+    private final FileSystemListing<?> fsListing;
 
     private final StateBackingStore<FileObject> store;
 
@@ -110,7 +110,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
      * @param store                                   the {@link StateBackingStore} used for storing object file cursor.
      */
     public DefaultFileSystemMonitor(final Long allowTasksReconfigurationAfterTimeoutMs,
-                                    final FileSystemListing fsListening,
+                                    final FileSystemListing<?> fsListening,
                                     final GenericFileCleanupPolicy cleaner,
                                     final SourceOffsetPolicy offsetPolicy,
                                     final StateBackingStore<FileObject> store) {
@@ -130,7 +130,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             throw new IllegalArgumentException("Cleaner must be one of 'FileCleanupPolicy', "
                     + "'BatchFileCleanupPolicy'" + " not " + cleaner.getClass().getName());
         }
-
+        this.cleaner.setStorage(fsListening.storage());
         this.offsetPolicy = offsetPolicy;
         this.store = store;
         this.status = ScanStatus.CREATED;

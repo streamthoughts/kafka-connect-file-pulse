@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
+import io.streamthoughts.kafka.connect.filepulse.fs.StorageAware;
 import org.apache.kafka.common.Configurable;
 
 import java.util.Map;
@@ -28,7 +29,7 @@ import java.util.Map;
  * @param <S>   type of the source to be cleaned.
  * @param <R>   type of the operation result.
  */
-public interface GenericFileCleanupPolicy<S, R> extends AutoCloseable, Configurable {
+public interface GenericFileCleanupPolicy<S, R> extends AutoCloseable, Configurable, StorageAware {
 
     /**
      * Configure this class with the given key-value pairs

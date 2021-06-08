@@ -32,10 +32,11 @@ import java.util.Map;
  */
 public class LastModifiedFileListFilter extends PredicateFileListFilter {
 
-    private static final String FILE_MINIMUM_AGE_MS_CONF    = "file.filter.minimum.age.ms";
-    private static final String FILE_MINIMUM_AGE_MS_DOC     =
-        "Last modified time for a file can be accepted (default: 5000)";
-    private static final int FILE_MINIMUM_AGE_MS_DEFAULT    = 5000;
+    private static final String FILE_MINIMUM_AGE_MS_CONF = "file.filter.minimum.age.ms";
+    private static final String FILE_MINIMUM_AGE_MS_DOC = "Last modified time for a file " +
+                                                          "can be accepted (default: 5000)";
+    private static final int FILE_MINIMUM_AGE_MS_DEFAULT = 5000;
+
     private static final Logger LOG = LoggerFactory.getLogger(LastModifiedFileListFilter.class);
 
     private long minimumAgeMs;
@@ -45,7 +46,7 @@ public class LastModifiedFileListFilter extends PredicateFileListFilter {
      */
     @Override
     public void configure(final Map<String, ?> props) {
-        AbstractConfig abstractConfig = new AbstractConfig(getConfigDef(), props);
+        final AbstractConfig abstractConfig = new AbstractConfig(getConfigDef(), props);
         this.minimumAgeMs = abstractConfig.getLong(FILE_MINIMUM_AGE_MS_CONF);
     }
 
@@ -64,8 +65,13 @@ public class LastModifiedFileListFilter extends PredicateFileListFilter {
 
     private static ConfigDef getConfigDef() {
         return new ConfigDef()
-                .define(FILE_MINIMUM_AGE_MS_CONF, ConfigDef.Type.LONG, FILE_MINIMUM_AGE_MS_DEFAULT,
-                        ConfigDef.Importance.HIGH, FILE_MINIMUM_AGE_MS_DOC);
+                .define(
+                        FILE_MINIMUM_AGE_MS_CONF,
+                        ConfigDef.Type.LONG,
+                        FILE_MINIMUM_AGE_MS_DEFAULT,
+                        ConfigDef.Importance.HIGH,
+                        FILE_MINIMUM_AGE_MS_DOC
+                );
     }
 
     private static boolean isNotModifiedForMs(final FileObjectMeta meta, final long minimumAgeMs) {

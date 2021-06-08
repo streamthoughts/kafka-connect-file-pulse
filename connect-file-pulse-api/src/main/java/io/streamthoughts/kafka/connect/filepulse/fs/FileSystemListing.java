@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * The {@code FileSystemListing} is used to list the object files that exists under a specific file-system.
  */
-public interface FileSystemListing extends Configurable {
+public interface FileSystemListing<T extends Storage> extends StorageProvider<T>, Configurable {
 
     /**
      * Configure this class with the given key-value pairs
@@ -47,5 +47,7 @@ public interface FileSystemListing extends Configurable {
      * @param filter    the filter to apply.
      */
     void setFilter(final FileListFilter filter);
+
+
 
 }

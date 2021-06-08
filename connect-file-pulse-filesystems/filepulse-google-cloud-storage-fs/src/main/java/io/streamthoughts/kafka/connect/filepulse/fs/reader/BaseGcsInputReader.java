@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.fs.GcsClientConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.GcsClientUtils;
 import io.streamthoughts.kafka.connect.filepulse.fs.GcsStorage;
+import io.streamthoughts.kafka.connect.filepulse.reader.StorageAwareFileInputReader;
 
 import java.util.Map;
 

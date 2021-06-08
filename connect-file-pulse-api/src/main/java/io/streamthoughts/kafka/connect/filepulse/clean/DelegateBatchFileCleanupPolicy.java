@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
+import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 
 import java.util.List;
@@ -68,5 +69,13 @@ public class DelegateBatchFileCleanupPolicy implements BatchFileCleanupPolicy {
     @Override
     public void close() throws Exception {
         delegate.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setStorage(final Storage storage) {
+        delegate.setStorage(storage);
     }
 }

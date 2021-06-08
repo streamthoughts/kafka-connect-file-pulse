@@ -47,7 +47,7 @@ public class LocalFSDirectoryListingTest {
 
     private File inputDirectory;
 
-    private FileSystemListing scanner;
+    private LocalFSDirectoryListing scanner;
 
     @Before
     public void setUp() throws IOException {
@@ -66,9 +66,9 @@ public class LocalFSDirectoryListingTest {
             zos.closeEntry();
         }
 
-        scanner.configure(new HashMap<String, Object>(){{
+        scanner.configure(new HashMap<>() {{
             put(LocalFSDirectoryListingConfig.FS_RECURSIVE_SCAN_ENABLE_CONFIG, false);
-            put(LocalFSDirectoryListingConfig.FS_SCAN_DIRECTORY_PATH_CONFIG, inputDirectory.getAbsolutePath());
+            put(LocalFSDirectoryListingConfig.FS_LISTING_DIRECTORY_PATH, inputDirectory.getAbsolutePath());
         }});
 
         final Collection<FileObjectMeta> scanned = scanner.listObjects();
@@ -85,7 +85,7 @@ public class LocalFSDirectoryListingTest {
 
         scanner.configure(new HashMap<String, Object>(){{
             put(LocalFSDirectoryListingConfig.FS_RECURSIVE_SCAN_ENABLE_CONFIG, true);
-            put(LocalFSDirectoryListingConfig.FS_SCAN_DIRECTORY_PATH_CONFIG, inputDirectory.getAbsolutePath());
+            put(LocalFSDirectoryListingConfig.FS_LISTING_DIRECTORY_PATH, inputDirectory.getAbsolutePath());
         }});
 
         final Collection<String> scanned = scanner
@@ -115,7 +115,7 @@ public class LocalFSDirectoryListingTest {
 
         scanner.configure(new HashMap<String, Object>(){{
             put(LocalFSDirectoryListingConfig.FS_RECURSIVE_SCAN_ENABLE_CONFIG, false);
-            put(LocalFSDirectoryListingConfig.FS_SCAN_DIRECTORY_PATH_CONFIG, inputDirectory.getAbsolutePath());
+            put(LocalFSDirectoryListingConfig.FS_LISTING_DIRECTORY_PATH, inputDirectory.getAbsolutePath());
         }});
 
         final Collection<String> scanned = scanner

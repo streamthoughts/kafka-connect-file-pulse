@@ -21,10 +21,19 @@ package io.streamthoughts.kafka.connect.filepulse.clean;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
 
+import java.util.Map;
+
 /**
  * Policy for cleaning individual completed source files.
  */
-public interface FileCleanupPolicy extends GenericFileCleanupPolicy<FileObject, Boolean> {
+public interface FileCleanupPolicy extends
+        GenericFileCleanupPolicy<FileObject, Boolean> {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void configure(final Map<String, ?> configs) { }
 
     /**
      * {@inheritDoc}
@@ -37,4 +46,5 @@ public interface FileCleanupPolicy extends GenericFileCleanupPolicy<FileObject, 
     boolean onSuccess(final FileObject source);
 
     boolean onFailure(final FileObject source);
+
 }

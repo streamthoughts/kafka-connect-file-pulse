@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageClientUtils;
 import io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorage;
 import io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageFileSystemListing;
+import io.streamthoughts.kafka.connect.filepulse.reader.StorageAwareFileInputReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

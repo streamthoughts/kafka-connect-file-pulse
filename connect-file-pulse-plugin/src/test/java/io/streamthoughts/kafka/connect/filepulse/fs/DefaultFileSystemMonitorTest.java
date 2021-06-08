@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class DefaultFileSystemScannerTest {
+public class DefaultFileSystemMonitorTest {
 
     private static final SourceOffsetPolicy OFFSET_MANAGER = new SourceOffsetPolicy() {
         @Override
@@ -236,7 +236,7 @@ public class DefaultFileSystemScannerTest {
     }
 
     private DefaultFileSystemMonitor newFsMonitorThread(final MockFileCleaner cleaner,
-                                                        final FileSystemListing scanner,
+                                                        final FileSystemListing<Storage> scanner,
                                                         final StateBackingStore<FileObject> store) {
         return new DefaultFileSystemMonitor(
                 Long.MAX_VALUE,
@@ -247,7 +247,7 @@ public class DefaultFileSystemScannerTest {
         );
     }
 
-    private static class NoOpDirectoryScanner implements FileSystemListing {
+    private static class NoOpFileSystemListing implements FileSystemListing<Storage> {
 
         @Override
         public void configure(Map<String, ?> configs) {
@@ -262,9 +262,14 @@ public class DefaultFileSystemScannerTest {
         @Override
         public void setFilter(FileListFilter filter) {
         }
+
+        @Override
+        public Storage storage() {
+            return null;
+        }
     }
 
-    private static class MockTimesDirectoryScanner extends NoOpDirectoryScanner {
+    private static class MockTimesDirectoryScanner extends NoOpFileSystemListing {
 
         private final List<Collection<File>> files = new ArrayList<>();
         private int times = 0;

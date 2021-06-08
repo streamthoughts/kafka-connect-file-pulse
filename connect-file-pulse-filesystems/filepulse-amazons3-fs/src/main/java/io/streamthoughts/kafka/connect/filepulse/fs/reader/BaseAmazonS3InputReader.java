@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientUtils;
+import io.streamthoughts.kafka.connect.filepulse.reader.StorageAwareFileInputReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

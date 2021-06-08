@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,50 +16,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.clean;
+package io.streamthoughts.kafka.connect.filepulse.reader;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
+import io.streamthoughts.kafka.connect.filepulse.fs.StorageProvider;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 
-import java.util.Map;
+import java.net.URI;
 
-/**
- * Policy for printing into log files completed files.
- */
-public class LogCleanupPolicy implements FileCleanupPolicy {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LogCleanupPolicy.class);
+public interface StorageAwareFileInputReader<T extends Storage> extends StorageProvider<T>, FileInputReader {
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void configure(final Map<String, ?> configs) {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean onSuccess(final FileObject source) {
-        LOG.info("Success : {}", source);
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean onFailure(final FileObject source) {
-        LOG.info("Failure : {}", source);
-        return true;
+    default FileObjectMeta getObjectMetadata(final URI objectURI) {
+        return storage().getObjectMetadata(objectURI);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws Exception {
-
+    default boolean canBeRead(final URI objectURI) {
+        return storage().exists(objectURI);
     }
 }

@@ -16,32 +16,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.fs.reader;
+package io.streamthoughts.kafka.connect.filepulse.fs.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
+import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 
-import java.net.URI;
+/**
+ * Policy for deleting completed files.
+ */
+public class DeleteCleanupPolicy implements FileCleanupPolicy {
 
-public interface StorageAwareFileInputReader<T extends Storage> extends FileInputReader {
+    private Storage storage;
 
     /**
      * {@inheritDoc}
      */
-    default FileObjectMeta getObjectMetadata(final URI objectURI) {
-        return storage().getObjectMetadata(objectURI);
+    @Override
+    public boolean onSuccess(final FileObject source) {
+        return storage.delete(source.metadata().uri());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    default boolean canBeRead(final URI objectURI) {
-        return storage().exists(objectURI);
+    public boolean onFailure(final FileObject source) {
+        return storage.delete(source.metadata().uri());
     }
 
     /**
-     * @return  the {@link Storage} attached to this reader.
+     * {@inheritDoc}
      */
-   T storage();
+    @Override
+    public void close() { }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setStorage(final Storage storage) {
+        this.storage = storage;
+    }
 }

@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.BytesRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIteratorFactory;

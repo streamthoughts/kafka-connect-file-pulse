@@ -25,7 +25,6 @@ import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.Storage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import org.slf4j.Logger;
@@ -60,6 +59,39 @@ public class AmazonS3Storage implements Storage {
     @Override
     public boolean exists(final URI objectURI) {
         return doesS3ObjectExist(S3BucketKey.fromURI(objectURI));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean delete(final URI objectURI) {
+        final S3BucketKey s3Object = S3BucketKey.fromURI(objectURI);
+        try {
+            this.s3Client.deleteObject(s3Object.bucketName(), s3Object.key());
+            return true;
+        } catch (AmazonServiceException e) {
+            LOG.error(
+                    "Failed to remove object from Amazon S3. "
+                    + "Error occurred while processing the request for {}: {}",
+                    s3Object.toURI(),
+                    e
+            );
+        } catch (SdkClientException e) {
+            LOG.error(
+                    "Failed to remove object from Amazon S3. "
+                    + "Error occurred while making the request or handling the response for {}: {}",
+                    s3Object.toURI(),
+                    e
+            );
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean move(final URI source, final URI dest) {
+        throw new UnsupportedOperationException();
     }
 
     /**

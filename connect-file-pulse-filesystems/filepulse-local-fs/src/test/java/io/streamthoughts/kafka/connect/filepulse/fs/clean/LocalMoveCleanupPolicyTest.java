@@ -16,8 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.fs;
+package io.streamthoughts.kafka.connect.filepulse.fs.clean;
 
+import io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListingConfig;
+import io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanupPolicy;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalFileStorage;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
@@ -36,7 +39,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class MoveCleanupPolicyTest {
+public class LocalMoveCleanupPolicyTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -64,15 +67,15 @@ public class MoveCleanupPolicyTest {
 
         config = new HashMap<>();
 
-        config.put(MoveCleanupPolicy.MoveFileCleanerConfig.CLEANER_OUTPUT_SUCCEED_PATH_CONFIG, succeedDirectory.getAbsolutePath());
-        config.put(MoveCleanupPolicy.MoveFileCleanerConfig.CLEANER_OUTPUT_FAILED_PATH_CONFIG, failedDirectory.getAbsolutePath());
-        config.put(LocalFSDirectoryListingConfig.FS_SCAN_DIRECTORY_PATH_CONFIG, folder.getRoot().getAbsolutePath());
+        config.put(LocalMoveCleanupPolicy.MoveFileCleanerConfig.CLEANER_OUTPUT_SUCCEED_PATH_CONFIG, succeedDirectory.getAbsolutePath());
+        config.put(LocalMoveCleanupPolicy.MoveFileCleanerConfig.CLEANER_OUTPUT_FAILED_PATH_CONFIG, failedDirectory.getAbsolutePath());
+        config.put(LocalFSDirectoryListingConfig.FS_LISTING_DIRECTORY_PATH, folder.getRoot().getAbsolutePath());
     }
 
     @Test
     public void should_move_file_given_completed_source() {
-
-        MoveCleanupPolicy policy = new MoveCleanupPolicy();
+        final LocalMoveCleanupPolicy policy = new LocalMoveCleanupPolicy();
+        policy.setStorage(new LocalFileStorage());
         policy.configure(config);
 
         Boolean result = policy.apply(source.withStatus(FileObjectStatus.COMPLETED));
@@ -82,8 +85,8 @@ public class MoveCleanupPolicyTest {
 
     @Test
     public void should_move_file_given_failed_source() {
-
-        MoveCleanupPolicy policy = new MoveCleanupPolicy();
+        final LocalMoveCleanupPolicy policy = new LocalMoveCleanupPolicy();
+        policy.setStorage(new LocalFileStorage());
         policy.configure(config);
 
         Boolean result = policy.apply(source.withStatus(FileObjectStatus.FAILED));

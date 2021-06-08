@@ -24,9 +24,10 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.StorageException;
 import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.Storage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +42,8 @@ import java.util.Optional;
  * A {@link Storage} implementation for Google Cloud Storage.
  */
 public class GcsStorage implements Storage {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GcsStorage.class);
 
     public static final String GCS_URI_SCHEME = "gcs://";
     public static final String URI_SEPARATOR = "/";
@@ -76,6 +79,27 @@ public class GcsStorage implements Storage {
         } catch (IOException e) {
             throw new ConnectFilePulseException("Failed to check if Blob exists for uri: " + uri, e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean delete(final URI uri) {
+        try {
+            return getBlob(uri).delete();
+        } catch (IOException e) {
+            LOG.error("Failed to delete Blob for uri: {}", uri, e);
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean move(final URI source, final URI dest) {
+        throw new UnsupportedOperationException();
     }
 
     /**

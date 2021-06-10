@@ -69,5 +69,19 @@
       </description>
     </item>
     
+    <item>
+      <title>Docs: Docs Release v2.0.x</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/v2-0/docs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/v2-0/docs/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This section is where the user documentation for Connect File Pulse lives - all the information that users need to understand and successfully use Connect File Pulse.&lt;/p&gt;
+
+      </description>
+    </item>
+    
   </channel>
 </rss>

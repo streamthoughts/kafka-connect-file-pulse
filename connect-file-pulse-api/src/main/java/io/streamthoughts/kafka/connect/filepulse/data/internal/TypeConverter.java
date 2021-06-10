@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Class which can be used to convert an object to a specific type.
@@ -115,8 +116,12 @@ public class TypeConverter implements Serializable {
     public static Float getFloat(final Object value) throws IllegalArgumentException {
         Objects.requireNonNull(value, "value can't be null");
 
-        if (value instanceof String && isNumber((String) value)) {
-            return new BigDecimal(value.toString()).floatValue();
+        if (value instanceof String) {
+            return getBigDecimal(value)
+                    .map(BigDecimal::floatValue)
+                    .orElseThrow(() ->
+                            new DataException(String.format("Cannot parse 64-bits double content from \"%s\"", value))
+                    );
         }
         if (value instanceof Number) {
             Number number = (Number) value;
@@ -125,11 +130,23 @@ public class TypeConverter implements Serializable {
         throw new DataException(String.format("Cannot parse 32-bits float content from \"%s\"", value));
     }
 
+    private static Optional<BigDecimal> getBigDecimal(final Object value) {
+        try {
+            return Optional.of(new BigDecimal(value.toString().replace(",", ".")));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
     public static Double getDouble(final Object value) throws IllegalArgumentException {
         Objects.requireNonNull(value, "value can't be null");
 
-        if (value instanceof String && isNumber((String) value)) {
-            return new BigDecimal(value.toString()).doubleValue();
+        if (value instanceof String) {
+            return getBigDecimal(value)
+               .map(BigDecimal::doubleValue)
+               .orElseThrow(() ->
+                       new DataException(String.format("Cannot parse 64-bits double content from \"%s\"", value))
+               );
         }
         if (value instanceof Number) {
             Number number = (Number) value;
@@ -202,12 +219,10 @@ public class TypeConverter implements Serializable {
             return null;
         }
 
-        try {
-            return new BigDecimal(result.replace(",", "."));
-        } catch (NumberFormatException e) {
-            throw new DataException(
-                    String.format("Cannot parse decimal content from \"%s\"", value));
-        }
+        return getBigDecimal(value)
+                .orElseThrow(() ->
+                        new DataException(String.format("Cannot parse decimal content from \"%s\"", value))
+                );
     }
 
     private static boolean isNumber(final String s) {

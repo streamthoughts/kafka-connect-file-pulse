@@ -503,7 +503,7 @@ file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
     <item>
       <title>Docs: File Readers</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link>
-      <pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid>
       <description>
@@ -600,12 +600,12 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;xbytesarrayinputreader&#34;&gt;xBytesArrayInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RBytesArrayInputReader&lt;/code&gt;s create a single byte array record from a source file.&lt;/p&gt;
-&lt;h2 id=&#34;xavrofileinputreader&#34;&gt;xAvroFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RAvroFileInputReader&lt;/code&gt;s can be used to read Avro files.&lt;/p&gt;
-&lt;h2 id=&#34;xxmlfileinputreader&#34;&gt;xXMLFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RXMLFileInputReader&lt;/code&gt;s can be used to read XML files.&lt;/p&gt;
+&lt;h2 id=&#34;xxxbytesarrayinputreader&#34;&gt;XxxBytesArrayInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;BytesArrayInputReader&lt;/code&gt;s create a single byte array record from a source file.&lt;/p&gt;
+&lt;h2 id=&#34;xxxavrofileinputreader&#34;&gt;XxxAvroFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;AvroFileInputReader&lt;/code&gt;s can be used to read Avro files.&lt;/p&gt;
+&lt;h2 id=&#34;xxxxmlfileinputreader&#34;&gt;XxxXMLFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;XMLFileInputReader&lt;/code&gt;s can be used to read XML files.&lt;/p&gt;
 &lt;h3 id=&#34;configuration1&#34;&gt;Configuration&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -816,13 +816,13 @@ For example, they can be used to split one input message to multiple messages or
     <item>
       <title>Docs: Accessing Data and Metadata</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</link>
-      <pubDate>Wed, 11 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</guid>
       <description>
         
         
-        &lt;p&gt;Some filters (e.g : &lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter&#34;&gt;AppendFilter&lt;/a&gt; can be configured using &lt;em&gt;Simple Connect Expression Language&lt;/em&gt;.&lt;/p&gt;
+        &lt;p&gt;Some filters (e.g : &lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter&#34;&gt;AppendFilter&lt;/a&gt;) can be configured using &lt;em&gt;Simple Connect Expression Language&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Simple Connect Expression Language&lt;/em&gt; (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.&lt;/p&gt;
 &lt;p&gt;The syntaxes to define an expression are of the form : &lt;code&gt;&amp;lt;expression string&amp;gt;&lt;/code&gt; or &lt;code&gt;&amp;quot;{{ &amp;lt;expression string&amp;gt; }}&amp;quot;&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;ScEL supports the following capabilities :&lt;/p&gt;
@@ -1421,7 +1421,7 @@ filters.AppendError.value={{ $error.message }}
     <item>
       <title>Docs: Processing Filters</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link>
-      <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</guid>
       <description>
@@ -1463,12 +1463,12 @@ filters.AppendError.value={{ $error.message }}
 &lt;td&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;a href=&#34;#excludeFilter&#34;&gt;ExcludeFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#excludefilter&#34;&gt;ExcludeFilter&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;Excludes one or more fields from the input record.&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;v1.4.0&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;a href=&#34;#explodeFilter&#34;&gt;ExplodeFilter&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#explodefilter&#34;&gt;ExplodeFilter&lt;/a&gt;&lt;/td&gt;
 &lt;td&gt;Explodes an array or list field into separate records.&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;v1.4.0&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
@@ -2495,13 +2495,13 @@ you can used one of the following override prefixes :&lt;/p&gt;
     <item>
       <title>Docs: File Cleanup Policies</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</link>
-      <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</guid>
       <description>
         
         
-        &lt;p&gt;The connector can be configured with a specific &lt;a href=&#34;connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/clean/FileCleanupPolicy.java&#34;&gt;FileCleanupPolicy&lt;/a&gt; implementation.&lt;/p&gt;
+        &lt;p&gt;The connector can be configured with a specific &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/clean/FileCleanupPolicy.java&#34;&gt;FileCleanupPolicy&lt;/a&gt; implementation.&lt;/p&gt;
 &lt;p&gt;The cleanup policy can be configured with the below connect property :&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -2524,23 +2524,26 @@ you can used one of the following override prefixes :&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h2 id=&#34;available-cleanup-policies&#34;&gt;Available Cleanup Policies&lt;/h2&gt;
-&lt;h3 id=&#34;deletecleanpolicy&#34;&gt;DeleteCleanPolicy&lt;/h3&gt;
+&lt;h3 id=&#34;deletecleanpolicy&#34;&gt;&lt;code&gt;DeleteCleanPolicy&lt;/code&gt;&lt;/h3&gt;
 &lt;p&gt;This policy deletes all files regardless of their final status (completed or failed).&lt;/p&gt;
 &lt;p&gt;To enable this policy, the property &lt;code&gt;fs.cleanup.policy.class&lt;/code&gt; must configured to :&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanupPolicy
-&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;configuration&#34;&gt;Configuration&lt;/h4&gt;
-&lt;p&gt;no configuration&lt;/p&gt;
-&lt;h3 id=&#34;logcleanpolicy&#34;&gt;LogCleanPolicy&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.clean.DeleteCleanupPolicy
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;logcleanpolicy&#34;&gt;&lt;code&gt;LogCleanPolicy&lt;/code&gt;&lt;/h3&gt;
 &lt;p&gt;This policy prints to logs some information after files completion.&lt;/p&gt;
 &lt;p&gt;To enable this policy, the property &lt;code&gt;fs.cleanup.policy.class&lt;/code&gt; must configured to :&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy 
-&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;configuration1&#34;&gt;Configuration&lt;/h4&gt;
-&lt;p&gt;no configuration&lt;/p&gt;
-&lt;h3 id=&#34;movecleanpolicy&#34;&gt;MoveCleanPolicy&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.clean.LogCleanupPolicy 
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;localmovecleanpolicy&#34;&gt;&lt;code&gt;LocalMoveCleanPolicy&lt;/code&gt;&lt;/h3&gt;
 &lt;p&gt;This policy attempts to move atomically files to configurable target directories.&lt;/p&gt;
 &lt;p&gt;To enable this policy, the property &lt;code&gt;fs.cleanup.policy.class&lt;/code&gt; must configured to :&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanupPolicy
-&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;configuration2&#34;&gt;Configuration&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanPolicy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Usage&lt;/h4&gt;
+This policy only works when using the &lt;code&gt;LocalFSDirectoryListing&lt;/code&gt;.
+&lt;/div&gt;
+
+&lt;h4 id=&#34;configuration&#34;&gt;Configuration&lt;/h4&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;

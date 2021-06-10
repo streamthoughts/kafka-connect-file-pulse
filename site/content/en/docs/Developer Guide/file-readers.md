@@ -1,5 +1,5 @@
 ---
-date: 2021-05-12
+date: 2021-06-10
 title: "File Readers"
 linkTitle: "File Readers"
 weight: 40
@@ -64,17 +64,17 @@ This reader creates one record per row. It should be used for reading delimited 
 |`skip.footers` | The number of rows to be skipped at the end of file. | `Integer` | `0` | Medium | 
 |`read.max.wait.ms` | The maximum time to wait in milliseconds for more bytes after hitting end of file. | `Long` | `0` | Medium | 
 
-## xBytesArrayInputReader
+## XxxBytesArrayInputReader
 
-The `<PREFIX>RBytesArrayInputReader`s create a single byte array record from a source file.
+The `<PREFIX>BytesArrayInputReader`s create a single byte array record from a source file.
 
-## xAvroFileInputReader
+## XxxAvroFileInputReader
 
-The `<PREFIX>RAvroFileInputReader`s can be used to read Avro files.
+The `<PREFIX>AvroFileInputReader`s can be used to read Avro files.
 
-## xXMLFileInputReader
+## XxxXMLFileInputReader
 
-The `<PREFIX>RXMLFileInputReader`s can be used to read XML files.
+The `<PREFIX>XMLFileInputReader`s can be used to read XML files.
 
 ### Configuration
 

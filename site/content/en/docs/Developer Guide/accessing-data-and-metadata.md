@@ -1,5 +1,5 @@
 ---
-date: 2020-11-11
+date: 2021-06-10
 title: "Accessing Data and Metadata"
 linkTitle: "Accessing Data and Metadata"
 weight: 60
@@ -7,7 +7,7 @@ description: >
   The commons configuration for Connect File Pulse.
 ---
 
-Some filters (e.g : [AppendFilter](/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter) can be configured using *Simple Connect Expression Language*.
+Some filters (e.g : [AppendFilter](/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter)) can be configured using *Simple Connect Expression Language*.
 
 *Simple Connect Expression Language* (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.
 

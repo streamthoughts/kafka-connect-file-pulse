@@ -1,5 +1,5 @@
 ---
-date: 2020-09-10
+date: 2021-06-10
 title: "Processing Filters"
 linkTitle: "Processing Filters"
 weight: 80
@@ -16,8 +16,8 @@ These filters are available for use with Kafka Connect File Pulse:
 | [DateFilter](#datefilter)  | Converts a field's value containing a date to a unix epoch time | |
 | [DelimitedRowFilter](#delimitedrowfilter)  | Parses a message field's value containing columns delimited by a separator into a struct | |
 | [DropFilter](#dropfilter)  | Drops messages satisfying a specific condition without throwing exception. | |
-| [ExcludeFilter](#excludeFilter)  | Excludes one or more fields from the input record. | `v1.4.0` |
-| [ExplodeFilter](#explodeFilter)  | Explodes an array or list field into separate records. | `v1.4.0` |
+| [ExcludeFilter](#excludefilter)  | Excludes one or more fields from the input record. | `v1.4.0` |
+| [ExplodeFilter](#explodefilter)  | Explodes an array or list field into separate records. | `v1.4.0` |
 | [FailFilter](#failfilter)  | Throws an exception when a message satisfy a specific condition | |
 | [GrokFilter](#grokfilter)  | Parses an unstructured message field's value to a struct by combining Grok patterns | |
 | [GroupRowFilter](#grouprowfilter)  | Regroups multiple following messages into a single message by composing a grouping key| |

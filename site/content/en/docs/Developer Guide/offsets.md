@@ -1,7 +1,7 @@
 ---
-date: 2020-05-21
-title: "Identifying files"
-linkTitle: "Identifying files"
+date: 2021-06-10
+title: "Identifying Files"
+linkTitle: "Identifying Files"
 weight: 45
 description: >
   Learn how Kafka Connect FilePulse uniquely identifies files.

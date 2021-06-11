@@ -22,6 +22,7 @@ $colors:
 $dark: #121b28 !default;
 $blue: $color1 !default;
 $blue-light: $color2 !default;
+$green-light: #26b793;
 
 $gray: #6C757D !default;
 $gray-light: #F8F9FA !default;
@@ -131,6 +132,10 @@ footer.bg-dark {
 .p-x-25 {
   padding-left: 25px;
   padding-right: 25px;
+}
+
+.td-box a, .td-content a {
+    color: $color4;
 }
 
 #main-features {

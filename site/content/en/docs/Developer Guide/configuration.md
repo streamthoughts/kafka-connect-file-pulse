@@ -43,6 +43,8 @@ These configurations are described in detail in subsequent chapters.
 
 **Properties for uniquely identifying object files and records ([FileReaders](/kafka-connect-file-pulse/docs/developer-guide/file-readers/))**
 
+| Configuration |   Description |   Type    |   Default |   Importance  |
+| --------------| --------------|-----------| --------- | ------------- |
 | `offset.policy.class` | Class which is used to determine the source partition and offset that uniquely identify a input record | `class` | *io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy* | HIGH |
 
 **Properties for synchronizing Connector and Tasks**
@@ -61,6 +63,8 @@ These configurations are described in detail in subsequent chapters.
 | --------------| --------------|-----------| --------- | ------------- |
 | `tasks.file.status.storage.topic` | Name of the internal topic used by tasks and connector to report and monitor file progression. | class | *connect-file-pulse-status* | HIGH |
 | `tasks.file.status.storage.bootstrap.servers` | A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster. | string | *-* | HIGH |
+| `tasks.file.status.storage.topic.partitions` | The number of partitions to be used for the status storage topic. | int | *-* | LOW |
+| `tasks.file.status.storage.topic.replication.factor` | The replication factor to be used for the status storage topic. | float | *-* | LOW |
 
 ## Examples
 

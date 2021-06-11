@@ -4,19 +4,23 @@ title: "File Readers"
 linkTitle: "File Readers"
 weight: 40
 description: >
-  Learn how to configure Connect FIlePulse for a specific file format.
+  Learn how to configure Connect FilePulse for a specific file format.
 ---
 
 The `FilePulseSourceTask` uses the [FileInputReader](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java).
 configured in the connector's configuration for reading object files (i.e., `tasks.reader.class`).
 
-
-
 Currently, Connect FilePulse provides the following `FileInputReader` implementations : 
 
 **Amazon S3**
 
-package: `io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.reader`
+package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
+
+* `AmazonS3AvroFileInputReader`
+* `AmazonS3BytesFileInputReader`
+* `AmazonS3RowFileInputReader`
+* `AmazonS3XMLFileInputReader`
+* `AmazonS3MetadataFileInputReader`
 
 **Azure Blob Storage**
 
@@ -84,7 +88,6 @@ The `<PREFIX>XMLFileInputReader`s can be used to read XML files.
 |`xpath.result.type` | The expected result type for the XPath expression in [NODESET, STRING] | `String` | `NODESET` | High | 
 |`force.array.on.fields` | The comma-separated list of fields for which an array-type must be forced | `List` | `-` | High |                                                
 
-## xMetadataFileInputReader
+## XxxMetadataFileInputReader
 
-The `FileInputMetadataReader`s can be used to send a single record per file containing metadata (i.e: `name`, `path`, `hash`, `lastModified`, `size`, etc)
-s
+The `FileInputMetadataReader`s can be used to send a single record per file containing metadata, i.e.: `name`, `path`, `hash`, `lastModified`, `size`, etc.

@@ -577,7 +577,26 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Properties for uniquely identifying object files and records (&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/&#34;&gt;FileReaders&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;| &lt;code&gt;offset.policy.class&lt;/code&gt; | Class which is used to determine the source partition and offset that uniquely identify a input record | &lt;code&gt;class&lt;/code&gt; | &lt;em&gt;io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em&gt; | HIGH |&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;offset.policy.class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Class which is used to determine the source partition and offset that uniquely identify a input record&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Properties for synchronizing Connector and Tasks&lt;/strong&gt;&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -630,8 +649,28 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;HIGH&lt;/td&gt;
 &lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tasks.file.status.storage.topic.partitions&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The number of partitions to be used for the status storage topic.&lt;/td&gt;
+&lt;td&gt;int&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;LOW&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tasks.file.status.storage.topic.replication.factor&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The replication factor to be used for the status storage topic.&lt;/td&gt;
+&lt;td&gt;float&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;LOW&lt;/td&gt;
+&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;h3 id=&#34;override-internal-consumerproducer-configuration&#34;&gt;Override Internal Consumer/Producer Configuration&lt;/h3&gt;
+&lt;p&gt;To override the default configuration for the internal consumer and producer clients used for reporting file status, you can use one of the following override prefixes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;tasks.file.status.storage.consumer.&amp;lt;consumer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tasks.file.status.storage.producer.&amp;lt;producer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;examples&#34;&gt;Examples&lt;/h2&gt;
 &lt;p&gt;Some configuration examples are available &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
@@ -770,7 +809,26 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Properties for uniquely identifying object files and records (&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/&#34;&gt;FileReaders&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;| &lt;code&gt;offset.policy.class&lt;/code&gt; | Class which is used to determine the source partition and offset that uniquely identify a input record | &lt;code&gt;class&lt;/code&gt; | &lt;em&gt;io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em&gt; | HIGH |&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;offset.policy.class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Class which is used to determine the source partition and offset that uniquely identify a input record&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Properties for synchronizing Connector and Tasks&lt;/strong&gt;&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -822,6 +880,20 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;td&gt;string&lt;/td&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tasks.file.status.storage.topic.partitions&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The number of partitions to be used for the status storage topic.&lt;/td&gt;
+&lt;td&gt;int&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;LOW&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tasks.file.status.storage.topic.replication.factor&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The replication factor to be used for the status storage topic.&lt;/td&gt;
+&lt;td&gt;float&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;LOW&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -2247,7 +2319,14 @@ file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
 configured in the connector&#39;s configuration for reading object files (i.e., &lt;code&gt;tasks.reader.class&lt;/code&gt;).&lt;/p&gt;
 &lt;p&gt;Currently, Connect FilePulse provides the following &lt;code&gt;FileInputReader&lt;/code&gt; implementations :&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Amazon S3&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.reader&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3AvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3BytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3RowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3XMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3MetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;Azure Blob Storage&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -2375,9 +2454,8 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;xmetadatafileinputreader&#34;&gt;xMetadataFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata (i.e: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc)
-s&lt;/p&gt;
+&lt;h2 id=&#34;xxxmetadatafileinputreader&#34;&gt;XxxMetadataFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata, i.e.: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc.&lt;/p&gt;
 
       </description>
     </item>
@@ -2395,7 +2473,14 @@ s&lt;/p&gt;
 configured in the connector&#39;s configuration for reading object files (i.e., &lt;code&gt;tasks.reader.class&lt;/code&gt;).&lt;/p&gt;
 &lt;p&gt;Currently, Connect FilePulse provides the following &lt;code&gt;FileInputReader&lt;/code&gt; implementations :&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Amazon S3&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.reader&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3AvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3BytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3RowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3XMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3MetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;Azure Blob Storage&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -2523,9 +2608,8 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;xmetadatafileinputreader&#34;&gt;xMetadataFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata (i.e: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc)
-s&lt;/p&gt;
+&lt;h2 id=&#34;xxxmetadatafileinputreader&#34;&gt;XxxMetadataFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata, i.e.: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc.&lt;/p&gt;
 
       </description>
     </item>
@@ -2743,11 +2827,11 @@ This reader creates one record per row. It should be used for reading delimited 
     </item>
     
     <item>
-      <title>Docs: Identifying files</title>
-      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/offsets/</link>
-      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      <title>Docs: Identifying Files</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</link>
+      <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/offsets/</guid>
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</guid>
       <description>
         
         
@@ -2781,10 +2865,10 @@ used by Kafka Connect to persist the position of the connector for each file (i.
     
     <item>
       <title>Docs: Identifying files</title>
-      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</link>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/offsets/</link>
       <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</guid>
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/offsets/</guid>
       <description>
         
         

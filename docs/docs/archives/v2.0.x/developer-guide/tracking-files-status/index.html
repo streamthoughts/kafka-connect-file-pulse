@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/tracking-files-status/" />
-<meta property="article:published_time" content="2021-05-19T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-06-10T22:54:08+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2021-06-11T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-06-11T18:54:50+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Tracking File Status">
 <meta itemprop="description" content="Learn how Connect FilePulse tracks the processing of each input file.
 ">
-<meta itemprop="datePublished" content="2021-05-19T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-06-10T22:54:08&#43;02:00" />
-<meta itemprop="wordCount" content="367">
+<meta itemprop="datePublished" content="2021-06-11T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-06-11T18:54:50&#43;02:00" />
+<meta itemprop="wordCount" content="288">
 
 
 
@@ -47,8 +47,8 @@
 
 
 
-<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.869b6c4539c54a4f00973a4e8871e11b904935560f012455b9e74f63e807ecd2.css" as="style">
-<link href="/kafka-connect-file-pulse/scss/main.min.869b6c4539c54a4f00973a4e8871e11b904935560f012455b9e74f63e807ecd2.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.7900d51f400e7bb12961e6cf406f157fb843afb3016510b9b96fb63197caa1d8.css" as="style">
+<link href="/kafka-connect-file-pulse/scss/main.min.7900d51f400e7bb12961e6cf406f157fb843afb3016510b9b96fb63197caa1d8.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -86,6 +86,16 @@
 				
 				
 				<a class="nav-link active" href="/kafka-connect-file-pulse/docs/" ><span class="active">Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kafka-connect-file-pulse/blog/" ><span>Blog</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -309,7 +319,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-offsets" href="/kafka-connect-file-pulse/docs/developer-guide/offsets/">Identifying files</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-offsets" href="/kafka-connect-file-pulse/docs/developer-guide/offsets/">Identifying Files</a>
       
       
       
@@ -1897,15 +1907,6 @@
 
 
 
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#the-message-format">The message format</a></li>
-    <li><a href="#list-of-file-status">List of File Status</a></li>
-    <li><a href="#configure-kafka-reporter">Configure Kafka reporter</a></li>
-    <li><a href="#override-internal-consumerproducer-configuration">Override Internal Consumer/Producer Configuration</a></li>
-  </ul>
-</nav>
-
 
 
           </div>
@@ -1972,7 +1973,7 @@
 	<h1>Tracking File Status</h1>
     <div class="lead">Learn how Connect FilePulse tracks the processing of each input file.</div>
 	       
-	<p>Connect File Pulse use an internal topic (<em>default:<code>connect-file-pulse-status</code></em>) to track the current state of files being processed.
+	<p>Connect File Pulse uses an internal topic (<em>default:<code>connect-file-pulse-status</code></em>) to track the current state of files being processed.
 This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.</p>
 <h2 id="the-message-format">The message format</h2>
 <p>Status event are publish into JSON with the following schema :</p>
@@ -2026,55 +2027,20 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
     }
 }
 </code></pre><h2 id="list-of-file-status">List of File Status</h2>
-<p>Source file can be in the following states :</p>
+<p>An object file can be in the following states :</p>
 <ul>
-<li>[1] <strong>SCHEDULED</strong> :  The file has been scheduled by the connector monitoring thread.</li>
+<li>[1] <strong>SCHEDULED</strong> : The file has been scheduled by the connector monitoring thread.</li>
 <li>[2] <strong>INVALID</strong> :  The file can't be scheduled because it is not readable.</li>
-<li>[2] <strong>STARTED</strong> : The file is starting to be read by a Task.</li>
-<li>[3] <strong>READING</strong> : The file is currently being read by a task. An event is wrote into Kafka while committing offsets.</li>
+<li>[2] <strong>STARTED</strong> : The file is starting to be read by a task.</li>
+<li>[3] <strong>READING</strong> : The task is still processing the file. An event is wrote into Kafka while committing offsets.</li>
 <li>[4] <strong>FAILED</strong> : The file processing failed.</li>
-<li>[4] <strong>COMPLETED</strong> : The file processing is completed.</li>
-<li>[5] <strong>CLEANED</strong> :  The file has been successfully clean up (depending of the configured strategy).</li>
-</ul>
-<h2 id="configure-kafka-reporter">Configure Kafka reporter</h2>
-<table>
-<thead>
-<tr>
-<th>Configuration</th>
-<th>Description</th>
-<th>Type</th>
-<th>Default</th>
-<th>Importance</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>tasks.file.status.storage.topic</code></td>
-<td>Name of the internal topic used by tasks and connector to report and monitor file progression.</td>
-<td>class</td>
-<td><em>connect-file-pulse-status</em></td>
-<td>high</td>
-</tr>
-<tr>
-<td><code>tasks.file.status.storage.bootstrap.servers</code></td>
-<td>Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector).</td>
-<td>string</td>
-<td><em>-</em></td>
-<td>high</td>
-</tr>
-</tbody>
-</table>
-<h2 id="override-internal-consumerproducer-configuration">Override Internal Consumer/Producer Configuration</h2>
-<p>To override the default configuration for the internal consumer and producer clients used for reporting states,
-you can used one of the following override prefixes :</p>
-<ul>
-<li><code>tasks.file.status.storage.consumer.&lt;consumer_property&gt;</code></li>
-<li><code>tasks.file.status.storage.producer.&lt;producer_property&gt;</code></li>
+<li>[4] <strong>COMPLETED</strong> : The task completes the processing of the file.</li>
+<li>[5] <strong>CLEANED</strong> :  The file has been successfully clean up by the connector (depends on the configured policy).</li>
 </ul>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified June 10, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0029c79dd4986463404f3bdb4c319e184ec55a65">docs(site): update for release 2.0.0 (0029c79)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified June 11, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4424faf873229134658b788540ac54de0dbb88c0">fix(site): fix documentation (4424faf)</a>
 </div>
 </div>
 

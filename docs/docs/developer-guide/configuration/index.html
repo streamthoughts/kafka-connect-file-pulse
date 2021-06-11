@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/" />
 <meta property="article:published_time" content="2021-05-12T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-05-19T23:43:45+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2021-06-11T18:54:50+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Configuration">
 <meta itemprop="description" content="The common configurations for deploying a File Pulse connector.
 ">
 <meta itemprop="datePublished" content="2021-05-12T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-05-19T23:43:45&#43;02:00" />
-<meta itemprop="wordCount" content="340">
+<meta itemprop="dateModified" content="2021-06-11T18:54:50&#43;02:00" />
+<meta itemprop="wordCount" content="370">
 
 
 
@@ -47,8 +47,8 @@
 
 
 
-<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.869b6c4539c54a4f00973a4e8871e11b904935560f012455b9e74f63e807ecd2.css" as="style">
-<link href="/kafka-connect-file-pulse/scss/main.min.869b6c4539c54a4f00973a4e8871e11b904935560f012455b9e74f63e807ecd2.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/kafka-connect-file-pulse/scss/main.min.7900d51f400e7bb12961e6cf406f157fb843afb3016510b9b96fb63197caa1d8.css" as="style">
+<link href="/kafka-connect-file-pulse/scss/main.min.7900d51f400e7bb12961e6cf406f157fb843afb3016510b9b96fb63197caa1d8.css" rel="stylesheet" integrity="">
 
 
 <script
@@ -86,6 +86,16 @@
 				
 				
 				<a class="nav-link active" href="/kafka-connect-file-pulse/docs/" ><span class="active">Documentation</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/kafka-connect-file-pulse/blog/" ><span>Blog</span></a>
 			</li>
 			
 			<li class="nav-item mr-4 mb-2 mb-lg-0">
@@ -309,7 +319,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-offsets" href="/kafka-connect-file-pulse/docs/developer-guide/offsets/">Identifying files</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-docs-developer-guide-offsets" href="/kafka-connect-file-pulse/docs/developer-guide/offsets/">Identifying Files</a>
       
       
       
@@ -2066,7 +2076,26 @@ These configurations are described in detail in subsequent chapters.</p>
 </tbody>
 </table>
 <p><strong>Properties for uniquely identifying object files and records (<a href="/kafka-connect-file-pulse/docs/developer-guide/file-readers/">FileReaders</a>)</strong></p>
-<p>| <code>offset.policy.class</code> | Class which is used to determine the source partition and offset that uniquely identify a input record | <code>class</code> | <em>io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy</em> | HIGH |</p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>offset.policy.class</code></td>
+<td>Class which is used to determine the source partition and offset that uniquely identify a input record</td>
+<td><code>class</code></td>
+<td><em>io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy</em></td>
+<td>HIGH</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Properties for synchronizing Connector and Tasks</strong></p>
 <table>
 <thead>
@@ -2119,6 +2148,20 @@ These configurations are described in detail in subsequent chapters.</p>
 <td><em>-</em></td>
 <td>HIGH</td>
 </tr>
+<tr>
+<td><code>tasks.file.status.storage.topic.partitions</code></td>
+<td>The number of partitions to be used for the status storage topic.</td>
+<td>int</td>
+<td><em>-</em></td>
+<td>LOW</td>
+</tr>
+<tr>
+<td><code>tasks.file.status.storage.topic.replication.factor</code></td>
+<td>The replication factor to be used for the status storage topic.</td>
+<td>float</td>
+<td><em>-</em></td>
+<td>LOW</td>
+</tr>
 </tbody>
 </table>
 <h2 id="examples">Examples</h2>
@@ -2126,7 +2169,7 @@ These configurations are described in detail in subsequent chapters.</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 19, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5c88877905711ceefd99f9506324db92dac5e64d">feat(plugin): add InMemoryStateBackingStore for tracking status of file objects (#138) (5c88877)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified June 11, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4424faf873229134658b788540ac54de0dbb88c0">fix(site): fix documentation (4424faf)</a>
 </div>
 </div>
 

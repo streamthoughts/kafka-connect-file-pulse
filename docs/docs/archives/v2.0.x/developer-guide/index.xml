@@ -185,7 +185,26 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Properties for uniquely identifying object files and records (&lt;a href=&#34;https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/&#34;&gt;FileReaders&lt;/a&gt;)&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;| &lt;code&gt;offset.policy.class&lt;/code&gt; | Class which is used to determine the source partition and offset that uniquely identify a input record | &lt;code&gt;class&lt;/code&gt; | &lt;em&gt;io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em&gt; | HIGH |&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;offset.policy.class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Class which is used to determine the source partition and offset that uniquely identify a input record&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;HIGH&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Properties for synchronizing Connector and Tasks&lt;/strong&gt;&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -238,8 +257,28 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;HIGH&lt;/td&gt;
 &lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tasks.file.status.storage.topic.partitions&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The number of partitions to be used for the status storage topic.&lt;/td&gt;
+&lt;td&gt;int&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;LOW&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tasks.file.status.storage.topic.replication.factor&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The replication factor to be used for the status storage topic.&lt;/td&gt;
+&lt;td&gt;float&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;LOW&lt;/td&gt;
+&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;h3 id=&#34;override-internal-consumerproducer-configuration&#34;&gt;Override Internal Consumer/Producer Configuration&lt;/h3&gt;
+&lt;p&gt;To override the default configuration for the internal consumer and producer clients used for reporting file status, you can use one of the following override prefixes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;tasks.file.status.storage.consumer.&amp;lt;consumer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tasks.file.status.storage.producer.&amp;lt;producer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;examples&#34;&gt;Examples&lt;/h2&gt;
 &lt;p&gt;Some configuration examples are available &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
@@ -513,7 +552,14 @@ file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
 configured in the connector&#39;s configuration for reading object files (i.e., &lt;code&gt;tasks.reader.class&lt;/code&gt;).&lt;/p&gt;
 &lt;p&gt;Currently, Connect FilePulse provides the following &lt;code&gt;FileInputReader&lt;/code&gt; implementations :&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Amazon S3&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.aws.s3.reader&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3AvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3BytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3RowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3XMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3MetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;Azure Blob Storage&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -641,9 +687,8 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;xmetadatafileinputreader&#34;&gt;xMetadataFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata (i.e: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc)
-s&lt;/p&gt;
+&lt;h2 id=&#34;xxxmetadatafileinputreader&#34;&gt;XxxMetadataFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata, i.e.: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc.&lt;/p&gt;
 
       </description>
     </item>
@@ -2383,13 +2428,13 @@ filters.MySplitterFilter.separator=,
     <item>
       <title>Docs: Tracking File Status</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/tracking-files-status/</link>
-      <pubDate>Wed, 19 May 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 11 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/tracking-files-status/</guid>
       <description>
         
         
-        &lt;p&gt;Connect File Pulse use an internal topic (&lt;em&gt;default:&lt;code&gt;connect-file-pulse-status&lt;/code&gt;&lt;/em&gt;) to track the current state of files being processed.
+        &lt;p&gt;Connect File Pulse uses an internal topic (&lt;em&gt;default:&lt;code&gt;connect-file-pulse-status&lt;/code&gt;&lt;/em&gt;) to track the current state of files being processed.
 This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.&lt;/p&gt;
 &lt;h2 id=&#34;the-message-format&#34;&gt;The message format&lt;/h2&gt;
 &lt;p&gt;Status event are publish into JSON with the following schema :&lt;/p&gt;
@@ -2443,50 +2488,15 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
     }
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;list-of-file-status&#34;&gt;List of File Status&lt;/h2&gt;
-&lt;p&gt;Source file can be in the following states :&lt;/p&gt;
+&lt;p&gt;An object file can be in the following states :&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;[1] &lt;strong&gt;SCHEDULED&lt;/strong&gt; :  The file has been scheduled by the connector monitoring thread.&lt;/li&gt;
+&lt;li&gt;[1] &lt;strong&gt;SCHEDULED&lt;/strong&gt; : The file has been scheduled by the connector monitoring thread.&lt;/li&gt;
 &lt;li&gt;[2] &lt;strong&gt;INVALID&lt;/strong&gt; :  The file can&#39;t be scheduled because it is not readable.&lt;/li&gt;
-&lt;li&gt;[2] &lt;strong&gt;STARTED&lt;/strong&gt; : The file is starting to be read by a Task.&lt;/li&gt;
-&lt;li&gt;[3] &lt;strong&gt;READING&lt;/strong&gt; : The file is currently being read by a task. An event is wrote into Kafka while committing offsets.&lt;/li&gt;
+&lt;li&gt;[2] &lt;strong&gt;STARTED&lt;/strong&gt; : The file is starting to be read by a task.&lt;/li&gt;
+&lt;li&gt;[3] &lt;strong&gt;READING&lt;/strong&gt; : The task is still processing the file. An event is wrote into Kafka while committing offsets.&lt;/li&gt;
 &lt;li&gt;[4] &lt;strong&gt;FAILED&lt;/strong&gt; : The file processing failed.&lt;/li&gt;
-&lt;li&gt;[4] &lt;strong&gt;COMPLETED&lt;/strong&gt; : The file processing is completed.&lt;/li&gt;
-&lt;li&gt;[5] &lt;strong&gt;CLEANED&lt;/strong&gt; :  The file has been successfully clean up (depending of the configured strategy).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;configure-kafka-reporter&#34;&gt;Configure Kafka reporter&lt;/h2&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;th&gt;Type&lt;/th&gt;
-&lt;th&gt;Default&lt;/th&gt;
-&lt;th&gt;Importance&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;tasks.file.status.storage.topic&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Name of the internal topic used by tasks and connector to report and monitor file progression.&lt;/td&gt;
-&lt;td&gt;class&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;connect-file-pulse-status&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;tasks.file.status.storage.bootstrap.servers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Reporter identifier to be used by tasks and connector to report and monitor file progression (must be unique per connector).&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
-&lt;td&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;override-internal-consumerproducer-configuration&#34;&gt;Override Internal Consumer/Producer Configuration&lt;/h2&gt;
-&lt;p&gt;To override the default configuration for the internal consumer and producer clients used for reporting states,
-you can used one of the following override prefixes :&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;tasks.file.status.storage.consumer.&amp;lt;consumer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;tasks.file.status.storage.producer.&amp;lt;producer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;[4] &lt;strong&gt;COMPLETED&lt;/strong&gt; : The task completes the processing of the file.&lt;/li&gt;
+&lt;li&gt;[5] &lt;strong&gt;CLEANED&lt;/strong&gt; :  The file has been successfully clean up by the connector (depends on the configured policy).&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>

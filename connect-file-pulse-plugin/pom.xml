@@ -74,7 +74,7 @@
                             <documentationUrl>https://github.com/streamthoughts/kafka-connect-file-pulse</documentationUrl>
                             <sourceUrl>https://github.com/streamthoughts/kafka-connect-file-pulse</sourceUrl>
                             <description>
-                                The Kafka Connect FilePulse Connector is a powerful source connector that makes it easy to parse, transform, and load data from the local file system into Apache Kafka. It offers built-in support for various file formats such as CSV, XML, JSON, LOG4J, AVRO.
+                                The Kafka Connect FilePulse Connector is a powerful source connector that makes it easy to parse, transform, and load data from the local filesystem, Amazon S3, Azure Blob Storage and Google Cloud Storage. This connector supports a variety of formats equally for all storage systems, e.g., text files, CSV, XML, JSON, Avro, Log4j, etc.
                             </description>
                             <supportProviderName>StreamThoughts</supportProviderName>
                             <supportSummary>This connector is supported by the open source community and StreamThoughts as part of its open source offering.</supportSummary>

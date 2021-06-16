@@ -282,7 +282,7 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
     <item>
       <title>Docs: FileSystem Listing</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link>
-      <pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 16 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</guid>
       <description>
@@ -290,6 +290,7 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
         
         &lt;p&gt;The &lt;code&gt;FilePulseSourceConnector&lt;/code&gt; periodically lists object files that may be streamed into Kafka using the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java&#34;&gt;FileSystemListing&lt;/a&gt;&lt;br&gt;
 configured in the connector&#39;s configuration.&lt;/p&gt;
+&lt;h2 id=&#34;supported-filesystems&#34;&gt;Supported Filesystems&lt;/h2&gt;
 &lt;p&gt;Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;AmazonS3FileSystemListing&lt;/code&gt;&lt;/li&gt;
@@ -329,7 +330,7 @@ configured in the connector&#39;s configuration.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h3&gt;
+&lt;h4 id=&#34;supported-file-types&#34;&gt;Supported File types&lt;/h4&gt;
 &lt;p&gt;The &lt;code&gt;LocalFSDirectoryListing&lt;/code&gt; will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href=&#34;https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path&#34;&gt;Files#probeContentType&lt;/a&gt;)
 Supported content-types are:&lt;/p&gt;
 &lt;ul&gt;
@@ -515,11 +516,18 @@ Supported content-types are:&lt;/p&gt;
 All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
 At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p&gt;
 &lt;p&gt;FilePulse packs with the following built-in filters :&lt;/p&gt;
-&lt;h3 id=&#34;ignorehiddenfilefilter-only-supported-by-localfsdirectorylisting&#34;&gt;IgnoreHiddenFileFilter (only supported by &lt;code&gt;LocalFSDirectoryListing&lt;/code&gt;)&lt;/h3&gt;
+&lt;h3 id=&#34;ignorehiddenfilefilter&#34;&gt;IgnoreHiddenFileFilter&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;IgnoreHiddenFileFilter&lt;/code&gt; can be used to filter hidden files from being read.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Configuration example&lt;/strong&gt;&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;lastmodifiedfilefilter&#34;&gt;LastModifiedFileFilter&lt;/h3&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Limitation&lt;/h4&gt;
+This filter is only supported by the &lt;code&gt;LocalFSDirectoryListing&lt;/code&gt;.
+&lt;/div&gt;
+
+&lt;h3 id=&#34;lastmodifiedfilefilter&#34;&gt;LastModifiedFileFilter&lt;/h3&gt;
 &lt;p&gt;The &lt;code&gt;LastModifiedFileFilter&lt;/code&gt; can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-properties&#34; data-lang=&#34;properties&#34;&gt;fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
 # The last modified time for a file can be accepted (default: 5000)
@@ -549,7 +557,7 @@ configured in the connector&#39;s configuration for reading object files (i.e., 
 &lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;AmazonS3AvroFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AmazonS3BytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3BytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;AmazonS3RowFileInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;AmazonS3XMLFileInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;AmazonS3MetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
@@ -558,7 +566,7 @@ configured in the connector&#39;s configuration for reading object files (i.e., 
 &lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;AzureBlobStorageAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AzureBlobStorageBytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;AzureBlobStorageRowFileInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;AzureBlobStorageXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;AzureBlobStorageMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
@@ -567,7 +575,7 @@ configured in the connector&#39;s configuration for reading object files (i.e., 
 &lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;GcsAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;GcsBytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;GcsRowFileInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;GcsXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;GcsMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
@@ -576,7 +584,7 @@ configured in the connector&#39;s configuration for reading object files (i.e., 
 &lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;LocalAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;LocalBytesFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;LocalRowFileInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;LocalXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;LocalMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
@@ -896,7 +904,7 @@ For example, they can be used to split one input message to multiple messages or
 &lt;p&gt;The bellow example shows how to dynamically build a field selector by concatenating &lt;code&gt;$.&lt;/code&gt; and
 the first element present in the array field &lt;code&gt;$.values&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;{{ &#39;$.&#39;extract_array($.values, 0) }}&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Note the used of double-quotes to define a substitution expressions&lt;/p&gt;
+&lt;p&gt;Note the use of double-quotes to define a substitution expressions&lt;/p&gt;
 &lt;h2 id=&#34;builtin-functions&#34;&gt;Built-in Functions&lt;/h2&gt;
 &lt;p&gt;ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.&lt;/p&gt;
 &lt;table&gt;

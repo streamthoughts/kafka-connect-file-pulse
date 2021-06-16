@@ -62,7 +62,7 @@ the first element present in the array field `$.values`.
 `{{ '$.'extract_array($.values, 0) }}`
 
 
-Note the used of double-quotes to define a substitution expressions 
+Note the use of double-quotes to define a substitution expressions 
 
 ## Built-in Functions
 

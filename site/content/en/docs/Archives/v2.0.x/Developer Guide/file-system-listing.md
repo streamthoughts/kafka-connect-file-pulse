@@ -1,5 +1,5 @@
 ---
-date: 2021-05-12
+date: 2021-06-16
 title: "FileSystem Listing"
 linkTitle: "FileSystem Listing"
 weight: 30
@@ -9,6 +9,8 @@ description: >
 
 The `FilePulseSourceConnector` periodically lists object files that may be streamed into Kafka using the [FileSystemListing](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java)  
 configured in the connector's configuration.
+
+## Supported Filesystems
 
 Currently, Kafka Connect FilePulse supports the following implementations: 
 
@@ -32,8 +34,7 @@ The `LocalFSDirectoryListing` class can be used for listing files that exist in 
 | `fs.listing.directory.path`             | The input directory to scan | `string`  |     -     |    HIGH       |
 | `fs.listing.recursive.enabled`          | Flag indicating whether local directory should be recursively scanned | `boolean` | `true` | MEDIUM |
 
-
-### Supported File types
+#### Supported File types
 
 The `LocalFSDirectoryListing` will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : [Files#probeContentType](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path))
 Supported content-types are:
@@ -106,7 +107,7 @@ At the next scan, previously filtered files will be evaluated again to determine
 
 FilePulse packs with the following built-in filters :
 
-### IgnoreHiddenFileFilter (only supported by `LocalFSDirectoryListing`)
+### IgnoreHiddenFileFilter
 
 The `IgnoreHiddenFileFilter` can be used to filter hidden files from being read.
 
@@ -115,6 +116,10 @@ The `IgnoreHiddenFileFilter` can be used to filter hidden files from being read.
 ```properties
 fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
 ```
+
+{{% alert title="Limitation" color="warning" %}}
+This filter is only supported by the `LocalFSDirectoryListing`.
+{{% /alert %}}
 
 ### LastModifiedFileFilter
 

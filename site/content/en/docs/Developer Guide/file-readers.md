@@ -17,7 +17,7 @@ Currently, Connect FilePulse provides the following `FileInputReader` implementa
 package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
 
 * `AmazonS3AvroFileInputReader`
-* `AmazonS3BytesFileInputReader`
+* `AmazonS3BytesArrayInputReader`
 * `AmazonS3RowFileInputReader`
 * `AmazonS3XMLFileInputReader`
 * `AmazonS3MetadataFileInputReader`
@@ -27,7 +27,7 @@ package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
 package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
 
 * `AzureBlobStorageAvroFileInputReader`
-* `AzureBlobStorageBytesFileInputReader`
+* `AzureBlobStorageBytesArrayInputReader`
 * `AzureBlobStorageRowFileInputReader`
 * `AzureBlobStorageXMLFileInputReader`
 * `AzureBlobStorageMetadataFileInputReader`
@@ -37,7 +37,7 @@ package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
 package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
 
 * `GcsAvroFileInputReader`
-* `GcsBytesFileInputReader`
+* `GcsBytesArrayInputReader`
 * `GcsRowFileInputReader`
 * `GcsXMLFileInputReader`
 * `GcsMetadataFileInputReader`
@@ -47,7 +47,7 @@ package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
 package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
 
 * `LocalAvroFileInputReader`
-* `LocalBytesFileInputReader`
+* `LocalBytesArrayInputReader`
 * `LocalRowFileInputReader`
 * `LocalXMLFileInputReader`
 * `LocalMetadataFileInputReader`

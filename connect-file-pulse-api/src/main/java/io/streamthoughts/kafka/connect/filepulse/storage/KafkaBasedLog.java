@@ -52,18 +52,18 @@ public class KafkaBasedLog<K, V> {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaBasedLog.class);
     private static final long CREATE_TOPIC_TIMEOUT_MS = 30000;
 
-    private Time time;
+    private final Time time;
     private final String topic;
     private final Map<String, Object> producerConfigs;
     private final Map<String, Object> consumerConfigs;
     private final Callback<ConsumerRecord<K, V>> consumedCallback;
     private Consumer<K, V> consumer;
-    private Producer<K, V> producer;
+    private volatile Producer<K, V> producer;
 
     private Thread thread;
     private boolean stopRequested;
-    private Queue<Callback<Void>> readLogEndOffsetCallbacks;
-    private Runnable initializer;
+    private final Queue<Callback<Void>> readLogEndOffsetCallbacks;
+    private final Runnable initializer;
 
     private volatile States state;
 
@@ -230,12 +230,20 @@ public class KafkaBasedLog<K, V> {
         return future;
     }
 
-    public void send(K key, V value) {
+    public void send(final K key, final V value) {
+        checkIsRunning();
         send(key, value, null);
     }
 
-    public void send(K key, V value, org.apache.kafka.clients.producer.Callback callback) {
+    public void send(final K key, final V value, final org.apache.kafka.clients.producer.Callback callback) {
+        checkIsRunning();
         producer.send(new ProducerRecord<>(topic, key, value), callback);
+    }
+
+    private synchronized void checkIsRunning() {
+        if (state != States.RUNNING) {
+            throw new IllegalStateException("KafkaBasedLog is already not running.");
+        }
     }
 
 

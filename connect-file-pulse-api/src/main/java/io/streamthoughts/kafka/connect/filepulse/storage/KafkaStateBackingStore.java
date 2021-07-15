@@ -85,7 +85,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
      * {@inheritDoc}
      */
     @Override
-    public void start() {
+    public synchronized void start() {
         if (isStarted()) {
             throw new IllegalStateException("Cannot init again.");
         }

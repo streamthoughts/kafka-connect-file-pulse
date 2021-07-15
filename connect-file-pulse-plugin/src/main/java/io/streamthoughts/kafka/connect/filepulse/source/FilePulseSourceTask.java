@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
+import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStoreManager;
 import io.streamthoughts.kafka.connect.filepulse.state.internal.OpaqueMemoryResource;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
@@ -189,7 +190,13 @@ public class FilePulseSourceTask extends SourceTask {
             sharedStore = FileObjectStateBackingStoreManager.INSTANCE
                     .getOrCreateSharedStore(
                             connectorGroupName,
-                            taskConfig::getStateBackingStore,
+                            () -> {
+                                final FileObjectStateBackingStore store = taskConfig.getStateBackingStore();
+                                // Always invoke the start() method when store is created from Task
+                                // because this means the connector is running on a remote worker.
+                                store.start();
+                                return store;
+                            },
                             new Object()
                     );
         } catch (Exception exception) {

@@ -1,4 +1,4 @@
-version: '3'
+version: "3.3"
 services:
   cp-zookeeper:
     image: confluentinc/cp-zookeeper:6.0.1
@@ -9,6 +9,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - kafka-connect
 
   cp-broker:
     image: confluentinc/cp-kafka:latest
@@ -30,6 +32,8 @@ services:
       CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'false'
+    networks:
+      - kafka-connect
 
   cp-schema-registry:
     image: confluentinc/cp-schema-registry:6.0.1
@@ -43,16 +47,35 @@ services:
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+    networks:
+      - kafka-connect
 
-  connect-file-pulse:
-    image: streamthoughts/kafka-connect-file-pulse:2.0.0
-    container_name: connect
+  traefik:
+    image: traefik
+    container_name: "traefik"
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "8080:8080"
+      - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - kafka-connect
+
+  connect:
+    image: streamthoughts/kafka-connect-file-pulse:master
     depends_on:
     - cp-broker
     - cp-schema-registry
+    - traefik
     ports:
-    - "8083:8083"
-    - "8000:8000"
+    - "8083"
+    - "8000"
     environment:
       CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
@@ -75,7 +98,17 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components/"
       CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
       # CONNECT_LOG4J_LOGGERS: io.streamthoughts=DEBUG,org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
-      # Uncomment for debugging the connector during development cycle
-      # KAFKA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n"
+      KAFKA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n"
     volumes:
-      - ./connect-data:/tmp/connect-data        
+      - /tmp/kafka-connect:/tmp/kafka-connect
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.connect.loadbalancer.server.port=8083"
+      - "traefik.http.routers.connect.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.connect.entrypoints=web"
+    networks:
+      - kafka-connect
+
+networks:
+  kafka-connect:
+    driver: bridge

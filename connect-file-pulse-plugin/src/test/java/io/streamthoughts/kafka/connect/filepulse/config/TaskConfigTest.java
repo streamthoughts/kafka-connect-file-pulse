@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,6 +33,7 @@ public class TaskConfigTest {
     public void should_configure_filter_given_on_failure() {
         final TaskConfig config = new TaskConfig(new HashMap<>() {{
             put(CommonConfig.OUTPUT_TOPIC_CONFIG, "Test");
+            put(CommonConfig.TASKS_FILE_READER_CLASS_CONFIG, LocalRowFileInputReader.class.getName());
             put(TaskConfig.FILE_OBJECT_URIS_CONFIG, "/tmp");
             put(CommonConfig.FILTER_CONFIG, "Test");
             put(CommonConfig.FILTER_CONFIG + ".Test.type", AppendFilter.class.getName());

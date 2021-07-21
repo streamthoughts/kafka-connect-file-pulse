@@ -179,6 +179,16 @@
         </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.13</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <profiles>
         <profile>
             <id>standalone</id>
@@ -195,64 +205,104 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>one-for-all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-amazons3-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-azure-storage-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-google-cloud-storage-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-local-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>aws</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-amazons3-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>gcs</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-google-cloud-storage-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>azure</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-azure-storage-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>local</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-local-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-file-pulse-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-file-pulse-filters</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-filepulse-local-fs</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-filepulse-amazons3-fs</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-filepulse-azure-storage-fs</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-filepulse-google-cloud-storage-fs</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>connect-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-
 
         <!-- START test dependencies-->
         <dependency>
@@ -282,6 +332,12 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>json-path</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>kafka-connect-filepulse-local-fs</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <!-- END test dependencies-->
     </dependencies>

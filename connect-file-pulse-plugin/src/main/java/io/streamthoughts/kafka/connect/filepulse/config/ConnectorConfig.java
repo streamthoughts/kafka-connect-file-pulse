@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileListFilter;
-import io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Collections;
@@ -66,7 +65,6 @@ public class ConnectorConfig extends CommonConfig {
                 .define(
                         FS_LISTING_CLASS_CONFIG,
                         ConfigDef.Type.CLASS,
-                        LocalFSDirectoryListing.class,
                         ConfigDef.Importance.HIGH,
                         FS_LISTING_CLASS_DOC
                 )

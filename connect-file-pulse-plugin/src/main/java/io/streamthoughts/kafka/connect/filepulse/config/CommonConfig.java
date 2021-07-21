@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStore;
@@ -66,7 +65,6 @@ public class CommonConfig extends AbstractConfig {
                 .define(
                         TASKS_FILE_READER_CLASS_CONFIG,
                         ConfigDef.Type.CLASS,
-                        LocalRowFileInputReader.class,
                         ConfigDef.Importance.HIGH,
                         TASKS_FILE_READER_CLASS_DOC,
                         GROUP,

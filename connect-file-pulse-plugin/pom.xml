@@ -99,6 +99,10 @@
                                 <tag>log</tag>
                                 <tag>csv</tag>
                                 <tag>xml</tag>
+                                <tag>cloud</tag>
+                                <tag>aws</tag>
+                                <tag>azure</tag>
+                                <tag>gcs</tag>
                             </tags>
 
                             <requirements/>

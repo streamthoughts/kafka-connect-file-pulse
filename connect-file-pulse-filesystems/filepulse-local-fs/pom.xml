@@ -27,6 +27,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>Kafka Connect Source File Pulse Local Storage FS</name>
     <artifactId>kafka-connect-filepulse-local-fs</artifactId>
 
     <properties>

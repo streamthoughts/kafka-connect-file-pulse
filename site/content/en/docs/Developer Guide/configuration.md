@@ -23,7 +23,7 @@ These configurations are described in detail in subsequent chapters.
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `fs.listing.class` | Class which is used to list eligible files from the scanned file system. | class | *io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker* | MEDIUM |
+| `fs.listing.class` | Class which is used to list eligible files from the scanned file system. | class | *-* | MEDIUM |
 | `fs.listing.filters` | Filters use to list eligible input files| list | *-* | MEDIUM |
 | `fs.listing.interval.ms` | Time interval (in milliseconds) at wish to scan input directory | long | *10000* | HIGH |
 | `fs.cleanup.policy.class` | The fully qualified name of the class which is used to cleanup files | class | *-* | HIGH |
@@ -39,7 +39,7 @@ These configurations are described in detail in subsequent chapters.
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `tasks.reader.class` | The fully qualified name of the class which is used by tasks to read input files | class | *io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader* | HIGH |
+| `tasks.reader.class` | The fully qualified name of the class which is used by tasks to read input files | class | *-* | HIGH |
 
 **Properties for uniquely identifying object files and records ([FileReaders](/kafka-connect-file-pulse/docs/developer-guide/file-readers/))**
 
@@ -54,8 +54,12 @@ These configurations are described in detail in subsequent chapters.
 | `tasks.file.status.storage.class` | The FileObjectStateBackingStore class to be used for storing status state of file objects. | `Class` | `io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore` | HIGH
 
 **Available implementations are :**
-* `io.streamthoughts.kafka.connect.filepulse.state.InMemoryStateBackingStore`
+* `io.streamthoughts.kafka.connect.filepulse.state.InMemoryFileObjectStateBackingStore`
 * `io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore`
+
+{{% alert title="Limitation" color="warning" %}}
+The `InMemoryFileObjectStateBackingStore` implement is not fault-tolerant and should be only when using Kafka Connect in standalone mode or a single worker.
+{{% /alert %}}
 
 **Properties for configuring the `KafkaFileObjectStateBackingStore` class**
 

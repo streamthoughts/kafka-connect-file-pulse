@@ -109,7 +109,7 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;td&gt;&lt;code&gt;fs.listing.class&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;Class which is used to list eligible files from the scanned file system.&lt;/td&gt;
 &lt;td&gt;class&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;MEDIUM&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -179,7 +179,7 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;td&gt;&lt;code&gt;tasks.reader.class&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;The fully qualified name of the class which is used by tasks to read input files&lt;/td&gt;
 &lt;td&gt;class&lt;/td&gt;
-&lt;td&gt;&lt;em&gt;io.streamthoughts.kafka.connect.filepulse.reader.RowFileReader&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;&lt;em&gt;-&lt;/em&gt;&lt;/td&gt;
 &lt;td&gt;HIGH&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -228,9 +228,16 @@ These configurations are described in detail in subsequent chapters.&lt;/p&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;Available implementations are :&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.state.InMemoryStateBackingStore&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.state.InMemoryFileObjectStateBackingStore&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Limitation&lt;/h4&gt;
+The &lt;code&gt;InMemoryFileObjectStateBackingStore&lt;/code&gt; implement is not fault-tolerant and should be only when using Kafka Connect in standalone mode or a single worker.
+&lt;/div&gt;
+
 &lt;p&gt;&lt;strong&gt;Properties for configuring the &lt;code&gt;KafkaFileObjectStateBackingStore&lt;/code&gt; class&lt;/strong&gt;&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;

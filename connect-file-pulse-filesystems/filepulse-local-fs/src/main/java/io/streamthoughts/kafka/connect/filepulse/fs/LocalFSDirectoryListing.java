@@ -18,11 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
 import io.streamthoughts.kafka.connect.filepulse.fs.codec.CodecHandler;
 import io.streamthoughts.kafka.connect.filepulse.fs.codec.CodecManager;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalFileStorage;
-import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +65,7 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
     /**
      * Creates a new {@link LocalFSDirectoryListing} instance.
      *
-     * @param filters  the list of filters
+     * @param filters the list of filters
      */
     public LocalFSDirectoryListing(final List<FileListFilter> filters) {
         Objects.requireNonNull(filters, "filters can't be null");
@@ -90,8 +92,19 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
 
     private Collection<FileObjectMeta> toSourceObjects(final Collection<File> allFiles) {
         return allFiles.stream()
-            .map(LocalFileObjectMeta::new)
-            .collect(Collectors.toList());
+                .map(f -> {
+                    try {
+                        return Optional.of(new LocalFileObjectMeta(f));
+                    } catch (ConnectFilePulseException e) {
+                        LOG.warn(
+                            "Failed to read metadata. Object file is ignored: {}",
+                            e.getMessage()
+                        );
+                        return Optional.<LocalFileObjectMeta>empty();
+                    }
+                })
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -147,7 +160,8 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
             listingLocalFiles.addAll(directories.stream()
                 .filter(f -> !decompressedDirs.contains(f))
                 .flatMap(f -> listEligibleFiles(f).stream())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList())
+            );
         }
         return listingLocalFiles;
     }

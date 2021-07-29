@@ -55,7 +55,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilePulseSourceConnector.class);
 
-    private static final long MAX_TIMEOUT = 5000;
+    private static final long DEFAULT_MAX_TIMEOUT = 5000;
 
     private static final String CONNECT_NAME_CONFIG = "name";
 
@@ -99,7 +99,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
         initSharedStateBackingStore(connectorConfig, connectorGroupName);
 
-        final FileSystemListing directoryScanner = this.connectorConfig.fileSystemListing();
+        final FileSystemListing<?> directoryScanner = this.connectorConfig.fileSystemListing();
         directoryScanner.setFilter(new CompositeFileListFilter(connectorConfig.fileSystemListingFilter()));
 
         final FileCleanupPolicy cleaner = connectorConfig.cleanupPolicy();
@@ -176,13 +176,13 @@ public class FilePulseSourceConnector extends SourceConnector {
      */
     @Override
     public void stop() {
-        LOG.info("Stopping connector");
-        fsMonitorThread.shutdown();
+        LOG.info("Stopping FilePulse source connector");
+        fsMonitorThread.shutdown(DEFAULT_MAX_TIMEOUT);
         closeSharedStateBackingStore();
         try {
-            fsMonitorThread.join(MAX_TIMEOUT);
+            fsMonitorThread.join(DEFAULT_MAX_TIMEOUT);
         } catch (InterruptedException ignore) {
-            LOG.info("Connector stopped");
+            LOG.info("Stopped FilePulse source connector");
         }
     }
 

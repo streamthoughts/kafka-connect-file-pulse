@@ -30,12 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * This class is not thread-safe and is attended to be used only by one Source Connect Task.
@@ -80,29 +79,52 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
     }
 
     void addAll(final List<URI> files) {
-        if (isClose()) {
+        if (isClosed()) {
             throw new IllegalStateException("Can't add new input files, consumer is closed");
         }
-        final List<DelegateFileInputIterator> iterables = files
-                .stream()
-                .map(uri -> new DelegateFileInputIterator(uri, reader))
-                .filter(excludeUnreadableAndNotify())
-                .peek(it -> {
-                    if (hasListener()) listener.onScheduled(new FileContext(it.getMetadata()));
-                })
-                .collect(Collectors.toList());
-        queue.addAll(iterables);
-    }
+        final List<DelegateFileInputIterator> iterables = new ArrayList<>(files.size());
+        for (final URI uri : files) {
+            if (reader.canBeRead(uri)) {
 
-    private Predicate<DelegateFileInputIterator> excludeUnreadableAndNotify() {
-        return it -> {
-            boolean valid = it.isValid();
-            if (!valid) {
-                LOG.error("Invalid source, file doesn't exist or is not readable - ignore : {}", it.getObjectURI());
-                listener.onInvalid(new FileContext(new GenericFileObjectMeta(it.getObjectURI())));
+                final FileObjectMeta objectMeta;
+                final FileObjectKey key;
+                try {
+                    objectMeta = reader.getObjectMetadata(uri);
+                    key = FileObjectKey.of(offsetPolicy.toPartitionJson(objectMeta));
+                } catch (Exception e) {
+                    throw new ConnectFilePulseException(
+                        "Failed to compute object-file key while initializing processing for '" + uri + "'. " +
+                        " Connector must be restated.",
+                        e
+                    );
+                }
+
+                final DelegateFileInputIterator iterator = new DelegateFileInputIterator(key, uri, reader);
+                iterables.add(iterator);
+
+                if (hasListener()){
+                    listener.onScheduled(new FileContext(key, objectMeta));
+                }
+
+            } else {
+                try {
+                    // try to compute offset using GenericFileObjectMeta for notifying connector.
+                    final GenericFileObjectMeta objectMeta = new GenericFileObjectMeta(uri);
+                    final FileObjectKey key = FileObjectKey.of(offsetPolicy.toPartitionJson(objectMeta));
+                    if (hasListener()){
+                        LOG.warn("Failed to process object file '{}'. File does not exist or is not readable.", uri);
+                        listener.onScheduled(new FileContext(key, objectMeta));
+                    }
+                } catch (Exception e) {
+                    throw new ConnectFilePulseException(
+                        "Failed to compute object-file key while initializing processing for '" + uri + "'. " +
+                        " Connector must be restated.",
+                        e
+                    );
+                }
             }
-            return valid;
-        };
+        }
+        queue.addAll(iterables);
     }
 
     /**
@@ -114,6 +136,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             FileContext context = currentIterator.context();
             if (latestPollRecord != null) {
                 context = new FileContext(
+                        context.key(),
                         context.metadata(),
                         latestPollRecord.offset().toSourceOffset());
             }
@@ -135,7 +158,11 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      */
     @Override
     public RecordsIterable<FileRecord<TypedStruct>> next() {
-        if (queue.isEmpty()) return RecordsIterable.empty();
+        if (isClosed()) {
+            throw new IllegalStateException("FileRecordsPollingConsumer is closed, no more element can be returned");
+        }
+
+        if (!hasNext()) return RecordsIterable.empty();
 
         // Quickly iterate to lookup for a valid iterator
         do {
@@ -145,7 +172,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             } else {
                 currentIterator = openAndGetIteratorOrNullIfInvalid(taskContext, candidate);
             }
-        } while (!queue.isEmpty() && currentIterator == null);
+        } while (hasNext() && currentIterator == null);
 
         if (currentIterator == null) {
             return RecordsIterable.empty();
@@ -196,23 +223,24 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      */
     @Override
     public void close() {
-        DelegateFileInputIterator monitor;
-        while ((monitor = queue.poll()) != null) {
-            try {
-                monitor.close();
-            } catch (Exception ignore) {
+        if (closed.compareAndSet(false, true)) {
+            DelegateFileInputIterator monitor;
+            while ((monitor = queue.poll()) != null) {
+                try {
+                    monitor.close();
+                } catch (Exception ignore) {
 
+                }
             }
+            reader.close();
         }
-        reader.close();
-        closed.set(true);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean isClose() {
+    public boolean isClosed() {
         return closed.get();
     }
 
@@ -240,53 +268,76 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             final DelegateFileInputIterator iterator
     ) {
         // Re-check if the file is still valid.
-
         if (!iterator.isValid()) {
             LOG.error("File does not exist or is not readable, skip entry and continue '{}'", iterator.getObjectURI());
+            var objectMeta = new GenericFileObjectMeta(iterator.getObjectURI());
+            deleteFileQueueAndInvokeListener(new FileContext(iterator.key(), objectMeta), null);
+            return null;
+        }
 
-            var metadata = new GenericFileObjectMeta(iterator.getObjectURI());
-            deleteFileQueueAndInvokeListener(new FileContext(metadata), null);
+        FileObjectMeta metadata = null;
+        FileObjectOffset committedOffset;
+        try {
+            metadata = iterator.getMetadata();
+
+            if (!ignoreCommittedOffsets) {
+                committedOffset = offsetPolicy
+                        .getOffsetFor(context, metadata)
+                        .orElse(FileObjectOffset.empty());
+            } else {
+                committedOffset = FileObjectOffset.empty();
+            }
+        } catch (final Exception e) {
+            if (metadata == null) {
+                LOG.error(
+                        "Failed to load metadata for object file {}. Error: {}",
+                        iterator.getObjectURI(),
+                        e.getMessage()
+                );
+                metadata = new GenericFileObjectMeta(iterator.getObjectURI());
+                deleteFileQueueAndInvokeListener(new FileContext(iterator.key(), metadata), e);
+                return null;
+            } else {
+                LOG.warn(
+                        "Failed to load committed offset for object file {}." +
+                        " Previous offset will be ignored. Error: {}",
+                        iterator.getObjectURI(),
+                        e.getMessage()
+                );
+                committedOffset = FileObjectOffset.empty();
+            }
+        }
+
+        // Quickly check if we can considered this file completed based on the content-length.
+        boolean isAlreadyCompleted = committedOffset.position() >= metadata.contentLength();
+        if (!ignoreCommittedOffsets && isAlreadyCompleted) {
+            LOG.warn(
+                    "Detected source file already completed, skip entry and continue '{}'",
+                    iterator.getObjectURI());
+            deleteFileQueueAndInvokeListener(
+                    new FileContext(iterator.key(), metadata, committedOffset),
+                    null
+            );
             return null;
         }
 
         try {
-            final FileObjectMeta metadata = iterator.getMetadata();
-
-            final FileObjectOffset committedOffset;
-            if (!ignoreCommittedOffsets) {
-                committedOffset = offsetPolicy.getOffsetFor(context, metadata).orElse(FileObjectOffset.empty());
-            } else {
-                committedOffset = FileObjectOffset.empty();
-            }
-
-            // Quickly check if we can considered this file completed based on the content-length.
-            boolean isAlreadyCompleted = committedOffset.position() >= metadata.contentLength();
-            if (!ignoreCommittedOffsets && isAlreadyCompleted) {
-                LOG.warn(
-                        "Detected source file already completed, skip entry and continue '{}'",
-                        iterator.getObjectURI());
-                deleteFileQueueAndInvokeListener(new FileContext(metadata, committedOffset), null);
-            } else {
-                iterator.open();
-                iterator.seekTo(committedOffset);
-                pipeline.init(iterator.context());
-                if (hasListener()) {
-                    listener.onStart(iterator.context());
-                }
-                return iterator;
-            }
+            iterator.open();
+            iterator.seekTo(committedOffset);
+            pipeline.init(iterator.context());
         } catch (final Exception e) {
-            FileObjectMeta metadata;
-            try {
-                // Attempt to load metadata for listener
-                metadata = iterator.getMetadata();
-            } catch (Exception ignore) {
-                metadata = new GenericFileObjectMeta(iterator.getObjectURI());;
-            }
-            deleteFileQueueAndInvokeListener(new FileContext(metadata), e);
+            LOG.error(
+                    "Failed to initialized a new iterator for object file '{}'.",
+                    iterator.getObjectURI(),
+                    e
+            );
+            deleteFileQueueAndInvokeListener(new FileContext(iterator.key(), metadata), e);
+            return null;
         }
-
-        return null;
+        if (hasListener()) {
+            listener.onStart(iterator.context());
+        }
+        return iterator;
     }
 
     private FileInputIterator<FileRecord<TypedStruct>> getOrCloseIteratorIfNoMoreRecord(

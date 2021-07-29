@@ -24,8 +24,10 @@ import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResult;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResultSet;
 import io.streamthoughts.kafka.connect.filepulse.clean.GenericFileCleanupPolicy;
+import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
 import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectKey;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
@@ -78,10 +80,10 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
     private final StateBackingStore<FileObject> store;
 
     // List of files currently being processed by tasks.
-    private final Map<String, FileObjectMeta> scheduled = new ConcurrentHashMap<>();
+    private final Map<FileObjectKey, FileObjectMeta> scheduled = new ConcurrentHashMap<>();
 
     // List of files to be scheduled.
-    private final Map<String, FileObjectMeta> scanned = new ConcurrentHashMap<>();
+    private final Map<FileObjectKey, FileObjectMeta> scanned = new ConcurrentHashMap<>();
 
     // List of files for which an event of completion has been received - those files are waiting for cleanup
     private final LinkedBlockingQueue<FileObject> completed = new LinkedBlockingQueue<>();
@@ -143,18 +145,19 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             }
 
             @Override
-            public void onStateUpdate(final String key, final FileObject state) {
-                final FileObjectStatus status = state.status();
+            public void onStateUpdate(final String key, final FileObject object) {
+                final FileObjectKey objectId = FileObjectKey.of(key);
+                final FileObjectStatus status = object.status();
                 if (status.isOneOf(FileObjectStatus.completed())) {
-                    completed.add(state);
+                    completed.add(object.withKey(FileObjectKey.of(key)));
                 } else if (status.isOneOf(FileObjectStatus.CLEANED)) {
-                    final String partition = offsetPolicy.toPartitionJson(state.metadata());
-                    final FileObjectMeta remove = scheduled.remove(partition);
+                    final FileObjectMeta remove = scheduled.remove(objectId);
                     if (remove == null) {
                         LOG.warn(
-                                "Received cleaned status but no file currently scheduled for partition : '{}', " +
-                                        "this warn should only occurred during recovering step",
-                                partition);
+                            "Received cleaned status but no file currently scheduled for: '{}'. " +
+                            "This warn should only occurred during recovering step",
+                            key
+                        );
                     }
                 }
             }
@@ -174,9 +177,11 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
     private void recoverPreviouslyCompletedSources() {
         LOG.info("Recovering completed files from a previous execution");
-        fileState.states().values()
+        fileState.states()
+                .entrySet()
                 .stream()
-                .filter(s -> s.status().isOneOf(FileObjectStatus.completed()))
+                .map(it -> it.getValue().withKey(FileObjectKey.of(it.getKey())))
+                .filter(it -> it.status().isOneOf(FileObjectStatus.completed()))
                 .forEach(completed::add);
         LOG.info("Finished recovering previously completed files : " + completed);
     }
@@ -222,13 +227,13 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         completed.drainTo(cleanable);
 
         FileCleanupPolicyResultSet cleaned = cleaner.apply(cleanable);
-        cleaned.forEach((source, result) -> {
+        cleaned.forEach((fileObject, result) -> {
             if (result.equals(FileCleanupPolicyResult.SUCCEED)) {
-                final String partition = offsetPolicy.toPartitionJson(source.metadata());
-                store.put(partition, source.withStatus(FileObjectStatus.CLEANED));
+                final String key = fileObject.key().get().original();
+                store.put(key, fileObject.withStatus(FileObjectStatus.CLEANED));
             } else {
-                LOG.info("Postpone clean up for object file: '{}'", source.metadata().stringURI());
-                completed.add(source);
+                LOG.info("Postpone clean up for object file: '{}'", fileObject.metadata().stringURI());
+                completed.add(fileObject);
             }
         });
         LOG.info("Finished cleaning all completed object files");
@@ -257,7 +262,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         LOG.info("Completed object files listing. '{}' object files found in {}ms", objects.size(), took);
 
         final StateSnapshot<FileObject> snapshot = store.snapshot();
-        final Map<String, FileObjectMeta> toScheduled = toScheduled(objects, snapshot);
+        final Map<FileObjectKey, FileObjectMeta> toScheduled = toScheduled(objects, snapshot);
 
         // Some scheduled files are still being processed, but new files are detected
         if (!noScheduledFiles) {
@@ -295,8 +300,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         return !scanned.isEmpty() && status.equals(ScanStatus.STARTED);
     }
 
-    private Map<String, FileObjectMeta> toScheduled(final Collection<FileObjectMeta> scanned,
-                                                    final StateSnapshot<FileObject> snapshot) {
+    private Map<FileObjectKey, FileObjectMeta> toScheduled(final Collection<FileObjectMeta> scanned,
+                                                           final StateSnapshot<FileObject> snapshot) {
 
         final List<KeyValuePair<String, FileObjectMeta>> toScheduled = scanned.stream()
                 .map(source -> KeyValuePair.of(offsetPolicy.toPartitionJson(source), source))
@@ -318,20 +323,28 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 );
 
         if (!duplicates.isEmpty()) {
-            final String strDuplicates = duplicates
+            final String formatted = duplicates
                     .entrySet()
                     .stream()
-                    .map(e -> "offset=" + e.getKey() + ", files=" + e.getValue())
+                    .map(e -> "partition_key=" + e.getKey() + ", files=" + e.getValue())
                     .collect(Collectors.joining("\n\t", "\n\t", "\n"));
-            LOG.error("Duplicates detected in object files. Consider changing the configuration property \"offset.strategy\". Scan is ignored : {}", strDuplicates);
+            LOG.error(
+                "Duplicates object files detected. " +
+                "Consider changing the configuration for '{}'. " +
+                "Scan is ignored: {}",
+                ConnectorConfig.OFFSET_STRATEGY_CLASS_CONFIG,
+                formatted
+            );
             return Collections.emptyMap(); // ignore all sources files
         }
 
-        return toScheduled.stream().collect(Collectors.toMap(kv -> kv.key, kv -> kv.value));
+        return toScheduled.stream().collect(Collectors.toMap(kv -> FileObjectKey.of(kv.key), kv -> kv.value));
     }
 
-    private boolean maybeScheduled(final StateSnapshot<FileObject> snapshot, final String partition) {
-        return !snapshot.contains(partition) || snapshot.getForKey(partition).status().isOneOf(FileObjectStatus.started());
+    private boolean maybeScheduled(final StateSnapshot<FileObject> snapshot,
+                                   final String partition) {
+        return !snapshot.contains(partition) ||
+                snapshot.getForKey(partition).status().isOneOf(FileObjectStatus.started());
     }
 
     /**
@@ -360,9 +373,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             if (scanned.size() <= maxFilesToSchedule) {
                 scheduled.putAll(scanned);
             } else {
-                final Iterator<Map.Entry<String, FileObjectMeta>> it = scanned.entrySet().iterator();
+                final Iterator<Map.Entry<FileObjectKey, FileObjectMeta>> it = scanned.entrySet().iterator();
                 while (scheduled.size() < maxFilesToSchedule && it.hasNext()) {
-                    final Map.Entry<String, FileObjectMeta> next = it.next();
+                    final Map.Entry<FileObjectKey, FileObjectMeta> next = it.next();
                     scheduled.put(next.getKey(), next.getValue());
                 }
             }
@@ -389,6 +402,14 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
      */
     @Override
     public void close() {
-        this.status = ScanStatus.STOPPED;
+        try {
+            LOG.info("Closing FileSystemMonitor resources");
+            this.status = ScanStatus.STOPPED;
+            readStatesToEnd(5);
+            cleanUpCompletedFiles();
+            LOG.info("Closed FileSystemMonitor resources");
+        } catch (final Exception e) {
+            LOG.warn("Unexpected error while closing FileSystemMonitor.", e);
+        }
     }
 }

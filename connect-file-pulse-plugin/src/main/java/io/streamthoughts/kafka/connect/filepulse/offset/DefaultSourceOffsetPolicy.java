@@ -21,6 +21,8 @@ package io.streamthoughts.kafka.connect.filepulse.offset;
 import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collections;
@@ -36,6 +38,8 @@ import java.util.function.Function;
 import static io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta.SYSTEM_FILE_INODE_META_KEY;
 
 public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultSourceOffsetPolicy.class);
 
     private static final String FILEPATH_FIELD = "path";
     private static final String FILENAME_FIELD = "name";
@@ -53,35 +57,51 @@ public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
                 new GenericOffsetPolicy(
                         FILENAME_FIELD,
                         priority++,
-                        FileObjectMeta::name)
+                        FileObjectMeta::name
+                )
         );
         ATTRIBUTES.put(
                 FILEPATH_FIELD,
                 new GenericOffsetPolicy(
                         FILEPATH_FIELD,
                         priority++,
-                        source -> new File(source.uri()).getParentFile().getAbsolutePath())
+                        objectMeta -> new File(objectMeta.uri()).getParentFile().getAbsolutePath()
+                )
         );
         ATTRIBUTES.put(
                 HASH_FIELD,
                 new GenericOffsetPolicy(
                         HASH_FIELD,
                         priority++,
-                        source -> source.contentDigest().digest())
+                        objectMeta -> {
+                            return Optional.ofNullable(objectMeta.contentDigest())
+                                    .map(FileObjectMeta.ContentDigest::digest)
+                                    .orElseThrow(() -> new IllegalArgumentException(
+                                        "Object file property 'content-digest' is empty")
+                                    );
+                        }
+                )
         );
         ATTRIBUTES.put(
                 MODIFIED_FIELD,
                 new GenericOffsetPolicy(
                         MODIFIED_FIELD,
                         priority++,
-                        FileObjectMeta::lastModified)
+                        objectMeta -> {
+                            return Optional.ofNullable(objectMeta.lastModified())
+                                    .orElseThrow(() -> new IllegalArgumentException(
+                                        "Object file property 'last-modified' is empty")
+                                    );
+                        }
+                )
         );
         ATTRIBUTES.put(
                 URI_FIELD,
                 new GenericOffsetPolicy(
                         URI_FIELD,
                         priority++,
-                        FileObjectMeta::stringURI)
+                        FileObjectMeta::stringURI
+                )
         );
         ATTRIBUTES.put(
                 INODE_FIELD,
@@ -92,7 +112,8 @@ public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
                             .ofNullable((String) source.userDefinedMetadata().get(SYSTEM_FILE_INODE_META_KEY))
                             .orElseThrow(() -> {
                                 throw new ConnectFilePulseException(
-                                    "Unix-inode is not supported. " +
+                                    "Object file property 'unix-inode' is empty. " +
+                                    "Unix-inode maybe not supported. " +
                                     "Consider configuring a different value for " +
                                     "'" + DefaultSourceOffsetPolicyConfig.OFFSET_ATTRIBUTES_STRING_CONFIG + "' " +
                                     "[path, name, hash, name, uri]"
@@ -134,7 +155,7 @@ public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
         for (String label : offsetStrategyString.split("\\+")) {
             final GenericOffsetPolicy strategy = ATTRIBUTES.get(label.toLowerCase());
             if (strategy == null) {
-                throw new IllegalArgumentException("Unknown offset strategy for name '" + label + "'");
+                throw new IllegalArgumentException("Unknown offset policy for name '" + label + "'");
             }
             this.policies.add(strategy);
         }
@@ -144,16 +165,25 @@ public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
      * {@inheritDoc}
      */
     @Override
-    public Map<String, Object> toPartitionMap(final FileObjectMeta source) {
+    public Map<String, Object> toPartitionMap(final FileObjectMeta objectMeta) {
         Collections.sort(policies);
         Map<String, Object> offset = new LinkedHashMap<>();
-        for (GenericOffsetPolicy strategy : policies) {
-            strategy.addAttributeToPartitionMap(source, offset);
+        for (GenericOffsetPolicy policy : policies) {
+            try {
+                policy.addAttributeToPartitionMap(objectMeta, offset);
+            } catch (Exception e) {
+                LOG.error(
+                    "Unexpected error while building partition map using policy '{}'. Error: {}",
+                    policy.name,
+                    e.getMessage()
+                );
+                throw e;
+            }
         }
         return offset;
     }
 
-    static class GenericOffsetPolicy implements Comparable<GenericOffsetPolicy> {
+    static final class GenericOffsetPolicy implements Comparable<GenericOffsetPolicy> {
 
         final String name;
         final Function<FileObjectMeta, Object> offsetFunction;
@@ -167,8 +197,9 @@ public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
             this.priority = priority;
         }
 
-        void addAttributeToPartitionMap(final FileObjectMeta object, final Map<String, Object> offset) {
-            offset.put(name, offsetFunction.apply(object));
+        void addAttributeToPartitionMap(final FileObjectMeta objectMeta,
+                                        final Map<String, Object> offset) {
+            offset.put(name, offsetFunction.apply(objectMeta));
         }
 
         /**

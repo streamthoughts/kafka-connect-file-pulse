@@ -116,7 +116,7 @@ public class AvroDataStreamIterator extends ManagedFileInputIterator<TypedStruct
      */
     @Override
     public void close() {
-        if (!isClose()) {
+        if (!isClosed()) {
             Silent.unchecked(stream::close);
             super.close();
         }

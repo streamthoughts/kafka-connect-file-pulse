@@ -62,5 +62,5 @@ public interface FileInputIterator<T> extends Iterator<RecordsIterable<T>>, Auto
      * Checks whether this iterator is already close.
      * @return {@code true} if this iterator is close.
      */
-    boolean isClose();
+    boolean isClosed();
 }

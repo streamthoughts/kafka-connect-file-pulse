@@ -37,6 +37,7 @@ public class DelegateFileInputIterator implements FileInputIterator<FileRecord<T
     private static final Logger LOG = LoggerFactory.getLogger(DelegateFileInputIterator.class);
 
     private final URI objectURI;
+    private final FileObjectKey key;
     private final FileInputReader reader;
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
 
@@ -45,18 +46,22 @@ public class DelegateFileInputIterator implements FileInputIterator<FileRecord<T
     /**
      * Creates a new {@link DelegateFileInputIterator} instance.
      *
-     * @param objectURI the input source file.
+     * @param key       the object file key.
+     * @param objectURI the object file URI.
      * @param reader    the input source reader used to create a new {@link FileInputIterator}.
      */
-    DelegateFileInputIterator(final URI objectURI, final FileInputReader reader) {
-        this.objectURI = Objects.requireNonNull(objectURI, "source can't be null");
-        this.reader = Objects.requireNonNull(reader, "reader can't be null");
+    DelegateFileInputIterator(final FileObjectKey key,
+                              final URI objectURI,
+                              final FileInputReader reader) {
+        this.key = Objects.requireNonNull(key, "'key' should not be null");
+        this.objectURI = Objects.requireNonNull(objectURI, "'objectURI' can't be null");
+        this.reader = Objects.requireNonNull(reader, "'reader' can't be null");
     }
 
     /**
      * Gets the metadata of the backed object file.
      *
-     * @return  the {@link FileObjectMeta}
+     * @return the {@link FileObjectMeta}
      */
     public FileObjectMeta getMetadata() {
         return reader.getObjectMetadata(objectURI);
@@ -65,7 +70,7 @@ public class DelegateFileInputIterator implements FileInputIterator<FileRecord<T
     /**
      * Gets the URI of the backed object file.
      *
-     * @return  the {@link URI}
+     * @return the {@link URI}
      */
     public URI getObjectURI() {
         return objectURI;
@@ -84,15 +89,18 @@ public class DelegateFileInputIterator implements FileInputIterator<FileRecord<T
      * @return {@code true} if an iterator is already opened.
      */
     boolean isOpen() {
-        return iterator != null && !iterator.isClose();
+        return iterator != null && !iterator.isClosed();
     }
 
     /**
-     *
      * @return {@code true} if the backed object file can be read and is accessible.
      */
     boolean isValid() {
         return reader.canBeRead(objectURI);
+    }
+
+    public FileObjectKey key() {
+        return key;
     }
 
     /**
@@ -103,7 +111,12 @@ public class DelegateFileInputIterator implements FileInputIterator<FileRecord<T
         if (iterator == null) {
             throw new IllegalStateException("Iterator is not initialized for URI: " + objectURI);
         }
-        return iterator.context();
+        final FileContext context = iterator.context();
+        return new FileContext(
+                key,
+                context.metadata(),
+                context.offset()
+        );
     }
 
     /**
@@ -149,7 +162,7 @@ public class DelegateFileInputIterator implements FileInputIterator<FileRecord<T
      * {@inheritDoc}
      */
     @Override
-    public boolean isClose() {
+    public boolean isClosed() {
         return isClosed.get();
     }
 

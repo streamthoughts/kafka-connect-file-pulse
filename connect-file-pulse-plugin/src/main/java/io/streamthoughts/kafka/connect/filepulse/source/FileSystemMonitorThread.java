@@ -35,8 +35,6 @@ public class FileSystemMonitorThread extends Thread {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemMonitorThread.class);
 
-    private static final long SHUTDOWN_TIMEOUT_MS = 5000L;
-
     private final ConnectorContext context;
     private final CountDownLatch shutdownLatch;
     private final CountDownLatch waitingLatch;
@@ -99,13 +97,10 @@ public class FileSystemMonitorThread extends Thread {
         } catch (InterruptedException e) {
             LOG.error("Unexpected InterruptedException, ignoring: ", e);
         } finally {
-            LOG.info("Stopped thread monitoring filesystem.");
+            monitor.close();
+            LOG.info("Stopped filesystem monitoring thread.");
             waitingLatch.countDown();
         }
-    }
-
-    void shutdown() {
-        shutdown(SHUTDOWN_TIMEOUT_MS);
     }
 
     void shutdown(final long timeoutMs) {

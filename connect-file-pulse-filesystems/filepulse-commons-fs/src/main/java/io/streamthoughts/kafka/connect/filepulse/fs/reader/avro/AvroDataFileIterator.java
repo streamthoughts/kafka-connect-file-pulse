@@ -19,12 +19,11 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.avro;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.internal.Silent;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
+import io.streamthoughts.kafka.connect.filepulse.internal.Silent;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
@@ -52,7 +51,7 @@ public class AvroDataFileIterator extends ManagedFileInputIterator<TypedStruct> 
      * Creates a new {@link AvroDataFileIterator} instance.
      *
      * @param iteratorManager the {@link IteratorManager} instance.
-     * @param context         the {@link FileContext} instance.
+     * @param objectMeta      the {@link FileObjectMeta} instance.
      */
     public AvroDataFileIterator(final FileObjectMeta objectMeta,
                                 final IteratorManager iteratorManager,
@@ -152,7 +151,7 @@ public class AvroDataFileIterator extends ManagedFileInputIterator<TypedStruct> 
      */
     @Override
     public void close() {
-        if (!isClose()) {
+        if (!isClosed()) {
             Silent.unchecked(reader::close, ReaderException::new);
             super.close();
         }

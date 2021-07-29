@@ -97,6 +97,6 @@ public class BytesArrayInputIterator extends ManagedFileInputIterator<TypedStruc
      */
     @Override
     public boolean hasNext() {
-        return !isClose() && hasNext;
+        return !isClosed() && hasNext;
     }
 }

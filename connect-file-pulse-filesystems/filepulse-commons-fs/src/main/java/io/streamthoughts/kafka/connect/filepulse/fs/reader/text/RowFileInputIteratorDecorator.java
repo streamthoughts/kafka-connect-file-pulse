@@ -78,7 +78,7 @@ public abstract class RowFileInputIteratorDecorator implements FileInputIterator
      * {@inheritDoc}
      */
     @Override
-    public boolean isClose() {
-        return iterator.isClose();
+    public boolean isClosed() {
+        return iterator.isClosed();
     }
 }

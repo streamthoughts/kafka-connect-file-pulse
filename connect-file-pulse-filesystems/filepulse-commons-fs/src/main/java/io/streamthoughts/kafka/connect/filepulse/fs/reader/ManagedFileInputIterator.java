@@ -63,7 +63,7 @@ public abstract class ManagedFileInputIterator<T> implements FileInputIterator<F
      */
     @Override
     public void close() {
-        if (!isClose()) {
+        if (!isClosed()) {
             iteratorManager.removeIterator(this);
             closed.set(true);
         }
@@ -73,7 +73,7 @@ public abstract class ManagedFileInputIterator<T> implements FileInputIterator<F
      * {@inheritDoc}
      */
     @Override
-    public boolean isClose() {
+    public boolean isClosed() {
         return closed.get();
     }
 }

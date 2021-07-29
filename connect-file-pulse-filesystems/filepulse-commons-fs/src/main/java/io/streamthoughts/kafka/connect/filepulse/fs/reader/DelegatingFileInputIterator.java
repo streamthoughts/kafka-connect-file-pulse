@@ -92,7 +92,7 @@ public final class DelegatingFileInputIterator implements FileInputIterator<File
      * {@inheritDoc}
      */
     @Override
-    public boolean isClose() {
+    public boolean isClosed() {
         return isClosed.get();
     }
 }

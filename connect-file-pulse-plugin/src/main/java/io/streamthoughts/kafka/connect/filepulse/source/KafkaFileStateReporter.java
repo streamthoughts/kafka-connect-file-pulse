@@ -33,39 +33,33 @@ public class KafkaFileStateReporter implements StateListener {
 
     private final StateBackingStore<FileObject> store;
 
-    private final SourceOffsetPolicy offsetPolicy;
-
     /**
      * Creates a new {@link KafkaFileStateReporter} instance.
+     *
      * @param store         the store to be used.
-     * @param offsetPolicy  the offset policy.
      */
-    KafkaFileStateReporter(final StateBackingStore<FileObject> store,
-                           final SourceOffsetPolicy offsetPolicy) {
+    KafkaFileStateReporter(final StateBackingStore<FileObject> store) {
         Objects.requireNonNull(store, "store can't be null");
-        Objects.requireNonNull(offsetPolicy, "offsetPolicy can't be null");
         this.store = store;
-        this.offsetPolicy = offsetPolicy;
     }
 
     /**
      * Notify a state change for the specified source file.
      *
-     * @param metadata  the source file metadata.
-     * @param offset    the source file offset.
+     * @param key       the object file key.
+     * @param metadata  the object file metadata.
+     * @param offset    the object file offset.
      * @param status    the status.
      */
-    void notify(final FileObjectMeta metadata, final FileObjectOffset offset, final FileObjectStatus status) {
+    void notify(final FileObjectKey key,
+                final FileObjectMeta metadata,
+                final FileObjectOffset offset,
+                final FileObjectStatus status
+                ) {
         Objects.requireNonNull(metadata, "metadata can't be null");
         Objects.requireNonNull(offset, "offset can't be null");
         Objects.requireNonNull(status, "status can't be null");
-        final String partition = offsetPolicy.toPartitionJson(metadata);
-        final FileObject state = new FileObject(
-            metadata,
-            offset,
-            status
-        );
-        store.putAsync(partition, state);
+        store.putAsync(key.original(), new FileObject(metadata, offset, status));
     }
 
     /**
@@ -75,7 +69,7 @@ public class KafkaFileStateReporter implements StateListener {
     public void onScheduled(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Scheduling source file '{}'", context.metadata());
-        notify(context.metadata(), context.offset(), FileObjectStatus.SCHEDULED);
+        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.SCHEDULED);
     }
 
     /**
@@ -84,7 +78,7 @@ public class KafkaFileStateReporter implements StateListener {
     @Override
     public void onInvalid(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
-        notify(context.metadata(), context.offset(), FileObjectStatus.INVALID);
+        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.INVALID);
     }
 
     /**
@@ -94,7 +88,7 @@ public class KafkaFileStateReporter implements StateListener {
     public void onStart(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Starting to precess source file '{}'", context.metadata());
-        notify(context.metadata(), context.offset(), FileObjectStatus.STARTED);
+        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.STARTED);
     }
 
 
@@ -105,7 +99,7 @@ public class KafkaFileStateReporter implements StateListener {
     public void onCompleted(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Completed source file '{}'", context.metadata());
-        notify(context.metadata(), context.offset(), FileObjectStatus.COMPLETED);
+        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.COMPLETED);
     }
 
     /**
@@ -115,7 +109,7 @@ public class KafkaFileStateReporter implements StateListener {
     public void onFailure(final FileContext context, final Throwable t) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.error("Error while processing source file '{}'", context.metadata(), t);
-        notify(context.metadata(), context.offset(), FileObjectStatus.FAILED);
+        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.FAILED);
     }
 
 }

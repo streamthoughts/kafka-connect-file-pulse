@@ -19,16 +19,20 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 import com.jsoniter.annotation.JsonCreator;
+import com.jsoniter.annotation.JsonIgnore;
 import com.jsoniter.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A {@code FileObject} describes an input file being processing by the connector and its current state.
  */
-public class FileObject implements Serializable {
+public final class FileObject implements Serializable {
 
+    @JsonIgnore
+    private final FileObjectKey key;
     private final FileObjectMeta metadata;
     private final FileObjectOffset offset;
     private final FileObjectStatus status;
@@ -36,20 +40,25 @@ public class FileObject implements Serializable {
     /**
      * Creates a new {@link FileObject} instance.
      *
-     * @param source    the source file metadata.
-     * @param offset    the source file offset.
-     * @param status    the source status.
+     * @param metadata  the object file's metadata.
+     * @param offset    the object file's offset.
+     * @param status    the object file's status.
      */
     @JsonCreator
-    public FileObject(@JsonProperty("metadata") final FileObjectMeta source,
+    public FileObject(@JsonProperty("metadata") final FileObjectMeta metadata,
                       @JsonProperty("offset") final FileObjectOffset offset,
                       @JsonProperty("status") final FileObjectStatus status) {
-        Objects.requireNonNull(source, "source can't be null");
-        Objects.requireNonNull(offset, "offset can't be null");
-        Objects.requireNonNull(status, "status can't be null");
-        this.metadata = source;
-        this.offset = offset;
-        this.status = status;
+        this(metadata, offset, status, null);
+    }
+
+    public FileObject(final FileObjectMeta metadata,
+                      final FileObjectOffset offset,
+                      final FileObjectStatus status,
+                      final FileObjectKey key) {
+        this.metadata = Objects.requireNonNull(metadata, "metadata can't be null");
+        this.offset =  Objects.requireNonNull(offset, "offset can't be null");
+        this.status =  Objects.requireNonNull(status, "status can't be null");
+        this.key = key;
     }
 
     public FileObjectMeta metadata() {
@@ -64,8 +73,16 @@ public class FileObject implements Serializable {
         return status;
     }
 
+    public Optional<FileObjectKey> key() {
+        return Optional.ofNullable(key);
+    }
+
     public FileObject withStatus(final FileObjectStatus status) {
         return new FileObject(metadata, offset, status);
+    }
+
+    public FileObject withKey(final FileObjectKey key) {
+        return new FileObject(metadata, offset, status, key);
     }
 
     /**

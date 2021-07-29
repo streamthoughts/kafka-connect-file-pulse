@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC;
@@ -50,6 +51,8 @@ public class FilePulseSourceTask extends SourceTask {
     private static final String CONNECT_NAME_CONFIG = "name";
 
     private static final Integer NO_PARTITION = null;
+
+    private static final int DEFAULT_POLL_WAIT_MS = 500;
 
     public TaskConfig taskConfig;
 
@@ -67,6 +70,10 @@ public class FilePulseSourceTask extends SourceTask {
 
     private String connectorGroupName;
 
+    private final AtomicBoolean running = new AtomicBoolean(false);
+
+    private final AtomicBoolean closed = new AtomicBoolean(false);
+
     /**
      * {@inheritDoc}
      */
@@ -80,7 +87,7 @@ public class FilePulseSourceTask extends SourceTask {
      */
     @Override
     public void start(final Map<String, String> props) {
-        LOG.info("Starting task");
+        LOG.info("Starting FilePulse source task");
 
         final Map<String, String> configProperties = new HashMap<>(props);
         configProperties.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC, "true");
@@ -92,15 +99,19 @@ public class FilePulseSourceTask extends SourceTask {
         offsetPolicy = taskConfig.getSourceOffsetPolicy();
         topic = taskConfig.topic();
 
-        reporter = new KafkaFileStateReporter(sharedStore.getResource(), offsetPolicy);
+        reporter = new KafkaFileStateReporter(sharedStore.getResource());
         consumer = newFileRecordsPollingConsumer();
         consumer.setFileListener(reporter);
         consumer.addAll(taskConfig.files());
+
+        running.set(true);
+        LOG.info("Started FilePulse source task");
     }
 
-    @SuppressWarnings("unchecked")
     private DefaultFileRecordsPollingConsumer newFileRecordsPollingConsumer() {
-        final RecordFilterPipeline filter = new DefaultRecordFilterPipeline(taskConfig.filters());
+        final RecordFilterPipeline<FileRecord<TypedStruct>> filter = new DefaultRecordFilterPipeline(
+                taskConfig.filters()
+        );
         return new DefaultFileRecordsPollingConsumer(
                 context,
                 taskConfig.reader(),
@@ -114,29 +125,58 @@ public class FilePulseSourceTask extends SourceTask {
      */
     @Override
     public List<SourceRecord> poll() throws InterruptedException {
-        contextToBeCommitted = consumer.context();
+        LOG.trace("Polling for new data");
+        try {
+            while (running.get()) {
+                contextToBeCommitted = consumer.context();
 
-        if (!consumer.hasNext()) {
-            contextToBeCommitted = null;
-            LOG.info("Orphan task detected - all scheduled files are now completed - waiting for new reconfiguration.");
-            synchronized (this) {
-                this.wait();
+                if (!consumer.hasNext()) {
+                    contextToBeCommitted = null;
+                    LOG.info("Orphan FilePulse source task detected. " +
+                             "All scheduled files are now completed. " +
+                             "Waiting for new reconfiguration request from connector."
+                    );
+                    // we can safely close resources for this task
+                    this.running.set(false);
+                    closeResources();
+                    synchronized (this) {
+                        this.wait();
+                    }
+                    return null; // return directly as resources are already closed.
+                } else {
+                    List<SourceRecord> results = null;
+
+                    final RecordsIterable<FileRecord<TypedStruct>> records = consumer.next();
+                    if (!records.isEmpty()) {
+                        final FileContext context = consumer.context();
+                        LOG.debug("Returning {} records for {}", records.size(), context.metadata());
+                        results = records.stream().map(r -> buildSourceRecord(context, r)).collect(Collectors.toList());
+                    }
+
+                    // Wait for more incoming data records.
+                    if (results == null && consumer.hasNext()) {
+                        // Re-check if task is still running before waiting.
+                        if (!running.get()) continue;
+
+                        LOG.trace("Waiting {} ms to poll next records", DEFAULT_POLL_WAIT_MS);
+                        Thread.sleep(DEFAULT_POLL_WAIT_MS);
+                    }
+
+                    // Re-check if task is still running before returning to have a chance to close resources
+                    if (!running.get()) {
+                        continue;
+                    }
+                    return results;
+                }
             }
-            return null;
+        } catch (final Throwable t) {
+            // This task has failed, so close any resources (may be reopened if needed) before throwing
+            closeResources();
+            throw t;
         }
-
-        RecordsIterable<FileRecord<TypedStruct>> records = consumer.next();
-
-        // If no records attempt to wait for incoming records.
-        if (records.isEmpty() && consumer.hasNext()) {
-            Thread.sleep(500);
-            records = consumer.next();
-        }
-
-        FileContext context = consumer.context();
-        if (records != null && !records.isEmpty()) {
-            return records.stream().map(r -> buildSourceRecord(context, r)).collect(Collectors.toList());
-        }
+        // Only in case of shutdown
+        closeResources();
+        LOG.info("Stopped FilePulse source task.");
         return null;
     }
 
@@ -145,11 +185,13 @@ public class FilePulseSourceTask extends SourceTask {
      */
     @Override
     public void commit() {
-        if (contextToBeCommitted != null) {
+        if (running.get() && contextToBeCommitted != null) {
             reporter.notify(
+                contextToBeCommitted.key(),
                 contextToBeCommitted.metadata(),
                 contextToBeCommitted.offset(),
-                FileObjectStatus.READING);
+                FileObjectStatus.READING
+            );
         }
     }
 
@@ -174,19 +216,34 @@ public class FilePulseSourceTask extends SourceTask {
      */
     @Override
     public void stop() {
-        LOG.info("Stopping task.");
+        LOG.info("Stopping FilePulse source task");
+        running.set(false);
         synchronized (this) {
-            if (consumer != null) {
-                consumer.close();
-                notify();
-            }
-            closeSharedStateBackingStore();
+            notify();
         }
-        LOG.info("Task stopped.");
+    }
+
+    private void closeResources() {
+        if (closed.compareAndSet(false, true)) {
+            LOG.info("Closing resources FilePulse source task");
+            try {
+                if (consumer != null) {
+                    consumer.close();
+                }
+            } catch (Throwable t) {
+                LOG.warn("Error while closing task", t);
+            } finally {
+                contextToBeCommitted = null;
+                consumer = null;
+                closeSharedStateBackingStore();
+                LOG.info("Closed resources FilePulse source task");
+            }
+        }
     }
 
     private void initSharedStateBackingStore(final String connectorGroupName) {
         try {
+            LOG.info("Retrieving access to shared backing store");
             sharedStore = FileObjectStateBackingStoreManager.INSTANCE
                     .getOrCreateSharedStore(
                             connectorGroupName,

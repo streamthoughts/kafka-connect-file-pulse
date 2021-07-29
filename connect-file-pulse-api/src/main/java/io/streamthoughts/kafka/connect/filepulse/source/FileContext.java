@@ -23,7 +23,9 @@ import java.util.Objects;
 /**
  * Immutable class which is use to wrap contextual information about an input file.
  */
-public class FileContext {
+public final class FileContext {
+
+    private final FileObjectKey key;
 
     private final FileObjectMeta metadata;
 
@@ -35,21 +37,32 @@ public class FileContext {
      * @param metadata  the source metadata.
      */
     public FileContext(final FileObjectMeta metadata) {
-        this(metadata, FileObjectOffset.empty());
+        this(null, metadata);
     }
 
     /**
      * Creates a new {@link FileContext} instance.
      *
      * @param metadata  the source metadata.
-     * @param offset    teh source startPosition.
      */
-    public FileContext(final FileObjectMeta metadata,
+    public FileContext(final FileObjectKey key, final FileObjectMeta metadata) {
+        this(key, metadata, FileObjectOffset.empty());
+    }
+
+
+    /**
+     * Creates a new {@link FileContext} instance.
+     *
+     * @param key       the object file's key.
+     * @param metadata  the object file's metadata.
+     * @param offset    the object file's startPosition.
+     */
+    public FileContext(final FileObjectKey key,
+                       final FileObjectMeta metadata,
                        final FileObjectOffset offset) {
-        Objects.requireNonNull(metadata, "metadata can't be null");
-        Objects.requireNonNull(offset, "startPosition can't be null");
-        this.metadata = metadata;
-        this.offset = offset;
+        this.metadata =  Objects.requireNonNull(metadata, "metadata can't be null");
+        this.offset = Objects.requireNonNull(offset, "startPosition can't be null");
+        this.key = key;
     }
 
     /**
@@ -69,9 +82,18 @@ public class FileContext {
     public FileObjectOffset offset() {
         return offset;
     }
-    
+
+    /**
+     * Returns the partition string identifier for this file.
+     *
+     * @return the partition.
+     */
+    public FileObjectKey key() {
+        return key;
+    }
+
     public FileContext withOffset(final FileObjectOffset offset) {
-        return new FileContext(metadata, offset);
+        return new FileContext(key, metadata, offset);
     }
 
     /**
@@ -82,7 +104,8 @@ public class FileContext {
         if (this == o) return true;
         if (!(o instanceof FileContext)) return false;
         FileContext that = (FileContext) o;
-        return Objects.equals(metadata, that.metadata) &&
+        return Objects.equals(key, that.key) &&
+               Objects.equals(metadata, that.metadata) &&
                 Objects.equals(offset, that.offset);
     }
 
@@ -91,14 +114,15 @@ public class FileContext {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(metadata, offset);
+        return Objects.hash(key, metadata, offset);
     }
 
     @Override
     public String toString() {
         return "[" +
-                "metadata=" + metadata +
-                ", offset=" + offset +
+                "partition=" + key +
+                ", metadata="  + metadata +
+                ", offset="  + offset +
                 ']';
     }
 }

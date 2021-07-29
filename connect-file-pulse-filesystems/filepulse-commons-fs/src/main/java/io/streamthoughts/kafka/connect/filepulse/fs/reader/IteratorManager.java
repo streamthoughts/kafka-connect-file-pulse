@@ -53,7 +53,7 @@ public class IteratorManager {
      * @param iterator  an iterator to remove.
      */
     void removeIterator(final FileInputIterator<?> iterator) {
-        if (iterator.isClose()) {
+        if (iterator.isClosed()) {
             openIterators.remove(iterator);
         }
     }

@@ -181,7 +181,7 @@ public class RowFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
      */
     @Override
     public void close() {
-        if (!isClose()) {
+        if (!isClosed()) {
             if (this.reader != null) {
                 this.reader.close();
             }

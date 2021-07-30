@@ -230,9 +230,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         cleaned.forEach((fileObject, result) -> {
             if (result.equals(FileCleanupPolicyResult.SUCCEED)) {
                 final String key = fileObject.key().get().original();
-                store.put(key, fileObject.withStatus(FileObjectStatus.CLEANED));
+                store.putAsync(key, fileObject.withStatus(FileObjectStatus.CLEANED));
             } else {
-                LOG.info("Postpone clean up for object file: '{}'", fileObject.metadata().stringURI());
+                LOG.warn("Postpone clean up for object file: '{}'", fileObject.metadata().stringURI());
                 completed.add(fileObject);
             }
         });

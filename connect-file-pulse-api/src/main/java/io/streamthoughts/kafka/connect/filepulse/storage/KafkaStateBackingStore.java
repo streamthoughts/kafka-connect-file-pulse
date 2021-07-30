@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.storage;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.errors.RetriableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +37,9 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaStateBackingStore.class);
 
-    private static final long READ_TO_END_TIMEOUT_MS = 30000;
+    private static final Duration DEFAULT_READ_TO_END_TIMEOUT = Duration.ofSeconds(30);
 
-    private final KafkaBasedLog<String, byte[]> configLog;
+    private final KafkaBasedLog<String, byte[]> kafkaLog;
 
     private final Object lock = new Object();
 
@@ -47,7 +50,8 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
     private final StateSerde<T> serde;
     private final String keyPrefix;
     private final boolean consumerEnabled;
-    private States status = States.CREATED;
+
+    private volatile Status status = Status.CREATED;
     private StateBackingStore.UpdateListener<T> updateListener;
 
     /**
@@ -66,19 +70,15 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
                                   final StateSerde<T> serde,
                                   final boolean consumerEnabled) {
         KafkaBasedLogFactory factory = new KafkaBasedLogFactory(configs);
-        this.configLog = factory.make(topic, new ConsumeCallback());
+        this.kafkaLog = factory.make(topic, new ConsumeCallback());
         this.groupId = groupId;
         this.serde = serde;
         this.keyPrefix = keyPrefix;
         this.consumerEnabled = consumerEnabled;
     }
 
-    synchronized States getState() {
+    Status getState() {
         return this.status;
-    }
-
-    private synchronized void setState(final States status) {
-        this.status = status;
     }
 
     /**
@@ -92,8 +92,8 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
         LOG.info("Starting {}", getBackingStoreName());
         // Before startup, callbacks are *not* invoked. You can grab a snapshot after starting -- just take care that
         // updates can continue to occur in the background
-        configLog.start(consumerEnabled);
-        setState(States.STARTED);
+        kafkaLog.start(consumerEnabled);
+        this.status = Status.STARTED;
         LOG.info("Started {}", getBackingStoreName());
     }
 
@@ -102,7 +102,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
      */
     @Override
     public boolean isStarted() {
-        return getState().equals(States.STARTED);
+        return getState().equals(Status.STARTED);
     }
 
     /**
@@ -111,12 +111,12 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
     @Override
     public void stop() {
         synchronized (this) {
-            setState(States.PENDING_SHUTDOWN);
             LOG.info("Closing {}", getBackingStoreName());
-            configLog.flush();
-            configLog.stop();
+            this.status = Status.PENDING_SHUTDOWN;
+            kafkaLog.flush();
+            kafkaLog.stop();
+            this.status = Status.SHUTDOWN;
             LOG.info("Closed {}", getBackingStoreName());
-            setState(States.SHUTDOWN);
         }
     }
 
@@ -159,17 +159,13 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
     private void put(final String name, final T state, final boolean sync) {
         checkStates();
         try {
-            configLog.send(newRecordKey(groupId, name), serde.serialize(state));
-            if (sync) {
-                configLog.readToEnd().get(READ_TO_END_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-            }
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            LOG.error("Failed to write consumer state to Kafka: ", e);
-            throw new RuntimeException("Error writing consumer state to Kafka", e);
+            safeSend(name, serde.serialize(state));
+        } catch (final Exception e) {
+            LOG.error("Failed to write state to Kafka: ", e);
+            throw new RuntimeException("Error writing state to Kafka", e);
         }
+        mayRefreshState(sync);
     }
-
-
 
     /**
      * {@inheritDoc}
@@ -181,16 +177,40 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
 
     private void remove(final String name, final boolean sync) {
         checkStates();
-        LOG.debug("Removing consumer server state for name {}", name);
+        LOG.debug("Removing state for name {}", name);
         try {
-            configLog.send(newRecordKey(groupId, name), null);
-            if (sync) {
-                configLog.readToEnd().get(READ_TO_END_TIMEOUT_MS, TimeUnit.MILLISECONDS);
-            }
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            safeSend(name, null);
+        } catch (final Exception e) {
             LOG.error("Failed to remove state from Kafka: ", e);
             throw new RuntimeException("Error removing state from Kafka", e);
         }
+        mayRefreshState(sync);
+    }
+
+    private void mayRefreshState(final boolean refresh) {
+        try {
+            if (refresh) {
+                refresh(DEFAULT_READ_TO_END_TIMEOUT.toMillis(), TimeUnit.MILLISECONDS);
+            }
+        } catch (final TimeoutException e) {
+            LOG.error("Failed to synchronize state from Kafka: TimeoutException");
+        }
+    }
+
+    private void safeSend(final String key, final byte[] value) {
+        kafkaLog.send(newRecordKey(groupId, key), value, new org.apache.kafka.clients.producer.Callback() {
+            @Override
+            public void onCompletion(final RecordMetadata metadata, final Exception exception) {
+                if (exception == null) return;
+                if (exception instanceof RetriableException) {
+                    if (value == null) {
+                        kafkaLog.send(key, null, this);
+                    }
+                } else {
+                    LOG.error("Failed to write state update", exception);
+                }
+            }
+        });
     }
 
     /**
@@ -207,10 +227,16 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
     @Override
     public void refresh(final long timeout, final TimeUnit unit) throws TimeoutException {
         checkStates();
+
+        if (!consumerEnabled) {
+            LOG.warn("This KafkaStateBackingStore is running in producer mode only. Refresh is ignored.");
+            return;
+        }
+
         try {
-            configLog.readToEnd().get(timeout, unit);
+            kafkaLog.readToEnd().get(timeout, unit);
         } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException("Error trying to read to end of configDef log", e);
+            throw new RuntimeException("Error trying to read to end of log", e);
         }
     }
 
@@ -227,7 +253,8 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
     }
 
     private synchronized void checkStates() {
-        if (this.getState() == States.SHUTDOWN || this.getState() == States.PENDING_SHUTDOWN) {
+        if (status == Status.SHUTDOWN ||
+            status == Status.PENDING_SHUTDOWN) {
             throw new IllegalStateException("Bad state " + getState().name());
         }
     }
@@ -236,7 +263,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
         return keyPrefix + groupId + "." + stateName;
     }
 
-    public enum States {
+    public enum Status {
         CREATED, STARTED, PENDING_SHUTDOWN, SHUTDOWN
     }
 
@@ -245,7 +272,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
         @Override
         public void onCompletion(Throwable error, ConsumerRecord<String, byte[]> record) {
             if (error != null) {
-                LOG.error("Unexpected in consumer callback for KafkaStreamsStateBackingStore: ", error);
+                LOG.error("Unexpected in consumer callback for KafkaStateBackingStore: ", error);
                 return;
             }
 
@@ -281,7 +308,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
                         }
                     }
 
-                    if (getState() == States.STARTED && updateListener != null) {
+                    if (status == Status.STARTED && updateListener != null) {
                         if (removed) {
                             updateListener.onStateRemove(stateName);
                         } else {

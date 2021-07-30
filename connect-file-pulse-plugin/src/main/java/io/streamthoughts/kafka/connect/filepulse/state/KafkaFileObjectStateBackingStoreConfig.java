@@ -58,7 +58,6 @@ public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
         super(configDef(), originals, false);
     }
 
-
     public boolean getTaskStorageConsumerEnabled() {
         return this.getBoolean(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG);
     }

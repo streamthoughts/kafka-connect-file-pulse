@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC;
+import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG;
 
 /**
  * The FilePulseSourceTask.
@@ -90,7 +90,9 @@ public class FilePulseSourceTask extends SourceTask {
         LOG.info("Starting FilePulse source task");
 
         final Map<String, String> configProperties = new HashMap<>(props);
-        configProperties.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC, "true");
+        // Disable backing store Kafka Consumer if KafkaFileObjectStateBackingStore is configured.
+        configProperties.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG, "false");
+
         taskConfig = new TaskConfig(configProperties);
 
         connectorGroupName = props.get(CONNECT_NAME_CONFIG);

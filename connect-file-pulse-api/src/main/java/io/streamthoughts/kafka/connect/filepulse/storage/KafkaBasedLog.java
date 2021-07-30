@@ -109,7 +109,7 @@ public class KafkaBasedLog<K, V> {
         if (state != States.CREATED) {
             throw new IllegalStateException("Cannot restart KafkaBasedLog due to state being " + state +")");
         }
-        LOG.info("Starting KafkaBasedLog with topic {}",  topic);
+        LOG.info("Starting KafkaBasedLog with topic {} (consumer_mode_enabled={})",  topic, consumerEnabled);
         try {
             initializer.run();
             producer = createProducer();
@@ -142,9 +142,9 @@ public class KafkaBasedLog<K, V> {
 
                 thread = new WorkThread();
                 thread.start();
+                LOG.info("Finished reading KafkaBasedLog for topic {}", topic);
             }
             state = States.RUNNING;
-            LOG.info("Finished reading KafkaBasedLog for topic {}", topic);
             LOG.info("Started KafkaBasedLog for topic {}", topic);
         } catch (Exception e) {
             state = States.ERROR;
@@ -153,7 +153,8 @@ public class KafkaBasedLog<K, V> {
     }
 
     public void stop() {
-        if (state == States.PENDING_SHUTDOWN || state == States.CLOSED) {
+        if (state == States.PENDING_SHUTDOWN ||
+            state == States.CLOSED) {
             LOG.info("KafkaBasedLog is either being shutdown or already closed for topic {}", topic);
             return;
         }
@@ -163,8 +164,9 @@ public class KafkaBasedLog<K, V> {
             stopRequested = true;
         }
         try {
+            if (consumer != null) consumer.wakeup();
+
             try {
-                if (consumer != null) consumer.wakeup();
                 if (thread != null) thread.join();
             } catch (InterruptedException e) {
                 throw new ConnectException("Failed to stop KafkaBasedLog. Exiting without cleanly shutting " +
@@ -240,12 +242,11 @@ public class KafkaBasedLog<K, V> {
         producer.send(new ProducerRecord<>(topic, key, value), callback);
     }
 
-    private synchronized void checkIsRunning() {
+    private void checkIsRunning() {
         if (state != States.RUNNING) {
             throw new IllegalStateException("KafkaBasedLog is already not running.");
         }
     }
-
 
     private Producer<K, V> createProducer() {
         // Always require producer acks to all to ensure durable writes
@@ -265,7 +266,7 @@ public class KafkaBasedLog<K, V> {
         return new KafkaConsumer<>(consumerConfigs);
     }
 
-    private void poll(Duration timeout) {
+    private void poll(final Duration timeout) {
         try {
             ConsumerRecords<K, V> records = consumer.poll(timeout);
             for (ConsumerRecord<K, V> record : records)

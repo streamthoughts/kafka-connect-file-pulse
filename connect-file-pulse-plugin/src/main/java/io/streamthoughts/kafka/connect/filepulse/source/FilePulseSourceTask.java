@@ -94,20 +94,26 @@ public class FilePulseSourceTask extends SourceTask {
         configProperties.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG, "false");
 
         taskConfig = new TaskConfig(configProperties);
-
         connectorGroupName = props.get(CONNECT_NAME_CONFIG);
-        initSharedStateBackingStore(connectorGroupName);
-
         offsetPolicy = taskConfig.getSourceOffsetPolicy();
         topic = taskConfig.topic();
 
-        reporter = new KafkaFileStateReporter(sharedStore.getResource());
-        consumer = newFileRecordsPollingConsumer();
-        consumer.setFileListener(reporter);
-        consumer.addAll(taskConfig.files());
+        try {
 
-        running.set(true);
-        LOG.info("Started FilePulse source task");
+            initSharedStateBackingStore(connectorGroupName);
+
+            reporter = new KafkaFileStateReporter(sharedStore.getResource());
+            consumer = newFileRecordsPollingConsumer();
+            consumer.setFileListener(reporter);
+            consumer.addAll(taskConfig.files());
+
+            running.set(true);
+            LOG.info("Started FilePulse source task");
+        } catch (final Throwable t) {
+            // This task has failed, so close any resources (may be reopened if needed) before throwing
+            closeResources();
+            throw t;
+        }
     }
 
     private DefaultFileRecordsPollingConsumer newFileRecordsPollingConsumer() {
@@ -268,7 +274,9 @@ public class FilePulseSourceTask extends SourceTask {
 
     private void closeSharedStateBackingStore() {
         try {
-            sharedStore.close();
+            if (sharedStore != null) {
+                sharedStore.close();
+            }
         } catch (Exception exception) {
             LOG.error("Failed to shared StateBackingStore '{}'", connectorGroupName);
         }

@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,8 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private OpaqueMemoryResource<StateBackingStore<FileObject>> sharedStore;
 
+    private final AtomicBoolean closed = new AtomicBoolean(false);
+
     /**
      * {@inheritDoc}
      */
@@ -87,7 +90,7 @@ public class FilePulseSourceConnector extends SourceConnector {
     @Override
     public void start(final Map<String, String> props) {
         connectorGroupName = props.get(CONNECT_NAME_CONFIG);
-        LOG.info("Configuring connector : {}", connectorGroupName);
+        LOG.info("Starting FilePulse source connector: {}", connectorGroupName);
         try {
             configProperties = new HashMap<>(props);
             configProperties.put(TASKS_FILE_STATUS_STORAGE_NAME_CONFIG, connectorGroupName);
@@ -97,15 +100,16 @@ public class FilePulseSourceConnector extends SourceConnector {
             throw new ConnectException("Failed to initialize FilePulseSourceConnector due to configuration error", e);
         }
 
-        initSharedStateBackingStore(connectorConfig, connectorGroupName);
-
-        final FileSystemListing<?> directoryScanner = this.connectorConfig.fileSystemListing();
-        directoryScanner.setFilter(new CompositeFileListFilter(connectorConfig.fileSystemListingFilter()));
-
-        final FileCleanupPolicy cleaner = connectorConfig.cleanupPolicy();
-        final SourceOffsetPolicy offsetPolicy = connectorConfig.getSourceOffsetPolicy();
-
         try {
+
+            initSharedStateBackingStore(connectorConfig, connectorGroupName);
+
+            final FileSystemListing<?> directoryScanner = this.connectorConfig.fileSystemListing();
+            directoryScanner.setFilter(new CompositeFileListFilter(connectorConfig.fileSystemListingFilter()));
+
+            final FileCleanupPolicy cleaner = connectorConfig.cleanupPolicy();
+            final SourceOffsetPolicy offsetPolicy = connectorConfig.getSourceOffsetPolicy();
+
             scanner = new DefaultFileSystemMonitor(
                     connectorConfig.allowTasksReconfigurationAfterTimeoutMs(),
                     directoryScanner,
@@ -119,13 +123,9 @@ public class FilePulseSourceConnector extends SourceConnector {
                 throw new ConnectException(e);
             });
             fsMonitorThread.start();
+            LOG.info("Started FilePulse source connector: {}", connectorGroupName);
         } catch (Exception e) {
-            LOG.error(
-                    "Closing resources due to an error thrown during initialization of connector {} ",
-                    connectorGroupName
-            );
-            closeSharedStateBackingStore();
-            if (fsMonitorThread != null) fsMonitorThread.shutdown(0L);
+            closeResources();
             throw e;
         }
     }
@@ -177,12 +177,24 @@ public class FilePulseSourceConnector extends SourceConnector {
     @Override
     public void stop() {
         LOG.info("Stopping FilePulse source connector");
-        fsMonitorThread.shutdown(DEFAULT_MAX_TIMEOUT);
-        closeSharedStateBackingStore();
-        try {
-            fsMonitorThread.join(DEFAULT_MAX_TIMEOUT);
-        } catch (InterruptedException ignore) {
-            LOG.info("Stopped FilePulse source connector");
+        closeResources();
+        LOG.info("Stopped FilePulse source connector");
+    }
+
+    private void closeResources() {
+        if (closed.compareAndSet(false, true)) {
+            LOG.info("Closing resources for FilePulse source connector");
+            try {
+                if (fsMonitorThread != null) {
+                    fsMonitorThread.shutdown(DEFAULT_MAX_TIMEOUT);
+                    fsMonitorThread.join(DEFAULT_MAX_TIMEOUT);
+                }
+            } catch (InterruptedException e) {
+                LOG.warn("Error while closing file-system monitoring thread: {}", e.getMessage());
+            } finally {
+                closeSharedStateBackingStore();
+            }
+            LOG.info("Closed resources for FilePulse source connector");
         }
     }
 
@@ -212,7 +224,9 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private void closeSharedStateBackingStore() {
         try {
-            sharedStore.close();
+            if (sharedStore != null) {
+                sharedStore.close();
+            }
         } catch (Exception exception) {
             LOG.error("Failed to shared StateBackingStore '{}'", connectorGroupName);
         }

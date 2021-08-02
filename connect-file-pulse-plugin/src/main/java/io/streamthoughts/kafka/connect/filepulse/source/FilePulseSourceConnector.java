@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC;
 import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_NAME_CONFIG;
@@ -150,25 +151,36 @@ public class FilePulseSourceConnector extends SourceConnector {
                 .map(l -> l.stream().map(URI::toString).collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
-        List<Map<String, String>> taskConfigs = new ArrayList<>(groupFiles.size());
-        if (!groupFiles.isEmpty()) {
-            final long taskConfigsGen = taskConfigsGeneration.getAndIncrement();
-            for (List<String> group : groupFiles) {
-                final Map<String, String> taskProps = new HashMap<>(configProperties);
-                taskProps.put(TaskConfig.FILE_OBJECT_URIS_CONFIG, String.join(",", group));
-                taskConfigs.add(taskProps);
+        final long taskConfigsGen = taskConfigsGeneration.getAndIncrement();
+        final List<Map<String, String>> taskConfigs = new ArrayList<>(groupFiles.size());
+
+        if (groupFiles.isEmpty()) {
+            if (taskConfigsGen > 0) {
+                LOG.info("No object file was found - skip task reconfiguration.");
+                return taskConfigs;
             }
-            for (int i = 0; i < groupFiles.size(); i++) {
-                LOG.info(
-                        "Created config for task_id={} with '{}' object files (task_config_gen={}).",
-                        i,
-                        groupFiles.get(i).size(),
-                        taskConfigsGen);
-            }
+            LOG.info("No object file was found - resetting all tasks with an empty config.");
+            IntStream.range(0, maxTasks).forEachOrdered(i -> taskConfigs.add(createTaskConfig("")));
         } else {
-            LOG.warn("Failed to create new task configs - no object files found.");
+            groupFiles
+                    .stream()
+                    .map(group -> createTaskConfig(String.join(",", group)))
+                    .forEach(taskConfigs::add);
         }
+
+        IntStream.range(0, groupFiles.size()).forEachOrdered(i -> LOG.info(
+                "Created config for task_id={} with '{}' object files (task_config_gen={}).",
+                i,
+                groupFiles.get(i).size(),
+                taskConfigsGen)
+        );
         return taskConfigs;
+    }
+
+    private Map<String, String> createTaskConfig(final String URIs) {
+        final Map<String, String> taskProps = new HashMap<>(configProperties);
+        taskProps.put(TaskConfig.FILE_OBJECT_URIS_CONFIG, URIs);
+        return taskProps;
     }
 
     /**

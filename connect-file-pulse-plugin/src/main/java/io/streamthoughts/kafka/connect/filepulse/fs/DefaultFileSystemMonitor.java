@@ -40,11 +40,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -64,13 +66,11 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
     // TODO: Timeout should be user-configurable
     private static final long TASK_CONFIGURATION_DEFAULT_TIMEOUT = 15000L;
 
-    private enum ScanStatus {
-        CREATED, READY, STARTED, STOPPED
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(DefaultFileSystemMonitor.class);
 
-    private static final long READ_CONFIG_ON_START_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(30);
+    private static final Duration ON_START_READ_END_LOG_TIMEOUT = Duration.ofSeconds(30);
+    private static final Duration DEFAULT_READ_END_LOG_TIMEOUT = Duration.ofSeconds(5);
+    private static final int MAX_SCHEDULE_ATTEMPTS = 3;
 
     private final static Comparator<FileObjectMeta> BY_LAST_MODIFIED =
             Comparator.comparingLong(FileObjectMeta::lastModified);
@@ -100,7 +100,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
     private final AtomicBoolean taskReconfigurationRequested = new AtomicBoolean(false);
 
-    private ScanStatus status;
+    private final AtomicBoolean running = new AtomicBoolean(false);
+
+    private final AtomicBoolean changed = new AtomicBoolean(false);
 
     /**
      * Creates a new {@link DefaultFileSystemMonitor} instance.
@@ -135,8 +137,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         this.cleaner.setStorage(fsListening.storage());
         this.offsetPolicy = offsetPolicy;
         this.store = store;
-        this.status = ScanStatus.CREATED;
-        LOG.info("Creating local filesystem scanner");
+        LOG.info("Initializing FileSystemMonitor");
         // The listener is not call until the store is fully STARTED.
         this.store.setUpdateListener(new StateBackingStore.UpdateListener<>() {
             @Override
@@ -149,14 +150,20 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 final FileObjectKey objectId = FileObjectKey.of(key);
                 final FileObjectStatus status = object.status();
                 if (status.isOneOf(FileObjectStatus.completed())) {
-                    completed.add(object.withKey(FileObjectKey.of(key)));
+                    LOG.debug("Received completed status for: {}", object);
+                    completed.add(object.withKey(objectId));
+                    // We should always try to remove the object key from the list
+                    // of last scanned files to avoid scheduling an object file that has just been completed.
+                    if (scanned.remove(objectId) != null) {
+                        changed.set(true);
+                    }
                 } else if (status.isOneOf(FileObjectStatus.CLEANED)) {
                     final FileObjectMeta remove = scheduled.remove(objectId);
                     if (remove == null) {
                         LOG.warn(
-                            "Received cleaned status but no file currently scheduled for: '{}'. " +
-                            "This warn should only occurred during recovering step",
-                            key
+                                "Received cleaned status but no file currently scheduled for: '{}'. " +
+                                        "This warn should only occurred during recovering step",
+                                key
                         );
                     }
                 }
@@ -169,10 +176,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     "with tasks processing files is already started. You can ignore that warning if the connector " +
                     " is recovering from a crash or resuming after being paused.");
         }
-        readStatesToEnd(READ_CONFIG_ON_START_TIMEOUT_MS);
+        readStatesToEnd(ON_START_READ_END_LOG_TIMEOUT);
         recoverPreviouslyCompletedSources();
-        this.status = ScanStatus.READY;
-        LOG.info("Finished initializing local filesystem scanner");
+        LOG.info("Initialized FileSystemMonitor");
     }
 
     private void recoverPreviouslyCompletedSources() {
@@ -186,9 +192,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         LOG.info("Finished recovering previously completed files : " + completed);
     }
 
-    private boolean readStatesToEnd(long timeoutMs) {
+    private boolean readStatesToEnd(final Duration timeout) {
         try {
-            store.refresh(timeoutMs, TimeUnit.MILLISECONDS);
+            store.refresh(timeout.toMillis(), TimeUnit.MILLISECONDS);
             fileState = store.snapshot();
             LOG.debug(
                     "Finished reading to end of log and updated states snapshot, new states log position: {}",
@@ -205,20 +211,26 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
      */
     @Override
     public void invoke(final ConnectorContext context) {
+        // It seems to be OK to always run cleanup even if connector is not yet started or is being shut down.
         cleanUpCompletedFiles();
-        if (!taskReconfigurationRequested.get()) {
-            if (updateFiles()) {
-                LOG.info("Requesting task reconfiguration");
-                taskReconfigurationRequested.set(true);
-                context.requestTaskReconfiguration();
+        if (running.get()) {
+            if (!taskReconfigurationRequested.get()) {
+                if (updateFiles()) {
+                    LOG.info("Requesting task reconfiguration");
+                    taskReconfigurationRequested.set(true);
+                    context.requestTaskReconfiguration();
+                }
+            } else {
+                LOG.info("Task reconfiguration requested. Skip filesystem listing.");
             }
         } else {
-            LOG.info("Task reconfiguration requested. Skip filesystem listing.");
+            LOG.info("The connector is not completely started or is being shut down. Skip filesystem listing.");
         }
     }
 
     private void cleanUpCompletedFiles() {
         if (completed.isEmpty()) {
+            LOG.debug("Skipped cleanup. No object file completed.");
             return;
         }
 
@@ -243,13 +255,13 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         final boolean noScheduledFiles = scheduled.isEmpty();
         if (!noScheduledFiles && allowTasksReconfigurationAfterTimeoutMs == Long.MAX_VALUE) {
             LOG.info(
-                    "Scheduled files still being processed: {}. Skip filesystem listing while waiting for tasks completion",
-                    scheduled.size()
+                "Scheduled files still being processed: {}. Skip filesystem listing while waiting for tasks completion",
+                scheduled.size()
             );
             return false;
         }
 
-        boolean toEnd = readStatesToEnd(TimeUnit.SECONDS.toMillis(5));
+        boolean toEnd = readStatesToEnd(DEFAULT_READ_END_LOG_TIMEOUT);
         if (noScheduledFiles && !toEnd) {
             LOG.warn("Failed to read state changelog. Skip filesystem listing due to timeout");
             return false;
@@ -281,7 +293,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             if (timeout > 0) {
                 LOG.info(
                         "Scheduled files still being processed ({}) but new files detected. " +
-                                "Waiting for {} ms before allowing task reconfiguration",
+                        "Waiting for {} ms before allowing task reconfiguration",
                         scheduled.size(),
                         timeout
                 );
@@ -297,7 +309,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         LOG.info("Finished lookup for new object files: '{}' files can be scheduled for processing", scanned.size());
         // Only return true if the status is started, i.e. if this was not the first filesystem scan
         // This is used to not trigger task reconfiguration before the connector is fully started.
-        return !scanned.isEmpty() && status.equals(ScanStatus.STARTED);
+        return !scanned.isEmpty() && running.get();
     }
 
     private Map<FileObjectKey, FileObjectMeta> toScheduled(final Collection<FileObjectMeta> scanned,
@@ -329,11 +341,11 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     .map(e -> "partition_key=" + e.getKey() + ", files=" + e.getValue())
                     .collect(Collectors.joining("\n\t", "\n\t", "\n"));
             LOG.error(
-                "Duplicates object files detected. " +
-                "Consider changing the configuration for '{}'. " +
-                "Scan is ignored: {}",
-                ConnectorConfig.OFFSET_STRATEGY_CLASS_CONFIG,
-                formatted
+                    "Duplicates object files detected. " +
+                    "Consider changing the configuration for '{}'. " +
+                    "Scan is ignored: {}",
+                    ConnectorConfig.OFFSET_STRATEGY_CLASS_CONFIG,
+                    formatted
             );
             return Collections.emptyMap(); // ignore all sources files
         }
@@ -351,50 +363,96 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
      * {@inheritDoc}
      */
     @Override
-    public synchronized List<List<URI>> partitionFilesAndGet(int maxGroups, int maxFilesToSchedule) {
-        LOG.info("Retrieving object files to be scheduled found during last scan");
-        long started = Time.SYSTEM.milliseconds();
-        long now = started;
-        while (scanned.isEmpty() && now - started < TASK_CONFIGURATION_DEFAULT_TIMEOUT) {
-            try {
-                LOG.info("No file to be scheduled, waiting for next filesystem scan execution");
-                wait(Math.max(0, TASK_CONFIGURATION_DEFAULT_TIMEOUT - (now - started)));
-            } catch (InterruptedException ignore) {
-            }
-            now = Time.SYSTEM.milliseconds();
+    public List<List<URI>> partitionFilesAndGet(int maxGroups, int maxFilesToSchedule) {
+
+        if (!running.get()) {
+            // This is the first call of partitionFilesAndGet, hence the connector is starting or restarting after
+            // a configuration update. An empty list must be returned to ensure that all running tasks is stopped
+            // before scheduling new object files.
+            LOG.info("Started FileSystemMonitor");
+            running.set(true);
+            return Collections.emptyList();
         }
 
-        final List<List<URI>> partitions;
-        if (scanned.isEmpty()) {
-            LOG.warn("Filesystem could not be scanned quickly enough, " +
-                    "or no object file detected after connector started");
-            partitions = Collections.emptyList();
-        } else {
-            if (scanned.size() <= maxFilesToSchedule) {
-                scheduled.putAll(scanned);
-            } else {
-                final Iterator<Map.Entry<FileObjectKey, FileObjectMeta>> it = scanned.entrySet().iterator();
-                while (scheduled.size() < maxFilesToSchedule && it.hasNext()) {
-                    final Map.Entry<FileObjectKey, FileObjectMeta> next = it.next();
-                    scheduled.put(next.getKey(), next.getValue());
+        try {
+            long started = Time.SYSTEM.milliseconds();
+            long now = started;
+            while (scanned.isEmpty() && now - started < TASK_CONFIGURATION_DEFAULT_TIMEOUT) {
+                try {
+                    synchronized (this) {
+                        LOG.info("No file to be scheduled, waiting for next filesystem scan execution");
+                        wait(Math.max(0, TASK_CONFIGURATION_DEFAULT_TIMEOUT - (now - started)));
+                    }
+                } catch (InterruptedException ignore) {
                 }
+                now = Time.SYSTEM.milliseconds();
             }
 
-            List<FileObjectMeta> sources = new ArrayList<>(scheduled.values());
-            sources.sort(BY_LAST_MODIFIED);
-            int numGroups = Math.min(scheduled.size(), maxGroups);
+            List<List<URI>> partitions = new LinkedList<>();
 
-            final List<URI> paths = sources
-                    .stream()
-                    .map(FileObjectMeta::uri)
-                    .collect(Collectors.toList());
-            partitions = ConnectorUtils.groupPartitions(paths, numGroups);
+            // Re-check if there is still object files that may be scheduled.
+            if (!scanned.isEmpty()) {
+                int attempts = 0;
+                do {
+                    changed.set(false);
+                    LOG.info(
+                        "Preparing next scheduling using the object files found during last iteration (attempt={}/{}).",
+                        attempts + 1,
+                        MAX_SCHEDULE_ATTEMPTS
+                    );
+                    // Try to read states to end to make sure we do not attempt
+                    // to schedule an object file that has been cleanup.
+                    final boolean toEnd = readStatesToEnd(DEFAULT_READ_END_LOG_TIMEOUT);
+                    if (!toEnd) {
+                        LOG.warn("Failed to read state changelog while scheduling object files. Timeout.");
+                    }
+
+                    if (scanned.size() <= maxFilesToSchedule) {
+                        scheduled.putAll(scanned);
+                    } else {
+                        final Iterator<Map.Entry<FileObjectKey, FileObjectMeta>> it = scanned.entrySet().iterator();
+                        while (scheduled.size() < maxFilesToSchedule && it.hasNext()) {
+                            final Map.Entry<FileObjectKey, FileObjectMeta> next = it.next();
+                            scheduled.put(next.getKey(), next.getValue());
+                        }
+                    }
+
+                    List<FileObjectMeta> sources = new ArrayList<>(scheduled.values());
+                    sources.sort(BY_LAST_MODIFIED);
+                    final int numGroups = Math.min(scheduled.size(), maxGroups);
+
+                    final List<URI> paths = sources
+                            .stream()
+                            .map(FileObjectMeta::uri)
+                            .collect(Collectors.toList());
+                    partitions.addAll(ConnectorUtils.groupPartitions(paths, numGroups));
+
+                    attempts++;
+                    if (changed.get()) {
+                        if (attempts == MAX_SCHEDULE_ATTEMPTS) {
+                            LOG.warn(
+                                "Failed to prepare the object files after attempts: {}.",
+                                MAX_SCHEDULE_ATTEMPTS
+                            );
+                            // Make sure to clear the schedule list before returning.
+                            scheduled.clear();
+                            return Collections.emptyList();
+                        } else {
+                            LOG.warn("State updates was received while preparing the object files to be scheduled");
+                        }
+                    }
+                } while (changed.get() && attempts < MAX_SCHEDULE_ATTEMPTS);
+            }
+
+            if (partitions.isEmpty()) {
+                LOG.warn("Filesystem could not be scanned quickly enough, " +
+                        "or no object file was detected after starting the connector.");
+            }
+            return partitions;
+        } finally {
+            scanned.clear();
+            taskReconfigurationRequested.set(false);
         }
-
-        scanned.clear();
-        taskReconfigurationRequested.set(false);
-        status = ScanStatus.STARTED;
-        return partitions;
     }
 
     /**
@@ -402,14 +460,15 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
      */
     @Override
     public void close() {
-        try {
-            LOG.info("Closing FileSystemMonitor resources");
-            this.status = ScanStatus.STOPPED;
-            readStatesToEnd(5);
-            cleanUpCompletedFiles();
-            LOG.info("Closed FileSystemMonitor resources");
-        } catch (final Exception e) {
-            LOG.warn("Unexpected error while closing FileSystemMonitor.", e);
+        if (running.compareAndSet(true, false)) {
+            try {
+                LOG.info("Closing FileSystemMonitor resources");
+                readStatesToEnd(DEFAULT_READ_END_LOG_TIMEOUT);
+                cleanUpCompletedFiles();
+                LOG.info("Closed FileSystemMonitor resources");
+            } catch (final Exception e) {
+                LOG.warn("Unexpected error while closing FileSystemMonitor.", e);
+            }
         }
     }
 }

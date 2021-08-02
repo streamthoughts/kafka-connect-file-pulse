@@ -356,7 +356,6 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
     private void closeIterator(final FileInputIterator<FileRecord<TypedStruct>> iterator,
                                final Exception cause) {
         try {
-            LOG.info("Closing iterator for: {} ", iterator.context().metadata());
             iterator.close();
         } catch (final Exception e) {
             LOG.debug("Error while closing iterator for: '{}'", iterator.context().metadata(), e);

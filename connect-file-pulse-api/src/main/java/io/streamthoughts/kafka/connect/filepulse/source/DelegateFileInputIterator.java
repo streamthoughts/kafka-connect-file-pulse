@@ -151,10 +151,9 @@ public class DelegateFileInputIterator implements FileInputIterator<FileRecord<T
      */
     @Override
     public void close() {
-        if (!isClosed.get()) {
-            LOG.info("Closing iterator for: {} ", iterator.context().metadata());
+        if (isClosed.compareAndSet(false, true)) {
             iterator.close();
-            isClosed.set(true);
+            LOG.info("Closed iterator for: {} ", iterator.context().metadata());
         }
     }
 

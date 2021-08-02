@@ -18,16 +18,16 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
+import io.streamthoughts.kafka.connect.filepulse.state.InMemoryFileObjectStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.KafkaStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
-import io.streamthoughts.kafka.connect.filepulse.utils.InMemoryStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.utils.MockFileCleaner;
 import io.streamthoughts.kafka.connect.filepulse.utils.TemporaryFileInput;
 import org.apache.kafka.connect.connector.ConnectorContext;
@@ -81,20 +81,42 @@ public class DefaultFileSystemMonitorTest {
     @Rule
     public TestRule chain = RuleChain.outerRule(INPUT_DIRECTORY).around(INPUT_FILES);
 
+    private static final StateSnapshot<FileObject> EMPTY_STATE_SNAPSHOT = new StateSnapshot<>(
+            0,
+            Collections.emptyMap()
+    );
+
+    @Test
+    public void should_not_invoke_listing_when_monitor_is_not_fully_started() {
+        KafkaStateBackingStore store = Mockito.mock(KafkaStateBackingStore.class);
+        Mockito.when(store.snapshot()).thenReturn(EMPTY_STATE_SNAPSHOT);
+
+        final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(Collections.emptyList());
+        DefaultFileSystemMonitor monitor = newFileSystemMonitor(new MockFileCleaner(true), ds, store);
+
+        monitor.invoke(new MockConnectorContext());
+        assertEquals(0, ds.times());
+
+        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
+
+        monitor.invoke(new MockConnectorContext());
+        assertEquals(1, ds.times());
+    }
+
     @Test
     public void should_return_all_scanned_files_when_no_state_exist() {
-        StateSnapshot<FileObject> state = new StateSnapshot<>(0, Collections.emptyMap());
         KafkaStateBackingStore store = Mockito.mock(KafkaStateBackingStore.class);
-        Mockito.when(store.snapshot()).thenReturn(state);
+        Mockito.when(store.snapshot()).thenReturn(EMPTY_STATE_SNAPSHOT);
 
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
 
-        final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
-        DefaultFileSystemMonitor scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
+        final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(sources);
+        DefaultFileSystemMonitor monitor = newFileSystemMonitor(new MockFileCleaner(true), ds, store);
 
-        scanner.invoke(new MockConnectorContext());
+        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
+        monitor.invoke(new MockConnectorContext());
 
-        List<List<URI>> result = scanner.partitionFilesAndGet(1);
+        List<List<URI>> result = monitor.partitionFilesAndGet(1);
         assertNotNull(result);
         assertEquals(1, result.size());
         List<URI> expected = sources.stream().map(File::toURI).sorted().collect(Collectors.toList());
@@ -105,21 +127,20 @@ public class DefaultFileSystemMonitorTest {
 
     @Test
     public void should_clean_remaining_completed_files_while_starting() {
-        Map<String, FileObject> states = new HashMap<String, FileObject>() {
-            {
-                put("???", INPUT_FILES.stateFor(0, FileObjectStatus.COMPLETED));
-            }
-        };
+        Map<String, FileObject> states = new HashMap<>();
+        states.put("???", INPUT_FILES.stateFor(0, FileObjectStatus.COMPLETED));
+
         StateSnapshot<FileObject> state = new StateSnapshot<>(0, states);
         KafkaStateBackingStore store = Mockito.mock(KafkaStateBackingStore.class);
         Mockito.when(store.snapshot()).thenReturn(state);
 
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
-        final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
+        final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(sources);
         final MockFileCleaner cleaner = new MockFileCleaner(true);
-        DefaultFileSystemMonitor scanner = newFsMonitorThread(cleaner, ds, store);
+        DefaultFileSystemMonitor monitor = newFileSystemMonitor(cleaner, ds, store);
 
-        scanner.invoke(new MockConnectorContext());
+        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
+        monitor.invoke(new MockConnectorContext());
 
         Assert.assertEquals(1, cleaner.getSucceed().size());
         Assert.assertEquals(sources.get(0).toURI(), cleaner.getSucceed().get(0).uri());
@@ -129,22 +150,22 @@ public class DefaultFileSystemMonitorTest {
     public void should_filter_scanned_files_when_state_exist() {
 
         final FileObject completed = INPUT_FILES.stateFor(0, FileObjectStatus.COMPLETED);
-        Map<String, FileObject> states = new HashMap<String, FileObject>() {
-            {
-                put(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
-            }
-        };
+        Map<String, FileObject> states = new HashMap<>();
+        states.put(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
+
         StateSnapshot<FileObject> state = new StateSnapshot<>(0, states);
         KafkaStateBackingStore store = Mockito.mock(KafkaStateBackingStore.class);
         Mockito.when(store.snapshot()).thenReturn(state);
 
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
-        final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
-        DefaultFileSystemMonitor scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
+        final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(sources);
+        DefaultFileSystemMonitor monitor = newFileSystemMonitor(new MockFileCleaner(true), ds, store);
 
-        scanner.invoke(new MockConnectorContext());
+        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
 
-        List<List<URI>> groupedFiles = scanner.partitionFilesAndGet(1);
+        monitor.invoke(new MockConnectorContext());
+
+        List<List<URI>> groupedFiles = monitor.partitionFilesAndGet(1);
         assertNotNull(groupedFiles);
         assertEquals(1, groupedFiles.size());
 
@@ -157,23 +178,23 @@ public class DefaultFileSystemMonitorTest {
     public void should_scheduled_file_with_existing_reading_state() {
         final FileObject completed = INPUT_FILES.stateFor(0, FileObjectStatus.COMPLETED);
         final FileObject reading = INPUT_FILES.stateFor(1, FileObjectStatus.READING);
-        Map<String, FileObject> states = new HashMap<String, FileObject>() {
-            {
-                put(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
-                put(OFFSET_MANAGER.toPartitionJson(reading.metadata()), reading);
-            }
-        };
+        Map<String, FileObject> states = new HashMap<>();
+        states.put(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
+        states.put(OFFSET_MANAGER.toPartitionJson(reading.metadata()), reading);
+
         StateSnapshot<FileObject> state = new StateSnapshot<>(0, states);
         KafkaStateBackingStore store = Mockito.mock(KafkaStateBackingStore.class);
         Mockito.when(store.snapshot()).thenReturn(state);
 
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
-        final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
-        DefaultFileSystemMonitor scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
+        final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(sources);
+        DefaultFileSystemMonitor monitor = newFileSystemMonitor(new MockFileCleaner(true), ds, store);
 
-        scanner.invoke(new MockConnectorContext());
+        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
 
-        List<List<URI>> groupedFiles = scanner.partitionFilesAndGet(1);
+        monitor.invoke(new MockConnectorContext());
+
+        List<List<URI>> groupedFiles = monitor.partitionFilesAndGet(1);
         assertNotNull(groupedFiles);
         assertEquals(1, groupedFiles.size());
 
@@ -184,20 +205,19 @@ public class DefaultFileSystemMonitorTest {
 
     @Test
     public void should_not_scanned_directory_while_processing_files() {
-        final StateSnapshot<FileObject> state = new StateSnapshot<>(0, Collections.emptyMap());
         KafkaStateBackingStore store = Mockito.mock(KafkaStateBackingStore.class);
-        Mockito.when(store.snapshot()).thenReturn(state);
+        Mockito.when(store.snapshot()).thenReturn(EMPTY_STATE_SNAPSHOT);
 
         final List<File> sources = INPUT_FILES.getInputPathsFor(0, 1);
-        final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner(sources);
-        final DefaultFileSystemMonitor scanner = newFsMonitorThread(new MockFileCleaner(true), ds, store);
+        final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(sources);
+        final DefaultFileSystemMonitor monitor = newFileSystemMonitor(new MockFileCleaner(true), ds, store);
 
         MockConnectorContext context = new MockConnectorContext();
-        scanner.invoke(context);
+        monitor.invoke(context);
 
-        scanner.partitionFilesAndGet(1); // Get files to simulate a scheduled.
+        monitor.partitionFilesAndGet(1); // Get files to simulate a scheduled.
 
-        scanner.invoke(context);
+        monitor.invoke(context);
 
         assertEquals(1, ds.times());
     }
@@ -205,28 +225,27 @@ public class DefaultFileSystemMonitorTest {
     @Test
     public void should_cleanup_files_after_receiving_completed_state() {
 
-        final StateSnapshot<FileObject> state = new StateSnapshot<>(0, Collections.emptyMap());
-        final InMemoryStateBackingStore<FileObject> store = new InMemoryStateBackingStore<>(state);
+        final InMemoryFileObjectStateBackingStore store = new InMemoryFileObjectStateBackingStore(Collections.emptyMap());
         final MockFileCleaner cleaner = new MockFileCleaner(true);
-        final MockTimesDirectoryScanner ds = new MockTimesDirectoryScanner();
-        final DefaultFileSystemMonitor scanner = newFsMonitorThread(cleaner, ds, store);
+        final MockTimesFileSystemListing ds = new MockTimesFileSystemListing();
+        final DefaultFileSystemMonitor monitor = newFileSystemMonitor(cleaner, ds, store);
 
         ds.put(INPUT_FILES.getInputPathsFor(0, 1));
-        scanner.invoke(new MockConnectorContext());
+
+        monitor.invoke(new MockConnectorContext());
 
         Assert.assertEquals(0, cleaner.getSucceed().size());
         Assert.assertEquals(0, cleaner.getFailed().size());
 
         final FileObject completed = INPUT_FILES.stateFor(0, FileObjectStatus.COMPLETED);
-        store.listener.onStateUpdate(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
+        store.getListener().onStateUpdate(OFFSET_MANAGER.toPartitionJson(completed.metadata()), completed);
 
         final FileObject failed = INPUT_FILES.stateFor(1, FileObjectStatus.FAILED);
-        store.listener.onStateUpdate(OFFSET_MANAGER.toPartitionJson(failed.metadata()), failed);
+        store.getListener().onStateUpdate(OFFSET_MANAGER.toPartitionJson(failed.metadata()), failed);
 
         ds.put(INPUT_FILES.getInputPathsFor(0, 1, 2, 3));
-        scanner.invoke(new MockConnectorContext());
 
-        assertEquals(2, ds.times());
+        monitor.invoke(new MockConnectorContext());
 
         Assert.assertEquals(1, cleaner.getSucceed().size());
         Assert.assertEquals(INPUT_FILES.metadataFor(0).uri(), cleaner.getSucceed().get(0).uri());
@@ -235,12 +254,12 @@ public class DefaultFileSystemMonitorTest {
         Assert.assertEquals(INPUT_FILES.metadataFor(1).uri(), cleaner.getFailed().get(0).uri());
     }
 
-    private DefaultFileSystemMonitor newFsMonitorThread(final MockFileCleaner cleaner,
-                                                        final FileSystemListing<Storage> scanner,
-                                                        final StateBackingStore<FileObject> store) {
+    private DefaultFileSystemMonitor newFileSystemMonitor(final MockFileCleaner cleaner,
+                                                          final FileSystemListing<Storage> fsListing,
+                                                          final StateBackingStore<FileObject> store) {
         return new DefaultFileSystemMonitor(
                 Long.MAX_VALUE,
-                scanner,
+                fsListing,
                 cleaner,
                 OFFSET_MANAGER,
                 store
@@ -269,15 +288,15 @@ public class DefaultFileSystemMonitorTest {
         }
     }
 
-    private static class MockTimesDirectoryScanner extends NoOpFileSystemListing {
+    private static class MockTimesFileSystemListing extends NoOpFileSystemListing {
 
         private final List<Collection<File>> files = new ArrayList<>();
         private int times = 0;
 
-        MockTimesDirectoryScanner() {
+        MockTimesFileSystemListing() {
         }
 
-        MockTimesDirectoryScanner(final List<File> files) {
+        MockTimesFileSystemListing(final List<File> files) {
             this.files.add(files);
         }
 

@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.state;
 
+import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,6 +43,15 @@ public class InMemoryFileObjectStateBackingStore implements FileObjectStateBacki
     private StateBackingStore.UpdateListener<FileObject> listener;
 
     private final AtomicBoolean started = new AtomicBoolean(false);
+
+    public InMemoryFileObjectStateBackingStore() {
+
+    }
+
+    @VisibleForTesting
+    public InMemoryFileObjectStateBackingStore(final Map<String, FileObject> objects) {
+        this.objects.putAll(objects);
+    }
 
     /**
      * {@inheritDoc}
@@ -136,5 +147,10 @@ public class InMemoryFileObjectStateBackingStore implements FileObjectStateBacki
     @Override
     public void setUpdateListener(final UpdateListener<FileObject> listener) {
         this.listener = listener;
+    }
+
+    @VisibleForTesting
+    public UpdateListener<FileObject> getListener() {
+        return listener;
     }
 }

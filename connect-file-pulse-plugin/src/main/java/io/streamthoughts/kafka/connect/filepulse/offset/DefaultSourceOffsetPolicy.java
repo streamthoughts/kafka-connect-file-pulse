@@ -109,7 +109,7 @@ public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
                         INODE_FIELD,
                         priority++,
                         source -> Optional
-                            .ofNullable((String) source.userDefinedMetadata().get(SYSTEM_FILE_INODE_META_KEY))
+                            .ofNullable(source.userDefinedMetadata().get(SYSTEM_FILE_INODE_META_KEY).toString())
                             .orElseThrow(() -> {
                                 throw new ConnectFilePulseException(
                                     "Object file property 'unix-inode' is empty. " +

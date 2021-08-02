@@ -21,9 +21,9 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 import io.streamthoughts.kafka.connect.filepulse.Version;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
-import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.CompositeFileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileSystemMonitor;
+import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemMonitor;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStoreManager;
@@ -179,7 +179,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private Map<String, String> createTaskConfig(final String URIs) {
         final Map<String, String> taskProps = new HashMap<>(configProperties);
-        taskProps.put(TaskConfig.FILE_OBJECT_URIS_CONFIG, URIs);
+        taskProps.put(DefaultFileURIProvider.Config.FILE_OBJECT_URIS_CONFIG, URIs);
         return taskProps;
     }
 

@@ -18,7 +18,15 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import java.net.URI;
+import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
+import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileURIProvider;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
+import io.streamthoughts.kafka.connect.filepulse.fs.FileURIProvider;
+import org.apache.kafka.common.config.AbstractConfig;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigException;
+import org.apache.kafka.connect.errors.ConnectException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,20 +36,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
-import org.apache.kafka.common.config.AbstractConfig;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.connect.errors.ConnectException;
-
 /**
  *
  */
 public class TaskConfig extends CommonConfig {
 
-    public static final String FILE_OBJECT_URIS_CONFIG = "file.object.uris";
-    private static final String FILE_OBJECT_URIS_DOC = "The list of files task must proceed.";
+    private static final String FILE_URIS_PROVIDER_CONFIG = "file.uris.provider";
+    private static final String FILE_URIS_PROVIDER_DOC    = "The FileURIProvider class to be used for retrieving the file URIs to process";
 
     private static final String OMIT_READ_COMMITTED_FILE_CONFIG = "ignore.committed.offsets";
     private static final String OMIT_READ_COMMITTED_FILE_DOC = "Boolean indicating whether offsets check has to be performed, to avoid multiple (default : false)";
@@ -51,10 +52,11 @@ public class TaskConfig extends CommonConfig {
     static ConfigDef getConf() {
         return CommonConfig.getConf()
                 .define(
-                        FILE_OBJECT_URIS_CONFIG,
-                        ConfigDef.Type.LIST,
+                        FILE_URIS_PROVIDER_CONFIG,
+                        ConfigDef.Type.CLASS,
+                        DefaultFileURIProvider.class,
                         ConfigDef.Importance.HIGH,
-                        FILE_OBJECT_URIS_DOC
+                        FILE_URIS_PROVIDER_DOC
                 )
                 .define(
                         OMIT_READ_COMMITTED_FILE_CONFIG,
@@ -160,8 +162,8 @@ public class TaskConfig extends CommonConfig {
         newDef.embed(prefix, group, orderInGroup, filterConfigDef);
     }
 
-    public List<URI> files() {
-        return this.getList(FILE_OBJECT_URIS_CONFIG).stream().map(URI::create).collect(Collectors.toList());
+    public FileURIProvider getFileURIProvider() {
+        return this.getConfiguredInstance(FILE_URIS_PROVIDER_CONFIG, FileURIProvider.class);
     }
 
     public boolean isReadCommittedFile() {

@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
+import io.streamthoughts.kafka.connect.filepulse.fs.FileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStoreManager;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG;
@@ -47,6 +49,8 @@ import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectSta
 public class FilePulseSourceTask extends SourceTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilePulseSourceTask.class);
+
+    private static final int CONSECUTIVE_WAITS_BEFORE_RETURN = 3;
 
     private static final String CONNECT_NAME_CONFIG = "name";
 
@@ -67,6 +71,8 @@ public class FilePulseSourceTask extends SourceTask {
     private volatile FileContext contextToBeCommitted;
 
     private OpaqueMemoryResource<StateBackingStore<FileObject>> sharedStore;
+
+    private FileURIProvider fileURIProvider;
 
     private String connectorGroupName;
 
@@ -99,13 +105,12 @@ public class FilePulseSourceTask extends SourceTask {
         topic = taskConfig.topic();
 
         try {
-
             initSharedStateBackingStore(connectorGroupName);
 
             reporter = new KafkaFileStateReporter(sharedStore.getResource());
             consumer = newFileRecordsPollingConsumer();
             consumer.setFileListener(reporter);
-            consumer.addAll(taskConfig.files());
+            fileURIProvider = taskConfig.getFileURIProvider();
 
             running.set(true);
             LOG.info("Started FilePulse source task");
@@ -135,45 +140,58 @@ public class FilePulseSourceTask extends SourceTask {
     public List<SourceRecord> poll() throws InterruptedException {
         LOG.trace("Polling for new data");
         try {
-            while (running.get()) {
-                contextToBeCommitted = consumer.context();
+            final MaxConsecutiveAttempts consecutiveWaits = new MaxConsecutiveAttempts(CONSECUTIVE_WAITS_BEFORE_RETURN);
 
+            contextToBeCommitted = consumer.context();
+
+            while (running.get()) {
                 if (!consumer.hasNext()) {
                     contextToBeCommitted = null;
-                    LOG.info("Orphan FilePulse source task detected. " +
-                             "All scheduled files are now completed. " +
-                             "Waiting for new reconfiguration request from connector."
-                    );
-                    // we can safely close resources for this task
-                    this.running.set(false);
-                    closeResources();
-                    synchronized (this) {
-                        this.wait();
+                    if (fileURIProvider.hasMore()) {
+                        consumer.addAll(fileURIProvider.nextURIs());
+                        // fileURIProvider may have more URIs but still return empty collection
+                        // if files are not immediately available. In this case, this method should
+                        // be blocked before returning.
+                        if (!consumer.hasNext() && consecutiveWaits.checkAndDecrement()) {
+                            // Check if the SourceTask is still running to
+                            // return immediately instead of waiting
+                            if (!running.get()) continue;
+                            busyWait();
+                        }
+                    } else {
+                        LOG.info(
+                            "Completed all object files. FilePulse source task is transitioning to " +
+                            "IDLE state while waiting for new reconfiguration request from source connector."
+                        );
+                        // we can safely close resources for this task
+                        this.running.set(false);
+                        closeResources();
+                        synchronized (this) {
+                            // Wait for the source task being stopped by the TaskWorker
+                            this.wait();
+                        }
+                        return null; // return directly as resources are already closed
                     }
-                    return null; // return directly as resources are already closed.
                 } else {
                     List<SourceRecord> results = null;
-
                     final RecordsIterable<FileRecord<TypedStruct>> records = consumer.next();
+
                     if (!records.isEmpty()) {
                         final FileContext context = consumer.context();
                         LOG.debug("Returning {} records for {}", records.size(), context.metadata());
                         results = records.stream().map(r -> buildSourceRecord(context, r)).collect(Collectors.toList());
-                    }
 
-                    // Wait for more incoming data records.
-                    if (results == null && consumer.hasNext()) {
-                        // Re-check if task is still running before waiting.
+                    } else if (consumer.hasNext() && consecutiveWaits.checkAndDecrement()) {
+                        // Check if the SourceTask is still running to
+                        // return immediately instead of waiting
                         if (!running.get()) continue;
-
-                        LOG.trace("Waiting {} ms to poll next records", DEFAULT_POLL_WAIT_MS);
-                        Thread.sleep(DEFAULT_POLL_WAIT_MS);
-                    }
-
-                    // Re-check if task is still running before returning to have a chance to close resources
-                    if (!running.get()) {
+                        busyWait();
                         continue;
                     }
+
+                    // Check if the SourceTask should stop to close resources.
+                    if (!running.get()) continue;
+
                     return results;
                 }
             }
@@ -186,6 +204,11 @@ public class FilePulseSourceTask extends SourceTask {
         closeResources();
         LOG.info("Stopped FilePulse source task.");
         return null;
+    }
+
+    private void busyWait() throws InterruptedException {
+        LOG.trace("Waiting {} ms to poll next records", DEFAULT_POLL_WAIT_MS);
+        Thread.sleep(DEFAULT_POLL_WAIT_MS);
     }
 
     /**
@@ -279,6 +302,26 @@ public class FilePulseSourceTask extends SourceTask {
             }
         } catch (Exception exception) {
             LOG.error("Failed to shared StateBackingStore '{}'", connectorGroupName);
+        }
+    }
+
+    private static final class MaxConsecutiveAttempts {
+
+        final AtomicInteger consecutiveAttempts;
+
+        private MaxConsecutiveAttempts(final int maxConsecutiveAttempts) {
+            this.consecutiveAttempts = new AtomicInteger(maxConsecutiveAttempts);
+        }
+
+        public boolean checkAndDecrement() {
+            if (getRemaining() < 0) {
+                throw new IllegalStateException("cannot make a new consecutive attempt (remaining=0)");
+            }
+            return this.consecutiveAttempts.getAndDecrement() > 0;
+        }
+
+        private int getRemaining() {
+            return consecutiveAttempts.get();
         }
     }
 }

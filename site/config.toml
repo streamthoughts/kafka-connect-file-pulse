@@ -127,6 +127,12 @@ no = 'Sorry to hear that. Please <a href="https://github.com/streamthoughts/kafk
 	icon = "fab fa-github"
         desc = "Development takes place here!"
 
+# As of Hugo 0.60
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
 [[params.versions]]
   version = "master"
   url = "/kafka-connect-file-pulse/docs/"
@@ -151,8 +157,3 @@ no = 'Sorry to hear that. Please <a href="https://github.com/streamthoughts/kafk
   version = "v2.0.x"
   url = "/kafka-connect-file-pulse/v2-0/docs"
 
-# As of Hugo 0.60
-[markup]
-  [markup.goldmark]
-    [markup.goldmark.renderer]
-      unsafe = true

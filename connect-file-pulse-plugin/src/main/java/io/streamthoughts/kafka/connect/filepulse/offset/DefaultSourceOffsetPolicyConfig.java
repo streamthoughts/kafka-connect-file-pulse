@@ -32,7 +32,7 @@ public class DefaultSourceOffsetPolicyConfig extends AbstractConfig {
             "to be used for uniquely identifying an object file; must be one of " +
             "[name, path, lastModified, inode, hash, uri] (e.g: name+hash). Note that order doesn't matter.";
 
-    private static final String OFFSET_ATTRIBUTES_STRING_DEFAULT = "path+name";
+    private static final String OFFSET_ATTRIBUTES_STRING_DEFAULT = "uri";
 
     /**
      * Creates a new {@link ConnectorConfig} instance.

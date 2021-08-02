@@ -6,7 +6,6 @@
   "fs.listing.interval.ms": "10000",
   "internal.kafka.reporter.bootstrap.servers": "broker:29092",
   "internal.kafka.reporter.topic": "connect-file-pulse-status",
-  "offset.attributes.string": "name",
   "read.max.wait.ms": "5000",
   "topic": "connect-file-pulse-quickstart-avro",
   "tasks.reader.class": "io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalAvroFileInputReader",

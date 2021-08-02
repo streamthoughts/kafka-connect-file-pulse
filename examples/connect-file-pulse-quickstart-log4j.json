@@ -15,7 +15,7 @@
   "fs.listing.filters": "io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter",
   "fs.listing.interval.ms": "10000",
   "file.filter.regex.pattern":".*\\.log$",
-  "offset.attributes.string": "name",
+  "offset.attributes.string": "inode",
   "read.max.wait.ms": "5000",
   "topic": "connect-file-pulse-quickstart-log4j",
   "tasks.reader.class": "io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader",

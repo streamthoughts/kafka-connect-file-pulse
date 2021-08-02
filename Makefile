@@ -51,9 +51,9 @@ docker-build: mvn-package
 	export FULL_IMAGE_TAG_VERSION=${REPOSITORY}/${IMAGE}:${CONNECT_VERSION}; \
 	export FULL_IMAGE_TAG_BRANCH=${REPOSITORY}/${IMAGE}:${GIT_BRANCH}; \
 	if [[ ! -z "$$MVN_PROFILE" ]]; then \
-		FULL_IMAGE_TAG_LATEST=$$FULL_IMAGE_TAG_VERSION-$$MVN_PROFILE; \
-		FULL_IMAGE_TAG_VERSION=$$FULL_IMAGE_TAG_LATEST-$$MVN_PROFILE; \
-		FULL_IMAGE_TAG_BRANCH=$$FULL_IMAGE_TAG_LATEST-$$MVN_PROFILE; \
+		FULL_IMAGE_TAG_LATEST=$$FULL_IMAGE_TAG_LATEST-$$MVN_PROFILE; \
+		FULL_IMAGE_TAG_VERSION=$$FULL_IMAGE_TAG_VERSION-$$MVN_PROFILE; \
+		FULL_IMAGE_TAG_BRANCH=$$FULL_IMAGE_TAG_BRANCH-$$MVN_PROFILE; \
 	fi; \
 	docker build \
 		--build-arg connectFilePulseVersion=${CONNECT_VERSION} \
@@ -67,8 +67,8 @@ build-images: docker-build
 	for PROFILE in $(PROFILES); do MVN_PROFILE=$$PROFILE $(MAKE) docker-build; done
 
 push-images: print-info
-	docker push ${REPOSITORY}/${IMAGE}:latest ${REPOSITORY}/${IMAGE}:${CONNECT_VERSION} || exit 1 ;
-	docker push ${REPOSITORY}/${IMAGE}:latest ${REPOSITORY}/${IMAGE}:latest || exit 1 ;
+	docker push ${REPOSITORY}/${IMAGE}:${CONNECT_VERSION} || exit 1 ;
+	docker push ${REPOSITORY}/${IMAGE}:latest || exit 1 ;
 	for PROFILE in $(PROFILES); do\
 		docker push ${REPOSITORY}/${IMAGE}:${CONNECT_VERSION}-$$PROFILE || exit 1 ;\
 	done

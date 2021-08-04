@@ -18,11 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
+import io.streamthoughts.kafka.connect.filepulse.config.SourceTaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
-import io.streamthoughts.kafka.connect.filepulse.fs.FileURIProvider;
+import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStoreManager;
@@ -58,7 +58,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private static final int DEFAULT_POLL_WAIT_MS = 500;
 
-    public TaskConfig taskConfig;
+    public SourceTaskConfig taskConfig;
 
     private String topic;
 
@@ -72,7 +72,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private OpaqueMemoryResource<StateBackingStore<FileObject>> sharedStore;
 
-    private FileURIProvider fileURIProvider;
+    private TaskFileURIProvider fileURIProvider;
 
     private String connectorGroupName;
 
@@ -99,7 +99,7 @@ public class FilePulseSourceTask extends SourceTask {
         // Disable backing store Kafka Consumer if KafkaFileObjectStateBackingStore is configured.
         configProperties.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG, "false");
 
-        taskConfig = new TaskConfig(configProperties);
+        taskConfig = new SourceTaskConfig(configProperties);
         connectorGroupName = props.get(CONNECT_NAME_CONFIG);
         offsetPolicy = taskConfig.getSourceOffsetPolicy();
         topic = taskConfig.topic();

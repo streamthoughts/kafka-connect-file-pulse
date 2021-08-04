@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import io.streamthoughts.kafka.connect.filepulse.config.TaskConfig;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
@@ -29,7 +28,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class DefaultFileURIProvider implements FileURIProvider {
+public class DefaultTaskFileURIProvider implements TaskFileURIProvider {
 
     private List<URI> objectURIs;
 
@@ -69,7 +68,7 @@ public class DefaultFileURIProvider implements FileURIProvider {
         private static final String FILE_OBJECT_URIS_DOC = "The list of files task must proceed.";
 
         /**
-         * Creates a new {@link TaskConfig} instance.
+         * Creates a new {@link Config} instance.
          *
          * @param originals the original configs.
          */

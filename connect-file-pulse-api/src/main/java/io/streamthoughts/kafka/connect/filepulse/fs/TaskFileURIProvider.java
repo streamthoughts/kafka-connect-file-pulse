@@ -28,7 +28,7 @@ import java.util.Map;
  * Class that can be used to provide to {@link org.apache.kafka.connect.source.SourceTask}
  * the next URIs of the object files to process.
  */
-public interface FileURIProvider extends Configurable {
+public interface TaskFileURIProvider extends Configurable {
 
     /**
      * {@inheritDoc}

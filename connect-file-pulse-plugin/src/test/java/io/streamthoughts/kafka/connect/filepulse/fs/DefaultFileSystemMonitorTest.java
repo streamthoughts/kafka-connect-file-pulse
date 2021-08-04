@@ -41,7 +41,6 @@ import org.junit.rules.TestRule;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -97,7 +96,7 @@ public class DefaultFileSystemMonitorTest {
         monitor.invoke(new MockConnectorContext());
         assertEquals(0, ds.times());
 
-        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
+        monitor.listFilesToSchedule(0); // make a first call to mark the monitor as running.
 
         monitor.invoke(new MockConnectorContext());
         assertEquals(1, ds.times());
@@ -113,16 +112,15 @@ public class DefaultFileSystemMonitorTest {
         final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(sources);
         DefaultFileSystemMonitor monitor = newFileSystemMonitor(new MockFileCleaner(true), ds, store);
 
-        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
+        monitor.listFilesToSchedule(); // make a first call to mark the monitor as running.
         monitor.invoke(new MockConnectorContext());
 
-        List<List<URI>> result = monitor.partitionFilesAndGet(1);
+        List<FileObjectMeta> result = monitor.listFilesToSchedule();
         assertNotNull(result);
-        assertEquals(1, result.size());
-        List<URI> expected = sources.stream().map(File::toURI).sorted().collect(Collectors.toList());
-        List<URI> actual = result.get(0);
-        Collections.sort(actual);
-        assertEquals(expected, actual);
+        assertEquals(2, result.size());
+        assertEquals(
+            sources.stream().map(File::toURI).sorted().collect(Collectors.toList()),
+            result.stream().map(FileObjectMeta::uri).sorted().collect(Collectors.toList()));
     }
 
     @Test
@@ -139,7 +137,7 @@ public class DefaultFileSystemMonitorTest {
         final MockFileCleaner cleaner = new MockFileCleaner(true);
         DefaultFileSystemMonitor monitor = newFileSystemMonitor(cleaner, ds, store);
 
-        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
+        monitor.listFilesToSchedule(0); // make a first call to mark the monitor as running.
         monitor.invoke(new MockConnectorContext());
 
         Assert.assertEquals(1, cleaner.getSucceed().size());
@@ -161,17 +159,14 @@ public class DefaultFileSystemMonitorTest {
         final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(sources);
         DefaultFileSystemMonitor monitor = newFileSystemMonitor(new MockFileCleaner(true), ds, store);
 
-        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
+        monitor.listFilesToSchedule(); // make a first call to mark the monitor as running.
 
         monitor.invoke(new MockConnectorContext());
 
-        List<List<URI>> groupedFiles = monitor.partitionFilesAndGet(1);
+        List<FileObjectMeta> groupedFiles = monitor.listFilesToSchedule();
         assertNotNull(groupedFiles);
         assertEquals(1, groupedFiles.size());
-
-        List<URI> files = groupedFiles.get(0);
-        assertEquals(1, files.size());
-        assertEquals(sources.get(1).toURI(), files.get(0));
+        assertEquals(sources.get(1).toURI(), groupedFiles.get(0).uri());
     }
 
     @Test
@@ -190,17 +185,14 @@ public class DefaultFileSystemMonitorTest {
         final MockTimesFileSystemListing ds = new MockTimesFileSystemListing(sources);
         DefaultFileSystemMonitor monitor = newFileSystemMonitor(new MockFileCleaner(true), ds, store);
 
-        monitor.partitionFilesAndGet(0); // make a first call to mark the monitor as running.
+        monitor.listFilesToSchedule(0); // make a first call to mark the monitor as running.
 
         monitor.invoke(new MockConnectorContext());
 
-        List<List<URI>> groupedFiles = monitor.partitionFilesAndGet(1);
+        List<FileObjectMeta> groupedFiles = monitor.listFilesToSchedule();
         assertNotNull(groupedFiles);
         assertEquals(1, groupedFiles.size());
-
-        List<URI> files = groupedFiles.get(0);
-        assertEquals(1, files.size());
-        assertEquals(reading.metadata().uri(), files.get(0));
+        assertEquals(sources.get(1).toURI(), groupedFiles.get(0).uri());
     }
 
     @Test
@@ -215,7 +207,7 @@ public class DefaultFileSystemMonitorTest {
         MockConnectorContext context = new MockConnectorContext();
         monitor.invoke(context);
 
-        monitor.partitionFilesAndGet(1); // Get files to simulate a scheduled.
+        monitor.listFilesToSchedule(); // Get files to simulate a scheduled.
 
         monitor.invoke(context);
 

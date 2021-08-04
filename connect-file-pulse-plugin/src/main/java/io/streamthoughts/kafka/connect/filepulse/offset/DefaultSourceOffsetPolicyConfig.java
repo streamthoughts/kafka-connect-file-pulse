@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.offset;
 
-import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
+import io.streamthoughts.kafka.connect.filepulse.config.SourceConnectorConfig;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
@@ -35,7 +35,7 @@ public class DefaultSourceOffsetPolicyConfig extends AbstractConfig {
     private static final String OFFSET_ATTRIBUTES_STRING_DEFAULT = "uri";
 
     /**
-     * Creates a new {@link ConnectorConfig} instance.
+     * Creates a new {@link SourceConnectorConfig} instance.
      *
      * @param originals the originals configuration.
      */

@@ -18,40 +18,43 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import org.apache.kafka.connect.connector.ConnectorContext;
 
-import java.net.URI;
 import java.util.List;
 
 /**
- * A {@code FileSystemMonitor} is responsible for scanning a specific file system for new files to stream into Kafka.
+ * A {@code FileSystemMonitor} is responsible for monitoring a specific file-system
+ * for new files to stream into Kafka.
  */
 public interface FileSystemMonitor {
 
     /**
-     * Run a single filesystem scan using the specified context.
+     * Run a single filesystem scan using the specified context. This method must invoke
+     * the {@link ConnectorContext#requestTaskReconfiguration()} when new object-files can be scheduled.
+     *
      * @param context   the connector context.
      */
     void invoke(final ConnectorContext context);
 
     /**
-     * Gets newest files found during last scan partitioned for the specified number of groups.
+     * Retrieves the list of objects-files that were found during the last the {@link #invoke(ConnectorContext)} call.
+     * This method should not return more than the given maximum.
      *
-     * @param maxGroups          the maximum number of groups.
-     * @return                   list of files to execute.
+     * @return                             the list of {@link FileObjectMeta} to schedule.
      */
-   default List<List<URI>> partitionFilesAndGet(final int maxGroups) {
-       return partitionFilesAndGet(maxGroups, Integer.MAX_VALUE);
-   }
+    default List<FileObjectMeta> listFilesToSchedule() {
+        return listFilesToSchedule(Integer.MAX_VALUE);
+    }
 
     /**
-     * Gets newest files found during last scan partitioned for the specified number of groups.
+     * Retrieves the list of objects-files that were found during the last the {@link #invoke(ConnectorContext)} call.
+     * This method should not return more than the given maximum.
      *
-     * @param maxGroups          the maximum number of groups.
-     * @param maxFilesToSchedule the maximum number of files to scheduled.
-     * @return          list of files to execute.
+     * @param           maxFilesToSchedule the maximum number of files that can be schedules to tasks.
+     * @return                             the list of {@link FileObjectMeta} to schedule.
      */
-    List<List<URI>> partitionFilesAndGet(final int maxGroups, int maxFilesToSchedule);
+    List<FileObjectMeta> listFilesToSchedule(final int maxFilesToSchedule);
 
     /**
      * Close underlying I/O resources.

@@ -24,7 +24,7 @@ import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResult;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResultSet;
 import io.streamthoughts.kafka.connect.filepulse.clean.GenericFileCleanupPolicy;
-import io.streamthoughts.kafka.connect.filepulse.config.ConnectorConfig;
+import io.streamthoughts.kafka.connect.filepulse.config.SourceConnectorConfig;
 import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectKey;
@@ -35,11 +35,9 @@ import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.connect.connector.ConnectorContext;
-import org.apache.kafka.connect.util.ConnectorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -160,10 +158,10 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 } else if (status.isOneOf(FileObjectStatus.CLEANED)) {
                     final FileObjectMeta remove = scheduled.remove(objectId);
                     if (remove == null) {
-                        LOG.warn(
-                                "Received cleaned status but no file currently scheduled for: '{}'. " +
-                                        "This warn should only occurred during recovering step",
-                                key
+                        LOG.debug(
+                            "Received cleaned status but no file currently scheduled for: '{}'. " +
+                            "This warn should only occurred during recovering step",
+                            key
                         );
                     }
                 }
@@ -344,7 +342,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     "Duplicates object files detected. " +
                     "Consider changing the configuration for '{}'. " +
                     "Scan is ignored: {}",
-                    ConnectorConfig.OFFSET_STRATEGY_CLASS_CONFIG,
+                    SourceConnectorConfig.OFFSET_STRATEGY_CLASS_CONFIG,
                     formatted
             );
             return Collections.emptyMap(); // ignore all sources files
@@ -363,7 +361,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
      * {@inheritDoc}
      */
     @Override
-    public List<List<URI>> partitionFilesAndGet(int maxGroups, int maxFilesToSchedule) {
+    public List<FileObjectMeta> listFilesToSchedule(final int maxFilesToSchedule) {
 
         if (!running.get()) {
             // This is the first call of partitionFilesAndGet, hence the connector is starting or restarting after
@@ -388,7 +386,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 now = Time.SYSTEM.milliseconds();
             }
 
-            List<List<URI>> partitions = new LinkedList<>();
+            List<FileObjectMeta> partitions = new LinkedList<>();
 
             // Re-check if there is still object files that may be scheduled.
             if (!scanned.isEmpty()) {
@@ -417,15 +415,10 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                         }
                     }
 
-                    List<FileObjectMeta> sources = new ArrayList<>(scheduled.values());
-                    sources.sort(BY_LAST_MODIFIED);
-                    final int numGroups = Math.min(scheduled.size(), maxGroups);
-
-                    final List<URI> paths = sources
+                    partitions = scanned.values()
                             .stream()
-                            .map(FileObjectMeta::uri)
+                            .sorted(BY_LAST_MODIFIED)
                             .collect(Collectors.toList());
-                    partitions.addAll(ConnectorUtils.groupPartitions(paths, numGroups));
 
                     attempts++;
                     if (changed.get()) {

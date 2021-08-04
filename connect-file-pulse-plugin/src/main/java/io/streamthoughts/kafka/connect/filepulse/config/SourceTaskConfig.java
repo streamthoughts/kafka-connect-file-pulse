@@ -19,9 +19,9 @@
 package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
-import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileURIProvider;
+import io.streamthoughts.kafka.connect.filepulse.fs.DefaultTaskFileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
-import io.streamthoughts.kafka.connect.filepulse.fs.FileURIProvider;
+import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileURIProvider;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 /**
  *
  */
-public class TaskConfig extends CommonConfig {
+public class SourceTaskConfig extends CommonSourceConfig {
 
     private static final String FILE_URIS_PROVIDER_CONFIG = "file.uris.provider";
     private static final String FILE_URIS_PROVIDER_DOC    = "The FileURIProvider class to be used for retrieving the file URIs to process";
@@ -50,11 +50,11 @@ public class TaskConfig extends CommonConfig {
     private final EnrichedConnectorConfig enrichedConfig;
 
     static ConfigDef getConf() {
-        return CommonConfig.getConf()
+        return CommonSourceConfig.getConfigDev()
                 .define(
                         FILE_URIS_PROVIDER_CONFIG,
                         ConfigDef.Type.CLASS,
-                        DefaultFileURIProvider.class,
+                        DefaultTaskFileURIProvider.class,
                         ConfigDef.Importance.HIGH,
                         FILE_URIS_PROVIDER_DOC
                 )
@@ -68,21 +68,21 @@ public class TaskConfig extends CommonConfig {
     }
 
     /**
-     * Creates a new {@link TaskConfig} instance.
+     * Creates a new {@link SourceTaskConfig} instance.
      *
      * @param originals the original configs.
      */
-    public TaskConfig(final Map<String, String> originals) {
+    public SourceTaskConfig(final Map<String, String> originals) {
         this(getConf(), originals);
     }
 
     /**
-     * Creates a new {@link TaskConfig} instance.
+     * Creates a new {@link SourceTaskConfig} instance.
      *
      * @param configDef the configuration definition.
      * @param originals the original configs.
      */
-    private TaskConfig(final ConfigDef configDef, final Map<String, String> originals) {
+    private SourceTaskConfig(final ConfigDef configDef, final Map<String, String> originals) {
         super(getConf(), originals);
         enrichedConfig = new EnrichedConnectorConfig(
                 enrich(configDef, originals),
@@ -162,8 +162,8 @@ public class TaskConfig extends CommonConfig {
         newDef.embed(prefix, group, orderInGroup, filterConfigDef);
     }
 
-    public FileURIProvider getFileURIProvider() {
-        return this.getConfiguredInstance(FILE_URIS_PROVIDER_CONFIG, FileURIProvider.class);
+    public TaskFileURIProvider getFileURIProvider() {
+        return this.getConfiguredInstance(FILE_URIS_PROVIDER_CONFIG, TaskFileURIProvider.class);
     }
 
     public boolean isReadCommittedFile() {
@@ -171,11 +171,11 @@ public class TaskConfig extends CommonConfig {
     }
 
     public String topic() {
-        return this.getString(CommonConfig.OUTPUT_TOPIC_CONFIG);
+        return this.getString(CommonSourceConfig.OUTPUT_TOPIC_CONFIG);
     }
 
     public FileInputReader reader() {
-        return getConfiguredInstance(CommonConfig.TASKS_FILE_READER_CLASS_CONFIG, FileInputReader.class);
+        return getConfiguredInstance(CommonSourceConfig.TASKS_FILE_READER_CLASS_CONFIG, FileInputReader.class);
     }
 
     public List<RecordFilter> filters() {

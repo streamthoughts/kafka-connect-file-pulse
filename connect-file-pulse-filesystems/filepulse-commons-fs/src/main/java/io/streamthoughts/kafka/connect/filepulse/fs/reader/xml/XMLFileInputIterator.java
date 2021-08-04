@@ -35,6 +35,7 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import net.sf.saxon.lib.NamespaceConstant;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -56,6 +57,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -92,11 +94,14 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
 
         try (stream) {
 
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setIgnoringElementContentWhitespace(true);
             builderFactory.setIgnoringComments(true);
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(stream));
+            builderFactory.setNamespaceAware(config.isNamespaceAwareEnabled());
+            builderFactory.setValidating(config.isValidatingEnabled());
+
+            final DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            final Document document = builder.parse(new InputSource(stream));
 
             final XPathFactory xPathFactory = XPathFactory.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON);
             XPath expression = xPathFactory.newXPath();
@@ -183,6 +188,8 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
     private static class Node2StructConverter {
 
         private static final String DEFAULT_TEXT_NODE_FIELD_NAME = "value";
+        private static final Pattern NAME_INVALID_CHARACTERS = Pattern.compile("[.\\-]");
+        public static final String NAME_INVALID_CHARACTER_REPLACEMENT = "_";
 
         /**
          * Converts the given {@link Node} object tree into a new new {@link TypedStruct} instance.
@@ -315,7 +322,7 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
             if (attributes == null) return;
 
             for (int i = 0; i < attributes.getLength(); i++) {
-                Node attr = attributes.item(i);
+                Attr attr = (Attr) attributes.item(i);
                 String attrName = determineNodeName(attr);
                 if (isNotXmlNamespace(attr)) {
                     struct.put(attrName, attr.getNodeValue());
@@ -332,7 +339,10 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
         }
 
         private static String determineNodeName(final Node node) {
-            return node.getLocalName() != null ? node.getLocalName() : node.getNodeName();
+            final String name = node.getLocalName() != null ? node.getLocalName() : node.getNodeName();
+            return NAME_INVALID_CHARACTERS
+                .matcher(name)
+                .replaceAll(NAME_INVALID_CHARACTER_REPLACEMENT);
         }
     }
 }

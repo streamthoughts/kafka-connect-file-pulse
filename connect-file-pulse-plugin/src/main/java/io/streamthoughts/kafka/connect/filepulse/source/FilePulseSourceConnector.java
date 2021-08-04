@@ -21,14 +21,14 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 import io.streamthoughts.kafka.connect.filepulse.Version;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.config.SourceConnectorConfig;
+import io.streamthoughts.kafka.connect.filepulse.config.SourceTaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.CompositeFileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.DefaultFileSystemMonitor;
 import io.streamthoughts.kafka.connect.filepulse.fs.DefaultTaskFileURIProvider;
+import io.streamthoughts.kafka.connect.filepulse.fs.DelegateTaskFileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemMonitor;
-import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStoreManager;
-import io.streamthoughts.kafka.connect.filepulse.state.internal.OpaqueMemoryResource;
-import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
+import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreAccess;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.connector.Task;
@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private TaskPartitioner partitioner;
 
-    private OpaqueMemoryResource<StateBackingStore<FileObject>> sharedStore;
+    private StateBackingStoreAccess sharedStore;
 
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -104,12 +105,16 @@ public class FilePulseSourceConnector extends SourceConnector {
 
         try {
 
-            initSharedStateBackingStore(connectorConfig, connectorGroupName);
+            sharedStore = new StateBackingStoreAccess(
+                    connectorGroupName,
+                    connectorConfig::getStateBackingStore,
+                    false
+            );
 
-            final FileSystemListing<?> fileSystemListing = this.connectorConfig.getFileSystemListing();
+            final FileSystemListing<?> fileSystemListing = connectorConfig.getFileSystemListing();
             fileSystemListing.setFilter(new CompositeFileListFilter(connectorConfig.getFileSystemListingFilter()));
 
-            final FileCleanupPolicy cleaner = connectorConfig.cleanupPolicy();
+            final FileCleanupPolicy cleaner = connectorConfig.getFileCleanupPolicy();
             final SourceOffsetPolicy offsetPolicy = connectorConfig.getSourceOffsetPolicy();
 
             partitioner = connectorConfig.getTaskPartitioner();
@@ -118,9 +123,10 @@ public class FilePulseSourceConnector extends SourceConnector {
                     fileSystemListing,
                     cleaner,
                     offsetPolicy,
-                    sharedStore.getResource()
+                    sharedStore.get().getResource()
             );
-            fsMonitorThread = new FileSystemMonitorThread(context, monitor, connectorConfig.scanInternalMs());
+            monitor.setFileSystemListingEnabled(!connectorConfig.isFileListingTaskDelegationEnabled());
+            fsMonitorThread = new FileSystemMonitorThread(context, monitor, connectorConfig.getListingInterval());
             fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {
                 LOG.info("Uncaught error from file system monitoring thread [{}]", t.getName(), e);
                 throw new ConnectException(e);
@@ -147,6 +153,16 @@ public class FilePulseSourceConnector extends SourceConnector {
     @Override
     public List<Map<String, String>> taskConfigs(int maxTasks) {
         LOG.info("Creating new tasks configurations (maxTasks={})", maxTasks);
+
+        if (connectorConfig.isFileListingTaskDelegationEnabled()) {
+            final List<Map<String, String>> taskConfigs = new ArrayList<>(maxTasks);
+            IntStream.range(0, maxTasks)
+                    .forEachOrdered(i -> taskConfigs
+                            .add(createTaskConfig(i, maxTasks, null))
+                    );
+            return taskConfigs;
+        }
+
         final List<List<String>> partitioned = partitionAndGet(maxTasks);
 
         final long taskConfigsGen = taskConfigsGeneration.getAndIncrement();
@@ -160,12 +176,12 @@ public class FilePulseSourceConnector extends SourceConnector {
             LOG.info("No object file was found - resetting all tasks with an empty config.");
             IntStream.range(0, maxTasks)
                     .forEachOrdered(i -> taskConfigs
-                            .add(createTaskConfig(i, maxTasks, ""))
+                            .add(createTaskConfig(i, maxTasks, Collections.emptyList()))
                     );
         } else {
             IntStream.range(0, partitioned.size())
                     .forEachOrdered(i -> taskConfigs
-                            .add(createTaskConfig(i, partitioned.size(), String.join(",", partitioned.get(i))))
+                            .add(createTaskConfig(i, partitioned.size(), partitioned.get(i)))
                     );
         }
 
@@ -188,9 +204,19 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private Map<String, String> createTaskConfig(final int taskId,
                                                  final int taskCount,
-                                                 final String URIs) {
+                                                 final List<String> URIs) {
         final Map<String, String> taskConfig = new HashMap<>(configProperties);
-        taskConfig.put(DefaultTaskFileURIProvider.Config.FILE_OBJECT_URIS_CONFIG, URIs);
+        if (connectorConfig.isFileListingTaskDelegationEnabled()) {
+            taskConfig.put(SourceTaskConfig.FILE_URIS_PROVIDER_CONFIG, DelegateTaskFileURIProvider.class.getName());
+            taskConfig.put(SourceTaskConfig.TASK_PARTITIONER_CLASS_CONFIG, HashByURITaskPartitioner.class.getName());
+            taskConfig.put(DelegateTaskFileURIProvider.Config.TASK_ID_CONFIG, String.valueOf(taskId));
+            taskConfig.put(DelegateTaskFileURIProvider.Config.TASK_COUNT_CONFIG, String.valueOf(taskCount));
+            taskConfig.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG, "true");
+        } else {
+            taskConfig.put(SourceTaskConfig.FILE_URIS_PROVIDER_CONFIG, DefaultTaskFileURIProvider.class.getName());
+            taskConfig.put(DefaultTaskFileURIProvider.Config.FILE_OBJECT_URIS_CONFIG, String.join(",", URIs));
+            taskConfig.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG, "false");
+        }
         return taskConfig;
     }
 
@@ -209,14 +235,25 @@ public class FilePulseSourceConnector extends SourceConnector {
             LOG.info("Closing resources for FilePulse source connector");
             try {
                 if (fsMonitorThread != null) {
+                    try {
                     fsMonitorThread.shutdown(DEFAULT_MAX_TIMEOUT);
                     fsMonitorThread.join(DEFAULT_MAX_TIMEOUT);
+                    } catch (InterruptedException e) {
+                        LOG.warn("Failed to close file-system monitoring thread. Error: {}", e.getMessage());
+                    }
                 }
-            } catch (InterruptedException e) {
-                LOG.warn("Error while closing file-system monitoring thread: {}", e.getMessage());
-            } finally {
+                if (partitioner != null) {
+                    try {
+                        partitioner.close();
+                    } catch (final Exception e) {
+                        LOG.warn("Failed to close TaskPartition. Error: {}", e.getMessage());
+                    }
+                }
+            }
+            finally {
                 closeSharedStateBackingStore();
             }
+
             LOG.info("Closed resources for FilePulse source connector");
         }
     }
@@ -227,22 +264,6 @@ public class FilePulseSourceConnector extends SourceConnector {
     @Override
     public ConfigDef config() {
         return SourceConnectorConfig.getConf();
-    }
-
-    private void initSharedStateBackingStore(final SourceConnectorConfig config, final String connectorGroupName) {
-        try {
-            sharedStore = FileObjectStateBackingStoreManager.INSTANCE
-                    .getOrCreateSharedStore(
-                            connectorGroupName,
-                            config::getStateBackingStore,
-                            new Object()
-                    );
-        } catch (Exception exception) {
-            throw new ConnectException(
-                    "Failed to create shared StateBackingStore for group '" + connectorGroupName + "'.",
-                    exception
-            );
-        }
     }
 
     private void closeSharedStateBackingStore() {

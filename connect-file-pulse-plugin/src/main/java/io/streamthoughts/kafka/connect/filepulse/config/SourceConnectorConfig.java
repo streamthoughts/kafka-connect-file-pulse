@@ -42,6 +42,9 @@ public class SourceConnectorConfig extends CommonSourceConfig {
     private static final String MAX_SCHEDULED_FILES_DOC       = "Maximum number of files that can be schedules to tasks.";
     private static final int MAX_SCHEDULED_FILES_DEFAULT      = 1000;
 
+    public static final String FS_LISTING_TASK_DELEGATION_ENABLED_CONFIG = "fs.listing.task.delegation.enabled";
+    private static final String FS_LISTING_TASK_DELEGATION_ENABLED_DOC = "Boolean indicating whether the file listing process should be delegated to tasks.";
+
     /**
      * Creates a new {@link SourceConnectorConfig} instance.
      * @param originals the originals configuration.
@@ -81,6 +84,14 @@ public class SourceConnectorConfig extends CommonSourceConfig {
                         MAX_SCHEDULED_FILES_DEFAULT,
                         ConfigDef.Importance.MEDIUM,
                         MAX_SCHEDULED_FILES_DOC
+                )
+
+                .define(
+                        FS_LISTING_TASK_DELEGATION_ENABLED_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.LOW,
+                        FS_LISTING_TASK_DELEGATION_ENABLED_DOC
                 );
     }
 
@@ -92,12 +103,16 @@ public class SourceConnectorConfig extends CommonSourceConfig {
         return getInt(MAX_SCHEDULED_FILES_CONFIG);
     }
 
-    public FileCleanupPolicy cleanupPolicy() {
+    public FileCleanupPolicy getFileCleanupPolicy() {
         return getConfiguredInstance(FILE_CLEANER_CLASS_CONFIG, FileCleanupPolicy.class);
     }
 
-    public long scanInternalMs() {
+    public long getListingInterval() {
         return this.getLong(FS_LISTING_INTERVAL_MS_CONFIG);
+    }
+
+    public boolean isFileListingTaskDelegationEnabled() {
+        return getBoolean(FS_LISTING_TASK_DELEGATION_ENABLED_CONFIG);
     }
 
 }

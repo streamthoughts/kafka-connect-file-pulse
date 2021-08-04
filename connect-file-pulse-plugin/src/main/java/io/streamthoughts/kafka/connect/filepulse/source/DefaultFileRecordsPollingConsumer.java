@@ -248,7 +248,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      * {@inheritDoc}
      */
     @Override
-    public void setFileListener(final StateListener listener) {
+    public void setStateListener(final StateListener listener) {
         this.listener = listener;
     }
 
@@ -355,12 +355,13 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
 
     private void closeIterator(final FileInputIterator<FileRecord<TypedStruct>> iterator,
                                final Exception cause) {
+        final FileContext context = iterator.context();
         try {
             iterator.close();
         } catch (final Exception e) {
-            LOG.debug("Error while closing iterator for: '{}'", iterator.context().metadata(), e);
+            LOG.debug("Error while closing iterator for: '{}'", context.metadata(), e);
         } finally {
-            deleteFileQueueAndInvokeListener(iterator.context(), cause);
+            deleteFileQueueAndInvokeListener(context, cause);
         }
     }
 

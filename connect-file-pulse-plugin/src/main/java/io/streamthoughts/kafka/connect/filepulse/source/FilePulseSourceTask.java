@@ -24,11 +24,7 @@ import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipel
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStore;
-import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStoreManager;
-import io.streamthoughts.kafka.connect.filepulse.state.internal.OpaqueMemoryResource;
-import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
-import org.apache.kafka.connect.errors.ConnectException;
+import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreAccess;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
@@ -40,8 +36,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG;
 
 /**
  * The FilePulseSourceTask.
@@ -70,7 +64,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private volatile FileContext contextToBeCommitted;
 
-    private OpaqueMemoryResource<StateBackingStore<FileObject>> sharedStore;
+    private StateBackingStoreAccess sharedStore;
 
     private TaskFileURIProvider fileURIProvider;
 
@@ -96,8 +90,6 @@ public class FilePulseSourceTask extends SourceTask {
         LOG.info("Starting FilePulse source task");
 
         final Map<String, String> configProperties = new HashMap<>(props);
-        // Disable backing store Kafka Consumer if KafkaFileObjectStateBackingStore is configured.
-        configProperties.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG, "false");
 
         taskConfig = new SourceTaskConfig(configProperties);
         connectorGroupName = props.get(CONNECT_NAME_CONFIG);
@@ -105,11 +97,15 @@ public class FilePulseSourceTask extends SourceTask {
         topic = taskConfig.topic();
 
         try {
-            initSharedStateBackingStore(connectorGroupName);
+            sharedStore = new StateBackingStoreAccess(
+                    connectorGroupName,
+                    taskConfig::getStateBackingStore,
+                    true
+            );
 
-            reporter = new KafkaFileStateReporter(sharedStore.getResource());
+            reporter = new KafkaFileStateReporter(sharedStore.get().getResource());
             consumer = newFileRecordsPollingConsumer();
-            consumer.setFileListener(reporter);
+            consumer.setStateListener(reporter);
             fileURIProvider = taskConfig.getFileURIProvider();
 
             running.set(true);
@@ -145,18 +141,20 @@ public class FilePulseSourceTask extends SourceTask {
             contextToBeCommitted = consumer.context();
 
             while (running.get()) {
+                List<SourceRecord> results = null;
                 if (!consumer.hasNext()) {
                     contextToBeCommitted = null;
                     if (fileURIProvider.hasMore()) {
                         consumer.addAll(fileURIProvider.nextURIs());
                         // fileURIProvider may have more URIs but still return empty collection
-                        // if files are not immediately available. In this case, this method should
+                        // if no file is immediately available. In this case, this method should
                         // be blocked before returning.
-                        if (!consumer.hasNext() && consecutiveWaits.checkAndDecrement()) {
+                        if (!consumer.hasNext() &&
+                             consecutiveWaits.checkAndDecrement()) {
                             // Check if the SourceTask is still running to
                             // return immediately instead of waiting
-                            if (!running.get()) continue;
-                            busyWait();
+                            if (running.get()) busyWait();
+                            continue;
                         }
                     } else {
                         LOG.info(
@@ -164,16 +162,17 @@ public class FilePulseSourceTask extends SourceTask {
                             "IDLE state while waiting for new reconfiguration request from source connector."
                         );
                         // we can safely close resources for this task
-                        this.running.set(false);
+                        running.set(false);
                         closeResources();
                         synchronized (this) {
                             // Wait for the source task being stopped by the TaskWorker
                             this.wait();
                         }
-                        return null; // return directly as resources are already closed
+                        // Return directly as resources are already closed
+                        return null;
                     }
                 } else {
-                    List<SourceRecord> results = null;
+
                     final RecordsIterable<FileRecord<TypedStruct>> records = consumer.next();
 
                     if (!records.isEmpty()) {
@@ -181,19 +180,19 @@ public class FilePulseSourceTask extends SourceTask {
                         LOG.debug("Returning {} records for {}", records.size(), context.metadata());
                         results = records.stream().map(r -> buildSourceRecord(context, r)).collect(Collectors.toList());
 
-                    } else if (consumer.hasNext() && consecutiveWaits.checkAndDecrement()) {
-                        // Check if the SourceTask is still running to
-                        // return immediately instead of waiting
-                        if (!running.get()) continue;
+                    // Check if the SourceTask is still running to
+                    // return immediately instead of waiting
+                    } else if (running.get() &&
+                               consumer.hasNext() &&
+                               consecutiveWaits.checkAndDecrement()) {
                         busyWait();
                         continue;
                     }
-
-                    // Check if the SourceTask should stop to close resources.
-                    if (!running.get()) continue;
-
-                    return results;
                 }
+
+                // Check if the SourceTask should stop to close resources.
+                if (!running.get()) continue;
+                return results;
             }
         } catch (final Throwable t) {
             // This task has failed, so close any resources (may be reopened if needed) before throwing
@@ -259,39 +258,26 @@ public class FilePulseSourceTask extends SourceTask {
             LOG.info("Closing resources FilePulse source task");
             try {
                 if (consumer != null) {
-                    consumer.close();
+                    try {
+                        consumer.close();
+                    }  catch (final Throwable t) {
+                        LOG.warn("Failed to close FileRecordsPollingConsumer. Error: {}", t.getMessage());
+                    }
                 }
-            } catch (Throwable t) {
-                LOG.warn("Error while closing task", t);
+
+                if (fileURIProvider != null) {
+                    try {
+                        fileURIProvider.close();
+                    } catch (final Exception e) {
+                        LOG.warn("Failed to close FileURIProvider. Error: {}", e.getMessage());
+                    }
+                }
             } finally {
                 contextToBeCommitted = null;
                 consumer = null;
                 closeSharedStateBackingStore();
                 LOG.info("Closed resources FilePulse source task");
             }
-        }
-    }
-
-    private void initSharedStateBackingStore(final String connectorGroupName) {
-        try {
-            LOG.info("Retrieving access to shared backing store");
-            sharedStore = FileObjectStateBackingStoreManager.INSTANCE
-                    .getOrCreateSharedStore(
-                            connectorGroupName,
-                            () -> {
-                                final FileObjectStateBackingStore store = taskConfig.getStateBackingStore();
-                                // Always invoke the start() method when store is created from Task
-                                // because this means the connector is running on a remote worker.
-                                store.start();
-                                return store;
-                            },
-                            new Object()
-                    );
-        } catch (Exception exception) {
-            throw new ConnectException(
-                    "Failed to create shared StateBackingStore for group '" + connectorGroupName + "'.",
-                    exception
-            );
         }
     }
 
@@ -305,11 +291,14 @@ public class FilePulseSourceTask extends SourceTask {
         }
     }
 
-    private static final class MaxConsecutiveAttempts {
+    static final class MaxConsecutiveAttempts {
 
         final AtomicInteger consecutiveAttempts;
 
-        private MaxConsecutiveAttempts(final int maxConsecutiveAttempts) {
+        MaxConsecutiveAttempts(final int maxConsecutiveAttempts) {
+            if (maxConsecutiveAttempts <= 0) {
+                throw new IllegalArgumentException("'maxConsecutiveAttempts' must be superior to 0");
+            }
             this.consecutiveAttempts = new AtomicInteger(maxConsecutiveAttempts);
         }
 
@@ -320,7 +309,7 @@ public class FilePulseSourceTask extends SourceTask {
             return this.consecutiveAttempts.getAndDecrement() > 0;
         }
 
-        private int getRemaining() {
+        int getRemaining() {
             return consecutiveAttempts.get();
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -18,26 +18,22 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
+import org.junit.Test;
 
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-/**
- *
- */
-public interface FileRecordsPollingConsumer<T> extends FileInputIterator<T> {
+public class FilePulseSourceTaskTest {
 
-    /**
-     * Returns the context for the last record return from the {@link #next()} method.
-     * Can return {@code null} if the {@link #next()} method has never been invoke.
-     *
-     * @return  a {@link FileContext} instance.
-     */
-    FileContext context();
 
-    /**
-     * Sets a state listener.
-     *
-     * @param listener  the {@link StateListener} instance to be used.
-     */
-    void setStateListener(final StateListener listener);
+    @Test
+    public void test_MaxConsecutiveAttempts() {
+        final FilePulseSourceTask.MaxConsecutiveAttempts attempts = new FilePulseSourceTask.MaxConsecutiveAttempts(3);
+        assertEquals(3, attempts.getRemaining());
+        assertTrue(attempts.checkAndDecrement());
+        assertTrue(attempts.checkAndDecrement());
+        assertTrue(attempts.checkAndDecrement());
+        assertEquals(0, attempts.getRemaining());
+    }
+
 }

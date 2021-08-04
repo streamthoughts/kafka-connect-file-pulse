@@ -87,7 +87,7 @@ public class FileSystemMonitorThread extends Thread {
 
                 long timeout = Math.max(0, scanIntervalMs - (Time.SYSTEM.milliseconds() - started));
                 if (timeout > 0) {
-                    LOG.info("Waiting {} ms to monitor filesystem for new object files.", timeout);
+                    LOG.debug("Waiting {} ms before next filesystem monitoring iteration.", timeout);
                     boolean shuttingDown = shutdownLatch.await(timeout, TimeUnit.MILLISECONDS);
                     if (shuttingDown) {
                         return;

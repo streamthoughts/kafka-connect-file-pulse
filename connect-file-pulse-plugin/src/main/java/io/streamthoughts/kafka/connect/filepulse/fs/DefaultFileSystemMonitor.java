@@ -24,8 +24,6 @@ import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResult;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResultSet;
 import io.streamthoughts.kafka.connect.filepulse.clean.GenericFileCleanupPolicy;
-import io.streamthoughts.kafka.connect.filepulse.config.SourceConnectorConfig;
-import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectKey;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
@@ -54,7 +52,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A default {@link FileSystemMonitor} that can be used to trigger file
@@ -101,6 +98,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
     private final AtomicBoolean running = new AtomicBoolean(false);
 
     private final AtomicBoolean changed = new AtomicBoolean(false);
+
+    private final AtomicBoolean fileSystemListingEnabled = new AtomicBoolean(true);
 
     /**
      * Creates a new {@link DefaultFileSystemMonitor} instance.
@@ -211,7 +210,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
     public void invoke(final ConnectorContext context) {
         // It seems to be OK to always run cleanup even if connector is not yet started or is being shut down.
         cleanUpCompletedFiles();
-        if (running.get()) {
+        if (running.get() && fileSystemListingEnabled.get()) {
             if (!taskReconfigurationRequested.get()) {
                 if (updateFiles()) {
                     LOG.info("Requesting task reconfiguration");
@@ -221,9 +220,17 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             } else {
                 LOG.info("Task reconfiguration requested. Skip filesystem listing.");
             }
-        } else {
+        } else if (fileSystemListingEnabled.get()) {
             LOG.info("The connector is not completely started or is being shut down. Skip filesystem listing.");
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setFileSystemListingEnabled(final boolean enabled) {
+        this.fileSystemListingEnabled.set(enabled);
     }
 
     private void cleanUpCompletedFiles() {
@@ -271,8 +278,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         long took = Time.SYSTEM.milliseconds() - started;
         LOG.info("Completed object files listing. '{}' object files found in {}ms", objects.size(), took);
 
-        final StateSnapshot<FileObject> snapshot = store.snapshot();
-        final Map<FileObjectKey, FileObjectMeta> toScheduled = toScheduled(objects, snapshot);
+        final Map<FileObjectKey, FileObjectMeta> toScheduled = FileObjectCandidatesFilter
+                .filter(offsetPolicy, store.snapshot(), objects);
 
         // Some scheduled files are still being processed, but new files are detected
         if (!noScheduledFiles) {
@@ -310,52 +317,6 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         return !scanned.isEmpty() && running.get();
     }
 
-    private Map<FileObjectKey, FileObjectMeta> toScheduled(final Collection<FileObjectMeta> scanned,
-                                                           final StateSnapshot<FileObject> snapshot) {
-
-        final List<KeyValuePair<String, FileObjectMeta>> toScheduled = scanned.stream()
-                .map(source -> KeyValuePair.of(offsetPolicy.toPartitionJson(source), source))
-                .filter(kv -> maybeScheduled(snapshot, kv.key))
-                .collect(Collectors.toList());
-
-        // Looking for duplicates in sources files, i.e the OffsetPolicy generate two identical offsets for two files.
-        final Stream<Map.Entry<String, List<KeyValuePair<String, FileObjectMeta>>>> entryStream = toScheduled
-                .stream()
-                .collect(Collectors.groupingBy(kv -> kv.key))
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().size() > 1);
-
-        final Map<String, List<String>> duplicates = entryStream
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        e -> e.getValue().stream().map(m -> m.value.stringURI()).collect(Collectors.toList()))
-                );
-
-        if (!duplicates.isEmpty()) {
-            final String formatted = duplicates
-                    .entrySet()
-                    .stream()
-                    .map(e -> "partition_key=" + e.getKey() + ", files=" + e.getValue())
-                    .collect(Collectors.joining("\n\t", "\n\t", "\n"));
-            LOG.error(
-                    "Duplicates object files detected. " +
-                    "Consider changing the configuration for '{}'. " +
-                    "Scan is ignored: {}",
-                    SourceConnectorConfig.OFFSET_STRATEGY_CLASS_CONFIG,
-                    formatted
-            );
-            return Collections.emptyMap(); // ignore all sources files
-        }
-
-        return toScheduled.stream().collect(Collectors.toMap(kv -> FileObjectKey.of(kv.key), kv -> kv.value));
-    }
-
-    private boolean maybeScheduled(final StateSnapshot<FileObject> snapshot,
-                                   final String partition) {
-        return !snapshot.contains(partition) ||
-                snapshot.getForKey(partition).status().isOneOf(FileObjectStatus.started());
-    }
 
     /**
      * {@inheritDoc}

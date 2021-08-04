@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-interface StateListener {
+public interface StateListener {
 
     /**
      * This method is invoked when a file is scheduled by the task.

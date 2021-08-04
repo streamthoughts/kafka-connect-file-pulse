@@ -19,9 +19,11 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-public interface TaskPartitioner {
+public interface TaskPartitioner extends AutoCloseable {
 
     /**
      * Partitions the specified object-file URIs.
@@ -30,7 +32,7 @@ public interface TaskPartitioner {
      * @param taskCount     the total number of tasks.
      * @return              the list of URIs for the given {@literal taskId}.
      */
-    List<List<URI>> partition(final List<FileObjectMeta> files, final int taskCount);
+    List<List<URI>> partition(final Collection<FileObjectMeta> files, final int taskCount);
 
     /**
      * Partitions the specified object-file URIs.
@@ -40,9 +42,15 @@ public interface TaskPartitioner {
      * @param taskId        the task id.
      * @return              the list of URIs for the given {@literal taskId}.
      */
-    default List<URI> partitionForTask(final List<FileObjectMeta> files,
+    default List<URI> partitionForTask(final Collection<FileObjectMeta> files,
                                        final int taskCount,
                                        final int taskId) {
-        return partition(files, taskCount).get(taskId);
+        return files == null || files.isEmpty() ? Collections.emptyList() : partition(files, taskCount).get(taskId);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    default void close() { }
 }

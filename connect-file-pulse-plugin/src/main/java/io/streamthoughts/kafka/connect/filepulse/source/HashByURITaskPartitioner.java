@@ -23,8 +23,11 @@ import org.apache.kafka.common.utils.Utils;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class HashByURITaskPartitioner implements TaskPartitioner {
 
@@ -32,21 +35,20 @@ public class HashByURITaskPartitioner implements TaskPartitioner {
      * {@inheritDoc}
      */
     @Override
-    public List<List<URI>> partition(final List<FileObjectMeta> files, final int taskCount) {
+    public List<List<URI>> partition(final Collection<FileObjectMeta> files, final int taskCount) {
 
-        final int numGroups = Math.min(files.size(), taskCount);
+        if (files.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-        final ArrayList<List<URI>> partitioned = new ArrayList<>(numGroups);
+        final ArrayList<List<URI>> partitioned = new ArrayList<>(taskCount);
+        IntStream.range(0, taskCount).forEachOrdered(i -> partitioned.add(i, new LinkedList<>()));
+
         for (FileObjectMeta objectMeta : files) {
             final byte[] bytes = objectMeta.stringURI().getBytes(StandardCharsets.UTF_8);
             // TODO maybe we should not rely on Apache Kafka utility classes.
             final int taskId = Utils.toPositive(Utils.murmur2(bytes)) % taskCount;
-            List<URI> assigned = partitioned.get(taskId);
-            if (assigned == null) {
-                assigned = new LinkedList<>();
-                partitioned.add(taskId, assigned);
-            }
-            assigned.add(objectMeta.uri());
+            partitioned.get(taskId).add(objectMeta.uri());
         }
 
         return partitioned;

@@ -18,37 +18,29 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import org.apache.kafka.connect.util.ConnectorUtils;
+import org.junit.Test;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public class DefaultTaskPartitioner implements TaskPartitioner {
+import static org.junit.Assert.assertEquals;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<List<URI>> partition(final Collection<FileObjectMeta> files, final int taskCount) {
-        if (files.isEmpty()) {
-            return Collections.emptyList();
-        }
+public class HashByURITaskPartitionerTest {
 
-        final int numGroups = Math.min(files.size(), taskCount);
-        return ConnectorUtils
-                .groupPartitions(new ArrayList<>(files), numGroups)
-                .stream()
-                .map(this::toURIs)
-                .collect(Collectors.toList());
+    private final HashByURITaskPartitioner partitioner = new HashByURITaskPartitioner();
+
+    @Test
+    public void test() {
+        List<FileObjectMeta> toPartition = new ArrayList<>(10);
+        IntStream
+            .range(0, 1)
+            .forEachOrdered(i -> toPartition.add(new GenericFileObjectMeta(URI.create("file://tmp/" + i))));
+
+        final List<List<URI>> partitioned = partitioner.partition(toPartition, 4);
+        assertEquals(4, partitioned.size());
+        System.out.println(partitioned);
     }
 
-    private List<URI> toURIs(final List<FileObjectMeta> items) {
-        return items.stream()
-                .map(FileObjectMeta::uri)
-                .collect(Collectors.toList());
-    }
 }

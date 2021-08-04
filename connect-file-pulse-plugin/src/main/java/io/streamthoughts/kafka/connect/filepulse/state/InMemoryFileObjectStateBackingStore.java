@@ -44,9 +44,7 @@ public class InMemoryFileObjectStateBackingStore implements FileObjectStateBacki
 
     private final AtomicBoolean started = new AtomicBoolean(false);
 
-    public InMemoryFileObjectStateBackingStore() {
-
-    }
+    public InMemoryFileObjectStateBackingStore() { }
 
     @VisibleForTesting
     public InMemoryFileObjectStateBackingStore(final Map<String, FileObject> objects) {
@@ -138,7 +136,6 @@ public class InMemoryFileObjectStateBackingStore implements FileObjectStateBacki
      */
     @Override
     public void refresh(final long timeout, final TimeUnit unit) {
-
     }
 
     /**

@@ -1,0 +1,20 @@
+{
+  "connector.class": "io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector",
+  "fs.cleanup.policy.class": "io.streamthoughts.kafka.connect.filepulse.fs.clean.DeleteCleanupPolicy",
+  "fs.listing.class": "io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing",
+  "fs.listing.directory.path":"/tmp/kafka-connect/examples/",
+  "fs.listing.filters": "io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter",
+  "fs.listing.interval.ms": "5000",
+  "file.filter.regex.pattern":".*\\.(xml|XML)",
+  "topic": "connect-file-pulse-quickstart-xml",
+  "tasks.reader.class": "io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalXMLFileInputReader",
+  "reader.xml.parser.validating.enabled": true,
+  "reader.xml.parser.namespace.aware.enabled": true,
+  "reader.xml.exclude.empty.elements": true,
+  "tasks.file.status.storage.class": "io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore",
+  "tasks.file.status.storage.bootstrap.servers": "broker:29092",
+  "tasks.file.status.storage.topic": "connct-file-pulse-status",
+  "tasks.file.status.storage.topic.partitions": 10,
+  "tasks.file.status.storage.topic.replication.factor": 1,
+  "tasks.max": 1
+}

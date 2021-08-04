@@ -20,6 +20,7 @@
 package io.streamthoughts.kafka.connect.filepulse.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,6 +28,10 @@ import java.util.stream.Collectors;
 public class FieldPaths {
 
     private final Set<FieldPath> paths;
+
+    public static FieldPaths empty() {
+        return new FieldPaths(Collections.emptySet());
+    }
 
     public static FieldPaths from(final Collection<String> paths) {
         return new FieldPaths(paths.stream()

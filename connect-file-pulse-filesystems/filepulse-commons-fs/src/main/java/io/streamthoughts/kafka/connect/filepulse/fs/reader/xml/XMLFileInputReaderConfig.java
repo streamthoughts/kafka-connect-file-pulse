@@ -45,11 +45,14 @@ public class XMLFileInputReaderConfig extends AbstractConfig {
     private static final String FORCE_ARRAY_ON_FIELDS_FORCE = "The comma-separated list of fields for which " +
             "an array-type must be forced";
 
-    public static final String XPATH_PARSER_VALIDATING_ENABLED_CONFIG = "reader.xml.parser.validating.enabled";
-    private static final String XPATH_PARSER_VALIDATING_ENABLED_DOC = " Specifies that the parser will validate documents as they are parsed.";
+    public static final String XML_PARSER_VALIDATING_ENABLED_CONFIG = "reader.xml.parser.validating.enabled";
+    private static final String XML_PARSER_VALIDATING_ENABLED_DOC = " Specifies that the parser will validate documents as they are parsed (default: false).";
 
-    public static final String XPATH_PARSER_NAMESPACE_AWARE_ENABLED_CONFIG = "reader.xml.parser.namespace.aware.enabled";
-    private static final String XPATH_PARSER_NAMESPACE_AWARE_ENABLED_DOC = "Specifies that the XML parser will provide support for XML namespaces.";
+    public static final String XML_PARSER_NAMESPACE_AWARE_ENABLED_CONFIG = "reader.xml.parser.namespace.aware.enabled";
+    private static final String XML_PARSER_NAMESPACE_AWARE_ENABLED_DOC = "Specifies that the XML parser will provide support for XML namespaces (default: false).";
+
+    public static final String XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG = "reader.xml.exclude.empty.elements";
+    private static final String XML_EXCLUDE_EMPTY_ELEMENTS_DOC = "Specifies that the reader should exclude element having no field (default: false).";
 
     /**
      * Creates a new {@link XMLFileInputReaderConfig} instance.
@@ -69,11 +72,15 @@ public class XMLFileInputReaderConfig extends AbstractConfig {
     }
 
     public boolean isValidatingEnabled() {
-        return getBoolean(XPATH_PARSER_VALIDATING_ENABLED_CONFIG);
+        return getBoolean(XML_PARSER_VALIDATING_ENABLED_CONFIG);
     }
 
     public boolean isNamespaceAwareEnabled() {
-        return getBoolean(XPATH_PARSER_NAMESPACE_AWARE_ENABLED_CONFIG);
+        return getBoolean(XML_PARSER_NAMESPACE_AWARE_ENABLED_CONFIG);
+    }
+
+    public boolean isEmptyElementExcluded() {
+        return getBoolean(XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG);
     }
 
     public List<String> forceArrayFields() {
@@ -102,17 +109,23 @@ public class XMLFileInputReaderConfig extends AbstractConfig {
                         ConfigDef.Importance.HIGH,
                         XPATH_QUERY_DOC
                 )
-                .define(XPATH_PARSER_VALIDATING_ENABLED_CONFIG,
+                .define(XML_PARSER_VALIDATING_ENABLED_CONFIG,
                         ConfigDef.Type.BOOLEAN,
                         false,
                         ConfigDef.Importance.LOW,
-                        XPATH_PARSER_VALIDATING_ENABLED_DOC
+                        XML_PARSER_VALIDATING_ENABLED_DOC
                 )
-                .define(XPATH_PARSER_NAMESPACE_AWARE_ENABLED_CONFIG,
+                .define(XML_PARSER_NAMESPACE_AWARE_ENABLED_CONFIG,
                         ConfigDef.Type.BOOLEAN,
                         false,
                         ConfigDef.Importance.LOW,
-                        XPATH_PARSER_NAMESPACE_AWARE_ENABLED_DOC
+                        XML_PARSER_NAMESPACE_AWARE_ENABLED_DOC
+                )
+                .define(XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.LOW,
+                        XML_EXCLUDE_EMPTY_ELEMENTS_DOC
                 );
     }
 }

@@ -35,12 +35,16 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import net.sf.saxon.lib.NamespaceConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -57,6 +61,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -66,25 +71,38 @@ import static java.util.Collections.singletonList;
 
 public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> {
 
-    private final XMLFileInputReaderConfig config;
+    private static final Logger LOG = LoggerFactory.getLogger(XMLFileInputIterator.class);
 
     private final Object xpathResult;
 
     private final int totalRecords;
 
-    private int position = 0;
-
     private final ResultType type;
 
     private enum ResultType {NODE_SET, STRING}
 
+    private final Node2StructConverter converter;
+
+    private int position = 0;
+
+    /**
+     * Creates a new {@link XMLFileInputIterator} instance.
+     *
+     * @param config          the {@link XMLFileInputReaderConfig}.
+     * @param iteratorManager the {@link IteratorManager}.
+     * @param objectMeta      the {@link FileObjectMeta} of the file to process.
+     * @param stream          the {@link InputStream} of the file to process.
+     */
     public XMLFileInputIterator(final XMLFileInputReaderConfig config,
                                 final IteratorManager iteratorManager,
                                 final FileObjectMeta objectMeta,
                                 final InputStream stream) {
         super(objectMeta, iteratorManager);
 
-        this.config = config;
+        this.converter = new Node2StructConverter()
+                .setExcludeEmptyElement(config.isEmptyElementExcluded())
+                .setForceArrayFields(FieldPaths.from(config.forceArrayFields()));
+
         System.setProperty(
                 "javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON,
                 "net.sf.saxon.xpath.XPathFactoryImpl"
@@ -101,6 +119,34 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
             builderFactory.setValidating(config.isValidatingEnabled());
 
             final DocumentBuilder builder = builderFactory.newDocumentBuilder();
+
+            if (config.isValidatingEnabled()) {
+                builder.setErrorHandler(new ErrorHandler() {
+                    @Override
+                    public void warning(final SAXParseException e) {
+                        LOG.warn("Handled XML parser warning on file {}. Error: {}",
+                            objectMeta.uri(),
+                            e.getLocalizedMessage()
+                        );
+                    }
+
+                    @Override
+                    public void error(final SAXParseException e) {
+                        LOG.warn("Handled XML parser error on file {}. Error: {}",
+                                objectMeta.uri(),
+                                e.getLocalizedMessage()
+                        );
+                    }
+
+                    @Override
+                    public void fatalError(final SAXParseException e) {
+                        throw new ReaderException(
+                            "Handled XML parser fatal error on file '" + objectMeta.uri() + "'",
+                            e
+                        );
+                    }
+                });
+            }
             final Document document = builder.parse(new InputSource(stream));
 
             final XPathFactory xPathFactory = XPathFactory.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON);
@@ -154,11 +200,9 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
             if (item == null) return RecordsIterable.empty();
 
             try {
-                final FieldPaths forceArrayFields = FieldPaths.from(config.forceArrayFields());
-                final TypedStruct struct = Node2StructConverter.convertNodeObjectTree(item, forceArrayFields);
-                return incrementAndGet(struct);
+                return incrementAndGet(converter.apply(item));
             } catch (Exception e) {
-                throw new ReaderException("Fail to convert XML document to connect struct object: " + context, e);
+                throw new ReaderException("Failed to convert XML document to connect struct object: " + context, e);
             }
         }
 
@@ -185,11 +229,27 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
     /**
      * Utility class to convert a {@link Node} object into {@link TypedStruct}.
      */
-    private static class Node2StructConverter {
+    private static final class Node2StructConverter implements Function<Node, TypedStruct> {
+
+        private static final Logger LOG = LoggerFactory.getLogger(Node2StructConverter.class);
 
         private static final String DEFAULT_TEXT_NODE_FIELD_NAME = "value";
         private static final Pattern NAME_INVALID_CHARACTERS = Pattern.compile("[.\\-]");
-        public static final String NAME_INVALID_CHARACTER_REPLACEMENT = "_";
+        private static final String NAME_INVALID_CHARACTER_REPLACEMENT = "_";
+
+        private boolean excludeEmptyElement;
+
+        private FieldPaths forceArrayFields = FieldPaths.empty();
+
+        public Node2StructConverter setExcludeEmptyElement(boolean excludeEmptyElement) {
+            this.excludeEmptyElement = excludeEmptyElement;
+            return this;
+        }
+
+        public Node2StructConverter setForceArrayFields(final FieldPaths forceArrayFields) {
+            this.forceArrayFields = forceArrayFields;
+            return this;
+        }
 
         /**
          * Converts the given {@link Node} object tree into a new new {@link TypedStruct} instance.
@@ -197,12 +257,19 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
          * @param node the {@link Node} object tree to convert.
          * @return the new {@link TypedStruct} instance.
          */
-        private static TypedStruct convertNodeObjectTree(final Node node, final FieldPaths forceArrayFields) {
+        @Override
+        public TypedStruct apply(final Node node) {
+            return convertObjectTree(node, forceArrayFields);
+        }
+
+        private TypedStruct convertObjectTree(final Node node,
+                                              final FieldPaths forceArrayFields) {
             Objects.requireNonNull(node, "node cannot be null");
             String nodeName = determineNodeName(node);
             final FieldPaths currentForceArrayFields = nodeName.equals("#document")
                     ? forceArrayFields :
                     forceArrayFields.next(nodeName);
+
             TypedStruct container = TypedStruct.create();
             addAllNodeAttributes(container, node.getAttributes());
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
@@ -216,6 +283,33 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                 }
             }
             return container;
+        }
+
+        private Optional<?> readNodeObject(final Node node,
+                                           final FieldPaths forceArrayFields) {
+            if (isWhitespaceOrNewLineNodeElement(node)) {
+                return Optional.empty();
+            }
+
+            if (isTextNode(node)) {
+                return readTextNode(node, node.getNodeValue());
+            }
+
+            if (isElementNode(node)) {
+
+                if (excludeEmptyElement && isEmptyNode(node)) {
+                    LOG.debug("Empty XML element excluded: '{}'", node.getNodeName());
+                    return Optional.empty();
+                }
+
+                Optional<String> childTextContent = peekChildNodeTextContent(node);
+                if (childTextContent.isPresent()) {
+                    return readTextNode(node, childTextContent.get());
+                } else {
+                    return Optional.of(convertObjectTree(node, forceArrayFields));
+                }
+            }
+            throw new ReaderException("Unsupported node type '" + node.getNodeType() + "'");
         }
 
         private static TypedStruct enrichStructWithObject(final TypedStruct container,
@@ -245,24 +339,9 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
             return container.put(nodeName, value);
         }
 
-        private static Optional<?> readNodeObject(final Node node, final FieldPaths forceArrayFields) {
-            if (isWhitespaceOrNewLineNodeElement(node)) {
-                return Optional.empty();
-            }
-
-            if (isTextNode(node)) {
-                return readTextNode(node, node.getNodeValue());
-            }
-
-            if (isElementNode(node)) {
-                Optional<String> childTextContent = peekChildNodeTextContent(node);
-                if (childTextContent.isPresent()) {
-                    return readTextNode(node, childTextContent.get());
-                } else {
-                    return Optional.of(convertNodeObjectTree(node, forceArrayFields));
-                }
-            }
-            throw new ReaderException("Unsupported node type '" + node.getNodeType() + "'");
+        private static boolean isEmptyNode(final Node node) {
+            return node.getChildNodes().getLength() == 0 &&
+                    node.getAttributes().getLength() == 0;
         }
 
         private static Optional<?> readTextNode(final Node node,
@@ -341,8 +420,9 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
         private static String determineNodeName(final Node node) {
             final String name = node.getLocalName() != null ? node.getLocalName() : node.getNodeName();
             return NAME_INVALID_CHARACTERS
-                .matcher(name)
-                .replaceAll(NAME_INVALID_CHARACTER_REPLACEMENT);
+                    .matcher(name)
+                    .replaceAll(NAME_INVALID_CHARACTER_REPLACEMENT);
         }
+
     }
 }

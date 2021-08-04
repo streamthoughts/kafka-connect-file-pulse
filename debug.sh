@@ -15,15 +15,18 @@ banner() {
 usage() {
   echo "Usage: $0 [options]" 1>&2 && \
   echo -e "\t -b \t: Build project and the Docker image." 1>&2 && \
+  echo -e "\t -s \t: Number of connect workers (default: 2)." 1>&2 && \
   echo -e "\t -h\t: Print this Help." 1>&2; exit 1;
 }
 
 banner
 
 BUILD="false"
-while getopts "bh" o; do
+SCALE=2
+while getopts "bhs:" o; do
     case "${o}" in
         b) BUILD="true";;
+	s) SCALE="${OPTARG}";;
         h|*)
             usage
             ;;
@@ -39,7 +42,7 @@ echo -e "\n🐳 Stopping previous Kafka Docker-Compose stack..."
 (cd "$BASEDIR"; docker-compose -f ./docker-compose-debug.yml down)
 
 echo -e "\n🐳 Starting Kafka Docker-Compose stack..."
-(cd "$BASEDIR"; docker-compose -f ./docker-compose-debug.yml up -d --scale connect=2)
+(cd "$BASEDIR"; docker-compose -f ./docker-compose-debug.yml up -d --scale connect=$SCALE)
 
 echo -e "\n⏳ Waiting for Kafka Connect..."
 CONNECT_URL=http://localhost:80/connectors

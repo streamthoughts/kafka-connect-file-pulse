@@ -22,9 +22,20 @@ import java.util.Objects;
 
 public class TypedField {
 
-    private final int index;
+    private final Integer index;
     private final Schema schema;
     private final String name;
+
+    /**
+     * Creates a new {@link TypedField} instance.
+     *
+     * @param schema  the field type.
+     * @param name    the field name.
+     */
+    TypedField(final Schema schema,
+               final String name) {
+        this(null, schema, name);
+    }
 
     /**
      * Creates a new {@link TypedField} instance.
@@ -33,7 +44,7 @@ public class TypedField {
      * @param schema  the field type.
      * @param name    the field name.
      */
-    TypedField(final int index,
+    TypedField(final Integer index,
                final Schema schema,
                final String name) {
         this.index = index;
@@ -41,8 +52,7 @@ public class TypedField {
         this.name = name;
     }
 
-
-    public int index() {
+    int index() {
         return index;
     }
 

@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import java.util.Set;
 
 /**
- * Default interface which is used to merge twi {@link TypedStruct} instance.
+ * Default interface which is used to merge two {@link TypedStruct} instance.
  */
 public interface TypeValueMerger {
 
@@ -34,7 +34,7 @@ public interface TypeValueMerger {
      * @param right     the right {@link TypedStruct} to be merged.
      * @param overwrite the left field that must overwritten.
      *
-     * @return       the new {@link TypedStruct} instance.
+     * @return          the new {@link TypedStruct} instance.
      */
     TypedStruct merge(final TypedStruct left,
                       final TypedStruct right,

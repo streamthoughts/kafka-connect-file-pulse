@@ -39,11 +39,14 @@ public class TypeConverter implements Serializable {
         Objects.requireNonNull(value, "value can't be null");
 
         if (Collection.class.isAssignableFrom(value.getClass())) {
-            return (Collection) value;
+            return (Collection<?>) value;
         } else if (value instanceof Object[]) {
             return Arrays.asList((Object[]) value);
         }
-        throw new DataException(String.format("'%s' is not assignable to Collection \"%s\"", value.getClass(), value));
+
+        throw new DataException(
+         String.format("'%s' is not assignable to Collection: \"%s\"", value.getClass(), value)
+        );
     }
 
     public static Boolean getBool(final Object value) throws IllegalArgumentException {

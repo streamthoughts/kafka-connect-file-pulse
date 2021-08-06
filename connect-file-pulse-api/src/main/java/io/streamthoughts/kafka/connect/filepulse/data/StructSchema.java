@@ -18,18 +18,23 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 public class StructSchema implements Schema, Iterable<TypedField> {
 
-    private final Type type;
+    private static final Logger LOG = LoggerFactory.getLogger(StructSchema.class);
 
     private final Map<String, TypedField> fields;
 
@@ -62,11 +67,10 @@ public class StructSchema implements Schema, Iterable<TypedField> {
     /**
      * Creates a new {@link StructSchema} instance.
      *
-     * @param fields    the collection {@link TypedField} instances.
-     * @param name      the name of the schema.
+     * @param fields the collection {@link TypedField} instances.
+     * @param name   the name of the schema.
      */
     public StructSchema(final Collection<TypedField> fields, final String name) {
-        this.type = Type.STRUCT;
         this.fields = new LinkedHashMap<>();
         this.name = name;
         fields.forEach(field -> this.fields.put(field.name(), field));
@@ -86,7 +90,7 @@ public class StructSchema implements Schema, Iterable<TypedField> {
         return this;
     }
 
-    public int indexOf(final String fieldName) {
+    int indexOf(final String fieldName) {
         if (fieldName == null || fieldName.isEmpty()) {
             throw new DataException("fieldName cannot be null.");
         }
@@ -153,13 +157,13 @@ public class StructSchema implements Schema, Iterable<TypedField> {
      */
     @Override
     public Type type() {
-        return this.type;
+        return Type.STRUCT;
     }
 
     /**
      * Gets the name for this schema.
      *
-     * @return  the schema name.
+     * @return the schema name.
      */
     public String name() {
         return this.name;
@@ -167,9 +171,9 @@ public class StructSchema implements Schema, Iterable<TypedField> {
 
     /**
      * Sets the name for this schema.
-     * @param name  the schema name.
      *
-     * @return  {@code this}
+     * @param name the schema name.
+     * @return {@code this}
      */
     public StructSchema name(final String name) {
         this.name = name;
@@ -179,7 +183,7 @@ public class StructSchema implements Schema, Iterable<TypedField> {
     /**
      * Gets the namespace for this schema.
      *
-     * @return  the schema namespace.
+     * @return the schema namespace.
      */
     public String namespace() {
         return namespace;
@@ -189,8 +193,7 @@ public class StructSchema implements Schema, Iterable<TypedField> {
      * Sets the namespace for this schema.
      *
      * @param namespace the namespace.
-     *
-     * @return  {@code this}
+     * @return {@code this}
      */
     public StructSchema namespace(final String namespace) {
         this.namespace = namespace;
@@ -200,7 +203,7 @@ public class StructSchema implements Schema, Iterable<TypedField> {
     /**
      * Gets the doc for this schema.
      *
-     * @return  the doc.
+     * @return the doc.
      */
     public String doc() {
         return this.doc;
@@ -208,9 +211,9 @@ public class StructSchema implements Schema, Iterable<TypedField> {
 
     /**
      * Sets the doc for this schema.
-     * @param doc   the schema doc.
      *
-     * @return  {@code this}
+     * @param doc the schema doc.
+     * @return {@code this}
      */
     public StructSchema doc(final String doc) {
         this.doc = doc;
@@ -230,7 +233,26 @@ public class StructSchema implements Schema, Iterable<TypedField> {
      */
     @Override
     public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object) {
-        return mapper.map(this, (TypedStruct)object);
+        return mapper.map(this, (TypedStruct) object);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Schema merge(final Schema o) {
+        if (this.equals(o)) return this;
+
+        if (!(o instanceof StructSchema)) {
+            // StructSchema cannot only be merged with another StructSchema,
+            // so let's try to reverse the merge (e.g. ARRAY can be merged with a STRUCT).
+            return o.merge(this);
+        }
+
+        final StructSchema that = (StructSchema) o;
+
+        return new StructSchemaMerger().apply(this, that);
+
     }
 
     /**
@@ -241,8 +263,7 @@ public class StructSchema implements Schema, Iterable<TypedField> {
         if (this == o) return true;
         if (!(o instanceof StructSchema)) return false;
         StructSchema that = (StructSchema) o;
-        return type == that.type &&
-                Objects.equals(fields, that.fields);
+        return Objects.equals(fields, that.fields);
     }
 
     /**
@@ -251,7 +272,7 @@ public class StructSchema implements Schema, Iterable<TypedField> {
     @Override
     public int hashCode() {
         if (hash == null) {
-            hash = Objects.hash(type, fields);
+            hash = Objects.hash(fields);
         }
         return hash;
     }
@@ -264,5 +285,61 @@ public class StructSchema implements Schema, Iterable<TypedField> {
         return "[" +
                 "fields=" + fields +
                 ']';
+    }
+
+    static class StructSchemaMerger implements BiFunction<StructSchema, StructSchema, StructSchema> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @return  a new {@link StructSchema} resulting from the merge of the given two {@link StructSchema}.
+         */
+        @Override
+        public StructSchema apply(final StructSchema left, final StructSchema right) {
+
+            if (!Objects.equals(left.name, right.name))
+                throw new DataException(
+                        "Cannot merge two schemas wih different name " + left.name() + "<>" + right.name());
+
+            if (!Objects.equals(left.namespace, right.namespace))
+                throw new DataException(
+                        "Cannot merge two schemas wih different namespace " + left.name() + "<>" + right.name());
+
+            LOG.debug("Merging schemas with namespace: {}, name: {}", left.name, left.namespace);
+            final StructSchema merged = new StructSchema()
+                    .name(left.name)
+                    .namespace(left.namespace)
+                    .doc(left.doc);
+
+            final HashMap<String, TypedField> remaining = new HashMap<>(left.fields);
+
+            // Iterator on RIGHT fields and compare to LEFT fields.
+            for (final TypedField rightField : right.fields()) {
+
+                final String name = rightField.name();
+                LOG.debug("Merging field: name={}, ", name);
+
+                // field exist only on RIGHT schema.
+                if (!remaining.containsKey(name)) {
+                    merged.field(name, rightField.schema());
+                    continue;
+                }
+
+                // field exist on both LEFT and RIGHT schemas.
+                final TypedField leftField = remaining.remove(name);
+
+                try {
+                    final Schema fieldMergedSchema = leftField.schema().merge(rightField.schema());
+                    merged.field(name, fieldMergedSchema);
+                } catch (Exception e) {
+                    throw new DataException("Failed to merge schemas for field '" + name + "'. ", e);
+                }
+            }
+
+            // remaining fields that existing only on LEFT schema.
+            remaining.values().forEach(it -> merged.field(it.name(), it.schema()));
+
+            return merged;
+        }
     }
 }

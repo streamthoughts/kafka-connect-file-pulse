@@ -29,8 +29,8 @@ import java.util.stream.StreamSupport;
 
 public class TypedStruct implements GettableByName, SettableByName<TypedStruct>, Iterable<TypedField> {
 
-    private StructSchema schema;
-    private List<Object> values;
+    private final StructSchema schema;
+    private final List<Object> values;
 
     /**
      * Static helper that can be used to create a new {@link TypedStruct} instance.
@@ -58,7 +58,7 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
      * @param schema    the {@link StructSchema} instance.
      * @return          the type-struct instance.
      */
-    public static TypedStruct create(final StructSchema schema) {
+    private static TypedStruct create(final StructSchema schema) {
         return new TypedStruct(schema);
     }
 
@@ -191,14 +191,16 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
         return put(field, typed.schema(), typed.value());
     }
 
-    public TypedStruct put(final String field, final Schema schema, final Object object) {
-        if (!has(field)) {
-            this.schema.field(field, schema);
-            values.add(object);
+    public TypedStruct put(final String fieldName,
+                           final Schema fieldSchema,
+                           final Object fieldValue) {
+        if (!has(fieldName)) {
+            schema.field(fieldName, fieldSchema);
+            values.add(fieldValue);
         } else {
-            int index = this.schema.indexOf(field);
-            this.schema.set(field, schema); // handle case where field's schema is changed.
-            values.set(index, object);
+            int index = schema.indexOf(fieldName);
+            schema.set(fieldName, fieldSchema); // handle case where fieldName's fieldSchema is changed.
+            values.set(index, fieldValue);
         }
         return this;
     }
@@ -441,7 +443,7 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
         if (field.type() == Type.ARRAY) {
             List<Object> array = getArray(fieldName);
             if (!array.isEmpty()) {
-                return TypedValue.of(array.get(0), ((ArraySchema)field.schema()).valueSchema());
+                return TypedValue.any(array.get(0));
             }
         }
 

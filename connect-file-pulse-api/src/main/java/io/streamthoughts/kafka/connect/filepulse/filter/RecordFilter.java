@@ -123,7 +123,7 @@ public interface RecordFilter extends Configurable {
 
 
     @FunctionalInterface
-    static public interface RecordFilterProvider {
+    interface RecordFilterProvider {
 
         RecordFilter getRecordForAlias(final String alias);
     }

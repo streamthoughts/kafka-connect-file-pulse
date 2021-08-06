@@ -102,8 +102,6 @@ public class DefaultTypeValueMerger implements TypeValueMerger {
         return struct;
     }
 
-
-
     private static TypedValue merge(final TypedValue left, final TypedValue right) {
         List<Object> values = new LinkedList<>();
 

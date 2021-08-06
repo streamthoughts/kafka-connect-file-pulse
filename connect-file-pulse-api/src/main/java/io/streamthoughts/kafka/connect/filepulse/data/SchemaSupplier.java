@@ -28,8 +28,8 @@ public interface SchemaSupplier extends Supplier<Schema> {
     /**
      * Returns a supplier that will infer schema from the specified object.
      *
-     * @param object    the object to be used to infer schema.
-     * @return          a new {@link LazySchemaSupplier} instance.
+     * @param object the object to be used to infer schema.
+     * @return a new {@link LazySchemaSupplier} instance.
      */
     static SchemaSupplier lazy(final Object object) {
         return new LazySchemaSupplier(object);
@@ -38,8 +38,8 @@ public interface SchemaSupplier extends Supplier<Schema> {
     /**
      * Returns a supplier that will return the specified schema.
      *
-     * @param schema    the {@link Schema} instance to supply
-     * @return          a new {@link EagerSchemaSupplier} instance.
+     * @param schema the {@link Schema} instance to supply
+     * @return a new {@link EagerSchemaSupplier} instance.
      */
     static SchemaSupplier eager(final Schema schema) {
         return new EagerSchemaSupplier(schema);
@@ -47,7 +47,8 @@ public interface SchemaSupplier extends Supplier<Schema> {
 
     /**
      * Supplies the {@link Schema} instance.
-     * @return  the {@link Schema} instance.
+     *
+     * @return the {@link Schema} instance.
      */
     @Override
     Schema get();
@@ -59,6 +60,7 @@ public interface SchemaSupplier extends Supplier<Schema> {
 
         /**
          * Creates a new {@link LazySchemaSupplier} instance.
+         *
          * @param value the object to be used to infer the schema to returned.
          */
         LazySchemaSupplier(final Object value) {
@@ -79,17 +81,23 @@ public interface SchemaSupplier extends Supplier<Schema> {
 
         private void mayInferSchemaFromValue() {
             if (schema == null) {
+                if (value == null) {
+                    schema = SimpleSchema.forType(Type.NULL);
+                    return;
+                }
+
                 Type type = Type.forClass(value.getClass());
+                if (type == null) {
+                    throw new DataException("Cannot infer schema for type " + value.getClass());
+                }
+
                 if (type.isPrimitive()) {
                     schema = SimpleSchema.forType(type);
-
                 } else if (type == Type.STRUCT) {
-                    schema = ((TypedStruct)value).schema();
-
-                } else if (type == Type.MAP){
+                    schema = ((TypedStruct) value).schema();
+                } else if (type == Type.MAP) {
                     schema = new LazyMapSchema((Map) value);
-
-                } else if (type == Type.ARRAY){
+                } else if (type == Type.ARRAY) {
                     schema = new LazyArraySchema((List) value);
                 } else {
                     throw new DataException("Cannot infer schema for type " + value.getClass());
@@ -126,7 +134,8 @@ public interface SchemaSupplier extends Supplier<Schema> {
 
         /**
          * Creates a new {@link EagerSchemaSupplier} instance.
-         * @param schema    the {@link Schema} to be returned.
+         *
+         * @param schema the {@link Schema} to be returned.
          */
         EagerSchemaSupplier(final Schema schema) {
             Objects.requireNonNull(schema, "schema cannot be null");

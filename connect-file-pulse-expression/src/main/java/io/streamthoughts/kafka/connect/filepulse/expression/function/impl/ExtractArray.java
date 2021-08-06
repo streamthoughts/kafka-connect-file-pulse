@@ -18,7 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.impl;
 
-import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
@@ -84,8 +83,9 @@ public class ExtractArray implements ExpressionFunction {
      */
     @Override
     public TypedValue apply(final Arguments<GenericArgument> args) {
-        TypedValue array = args.valueOf(ARRAY_ARG);
-        List<Object> list = new ArrayList<>(array.getArray());
-        return TypedValue.of(list.get(args.valueOf(INDEX_ARG)), ((ArraySchema) array.schema()).valueSchema());
+        final TypedValue typed = args.valueOf(ARRAY_ARG);
+        final Integer index = args.valueOf(INDEX_ARG);
+        List<Object> list = new ArrayList<>(typed.getArray());
+        return TypedValue.any(list.get(index));
     }
 }

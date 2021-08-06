@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.config.SourceTaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
 import io.streamthoughts.kafka.connect.filepulse.filter.DefaultRecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileURIProvider;
@@ -178,7 +179,9 @@ public class FilePulseSourceTask extends SourceTask {
                     if (!records.isEmpty()) {
                         final FileContext context = consumer.context();
                         LOG.debug("Returning {} records for {}", records.size(), context.metadata());
-                        results = records.stream().map(r -> buildSourceRecord(context, r)).collect(Collectors.toList());
+                        results = records.stream()
+                                .map(r -> buildSourceRecord(context, r))
+                                .collect(Collectors.toList());
 
                     // Check if the SourceTask is still running to
                     // return immediately instead of waiting
@@ -232,13 +235,20 @@ public class FilePulseSourceTask extends SourceTask {
         final Map<String, ?> sourcePartition = offsetPolicy.toPartitionMap(metadata);
         final Map<String, ?> sourceOffsets = offsetPolicy.toOffsetMap(record.offset().toSourceOffset());
 
-        return record.toSourceRecord(
-            sourcePartition,
-            sourceOffsets,
-            context.metadata(),
-            topic,
-            NO_PARTITION
-        );
+        try {
+            return record.toSourceRecord(
+                    sourcePartition,
+                    sourceOffsets,
+                    context.metadata(),
+                    topic,
+                    NO_PARTITION
+            );
+        } catch (final Throwable t) {
+            throw new ConnectFilePulseException(
+                "Failed to convert data into connect record: '" + context.metadata().uri() + "'",
+                t
+            );
+        }
     }
 
     /**

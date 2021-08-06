@@ -189,6 +189,21 @@ public interface Schema {
         throw new UnsupportedOperationException("this method is not supported for schema of type : " + type());
     }
 
+    /**
+     * Merges this schema with the given one.
+     *
+     * @param that  the schema to merge.
+     * @return      a new {@link Schema}.
+     */
+    default Schema merge(final Schema that) {
+        if (this.equals(that)) return this;
+
+        if (this.type() == that.type()) {
+            return this;
+        }
+        throw new DataException("Cannot merge incompatible schema type " + this.type() + "<>" + that.type());
+    }
+
     class EmptySchema implements Schema {
 
         static EmptySchema INSTANCE = new EmptySchema();

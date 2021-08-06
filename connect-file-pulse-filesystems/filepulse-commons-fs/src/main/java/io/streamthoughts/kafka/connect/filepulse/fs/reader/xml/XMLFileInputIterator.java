@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
 
 import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
+import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.SchemaSupplier;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
@@ -259,10 +260,10 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
          */
         @Override
         public TypedStruct apply(final Node node) {
-            return convertObjectTree(node, forceArrayFields);
+            return convertObjectTree(node, forceArrayFields).getStruct();
         }
 
-        private TypedStruct convertObjectTree(final Node node,
+        private TypedValue convertObjectTree(final Node node,
                                               final FieldPaths forceArrayFields) {
             Objects.requireNonNull(node, "node cannot be null");
             String nodeName = determineNodeName(node);
@@ -274,18 +275,18 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
             addAllNodeAttributes(container, node.getAttributes());
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
                 final String childNodeName = isTextNode(child) ? nodeName : determineNodeName(child);
-                Optional<?> optional = readNodeObject(child, currentForceArrayFields);
+                Optional<TypedValue> optional = readNodeObject(child, currentForceArrayFields);
                 if (optional.isPresent()) {
-                    Object nodeValue = optional.get();
+                    TypedValue nodeValue = optional.get();
                     final boolean isArray = currentForceArrayFields.anyMatches(childNodeName);
                     container = enrichStructWithObject(container, childNodeName, nodeValue, isArray);
 
                 }
             }
-            return container;
+            return TypedValue.struct(container);
         }
 
-        private Optional<?> readNodeObject(final Node node,
+        private Optional<TypedValue> readNodeObject(final Node node,
                                            final FieldPaths forceArrayFields) {
             if (isWhitespaceOrNewLineNodeElement(node)) {
                 return Optional.empty();
@@ -303,38 +304,39 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                 }
 
                 Optional<String> childTextContent = peekChildNodeTextContent(node);
-                if (childTextContent.isPresent()) {
-                    return readTextNode(node, childTextContent.get());
-                } else {
-                    return Optional.of(convertObjectTree(node, forceArrayFields));
-                }
+                return childTextContent
+                        .map(s -> readTextNode(node, s))
+                        .orElseGet(() -> Optional.of(convertObjectTree(node, forceArrayFields)));
             }
             throw new ReaderException("Unsupported node type '" + node.getNodeType() + "'");
         }
 
         private static TypedStruct enrichStructWithObject(final TypedStruct container,
                                                           final String nodeName,
-                                                          final Object nodeValue,
-                                                          final boolean forceArrayField) {
+                                                          final TypedValue nodeObject,
+                                                          final boolean asArray) {
             TypedValue value;
+            final Object objectValue = nodeObject.value();
             if (container.has(nodeName)) {
                 final TypedField field = container.field(nodeName);
                 if (field.type() == Type.ARRAY) {
-                    List<Object> array = container.getArray(nodeName);
-                    array.add(nodeValue);
-                    value = TypedValue.array(array, ((ArraySchema) field.schema()).valueSchema());
+                    final List<Object> array = container.getArray(nodeName);
+                    array.add(objectValue);
+                    final Schema mergedSchema = ((ArraySchema)field.schema()).valueSchema().merge(nodeObject.schema());
+                    value = TypedValue.array(array, mergedSchema);
                 } else {
-                    List<Object> array = new LinkedList<>();
-                    array.add(container.get(nodeName).value());
-                    array.add(nodeValue);
-                    value = TypedValue.array(array, field.schema());
+                    final List<Object> array = new LinkedList<>();
+                    array.add(container.get(nodeName).value()); // add previous value
+                    array.add(objectValue);
+                    final Schema mergedSchema = field.schema().merge(nodeObject.schema());
+                    value = TypedValue.array(array, mergedSchema);
                 }
-            } else if (forceArrayField) {
+            } else if (asArray) {
                 List<Object> array = new LinkedList<>();
-                array.add(nodeValue);
-                value = TypedValue.array(array, SchemaSupplier.lazy(nodeValue).get());
+                array.add(objectValue);
+                value = TypedValue.array(array, SchemaSupplier.lazy(objectValue).get());
             } else {
-                value = TypedValue.any(nodeValue);
+                value = nodeObject;
             }
             return container.put(nodeName, value);
         }
@@ -344,16 +346,16 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                     node.getAttributes().getLength() == 0;
         }
 
-        private static Optional<?> readTextNode(final Node node,
-                                                final String text) {
+        private static Optional<TypedValue> readTextNode(final Node node,
+                                                         final String text) {
             final NamedNodeMap attributes = node.getAttributes();
             if (attributes != null && attributes.getLength() > 0) {
                 final TypedStruct container = TypedStruct.create();
                 addAllNodeAttributes(container, attributes);
                 container.put(DEFAULT_TEXT_NODE_FIELD_NAME, text);
-                return Optional.of(container);
+                return Optional.of(TypedValue.struct(container));
             }
-            return Optional.of(text);
+            return Optional.of(TypedValue.string(text));
         }
 
         private static Optional<String> peekChildNodeTextContent(final Node node) {

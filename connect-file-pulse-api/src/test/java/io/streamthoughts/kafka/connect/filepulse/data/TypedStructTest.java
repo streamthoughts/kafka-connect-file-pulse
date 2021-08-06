@@ -125,7 +125,5 @@ public class TypedStructTest {
 
         Assert.assertEquals("v1", struct.getStruct("first").getString("child"));
         Assert.assertEquals("v2", struct.getString("foo"));
-
-
     }
 }

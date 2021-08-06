@@ -231,7 +231,9 @@ public class XMLFileInputIteratorTest {
                                                    final String expectedId,
                                                    final String expectedNum) {
         Assert.assertEquals(expectedId, struct.getString("id"));
-        TypedStruct topicPartition = struct.getStruct("topicPartition");
+
+
+        TypedStruct topicPartition = struct.first("topicPartition").getStruct();
         Assert.assertNotNull(topicPartition);
         Assert.assertEquals("topicA", topicPartition.getString("topic"));
         Assert.assertEquals(expectedNum, topicPartition.getString("num"));
@@ -268,6 +270,12 @@ public class XMLFileInputIteratorTest {
             "\t</broker>\n" +
             "\t<broker id=\"103\">\n" +
             "\t\t<topicPartition topic=\"topicA\" num=\"2\" insync=\"true\">\n" +
+            "\t\t\t<earliestOffset>0</earliestOffset>\n" +
+            "\t\t\t<endLogOffset>100</endLogOffset>\n" +
+            "\t\t\t<logSize>1G</logSize>\n" +
+            "\t\t\t<numSegments>1</numSegments>\n" +
+            "\t\t</topicPartition>\n" +
+            "\t\t<topicPartition topic=\"topicA\" num=\"3\" insync=\"true\">\n" +
             "\t\t\t<earliestOffset>0</earliestOffset>\n" +
             "\t\t\t<endLogOffset>100</endLogOffset>\n" +
             "\t\t\t<logSize>1G</logSize>\n" +

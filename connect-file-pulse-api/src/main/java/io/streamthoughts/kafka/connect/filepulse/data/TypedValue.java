@@ -34,7 +34,7 @@ import java.util.Objects;
 public class TypedValue implements GettableByType {
 
     private final Object value;
-    private SchemaSupplier schema;
+    private final SchemaSupplier schema;
 
     public static TypedValue of(final Object value, final Schema schema) {
         return new TypedValue(schema, value);

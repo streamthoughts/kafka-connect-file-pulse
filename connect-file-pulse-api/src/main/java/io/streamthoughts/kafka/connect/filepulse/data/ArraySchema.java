@@ -78,6 +78,21 @@ public class ArraySchema implements Schema {
      * {@inheritDoc}
      */
     @Override
+    public Schema merge(final Schema o) {
+        if (this.equals(o)) return this;
+
+        if (o instanceof ArraySchema) {
+            final ArraySchema that = (ArraySchema)o;
+            return Schema.array(valueSchema.merge(that.valueSchema));
+        }
+
+        return Schema.array(valueSchema.merge(o));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ArraySchema)) return false;

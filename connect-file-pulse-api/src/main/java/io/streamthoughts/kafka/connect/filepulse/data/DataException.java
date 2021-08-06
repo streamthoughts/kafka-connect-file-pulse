@@ -25,9 +25,19 @@ public final class DataException extends ConnectFilePulseException {
     /**
      * Creates a new {@link DataException} instance.
      *
-     * @param message the error withMessage.
+     * @param message the error message.
      */
     public DataException(final String message) {
         super(message);
+    }
+
+    /**
+     * Creates a new {@link DataException} instance.
+     *
+     * @param message the error message.
+     * @param cause   the error cause.
+     */
+    public DataException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

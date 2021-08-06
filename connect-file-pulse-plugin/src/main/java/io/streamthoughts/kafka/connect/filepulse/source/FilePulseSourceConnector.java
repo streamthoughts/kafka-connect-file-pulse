@@ -129,7 +129,7 @@ public class FilePulseSourceConnector extends SourceConnector {
             fsMonitorThread = new FileSystemMonitorThread(context, monitor, connectorConfig.getListingInterval());
             fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {
                 LOG.info("Uncaught error from file system monitoring thread [{}]", t.getName(), e);
-                throw new ConnectException(e);
+                context.raiseError(new ConnectException("Unexpected error from FileSystemMonitorThread", e));
             });
             fsMonitorThread.start();
             LOG.info("Started FilePulse source connector: {}", connectorGroupName);

@@ -277,17 +277,22 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                 final String childNodeName = isTextNode(child) ? nodeName : determineNodeName(child);
                 Optional<TypedValue> optional = readNodeObject(child, currentForceArrayFields);
                 if (optional.isPresent()) {
-                    TypedValue nodeValue = optional.get();
+                    final TypedValue nodeValue = optional.get();
+                    if (excludeEmptyElement &&
+                        nodeValue.type() == Type.STRUCT &&
+                        nodeValue.isEmpty()) {
+                        LOG.debug("Empty XML element excluded: '{}'", node.getNodeName());
+                        continue;
+                    }
                     final boolean isArray = currentForceArrayFields.anyMatches(childNodeName);
                     container = enrichStructWithObject(container, childNodeName, nodeValue, isArray);
-
                 }
             }
             return TypedValue.struct(container);
         }
 
         private Optional<TypedValue> readNodeObject(final Node node,
-                                           final FieldPaths forceArrayFields) {
+                                                    final FieldPaths forceArrayFields) {
             if (isWhitespaceOrNewLineNodeElement(node)) {
                 return Optional.empty();
             }
@@ -297,13 +302,7 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
             }
 
             if (isElementNode(node)) {
-
-                if (excludeEmptyElement && isEmptyNode(node)) {
-                    LOG.debug("Empty XML element excluded: '{}'", node.getNodeName());
-                    return Optional.empty();
-                }
-
-                Optional<String> childTextContent = peekChildNodeTextContent(node);
+                final Optional<String> childTextContent = peekChildNodeTextContent(node);
                 return childTextContent
                         .map(s -> readTextNode(node, s))
                         .orElseGet(() -> Optional.of(convertObjectTree(node, forceArrayFields)));
@@ -339,11 +338,6 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                 value = nodeObject;
             }
             return container.put(nodeName, value);
-        }
-
-        private static boolean isEmptyNode(final Node node) {
-            return node.getChildNodes().getLength() == 0 &&
-                    node.getAttributes().getLength() == 0;
         }
 
         private static Optional<TypedValue> readTextNode(final Node node,

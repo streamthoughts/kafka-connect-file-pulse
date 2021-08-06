@@ -358,7 +358,11 @@ public class TypedValue implements GettableByType {
             return getArray().isEmpty();
         }
 
-        throw new DataException("Cannot check empty-value on non-string, non-array and non-map type");
+        if (Type.STRUCT == type) {
+            return getStruct().schema().fields().isEmpty();
+        }
+
+        throw new DataException("Cannot check empty-value on non-string, non-array, non-struct, and non-map type");
     }
 
     public TypedValue as(final Type type) {

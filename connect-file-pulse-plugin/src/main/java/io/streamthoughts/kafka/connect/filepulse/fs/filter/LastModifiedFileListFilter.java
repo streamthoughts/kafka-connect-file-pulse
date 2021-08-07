@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -26,20 +26,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
- *
+ * A {@link PredicateFileListFilter} that allows excluding from processing files
+ * that have not been modified since either a given maximum or minimum time in ms.
  */
 public class LastModifiedFileListFilter extends PredicateFileListFilter {
 
-    private static final String FILE_MINIMUM_AGE_MS_CONF = "file.filter.minimum.age.ms";
-    private static final String FILE_MINIMUM_AGE_MS_DOC = "Last modified time for a file " +
-                                                          "can be accepted (default: 5000)";
-    private static final int FILE_MINIMUM_AGE_MS_DEFAULT = 5000;
+    private final static String GROUP = "LastModifiedFileListFilter";
 
     private static final Logger LOG = LoggerFactory.getLogger(LastModifiedFileListFilter.class);
 
-    private long minimumAgeMs;
+    public static final String FILE_MINIMUM_AGE_MS_CONFIG = "file.filter.minimum.age.ms";
+    private static final String FILE_MINIMUM_AGE_MS_DOC =
+            "The minimum age in milliseconds of a file to be eligible for processing.";
+    private static final long FILE_MINIMUM_AGE_MS_DEFAULT = 0L;
+
+    public static final String FILE_MAXIMUM_AGE_MS_CONFIG = "file.filter.maximum.age.ms";
+    private static final String FILE_MAXIMUM_AGE_MS_DOC =
+            "The maximum age in milliseconds of a file to be eligible for processing.";
+    private static final long FILE_MAXIMUM_AGE_MS_DEFAULT = Long.MAX_VALUE;
+
+    private Predicate<FileObjectMeta> minimumAgePredicate;
+
+    private Predicate<FileObjectMeta> maximumAgePredicate;
 
     /**
      * {@inheritDoc}
@@ -47,7 +58,11 @@ public class LastModifiedFileListFilter extends PredicateFileListFilter {
     @Override
     public void configure(final Map<String, ?> props) {
         final AbstractConfig abstractConfig = new AbstractConfig(getConfigDef(), props);
-        this.minimumAgeMs = abstractConfig.getLong(FILE_MINIMUM_AGE_MS_CONF);
+        final Long minimumAgeMs = abstractConfig.getLong(FILE_MINIMUM_AGE_MS_CONFIG);
+        this.minimumAgePredicate = it -> Math.max(0, System.currentTimeMillis() - it.lastModified()) > minimumAgeMs;
+
+        final Long maximumAgeMs = abstractConfig.getLong(FILE_MAXIMUM_AGE_MS_CONFIG);
+        this.maximumAgePredicate = it -> Math.max(0, System.currentTimeMillis() - it.lastModified()) < maximumAgeMs;
     }
 
     /**
@@ -55,26 +70,52 @@ public class LastModifiedFileListFilter extends PredicateFileListFilter {
      */
     @Override
     public boolean test(final FileObjectMeta meta) {
-        boolean accepted = isNotModifiedForMs(meta, minimumAgeMs);
-        if (!accepted) {
-            LOG.debug("Filtering file {} - doesn't matches minimum age of {}.", meta.name(), minimumAgeMs);
+
+        if (!minimumAgePredicate.test(meta)) {
+            LOG.debug(
+                "Filtered '{}'. File do not match minimum age predicate.",
+                meta
+            );
+            return false;
         }
 
-        return accepted;
+        if (!maximumAgePredicate.test(meta)) {
+            LOG.debug(
+                "Filtered '{}'. File do not match maximum age predicate.",
+                meta
+            );
+            return false;
+        }
+
+        return true;
     }
 
     private static ConfigDef getConfigDef() {
+        int groupCounter = 0;
         return new ConfigDef()
                 .define(
-                        FILE_MINIMUM_AGE_MS_CONF,
+                        FILE_MINIMUM_AGE_MS_CONFIG,
                         ConfigDef.Type.LONG,
                         FILE_MINIMUM_AGE_MS_DEFAULT,
+                        ConfigDef.Range.atLeast(0),
                         ConfigDef.Importance.HIGH,
-                        FILE_MINIMUM_AGE_MS_DOC
+                        FILE_MINIMUM_AGE_MS_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        FILE_MINIMUM_AGE_MS_CONFIG
+                )
+                .define(
+                        FILE_MAXIMUM_AGE_MS_CONFIG,
+                        ConfigDef.Type.LONG,
+                        FILE_MAXIMUM_AGE_MS_DEFAULT,
+                        ConfigDef.Range.atLeast(0),
+                        ConfigDef.Importance.HIGH,
+                        FILE_MAXIMUM_AGE_MS_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        FILE_MAXIMUM_AGE_MS_CONFIG
                 );
-    }
-
-    private static boolean isNotModifiedForMs(final FileObjectMeta meta, final long minimumAgeMs) {
-        return System.currentTimeMillis() - meta.lastModified() > minimumAgeMs;
     }
 }

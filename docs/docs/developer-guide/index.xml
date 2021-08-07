@@ -705,7 +705,7 @@ This reader creates one record per row. It should be used for reading delimited 
     <item>
       <title>Docs: Identifying Files</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</link>
-      <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 04 Aug 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</guid>
       <description>
@@ -730,7 +730,7 @@ used by Kafka Connect to persist the position of the connector for each file (i.
 &lt;td&gt;&lt;code&gt;offset.attributes.string&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;A separated list of attributes, using &amp;lsquo;+&amp;rsquo; character as separator, to be used for uniquely identifying an object file; must be one of [name, path, lastModified, inode, hash, uri] (e.g: name+hash). Note that order doesn&#39;t matter.&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;path+name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;uri&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;HIGH&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;

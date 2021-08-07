@@ -20,29 +20,29 @@
 <link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kafka-connect-file-pulse/favicons/android-192x192.png" sizes="192x192">
 
-<title>Connect FilePulse 2.0 is Available 🚀 | Kafka Connect File Pulse</title><meta property="og:title" content="Connect FilePulse 2.0 is Available 🚀" />
-<meta property="og:description" content="Connect FilePulse 2.0 is finally here! Here is an overview of what is new:
-Supported Cloud Storage Previously, Connect FilePulse was designed to provide direct integration between legacy systems and Apache Kafka. But, it could be only used to process and integrate data records from the local filesystem on which the connector was deployed.
-As more and more organizations move from on-premises to cloud infrastructure, we&#39;ve seen a growing demand from developers for the connector to support cloud storage." />
+<title>Connect FilePulse 2.1 is Available 🚀 | Kafka Connect File Pulse</title><meta property="og:title" content="Connect FilePulse 2.1 is Available 🚀" />
+<meta property="og:description" content="This new release contains a number of bug fixes and improvements that make ConnectFilePulse more stable and resilient in production.
+Full Release Notes Connect File Pulse 2.1 can be downloaded from the GitHub Releases Page.
+Improvements &amp; Bugfixes f1c071e refactor(plugin): change default value of offset.attributes.string to uri (#154) d8aac2b refactor(plugin): enhance error handling when file do not exist anymore 8a17051 fix(plugin): fix ClassCastException when offset.attributes.string=inode (#153) defee21 fix(plugin): remove duplicate log when closing file iterator 7897bcb fix(plugin): improve DefaultFileSystemMonitor to avoid scheduling files that may be cleanup by remaining tasks (#152) 28456db fix(plugin): fix task must close resources on error while starting ddf8b86 fix(api): fix DeadLock on KafkaStateBackingStore 370a1d6 fix(filesystems): fix FileSystemMonitorThread should not fail if file metadata cannot be retrieved (#150) e9462c8 fix(plugin): fix NPE using version 2." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/06/10/connect-filepulse-2.0-is-available/" />
-<meta property="article:published_time" content="2021-06-10T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-06-11T18:55:15+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
-<meta itemprop="name" content="Connect FilePulse 2.0 is Available 🚀">
-<meta itemprop="description" content="Connect FilePulse 2.0 is finally here! Here is an overview of what is new:
-Supported Cloud Storage Previously, Connect FilePulse was designed to provide direct integration between legacy systems and Apache Kafka. But, it could be only used to process and integrate data records from the local filesystem on which the connector was deployed.
-As more and more organizations move from on-premises to cloud infrastructure, we&#39;ve seen a growing demand from developers for the connector to support cloud storage.">
-<meta itemprop="datePublished" content="2021-06-10T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-06-11T18:55:15&#43;02:00" />
-<meta itemprop="wordCount" content="733">
+<meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/04/08/connect-filepulse-2.1-is-available/" />
+<meta property="article:published_time" content="2021-04-08T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-08-07T18:02:28+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta itemprop="name" content="Connect FilePulse 2.1 is Available 🚀">
+<meta itemprop="description" content="This new release contains a number of bug fixes and improvements that make ConnectFilePulse more stable and resilient in production.
+Full Release Notes Connect File Pulse 2.1 can be downloaded from the GitHub Releases Page.
+Improvements &amp; Bugfixes f1c071e refactor(plugin): change default value of offset.attributes.string to uri (#154) d8aac2b refactor(plugin): enhance error handling when file do not exist anymore 8a17051 fix(plugin): fix ClassCastException when offset.attributes.string=inode (#153) defee21 fix(plugin): remove duplicate log when closing file iterator 7897bcb fix(plugin): improve DefaultFileSystemMonitor to avoid scheduling files that may be cleanup by remaining tasks (#152) 28456db fix(plugin): fix task must close resources on error while starting ddf8b86 fix(api): fix DeadLock on KafkaStateBackingStore 370a1d6 fix(filesystems): fix FileSystemMonitorThread should not fail if file metadata cannot be retrieved (#150) e9462c8 fix(plugin): fix NPE using version 2.">
+<meta itemprop="datePublished" content="2021-04-08T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-08-07T18:02:28&#43;02:00" />
+<meta itemprop="wordCount" content="206">
 
 
 
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Connect FilePulse 2.0 is Available 🚀"/>
-<meta name="twitter:description" content="Connect FilePulse 2.0 is finally here! Here is an overview of what is new:
-Supported Cloud Storage Previously, Connect FilePulse was designed to provide direct integration between legacy systems and Apache Kafka. But, it could be only used to process and integrate data records from the local filesystem on which the connector was deployed.
-As more and more organizations move from on-premises to cloud infrastructure, we&#39;ve seen a growing demand from developers for the connector to support cloud storage."/>
+<meta name="twitter:title" content="Connect FilePulse 2.1 is Available 🚀"/>
+<meta name="twitter:description" content="This new release contains a number of bug fixes and improvements that make ConnectFilePulse more stable and resilient in production.
+Full Release Notes Connect File Pulse 2.1 can be downloaded from the GitHub Releases Page.
+Improvements &amp; Bugfixes f1c071e refactor(plugin): change default value of offset.attributes.string to uri (#154) d8aac2b refactor(plugin): enhance error handling when file do not exist anymore 8a17051 fix(plugin): fix ClassCastException when offset.attributes.string=inode (#153) defee21 fix(plugin): remove duplicate log when closing file iterator 7897bcb fix(plugin): improve DefaultFileSystemMonitor to avoid scheduling files that may be cleanup by remaining tasks (#152) 28456db fix(plugin): fix task must close resources on error while starting ddf8b86 fix(api): fix DeadLock on KafkaStateBackingStore 370a1d6 fix(filesystems): fix FileSystemMonitorThread should not fail if file metadata cannot be retrieved (#150) e9462c8 fix(plugin): fix NPE using version 2."/>
 
 
 
@@ -191,13 +191,13 @@ As more and more organizations move from on-premises to cloud infrastructure, we
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kafka-connect-file-pulse-blog-2021-06-10-connect-filepulse-2-0-is-available" href="/kafka-connect-file-pulse/blog/2021/06/10/connect-filepulse-2.0-is-available/">Connect FilePulse 2.0 is Available 🚀</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-blog-2021-06-10-connect-filepulse-2-0-is-available" href="/kafka-connect-file-pulse/blog/2021/06/10/connect-filepulse-2.0-is-available/">Connect FilePulse 2.0 is Available 🚀</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kafka-connect-file-pulse-blog-2021-04-08-connect-filepulse-2-1-is-available" href="/kafka-connect-file-pulse/blog/2021/04/08/connect-filepulse-2.1-is-available/">Connect FilePulse 2.1 is Available 🚀</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kafka-connect-file-pulse-blog-2021-04-08-connect-filepulse-2-1-is-available" href="/kafka-connect-file-pulse/blog/2021/04/08/connect-filepulse-2.1-is-available/">Connect FilePulse 2.1 is Available 🚀</a>
       
       
     </li>
@@ -225,8 +225,8 @@ As more and more organizations move from on-premises to cloud infrastructure, we
 
 
 
-<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/edit/master/site/content/en/blog/release_2.0.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new?title=Connect%20FilePulse%202.0%20is%20Available%20%f0%9f%9a%80" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/edit/master/site/content/en/blog/release_2.1.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new?title=Connect%20FilePulse%202.1%20is%20Available%20%f0%9f%9a%80" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
 
 
 <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -240,17 +240,11 @@ As more and more organizations move from on-premises to cloud infrastructure, we
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#supported-cloud-storage">Supported Cloud Storage</a></li>
-    <li><a href="#autocreate-internal-topic">Auto-create Internal Topic</a></li>
-    <li><a href="#inmemoryfileobjectstatebackingstore">InMemoryFileObjectStateBackingStore</a></li>
-    <li><a href="#improved-scalability">Improved Scalability</a></li>
-    <li><a href="#improved-grok-expression">Improved Grok Expression</a></li>
     <li><a href="#full-release-notes">Full Release Notes</a>
       <ul>
-        <li><a href="#features">Features</a></li>
         <li><a href="#improvements--bugfixes">Improvements & Bugfixes</a></li>
-        <li><a href="#subtasks">SubTasks</a></li>
-        <li><a href="#braking-changes">Braking changes</a></li>
+        <li><a href="#docs">Docs</a></li>
+        <li><a href="#subtasks">Sub-Tasks</a></li>
       </ul>
     </li>
   </ul>
@@ -265,119 +259,43 @@ As more and more organizations move from on-premises to cloud infrastructure, we
             </a>
             
 <div class="td-content">
-	<h1>Connect FilePulse 2.0 is Available 🚀</h1>
+	<h1>Connect FilePulse 2.1 is Available 🚀</h1>
 	
 	<div class="td-byline mb-4">
 		By <b>Florian Hussonnois (<a href="https://twitter.com/fhussonnois">@fhussonnois</a>)</b> |
-		<time datetime="2021-06-10" class="text-muted">Thursday, June 10, 2021</time>
+		<time datetime="2021-04-08" class="text-muted">Thursday, April 08, 2021</time>
 	</div>
-	<p><strong>Connect FilePulse 2.0 is finally here! Here is an overview of what is new:</strong></p>
-<h2 id="supported-cloud-storage">Supported Cloud Storage</h2>
-<p>Previously, Connect FilePulse was designed to provide direct integration between legacy systems and Apache Kafka.
-But, it could be only used to process and integrate data records from the local filesystem on which the connector was deployed.</p>
-<p>As more and more organizations move from on-premises to cloud infrastructure, we've seen a growing demand from developers for the connector to support cloud storage.</p>
-<p>Connect FilePulse 2.0 brings you the capabilities for reading files across different storage systems.
-Using a single Kafka Connect Source Connector you can now read files from the local filesystem, Amazon S3, Azure Blob Storage and Google Cloud Storage.</p>
-<p>In addition, the connector supports a variety of formats equally for all storage systems, e.g., text files, CSV, XML, JSON, Avro, etc.
-At the same time, you can still benefit from the powerful <a href="/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/">processing-filters</a> mechanism of Connect FilePulse to process data records as they are read by the connector.</p>
-<p>For example, here is the configuration for reading CSV object files from an Amazon S3 bucket.</p>
-<pre><code class="language-properties" data-lang="properties">name=connect-file-pulse-amazon-s3-csv
-connector.class=io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector
-topic=connect-filepulse-csv-data-records
-tasks.max=1
-
-fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing
-fs.listing.interval.ms=10000
-fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
-file.filter.regex.pattern=.*\\.csv$
-
-fs.cleanup.policy.class=io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy
-
-aws.access.key.id=xxxxxxxxx
-aws.secret.access.key=xxxxxxxxx
-aws.s3.region=eu-west-3
-aws.s3.bucket.name=connect-filepulse
-
-tasks.reader.class=io.streamthoughts.kafka.connect.filepulse.fs.reader.AmazonS3RowFileInputReader
-
-skip.headers=1
-offset.attributes.string=uri
-
-filters=ParseLine
-filters.ParseLine.type=io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter
-filters.ParseLine.extractColumnName=headers
-filters.ParseLine.trimColumn=true
-filters.ParseLine.separator=;
-tasks.file.status.storage.bootstrap.servers=kafka101:9092
-tasks.file.status.storage.topic=connect-file-pulse-status
-tasks.file.status.storage.topic.partitions=10
-tasks.file.status.storage.topic.replication.factor=1
-</code></pre><h2 id="autocreate-internal-topic">Auto-create Internal Topic</h2>
-<p>By default, Connect FilePulse uses the internal topic <code>connect-file-pulse-status</code> to track the current state of each file
-being scheduled and processed by tasks. This allows you to deploy Connect FilePulse is a distributed Kafka Connect cluster with each worker only processing a subset of files.</p>
-<p>In version 2.0, this topic is will be automatically created by the connector if it doesn't already exist. You can configure the number of partitions, as well as, the replication factor of this topic using the
-new properties <code>tasks.file.status.storage.topic.partitions</code> and <code>tasks.file.status.storage.topic.replication.factor</code>.</p>
-<h2 id="inmemoryfileobjectstatebackingstore">InMemoryFileObjectStateBackingStore</h2>
-<p>In version 2.0, we provide a new property <code>tasks.file.status.storage.class</code> that can be used to specify the class implementing the <code>FileObjectStateBackingStore</code> interface
-to be used for storing the status of each file. By default, Connect FilePulse uses the kafka-based implementation called <code>i.s.k.c.f.state.KafkaFileObjectStateBackingStore</code>.</p>
-<p>But, in some context, it may be not necessary to deploy Connect FilePulse in distributed mode and this implementation can lead to additional costs if, for example, you are using a fully-managed Apache Kafka service.
-So now, we also provide the <code>i.s.k.c.f.state.InMemoryFileObjectStateBackingStore</code> implementation to only keep file status in-memory.</p>
-<h2 id="improved-scalability">Improved Scalability</h2>
-<p>Connect FilePulse can be used to integrate a very large number of files in parallel.
-Unfortunately, too many files to process can result in a too-large message to produce in Kafka for configuring tasks (i.e. <code>connect-config</code>).
-To solve this blocking issue, in version 2.0, we have added the new property <code>max.scheduled.files</code> to limit the maximum number of files that can be scheduled at the same time (Default is <code>1000</code>).</p>
-<h2 id="improved-grok-expression">Improved Grok Expression</h2>
-<p>In a previous version, Connect FilePulse has brought the support for Grok expressions to parse data.
-Since this mechanism has been migrated to a new dedicated project <a href="https://github.com/streamthoughts/kafka-connect-transform-grok">kafka-connect-transform-grok</a> in order to be able to use Grok expressions with Kafka Connect's a SMTs.
-Now, Connect FilePulse directly depends on that project to provide the <code>GrokFilter</code> with a unified configuration.</p>
+	<p><strong>This new release contains a number of bug fixes and improvements that make ConnectFilePulse more stable and resilient in production.</strong></p>
 <h2 id="full-release-notes">Full Release Notes</h2>
-<p>Connect File Pulse 2.0 can be downloaded from the <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.0.0">GitHub Releases Page</a>.</p>
-<p>Members of the open-source community who appear in these release notes:</p>
-<ul>
-<li>@at0dd</li>
-<li>@qgeffard</li>
-</ul>
-<p>Thank you for your valuable contributions!</p>
-<h3 id="features">Features</h3>
-<ul>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/13eed7b">13eed7b</a> feat(plugin): add support for auto-creating the internal topic used by ConnectFilePulse (#139)</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5c88877">5c88877</a> feat(plugin): add InMemoryStateBackingStore for tracking status of file objects (#138)</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/52adca9">52adca9</a> feat(filesystems): add support for Google Cloud Storage (#121)</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7b49b81">7b49b81</a> feat(plugin): add new property max.scheduled.files (#122) (#123)</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/390ad82">390ad82</a> feat(filesystems): add support for AWS S3 (#111)</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/92e3341">92e3341</a> feat(filesystems): add support for Azure Blob Storage (#112)</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/685618a">685618a</a> refactor(filters): migrate GrokFilter to use classes from grok-transformer (#118)</li>
-</ul>
+<p>Connect File Pulse 2.1 can be downloaded from the <a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.1.0">GitHub Releases Page</a>.</p>
 <h3 id="improvements--bugfixes">Improvements &amp; Bugfixes</h3>
-<ul>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/6ef5162">6ef5162</a> fix(api): fix decimal numbers not being correctly parsed (#142)</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/6c779af">6c779af</a> refactor(filesystems): make cleanup policy storage aware</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d13c236">d13c236</a> fix(filesystems): make compression codec more robust to encoding</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7d2ddac">7d2ddac</a> docs(site): fix DateFilter formats config</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e222414">e222414</a> fix(api): change digest value to string</li>
-</ul>
-<h3 id="subtasks">SubTasks</h3>
-<ul>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1658d35">1658d35</a> refactor(api/filesystems): move FileInputIterator implementation to commons-fs</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/06385b3">06385b3</a> refactor(filesystems): add module filepulse-commons-fs</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/57da04c">57da04c</a> subtask(all): refactor FilePulse API to support remote storages (#100)</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ee4acad">ee4acad</a> add github workflow</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a3eb908">a3eb908</a> build(all): update to java 11</li>
-<li><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/98eb51f">98eb51f</a> build(mvn): add maven-wrapper</li>
-</ul>
-<h3 id="braking-changes">Braking changes</h3>
-<ul>
-<li>Configurations for Connect FilePulse 1.x  is not compatible with the version 2.x.</li>
-</ul>
+<p><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f1c071e">f1c071e</a> refactor(plugin): change default value of <code>offset.attributes.string</code> to uri (#154)
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d8aac2b">d8aac2b</a> refactor(plugin): enhance error handling when file do not exist anymore
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8a17051">8a17051</a> fix(plugin): fix ClassCastException when offset.attributes.string=inode (#153)
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/defee21">defee21</a> fix(plugin): remove duplicate log when closing file iterator
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7897bcb">7897bcb</a> fix(plugin): improve DefaultFileSystemMonitor to avoid scheduling files that may be cleanup by remaining tasks (#152)
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/28456db">28456db</a> fix(plugin): fix task must close resources on error while starting
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ddf8b86">ddf8b86</a> fix(api): fix DeadLock on KafkaStateBackingStore
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/370a1d6">370a1d6</a> fix(filesystems): fix FileSystemMonitorThread should not fail if file metadata cannot be retrieved (#150)
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e9462c8">e9462c8</a> fix(plugin): fix NPE using version 2.0 with KafkaFileObjectStateBackingStore (#149)</p>
+<h3 id="docs">Docs</h3>
+<p><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1b72a96">1b72a96</a> docs(site): fix syntax for &lsquo;exists&rsquo; ScEL Built-in Function (#148)
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7da7e41">7da7e41</a> docs(site): fix documentation error for StateBackingStore (#147)</p>
+<h3 id="subtasks">Sub-Tasks</h3>
+<p><a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ec70611">ec70611</a> build(deps): bump commons-io from 2.5 to 2.7
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/aa62022">aa62022</a> fix(script): fix docker-compose for debugging
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2723516">2723516</a> refactor(build): add mvn profiles for different storages
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c1da2f8">c1da2f8</a> refactor(build): improve makefile and add utility script for debugging
+<a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/54ba1e5">54ba1e5</a> build(maven): add meta info</p>
 <p>If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!</p>
 
 	
 
 	<ul class="list-unstyled d-flex justify-content-between align-items-center mb-0 pt-5">
   <li>
-    <a href="/kafka-connect-file-pulse/blog/2021/04/08/connect-filepulse-2.1-is-available/" class="btn btn-primary "><span class="mr-1">←</span> Previous</a>
+    <a  class="btn btn-primary  disabled"><span class="mr-1">←</span> Previous</a>
   </li>
-    <a  class="btn btn-primary  disabled">Next <span class="ml-1">→</span></a>
+    <a href="/kafka-connect-file-pulse/blog/2021/06/10/connect-filepulse-2.0-is-available/" class="btn btn-primary ">Next <span class="ml-1">→</span></a>
   </li>
 </ul>
 

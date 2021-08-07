@@ -358,13 +358,13 @@
   </url>
   
   <url>
-    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.1.x/developer-guide/offsets/</loc>
-    <lastmod>2021-08-02T17:06:39+02:00</lastmod>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</loc>
+    <lastmod>2021-08-07T18:02:28+02:00</lastmod>
   </url>
   
   <url>
-    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</loc>
-    <lastmod>2021-06-11T18:54:50+02:00</lastmod>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.1.x/developer-guide/offsets/</loc>
+    <lastmod>2021-08-02T17:06:39+02:00</lastmod>
   </url>
   
   <url>
@@ -730,6 +730,11 @@
   <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/06/10/connect-filepulse-2.0-is-available/</loc>
     <lastmod>2021-06-11T18:55:15+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/04/08/connect-filepulse-2.1-is-available/</loc>
+    <lastmod>2021-08-07T18:02:28+02:00</lastmod>
   </url>
   
   <url>

@@ -1,7 +1,7 @@
 ---
 title: "Connect FilePulse 2.1 is Available 🚀"
-linkTitle: "Connect FilePulse 2.1 is Available 🚀"
-date: 2021-04-08
+linkTitle: "Connect FilePulse 2.1 is Available"
+date: 2021-08-04
 description: ""
 author: Florian Hussonnois ([@fhussonnois](https://twitter.com/fhussonnois))
 ---

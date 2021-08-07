@@ -64,6 +64,15 @@ $navbar-dark-hover-color: $color5 !default;
 $navbar-dark-active-color: $color2 !default;
 $navbar-dark-disabled-color: rgba($white, 0.25) !default;
 
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus  {
+    color: #1f6497!important;
+    border-color: #1f6497!important;
+    background: #ffffff!important;
+    border: 2px solid #1f6497!important;
+}
+
 footer.bg-dark {
     border-top: 1px solid $white;
     background-color: $color4 !important;

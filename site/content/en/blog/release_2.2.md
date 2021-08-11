@@ -55,28 +55,28 @@ Connect File Pulse 2.2 can be downloaded from the [GitHub Releases Page](https:/
 
 ### New Features
 
-[5bc2024](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5bc2024) feat(plugin): allow excluding from processing files based on maximum age in ms (#161)
-[a3ef5db](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a3ef5db) feat(filesystems): improve XMLFileInputIterator to allow excluding empty element (#159)
-[b00ef42](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b00ef42) feat(scripts): add arg to specify number of connect workers
-[ef8fbc3](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ef8fbc3) feat(plugin): add support for task file listing delegation
-[137c1a6](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/137c1a6) feat(filesystems): enhance XMLFileInputIterator with new config props
+* [5bc2024](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5bc2024) feat(plugin): allow excluding from processing files based on maximum age in ms (#161)
+* [a3ef5db](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a3ef5db) feat(filesystems): improve XMLFileInputIterator to allow excluding empty element (#159)
+* [b00ef42](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b00ef42) feat(scripts): add arg to specify number of connect workers
+* [ef8fbc3](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ef8fbc3) feat(plugin): add support for task file listing delegation
+* [137c1a6](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/137c1a6) feat(filesystems): enhance XMLFileInputIterator with new config props
 
 ### Improvements & Bugfixes
 
-[a693b52](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a693b52) fix(plugin): fix FilePulseSourceConnector should raise an error when FileSystemMonitorThread crash
-[c6f1f13](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c6f1f13) fix(api): fix empty document removing in XMLFileInputIterator
-[c0cc249](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c0cc249) fix(api): improve support for XML by adding capabilities to merge schemas (#160)
+* [a693b52](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a693b52) fix(plugin): fix FilePulseSourceConnector should raise an error when FileSystemMonitorThread crash
+* [c6f1f13](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c6f1f13) fix(api): fix empty document removing in XMLFileInputIterator
+* [c0cc249](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c0cc249) fix(api): improve support for XML by adding capabilities to merge schemas (#160)
 
 ### Docs
-[0c92901](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0c92901) docs(site): fix page date and css
-[7000b84](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7000b84) docs(site): add release note for 2.1.0
+* [0c92901](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0c92901) docs(site): fix page date and css
+* [7000b84](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7000b84) docs(site): add release note for 2.1.0
 
 ### Sub-Tasks
 
-[4f0add2](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4f0add2) project(issue): add github stale bot config
-[34ab52a](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/34ab52a) fix(scripts): update docker-compose for debug
-[a2fb4a5](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a2fb4a5) sub-task(plugin): add new interface TaskPartitioner
-[bbeebda](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bbeebda) subtask(plugin): add new interface FileURIProvider
-[e2825c0](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2825c0) build(deps): bump commons-compress from 1.20 to 1.21
+* [4f0add2](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4f0add2) project(issue): add github stale bot config
+* [34ab52a](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/34ab52a) fix(scripts): update docker-compose for debug
+* [a2fb4a5](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a2fb4a5) sub-task(plugin): add new interface TaskPartitioner
+* [bbeebda](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bbeebda) subtask(plugin): add new interface FileURIProvider
+* [e2825c0](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2825c0) build(deps): bump commons-compress from 1.20 to 1.21
 
 If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!

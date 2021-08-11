@@ -55,24 +55,32 @@ For this, you can use the new connector&#39;s configuration property: &lt;code&g
 &lt;h2 id=&#34;full-release-notes&#34;&gt;Full Release Notes&lt;/h2&gt;
 &lt;p&gt;Connect File Pulse 2.2 can be downloaded from the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.2.0&#34;&gt;GitHub Releases Page&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;new-features&#34;&gt;New Features&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5bc2024&#34;&gt;5bc2024&lt;/a&gt; feat(plugin): allow excluding from processing files based on maximum age in ms (#161)
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a3ef5db&#34;&gt;a3ef5db&lt;/a&gt; feat(filesystems): improve XMLFileInputIterator to allow excluding empty element (#159)
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b00ef42&#34;&gt;b00ef42&lt;/a&gt; feat(scripts): add arg to specify number of connect workers
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ef8fbc3&#34;&gt;ef8fbc3&lt;/a&gt; feat(plugin): add support for task file listing delegation
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/137c1a6&#34;&gt;137c1a6&lt;/a&gt; feat(filesystems): enhance XMLFileInputIterator with new config props&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5bc2024&#34;&gt;5bc2024&lt;/a&gt; feat(plugin): allow excluding from processing files based on maximum age in ms (#161)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a3ef5db&#34;&gt;a3ef5db&lt;/a&gt; feat(filesystems): improve XMLFileInputIterator to allow excluding empty element (#159)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b00ef42&#34;&gt;b00ef42&lt;/a&gt; feat(scripts): add arg to specify number of connect workers&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ef8fbc3&#34;&gt;ef8fbc3&lt;/a&gt; feat(plugin): add support for task file listing delegation&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/137c1a6&#34;&gt;137c1a6&lt;/a&gt; feat(filesystems): enhance XMLFileInputIterator with new config props&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3 id=&#34;improvements--bugfixes&#34;&gt;Improvements &amp;amp; Bugfixes&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a693b52&#34;&gt;a693b52&lt;/a&gt; fix(plugin): fix FilePulseSourceConnector should raise an error when FileSystemMonitorThread crash
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c6f1f13&#34;&gt;c6f1f13&lt;/a&gt; fix(api): fix empty document removing in XMLFileInputIterator
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c0cc249&#34;&gt;c0cc249&lt;/a&gt; fix(api): improve support for XML by adding capabilities to merge schemas (#160)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a693b52&#34;&gt;a693b52&lt;/a&gt; fix(plugin): fix FilePulseSourceConnector should raise an error when FileSystemMonitorThread crash&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c6f1f13&#34;&gt;c6f1f13&lt;/a&gt; fix(api): fix empty document removing in XMLFileInputIterator&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c0cc249&#34;&gt;c0cc249&lt;/a&gt; fix(api): improve support for XML by adding capabilities to merge schemas (#160)&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3 id=&#34;docs&#34;&gt;Docs&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0c92901&#34;&gt;0c92901&lt;/a&gt; docs(site): fix page date and css
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7000b84&#34;&gt;7000b84&lt;/a&gt; docs(site): add release note for 2.1.0&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0c92901&#34;&gt;0c92901&lt;/a&gt; docs(site): fix page date and css&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7000b84&#34;&gt;7000b84&lt;/a&gt; docs(site): add release note for 2.1.0&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3 id=&#34;subtasks&#34;&gt;Sub-Tasks&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4f0add2&#34;&gt;4f0add2&lt;/a&gt; project(issue): add github stale bot config
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/34ab52a&#34;&gt;34ab52a&lt;/a&gt; fix(scripts): update docker-compose for debug
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a2fb4a5&#34;&gt;a2fb4a5&lt;/a&gt; sub-task(plugin): add new interface TaskPartitioner
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bbeebda&#34;&gt;bbeebda&lt;/a&gt; subtask(plugin): add new interface FileURIProvider
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2825c0&#34;&gt;e2825c0&lt;/a&gt; build(deps): bump commons-compress from 1.20 to 1.21&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4f0add2&#34;&gt;4f0add2&lt;/a&gt; project(issue): add github stale bot config&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/34ab52a&#34;&gt;34ab52a&lt;/a&gt; fix(scripts): update docker-compose for debug&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a2fb4a5&#34;&gt;a2fb4a5&lt;/a&gt; sub-task(plugin): add new interface TaskPartitioner&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bbeebda&#34;&gt;bbeebda&lt;/a&gt; subtask(plugin): add new interface FileURIProvider&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2825c0&#34;&gt;e2825c0&lt;/a&gt; build(deps): bump commons-compress from 1.20 to 1.21&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p&gt;
 
       </description>
@@ -91,24 +99,30 @@ For this, you can use the new connector&#39;s configuration property: &lt;code&g
 &lt;h2 id=&#34;full-release-notes&#34;&gt;Full Release Notes&lt;/h2&gt;
 &lt;p&gt;Connect File Pulse 2.1 can be downloaded from the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.1.0&#34;&gt;GitHub Releases Page&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;improvements--bugfixes&#34;&gt;Improvements &amp;amp; Bugfixes&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f1c071e&#34;&gt;f1c071e&lt;/a&gt; refactor(plugin): change default value of &lt;code&gt;offset.attributes.string&lt;/code&gt; to uri (#154)
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d8aac2b&#34;&gt;d8aac2b&lt;/a&gt; refactor(plugin): enhance error handling when file do not exist anymore
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8a17051&#34;&gt;8a17051&lt;/a&gt; fix(plugin): fix ClassCastException when offset.attributes.string=inode (#153)
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/defee21&#34;&gt;defee21&lt;/a&gt; fix(plugin): remove duplicate log when closing file iterator
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7897bcb&#34;&gt;7897bcb&lt;/a&gt; fix(plugin): improve DefaultFileSystemMonitor to avoid scheduling files that may be cleanup by remaining tasks (#152)
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/28456db&#34;&gt;28456db&lt;/a&gt; fix(plugin): fix task must close resources on error while starting
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ddf8b86&#34;&gt;ddf8b86&lt;/a&gt; fix(api): fix DeadLock on KafkaStateBackingStore
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/370a1d6&#34;&gt;370a1d6&lt;/a&gt; fix(filesystems): fix FileSystemMonitorThread should not fail if file metadata cannot be retrieved (#150)
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e9462c8&#34;&gt;e9462c8&lt;/a&gt; fix(plugin): fix NPE using version 2.0 with KafkaFileObjectStateBackingStore (#149)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f1c071e&#34;&gt;f1c071e&lt;/a&gt; refactor(plugin): change default value of &lt;code&gt;offset.attributes.string&lt;/code&gt; to uri (#154)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d8aac2b&#34;&gt;d8aac2b&lt;/a&gt; refactor(plugin): enhance error handling when file do not exist anymore&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8a17051&#34;&gt;8a17051&lt;/a&gt; fix(plugin): fix ClassCastException when offset.attributes.string=inode (#153)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/defee21&#34;&gt;defee21&lt;/a&gt; fix(plugin): remove duplicate log when closing file iterator&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7897bcb&#34;&gt;7897bcb&lt;/a&gt; fix(plugin): improve DefaultFileSystemMonitor to avoid scheduling files that may be cleanup by remaining tasks (#152)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/28456db&#34;&gt;28456db&lt;/a&gt; fix(plugin): fix task must close resources on error while starting&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ddf8b86&#34;&gt;ddf8b86&lt;/a&gt; fix(api): fix DeadLock on KafkaStateBackingStore&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/370a1d6&#34;&gt;370a1d6&lt;/a&gt; fix(filesystems): fix FileSystemMonitorThread should not fail if file metadata cannot be retrieved (#150)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e9462c8&#34;&gt;e9462c8&lt;/a&gt; fix(plugin): fix NPE using version 2.0 with KafkaFileObjectStateBackingStore (#149)&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3 id=&#34;docs&#34;&gt;Docs&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1b72a96&#34;&gt;1b72a96&lt;/a&gt; docs(site): fix syntax for &amp;lsquo;exists&amp;rsquo; ScEL Built-in Function (#148)
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7da7e41&#34;&gt;7da7e41&lt;/a&gt; docs(site): fix documentation error for StateBackingStore (#147)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1b72a96&#34;&gt;1b72a96&lt;/a&gt; docs(site): fix syntax for &amp;lsquo;exists&amp;rsquo; ScEL Built-in Function (#148)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7da7e41&#34;&gt;7da7e41&lt;/a&gt; docs(site): fix documentation error for StateBackingStore (#147)&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h3 id=&#34;subtasks&#34;&gt;Sub-Tasks&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ec70611&#34;&gt;ec70611&lt;/a&gt; build(deps): bump commons-io from 2.5 to 2.7
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/aa62022&#34;&gt;aa62022&lt;/a&gt; fix(script): fix docker-compose for debugging
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2723516&#34;&gt;2723516&lt;/a&gt; refactor(build): add mvn profiles for different storages
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c1da2f8&#34;&gt;c1da2f8&lt;/a&gt; refactor(build): improve makefile and add utility script for debugging
-&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/54ba1e5&#34;&gt;54ba1e5&lt;/a&gt; build(maven): add meta info&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ec70611&#34;&gt;ec70611&lt;/a&gt; build(deps): bump commons-io from 2.5 to 2.7&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/aa62022&#34;&gt;aa62022&lt;/a&gt; fix(script): fix docker-compose for debugging&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2723516&#34;&gt;2723516&lt;/a&gt; refactor(build): add mvn profiles for different storages&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c1da2f8&#34;&gt;c1da2f8&lt;/a&gt; refactor(build): improve makefile and add utility script for debugging&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/54ba1e5&#34;&gt;54ba1e5&lt;/a&gt; build(maven): add meta info&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p&gt;
 
       </description>

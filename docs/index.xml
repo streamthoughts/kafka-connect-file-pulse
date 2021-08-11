@@ -13,6 +13,71 @@
     
     
     <item>
+      <title>Blog: Connect FilePulse 2.2 is Released 🚀</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/08/10/connect-filepulse-2.2-is-released/</link>
+      <pubDate>Tue, 10 Aug 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/08/10/connect-filepulse-2.2-is-released/</guid>
+      <description>
+        
+        
+        &lt;p&gt;&lt;strong&gt;This new release brings new capabilities and several bug fixes and improvements that make ConnectFilePulse still the more powerful Kafka Connect-based solution for processing files.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;support-for-filelisting-process-delegation&#34;&gt;Support for file-listing process delegation&lt;/h2&gt;
+&lt;p&gt;From the very beginning, Connect FilePulse was designed differently from most other Kafka connectors used for file processing.
+For example, we chose to use a single thread called the `FileSystemMonitorThread, managed by the connector instance, to scan the files to be processed and to apply the configured file cleanup policy.
+Then, when new files are detected on the file system, the connector instance triggers a task reconfiguration to distribute the files to be processed among the tasks.&lt;/p&gt;
+&lt;p&gt;Although this design offers many advantages it also brings some limitations that may make the connector less suitable for some scenarios,
+such as processing a very large number of small files that would be created quickly on the file system.&lt;/p&gt;
+&lt;p&gt;This limitation is mainly due to the fact that every time a task reconfiguration is triggered,
+Kafka Connect needs to stop and restart all tasks of our connector using the internal Kafka rebalance protocol.
+Thus, the connector may have some scalability issues if it is necessary to reconfigure tasks every second because new files have been created on the local filesystem.&lt;/p&gt;
+&lt;p&gt;To support such a scenario, Connect FilePulse 2.2.0 brings a new feature to delegate the file listing process to the connector&#39;s tasks
+This new feature can be enabled by setting the connector&#39;s property &lt;code&gt;fs.listing.task.delegation.enabled&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;When enabled, each task will scan the filesystem using the &lt;code&gt;fs.listing.class&lt;/code&gt; passed through the connector&#39;s configuration.
+In addition, a dedicated &lt;code&gt;TaskPartitioner&lt;/code&gt; is used to partition each file to a single task using the murmur2 hash algorithm.
+Finally, the cleanup policy passed through the connector&#39;s configuration is still executed by the &lt;code&gt;FileSystemMonitorThread&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;taskpartitioner&#34;&gt;TaskPartitioner&lt;/h2&gt;
+&lt;p&gt;Additionally, Connect FilePulse 2.2.0 introduces a new pluggable interface called &lt;code&gt;TaskPartitioner&lt;/code&gt; used to partition files among the connector&#39;s tasks.
+The connector ships with two built-in implementations: the &lt;code&gt;DefaultTaskPartitioner&lt;/code&gt; that spreads files evenly among the tasks and the &lt;code&gt;HashByURITaskPartitioner&lt;/code&gt; that partitions each file based on its URI.&lt;/p&gt;
+&lt;h2 id=&#34;improved-support-for-xml&#34;&gt;Improved support for XML&lt;/h2&gt;
+&lt;p&gt;Connect FilePulse 2.2.0 adds various improvements for XML support.
+So now, when using Connect FilePulse with the &lt;code&gt;LocalXMLFileInputReader&lt;/code&gt; you can enable the following features:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;reader.xml.parser.validating.enabled=true&lt;/code&gt;: To specify that the XML parser should validate documents as they are parsed.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;reader.xml.parser.namespace.aware.enabled=true&lt;/code&gt;: To specify that the XML parser should provide support for XML namespaces.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;reader.xml.exclude.empty.elements&lt;/code&gt;: To specify that the reader should automatically exclude elements having no field.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Furthermore, dynamic schema resolution has been improved when processing complex XML documents and more especially when handling documents with elements containing arrays.&lt;/p&gt;
+&lt;h2 id=&#34;improved-lastmodifiedfilelistfilter&#34;&gt;Improved LastModifiedFileListFilter&lt;/h2&gt;
+&lt;p&gt;Finally, this new release enhances the &lt;code&gt;LastModifiedFileListFilter&lt;/code&gt; to allow configuring the maximum age in milliseconds of a file to be eligible for processing.
+For this, you can use the new connector&#39;s configuration property: &lt;code&gt;file.filter.maximum.age.ms&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;full-release-notes&#34;&gt;Full Release Notes&lt;/h2&gt;
+&lt;p&gt;Connect File Pulse 2.2 can be downloaded from the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.2.0&#34;&gt;GitHub Releases Page&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;new-features&#34;&gt;New Features&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5bc2024&#34;&gt;5bc2024&lt;/a&gt; feat(plugin): allow excluding from processing files based on maximum age in ms (#161)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a3ef5db&#34;&gt;a3ef5db&lt;/a&gt; feat(filesystems): improve XMLFileInputIterator to allow excluding empty element (#159)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b00ef42&#34;&gt;b00ef42&lt;/a&gt; feat(scripts): add arg to specify number of connect workers
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ef8fbc3&#34;&gt;ef8fbc3&lt;/a&gt; feat(plugin): add support for task file listing delegation
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/137c1a6&#34;&gt;137c1a6&lt;/a&gt; feat(filesystems): enhance XMLFileInputIterator with new config props&lt;/p&gt;
+&lt;h3 id=&#34;improvements--bugfixes&#34;&gt;Improvements &amp;amp; Bugfixes&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a693b52&#34;&gt;a693b52&lt;/a&gt; fix(plugin): fix FilePulseSourceConnector should raise an error when FileSystemMonitorThread crash
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c6f1f13&#34;&gt;c6f1f13&lt;/a&gt; fix(api): fix empty document removing in XMLFileInputIterator
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c0cc249&#34;&gt;c0cc249&lt;/a&gt; fix(api): improve support for XML by adding capabilities to merge schemas (#160)&lt;/p&gt;
+&lt;h3 id=&#34;docs&#34;&gt;Docs&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0c92901&#34;&gt;0c92901&lt;/a&gt; docs(site): fix page date and css
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7000b84&#34;&gt;7000b84&lt;/a&gt; docs(site): add release note for 2.1.0&lt;/p&gt;
+&lt;h3 id=&#34;subtasks&#34;&gt;Sub-Tasks&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4f0add2&#34;&gt;4f0add2&lt;/a&gt; project(issue): add github stale bot config
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/34ab52a&#34;&gt;34ab52a&lt;/a&gt; fix(scripts): update docker-compose for debug
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a2fb4a5&#34;&gt;a2fb4a5&lt;/a&gt; sub-task(plugin): add new interface TaskPartitioner
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bbeebda&#34;&gt;bbeebda&lt;/a&gt; subtask(plugin): add new interface FileURIProvider
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2825c0&#34;&gt;e2825c0&lt;/a&gt; build(deps): bump commons-compress from 1.20 to 1.21&lt;/p&gt;
+&lt;p&gt;If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Blog: Connect FilePulse 2.1 is Available 🚀</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/08/04/connect-filepulse-2.1-is-available/</link>
       <pubDate>Wed, 04 Aug 2021 00:00:00 +0000</pubDate>

@@ -201,6 +201,20 @@ public interface Schema {
         if (this.type() == that.type()) {
             return this;
         }
+
+        if (this.type() == Type.STRING || that.type() == Type.STRING)
+            return Schema.string();
+
+        if ( (this.type() == Type.LONG && that.type() == Type.INTEGER) ||
+             (that.type() == Type.LONG && this.type() == Type.INTEGER)) {
+            return Schema.int64(); // return LONG
+        }
+
+        if ( (this.type() == Type.DOUBLE && that.type().isNumber()) ||
+             (that.type() == Type.DOUBLE && this.type().isNumber())) {
+            return Schema.float64(); // return DOUBLE
+        }
+
         throw new DataException("Cannot merge incompatible schema type " + this.type() + "<>" + that.type());
     }
 

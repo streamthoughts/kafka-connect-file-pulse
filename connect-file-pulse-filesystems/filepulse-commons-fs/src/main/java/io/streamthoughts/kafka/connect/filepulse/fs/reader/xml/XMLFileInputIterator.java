@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
 import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
-import io.streamthoughts.kafka.connect.filepulse.data.SchemaSupplier;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
@@ -102,7 +101,8 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
 
         this.converter = new Node2StructConverter()
                 .setExcludeEmptyElement(config.isEmptyElementExcluded())
-                .setForceArrayFields(FieldPaths.from(config.forceArrayFields()));
+                .setForceArrayFields(FieldPaths.from(config.forceArrayFields()))
+                .setTypeInferenceEnabled(config.isDataTypeInferenceEnabled());
 
         System.setProperty(
                 "javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON,
@@ -238,7 +238,9 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
         private static final Pattern NAME_INVALID_CHARACTERS = Pattern.compile("[.\\-]");
         private static final String NAME_INVALID_CHARACTER_REPLACEMENT = "_";
 
-        private boolean excludeEmptyElement;
+        private boolean excludeEmptyElement = false;
+
+        private boolean isTypeInferenceEnabled = false;
 
         private FieldPaths forceArrayFields = FieldPaths.empty();
 
@@ -249,6 +251,11 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
 
         public Node2StructConverter setForceArrayFields(final FieldPaths forceArrayFields) {
             this.forceArrayFields = forceArrayFields;
+            return this;
+        }
+
+        public Node2StructConverter setTypeInferenceEnabled(final boolean isTypeInferenceEnabled) {
+            this.isTypeInferenceEnabled = isTypeInferenceEnabled;
             return this;
         }
 
@@ -264,18 +271,21 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
         }
 
         private TypedValue convertObjectTree(final Node node,
-                                              final FieldPaths forceArrayFields) {
-            Objects.requireNonNull(node, "node cannot be null");
-            String nodeName = determineNodeName(node);
+                                             final FieldPaths forceArrayFields) {
+            Objects.requireNonNull(node, "'node' cannot be null");
+
+            final String nodeName = determineNodeName(node);
             final FieldPaths currentForceArrayFields = nodeName.equals("#document")
                     ? forceArrayFields :
-                    forceArrayFields.next(nodeName);
+                    forceArrayFields.next(sanitizeNodeName(nodeName));
 
+            // Create a new Struct container object for holding all node elements, i.e., child nodes and attributes.
             TypedStruct container = TypedStruct.create();
             addAllNodeAttributes(container, node.getAttributes());
             for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+                // Text nodes always return #text" as the node name, so it's best to use the parent node name instead.
                 final String childNodeName = isTextNode(child) ? nodeName : determineNodeName(child);
-                Optional<TypedValue> optional = readNodeObject(child, currentForceArrayFields);
+                Optional<TypedValue> optional = readObjectNodeValue(child, currentForceArrayFields);
                 if (optional.isPresent()) {
                     final TypedValue nodeValue = optional.get();
                     if (excludeEmptyElement &&
@@ -284,75 +294,106 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                         LOG.debug("Empty XML element excluded: '{}'", node.getNodeName());
                         continue;
                     }
-                    final boolean isArray = currentForceArrayFields.anyMatches(childNodeName);
-                    container = enrichStructWithObject(container, childNodeName, nodeValue, isArray);
+                    final boolean forceElementAsArray = currentForceArrayFields.anyMatches(childNodeName);
+                    container = enrichStructWithObject(container, childNodeName, nodeValue, forceElementAsArray);
                 }
             }
             return TypedValue.struct(container);
         }
 
-        private Optional<TypedValue> readNodeObject(final Node node,
-                                                    final FieldPaths forceArrayFields) {
+        private Optional<TypedValue> readObjectNodeValue(final Node node,
+                                                         final FieldPaths forceArrayFields) {
             if (isWhitespaceOrNewLineNodeElement(node)) {
                 return Optional.empty();
             }
 
             if (isTextNode(node)) {
-                return readTextNode(node, node.getNodeValue());
+                final String text = node.getNodeValue();
+                final TypedValue data = toTypedValue(text);
+                return readTextNodeValue(node, data);
             }
 
             if (isElementNode(node)) {
-                final Optional<String> childTextContent = peekChildNodeTextContent(node);
-                return childTextContent
-                        .map(s -> readTextNode(node, s))
-                        .orElseGet(() -> Optional.of(convertObjectTree(node, forceArrayFields)));
+                // Check if Element node contains only a single CDataNode.
+                final Optional<String> childTextContent = peekChildCDataNodeTextValue(node);
+                if (childTextContent.isPresent()) {
+                    final String text = childTextContent.get();
+                    final TypedValue data = toTypedValue(text);
+                    return readTextNodeValue(node, data);
+                }
+                return Optional.of(convertObjectTree(node, forceArrayFields));
             }
+
             throw new ReaderException("Unsupported node type '" + node.getNodeType() + "'");
+        }
+
+        private TypedValue toTypedValue(final String text) {
+            return isTypeInferenceEnabled ? TypedValue.parse(text) : TypedValue.string(text);
+        }
+
+        private static Optional<TypedValue> readTextNodeValue(final Node node, final TypedValue data) {
+            // Check if TextNode as no attribute
+            final NamedNodeMap attributes = node.getAttributes();
+            if (attributes == null || attributes.getLength() == 0) {
+                return Optional.of(data);
+            }
+
+            // Else, create a Struct container
+            final TypedStruct container = TypedStruct.create();
+            addAllNodeAttributes(container, attributes);
+            container.put(DEFAULT_TEXT_NODE_FIELD_NAME, data);
+            return Optional.of(TypedValue.struct(container));
         }
 
         private static TypedStruct enrichStructWithObject(final TypedStruct container,
                                                           final String nodeName,
                                                           final TypedValue nodeObject,
-                                                          final boolean asArray) {
-            TypedValue value;
-            final Object objectValue = nodeObject.value();
+                                                          final boolean forceElementAsArray) {
+            final TypedValue value;
             if (container.has(nodeName)) {
-                final TypedField field = container.field(nodeName);
-                if (field.type() == Type.ARRAY) {
-                    final List<Object> array = container.getArray(nodeName);
-                    array.add(objectValue);
-                    final Schema mergedSchema = ((ArraySchema)field.schema()).valueSchema().merge(nodeObject.schema());
-                    value = TypedValue.array(array, mergedSchema);
-                } else {
-                    final List<Object> array = new LinkedList<>();
-                    array.add(container.get(nodeName).value()); // add previous value
-                    array.add(objectValue);
-                    final Schema mergedSchema = field.schema().merge(nodeObject.schema());
-                    value = TypedValue.array(array, mergedSchema);
-                }
-            } else if (asArray) {
+                value = handleRepeatedElementsAsArray(container, nodeName, nodeObject);
+            } else if (forceElementAsArray) {
                 List<Object> array = new LinkedList<>();
-                array.add(objectValue);
-                value = TypedValue.array(array, SchemaSupplier.lazy(objectValue).get());
+                array.add(nodeObject.value());
+                value = TypedValue.array(array, nodeObject.schema());
             } else {
                 value = nodeObject;
             }
             return container.put(nodeName, value);
         }
 
-        private static Optional<TypedValue> readTextNode(final Node node,
-                                                         final String text) {
-            final NamedNodeMap attributes = node.getAttributes();
-            if (attributes != null && attributes.getLength() > 0) {
-                final TypedStruct container = TypedStruct.create();
-                addAllNodeAttributes(container, attributes);
-                container.put(DEFAULT_TEXT_NODE_FIELD_NAME, text);
-                return Optional.of(TypedValue.struct(container));
+        private static TypedValue handleRepeatedElementsAsArray(final TypedStruct container,
+                                                                final String nodeName,
+                                                                final TypedValue nodeObject) {
+            final TypedField field = container.field(nodeName);
+            final Schema mergedValueSchema;
+
+            List<Object> array;
+            if (field.type() == Type.ARRAY) {
+                mergedValueSchema = ((ArraySchema)field.schema()).valueSchema().merge(nodeObject.schema());
+                array = new LinkedList<>(container.getArray(nodeName));
+            } else {
+                // Auto-convert duplicates into an Array containing the previous and new elements.
+                mergedValueSchema = field.schema().merge(nodeObject.schema());
+                array = new LinkedList<>();
+                array.add(container.get(nodeName).value());
             }
-            return Optional.of(TypedValue.string(text));
+
+            // Add the new object to the array.
+            array.add(nodeObject.value());
+
+            // Make sure to convert all array values to the target array value-schema.
+            final Type valueType = mergedValueSchema.type();
+            if (valueType.isPrimitive()) {
+                array = array
+                        .stream()
+                        .map(valueType::convert)
+                        .collect(Collectors.toList());
+            }
+            return TypedValue.array(array, mergedValueSchema);
         }
 
-        private static Optional<String> peekChildNodeTextContent(final Node node) {
+        private static Optional<String> peekChildCDataNodeTextValue(final Node node) {
             if (!node.hasChildNodes()) return Optional.empty();
 
             final List<Node> nonNewLineNodes = collectAllNotNewLineNodes(node.getChildNodes());
@@ -381,7 +422,7 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
 
         private static boolean isTextNode(final Node n) {
             return isNodeOfType(n, Node.TEXT_NODE) ||
-                    isNodeOfType(n, Node.CDATA_SECTION_NODE);
+                   isNodeOfType(n, Node.CDATA_SECTION_NODE);
         }
 
         private static boolean isElementNode(final Node n) {
@@ -415,6 +456,10 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
 
         private static String determineNodeName(final Node node) {
             final String name = node.getLocalName() != null ? node.getLocalName() : node.getNodeName();
+            return sanitizeNodeName(name);
+        }
+
+        private static String sanitizeNodeName(final String name) {
             return NAME_INVALID_CHARACTERS
                     .matcher(name)
                     .replaceAll(NAME_INVALID_CHARACTER_REPLACEMENT);

@@ -173,7 +173,6 @@ public enum Type {
     }
 
     public boolean isPrimitive() {
-
         switch (this) {
             case FLOAT:
             case DOUBLE:
@@ -182,6 +181,18 @@ public enum Type {
             case BOOLEAN:
             case STRING:
             case BYTES:
+                return true;
+            default:
+        }
+        return false;
+    }
+
+    public boolean isNumber() {
+        switch (this) {
+            case FLOAT:
+            case DOUBLE:
+            case INTEGER:
+            case LONG:
                 return true;
             default:
         }

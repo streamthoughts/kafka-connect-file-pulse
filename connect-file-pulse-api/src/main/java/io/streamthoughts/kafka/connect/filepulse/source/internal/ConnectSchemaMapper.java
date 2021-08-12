@@ -55,10 +55,10 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
 
     static String normalizeSchemaName(final String name) {
         return Arrays
-            .stream(REGEX.split(name))
-            .filter(s -> !s.isEmpty())
-            .map(it -> it.substring(0, 1).toUpperCase() + it.substring(1))
-            .collect(Collectors.joining());
+                .stream(REGEX.split(name))
+                .filter(s -> !s.isEmpty())
+                .map(it -> it.substring(0, 1).toUpperCase() + it.substring(1))
+                .collect(Collectors.joining());
     }
 
     /**
@@ -99,7 +99,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
             sb.doc(schema.doc());
         }
 
-        for(final TypedField field : schema) {
+        for (final TypedField field : schema) {
             final String fieldName = field.name();
             final io.streamthoughts.kafka.connect.filepulse.data.Schema fieldSchema = field.schema();
             // Ignore schema NULL because cannot determine the expected type.
@@ -116,17 +116,17 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
     private void mayUpdateSchemaName(final io.streamthoughts.kafka.connect.filepulse.data.Schema schema,
                                      final String fieldName) {
         if (schema.type() == Type.ARRAY) {
-            final ArraySchema arraySchema = (ArraySchema)schema;
+            final ArraySchema arraySchema = (ArraySchema) schema;
             mayUpdateSchemaName(arraySchema.valueSchema(), fieldName);
         }
 
         if (schema.type() == Type.MAP) {
-            final MapSchema mapSchema = (MapSchema)schema;
+            final MapSchema mapSchema = (MapSchema) schema;
             mayUpdateSchemaName(mapSchema.valueSchema(), fieldName);
         }
 
         if (schema.type() == Type.STRUCT) {
-            final StructSchema structSchema = (StructSchema)schema;
+            final StructSchema structSchema = (StructSchema) schema;
             if (structSchema.name() == null) {
                 structSchema.name(normalizeSchemaName(fieldName));
             }
@@ -183,40 +183,61 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
 
     private static Struct toConnectStruct(final Schema connectSchema, final TypedStruct struct) {
         final Struct connectStruct = new Struct(connectSchema);
-        for (Field field : connectSchema.fields()) {
+        for (Field connectField : connectSchema.fields()) {
 
-            final String fieldName = connectSchema.name();
-            final boolean isOptional = field.schema().isOptional();
-            if (!struct.has(field.name())) {
+            final String recordName = connectSchema.name();
+            final String fieldName = connectField.name();
+
+            final boolean isOptional = connectField.schema().isOptional();
+            if (!struct.has(fieldName)) {
                 if (!isOptional) {
                     throw new DataException(
-                        "Failed to convert record to connect data. " +
-                        "Missing required field '" + field.name() + "' for record '" + fieldName + "'"
+                            "Failed to convert record to connect data. " +
+                                    "Missing required connectField '" + fieldName + "' for record '" + recordName + "'"
                     );
                 }
                 continue;
             }
 
-            TypedValue typed = struct.get(field.name());
-            final Schema fieldSchema = field.schema();
+            TypedValue typed = struct.get(fieldName);
+            final Schema connectFieldSchema = connectField.schema();
 
             final Schema.Type dataSchemaType = typed.type().schemaType();
+            final Schema.Type schemaType = connectFieldSchema.type();
 
-            if (fieldSchema.type() != dataSchemaType) {
-
-                if (!fieldSchema.type().equals(Schema.Type.ARRAY)) {
-                    throw new DataException("Failed to convert record field '" + fieldName + "' to connect data. " +
-                        "Types do not match " + fieldSchema.type() + "<>" + typed.type());
+            if (schemaType != dataSchemaType) {
+                if (schemaType.equals(Schema.Type.ARRAY)) {
+                    Schema.Type arrayValueType = connectFieldSchema.valueSchema().type();
+                    if (!arrayValueType.equals(dataSchemaType)) {
+                        throw new DataException(
+                                "Failed to convert record connectField '" +
+                                recordName + "." + fieldName + "' to connect data. " +
+                                "Types do not match Array[" + arrayValueType + "]<>Array[" + dataSchemaType + "]"
+                        );
+                    }
+                    typed = TypedValue.array(Collections.singleton(typed.value()), typed.schema());
                 }
-
-                Schema.Type arrayValueType = fieldSchema.valueSchema().type();
-                if (!arrayValueType.equals(dataSchemaType)) {
-                    throw new DataException("Failed to convert record field '" + fieldName + "' to connect data. " +
-                        "Types do not match Array[" + arrayValueType + "]<>Array[" + typed.type() + "]");
+                // Handle specific STRING and NUMBER conversions for primitive type.
+                else if (dataSchemaType.isPrimitive()) {
+                    final boolean isNumber = typed.type().isNumber();
+                    if (schemaType == Schema.Type.STRING) {
+                        typed = typed.as(Type.STRING);
+                    // handle INTEGER/LONG -> DOUBLE
+                    } else if (schemaType == Schema.Type.FLOAT64 && isNumber) {
+                        typed = typed.as(Type.DOUBLE);
+                    // handle INTEGER -> LONG
+                    } else if (schemaType == Schema.Type.INT64 && typed.type() == Type.INTEGER) {
+                        typed = typed.as(Type.LONG);
+                    }
+                } else {
+                    throw new DataException(
+                            "Failed to convert record connectField '" +
+                            recordName + "." + fieldName + "' to connect data. " +
+                            "Types do not match " + schemaType + "<>" + dataSchemaType
+                    );
                 }
-                typed = TypedValue.array(Collections.singleton(typed.value()), typed.schema());
             }
-            connectStruct.put(field, toConnectObject(fieldSchema, typed));
+            connectStruct.put(connectField, toConnectObject(connectFieldSchema, typed));
         }
         return connectStruct;
     }
@@ -240,12 +261,12 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                     ((MapSchema) typed.schema()).keySchema();
 
             return typed.getMap().entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                    e -> toConnectObject(connectKeySchema, TypedValue.of(e.getKey(), keySchema)),
-                    e -> toConnectObject(connectValueSchema, TypedValue.of(e.getValue(), valueSchema))
-                    )
-                );
+                    .stream()
+                    .collect(Collectors.toMap(
+                            e -> toConnectObject(connectKeySchema, TypedValue.of(e.getKey(), keySchema)),
+                            e -> toConnectObject(connectValueSchema, TypedValue.of(e.getValue(), valueSchema))
+                            )
+                    );
         }
 
         if (schema.type() == Schema.Type.ARRAY) {
@@ -255,9 +276,9 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                     ((ArraySchema) typed.schema()).valueSchema();
 
             return typed.getArray()
-                .stream()
-                .map(e -> toConnectObject(connectValueSchema, TypedValue.of(e, valueSchema)))
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(e -> toConnectObject(connectValueSchema, TypedValue.of(e, valueSchema)))
+                    .collect(Collectors.toList());
         }
         return typed.value();
     }

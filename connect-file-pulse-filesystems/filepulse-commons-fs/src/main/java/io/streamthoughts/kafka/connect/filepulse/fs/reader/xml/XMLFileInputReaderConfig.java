@@ -54,6 +54,9 @@ public class XMLFileInputReaderConfig extends AbstractConfig {
     public static final String XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG = "reader.xml.exclude.empty.elements";
     private static final String XML_EXCLUDE_EMPTY_ELEMENTS_DOC = "Specifies that the reader should exclude element having no field (default: false).";
 
+    public static final String XML_DATA_TYPE_INFERENCE_ENABLED_CONFIG = "reader.xml.data.type.inference.enabled";
+    private static final String XML_DATA_TYPE_INFERENCE_ENABLED_DOC = "Specifies that the reader should try to infer the type of data nodes. (default: false).";
+
     /**
      * Creates a new {@link XMLFileInputReaderConfig} instance.
      *
@@ -81,6 +84,10 @@ public class XMLFileInputReaderConfig extends AbstractConfig {
 
     public boolean isEmptyElementExcluded() {
         return getBoolean(XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG);
+    }
+
+    public boolean isDataTypeInferenceEnabled() {
+        return getBoolean(XML_DATA_TYPE_INFERENCE_ENABLED_CONFIG);
     }
 
     public List<String> forceArrayFields() {
@@ -126,6 +133,12 @@ public class XMLFileInputReaderConfig extends AbstractConfig {
                         false,
                         ConfigDef.Importance.LOW,
                         XML_EXCLUDE_EMPTY_ELEMENTS_DOC
+                )
+                .define(XML_DATA_TYPE_INFERENCE_ENABLED_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.LOW,
+                        XML_DATA_TYPE_INFERENCE_ENABLED_DOC
                 );
     }
 }

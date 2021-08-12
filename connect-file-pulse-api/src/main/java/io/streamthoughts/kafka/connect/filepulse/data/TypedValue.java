@@ -36,6 +36,24 @@ public class TypedValue implements GettableByType {
     private final Object value;
     private final SchemaSupplier schema;
 
+    public static TypedValue parse(final String text) {
+        final String trimmed = text.trim();
+        if (TypeConverter.isIntegerNumber(trimmed)) {
+            // check if string fit within `long`
+            if (trimmed.length() <= 19 && TypeConverter.isInLongRange(trimmed)) {
+                return TypedValue.int64(Long.parseLong(trimmed));
+            }
+        }
+        if (TypeConverter.isDoubleNumber(trimmed)) {
+            return TypedValue.float64(Double.parseDouble(trimmed));
+        }
+        if (TypeConverter.isBooleanString(trimmed)) {
+            return TypedValue.bool(Boolean.parseBoolean(trimmed));
+        }
+
+        return TypedValue.string(text);
+    }
+
     public static TypedValue of(final Object value, final Schema schema) {
         return new TypedValue(schema, value);
     }

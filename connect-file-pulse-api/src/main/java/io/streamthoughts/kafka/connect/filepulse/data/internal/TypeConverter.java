@@ -29,11 +29,18 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Class which can be used to convert an object to a specific type.
  */
 public class TypeConverter implements Serializable {
+
+    private static final String BOOLEAN_TRUE = "true";
+    private static final String BOOLEAN_FALSE = "false";
+
+    private static final String MIN_LONG_STR_NO_SIGN = String.valueOf(Long.MIN_VALUE).substring(1);
+    private static final String MAX_LONG_STR = String.valueOf(Long.MAX_VALUE);
 
     public static Collection getArray(final Object value) throws IllegalArgumentException {
         Objects.requireNonNull(value, "value can't be null");
@@ -45,7 +52,7 @@ public class TypeConverter implements Serializable {
         }
 
         throw new DataException(
-         String.format("'%s' is not assignable to Collection: \"%s\"", value.getClass(), value)
+                String.format("'%s' is not assignable to Collection: \"%s\"", value.getClass(), value)
         );
     }
 
@@ -62,9 +69,9 @@ public class TypeConverter implements Serializable {
                 int digit = (int) s.charAt(0);
                 result = digit > 0;
             } else {
-                result = s.equalsIgnoreCase("true") ||
-                         s.equalsIgnoreCase("yes") ||
-                         s.equalsIgnoreCase("y");
+                result = s.equalsIgnoreCase(BOOLEAN_TRUE) ||
+                        s.equalsIgnoreCase("yes") ||
+                        s.equalsIgnoreCase("y");
             }
         }
         if (value instanceof Boolean) {
@@ -80,7 +87,7 @@ public class TypeConverter implements Serializable {
     public static Short getShort(final Object value) throws IllegalArgumentException {
         Objects.requireNonNull(value, "value can't be null");
 
-        if (value instanceof String && isNumber((String) value)) {
+        if (value instanceof String && isIntegerNumber((String) value)) {
             return new BigDecimal(value.toString()).shortValue();
         }
         if (value instanceof Number) {
@@ -93,7 +100,7 @@ public class TypeConverter implements Serializable {
     public static Integer getInt(final Object value) throws IllegalArgumentException {
         Objects.requireNonNull(value, "value can't be null");
 
-        if (value instanceof String && isNumber((String) value)) {
+        if (value instanceof String && isIntegerNumber((String) value)) {
             return new BigDecimal(value.toString()).intValue();
         }
         if (value instanceof Number) {
@@ -106,8 +113,11 @@ public class TypeConverter implements Serializable {
     public static Long getLong(final Object value) throws IllegalArgumentException {
         Objects.requireNonNull(value, "value can't be null");
 
-        if (value instanceof String && isNumber((String) value)) {
-            return new BigDecimal(value.toString()).longValue();
+        if (value instanceof String) {
+            final String trimmed = ((String) value).trim();
+            if (isIntegerNumber(trimmed)) {
+                return new BigDecimal(trimmed).longValue();
+            }
         }
         if (value instanceof Number) {
             Number number = (Number) value;
@@ -146,10 +156,10 @@ public class TypeConverter implements Serializable {
 
         if (value instanceof String) {
             return getBigDecimal(value)
-               .map(BigDecimal::doubleValue)
-               .orElseThrow(() ->
-                       new DataException(String.format("Cannot parse 64-bits double content from \"%s\"", value))
-               );
+                    .map(BigDecimal::doubleValue)
+                    .orElseThrow(() ->
+                            new DataException(String.format("Cannot parse 64-bits double content from \"%s\"", value))
+                    );
         }
         if (value instanceof Number) {
             Number number = (Number) value;
@@ -170,7 +180,7 @@ public class TypeConverter implements Serializable {
             return new Date(number.longValue());
         }
 
-        if (value instanceof String && isNumber((String) value)) {
+        if (value instanceof String && isIntegerNumber((String) value)) {
             return new Date(Long.parseLong((String) value));
         }
 
@@ -179,22 +189,22 @@ public class TypeConverter implements Serializable {
 
     public static String getString(final Object value) {
         if (value instanceof ByteBuffer) {
-            return StandardCharsets.UTF_8.decode((ByteBuffer)value).toString();
+            return StandardCharsets.UTF_8.decode((ByteBuffer) value).toString();
         }
         return (value != null) ? value.toString() : null;
     }
 
     public static byte[] getBytes(final Object value) {
         if (value instanceof ByteBuffer) {
-            return ((ByteBuffer)value).array();
+            return ((ByteBuffer) value).array();
         }
 
         if (value instanceof String) {
-            return ((String)value).getBytes(StandardCharsets.UTF_8);
+            return ((String) value).getBytes(StandardCharsets.UTF_8);
         }
 
         if (value.getClass().isArray()) {
-            return (byte[])value;
+            return (byte[]) value;
         }
         throw new DataException(String.format("Cannot parse byte[] from \"%s\"", value));
     }
@@ -228,22 +238,99 @@ public class TypeConverter implements Serializable {
                 );
     }
 
-    private static boolean isNumber(final String s) {
-        if (s.isEmpty()) {
+    public static boolean isBooleanString(final String text) {
+        return BOOLEAN_TRUE.equalsIgnoreCase(text) || BOOLEAN_FALSE.equalsIgnoreCase(text);
+    }
+
+    public static boolean isIntegerNumber(final String text) {
+        if (text.isEmpty())
             return false;
-        }
-        for (int i = 0; i < s.length(); i++) {
-            if (i == 0 && s.charAt(i) == '-') {
-                if (s.length() == 1) {
-                    return false;
-                } else {
-                    continue;
-                }
-            }
-            if (Character.digit(s.charAt(i), 10) < 0) {
+
+        // skip leading negative sign, do NOT allow leading plus
+        char c = text.charAt(0);
+        final int start = c == '-' ? 1 : 0;
+        if (start == 1 && text.length() == 1)
+            return false;
+
+        for (int i = start; i < text.length(); i++) {
+            c = text.charAt(i);
+            if (Character.digit(c, 10) < 0) {
                 return false;
             }
         }
         return true;
     }
+
+    public static boolean isDoubleNumber(final String text) {
+        return text != null && DOUBLE_REGEX_MATCHER.matcher(text).matches();
+    }
+
+    public static boolean isInLongRange(String s) {
+        final boolean negative = s.charAt(0) == '-';
+        final String cmp = negative ? MIN_LONG_STR_NO_SIGN : MAX_LONG_STR;
+
+        if (negative) {
+            s = s.substring(1);
+        }
+
+        int cmpLen = cmp.length();
+        int alen = s.length();
+        if (alen < cmpLen) {
+            return true;
+        } else if (alen > cmpLen) {
+            return false;
+        } else {
+            for(int i = 0; i < cmpLen; ++i) {
+                int diff = s.charAt(i) - cmp.charAt(i);
+                if (diff != 0) {
+                    return diff < 0;
+                }
+            }
+            return true;
+        }
+    }
+
+
+    /**
+     * The regexp suggested by the {@link Double#valueOf(String)}.
+     */
+    private static final String Digits = "(\\p{Digit}+)";
+    private static final String HexDigits = "(\\p{XDigit}+)";
+    // an exponent is 'e' or 'E' followed by an optionally
+    // signed decimal integer.
+    private static final String Exp = "[eE][+-]?" + Digits;
+    private static final String fpRegex =
+            "[\\x00-\\x20]*" +  // Optional leading "whitespace"
+                    "[+-]?(" + // Optional sign character
+                    "NaN|" +           // "NaN" string
+                    "Infinity|" +      // "Infinity" string
+
+                    // A decimal floating-point string representing a finite positive
+                    // number without a leading sign has at most five basic pieces:
+                    // Digits . Digits ExponentPart FloatTypeSuffix
+                    //
+                    // Since this method allows integer-only strings as input
+                    // in addition to strings of floating-point literals, the
+                    // two sub-patterns below are simplifications of the grammar
+                    // productions from section 3.10.2 of
+                    // The Java Language Specification.
+
+                    // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
+                    "(((" + Digits + "(\\.)?(" + Digits + "?)(" + Exp + ")?)|" +
+
+                    // . Digits ExponentPart_opt FloatTypeSuffix_opt
+                    "(\\.(" + Digits + ")(" + Exp + ")?)|" +
+
+                    // Hexadecimal strings
+                    "((" +
+                    // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
+                    "(0[xX]" + HexDigits + "(\\.)?)|" +
+
+                    // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
+                    "(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
+
+                    ")[pP][+-]?" + Digits + "))" +
+                    "[fFdD]?))" +
+                    "[\\x00-\\x20]*";// Optional trailing "whitespace"
+        private static final Pattern DOUBLE_REGEX_MATCHER = Pattern.compile(fpRegex);
 }

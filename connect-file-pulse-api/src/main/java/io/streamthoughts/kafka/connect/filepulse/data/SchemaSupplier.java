@@ -138,8 +138,7 @@ public interface SchemaSupplier extends Supplier<Schema> {
          * @param schema the {@link Schema} to be returned.
          */
         EagerSchemaSupplier(final Schema schema) {
-            Objects.requireNonNull(schema, "schema cannot be null");
-            this.schema = schema;
+            this.schema = Objects.requireNonNull(schema, "'schema' cannot be null");
         }
 
         /**

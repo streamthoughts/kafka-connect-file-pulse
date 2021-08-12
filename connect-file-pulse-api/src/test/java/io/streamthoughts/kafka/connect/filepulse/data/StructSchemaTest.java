@@ -103,19 +103,56 @@ public class StructSchemaTest {
         Assert.assertEquals(Type.INTEGER, ((StructSchema)merged).field("field-two").type());
     }
 
-
     @Test(expected = DataException.class)
     public void should_failed_merged_given_two_schemas_with_incompatible_fields() {
         final StructSchema schema1 = new StructSchema()
                 .name("test")
                 .namespace("namespace")
-                .field("field-one", Schema.string());
+                .field("field-one", Schema.float32());
 
         final StructSchema schema2 = new StructSchema()
                 .name("test")
                 .namespace("namespace")
-                .field("field-one", Schema.int32());
+                .field("field-one",  Schema.bool());
 
         schema1.merge(schema2); // expecting failure
+    }
+
+    @Test
+    public void should_failed_merged_given_two_schemas_with_fields_compatible_to_long() {
+        final StructSchema schema1 = new StructSchema()
+                .name("test")
+                .namespace("namespace")
+                .field("field-one", Schema.int32());
+
+        final StructSchema schema2 = new StructSchema()
+                .name("test")
+                .namespace("namespace")
+                .field("field-one",  Schema.int64());
+
+        final Schema merged = schema1.merge(schema2);
+        Assert.assertNotNull(merged);
+        Assert.assertEquals(Type.STRUCT, merged.type());
+        Assert.assertEquals(1, ((StructSchema)merged).fields().size());
+        Assert.assertEquals(Type.LONG, ((StructSchema)merged).field("field-one").type());
+    }
+
+    @Test
+    public void should_failed_merged_given_two_schemas_with_fields_compatible_to_double() {
+        final StructSchema schema1 = new StructSchema()
+                .name("test")
+                .namespace("namespace")
+                .field("field-one", Schema.int32());
+
+        final StructSchema schema2 = new StructSchema()
+                .name("test")
+                .namespace("namespace")
+                .field("field-one",  Schema.float64());
+
+        final Schema merged = schema1.merge(schema2);
+        Assert.assertNotNull(merged);
+        Assert.assertEquals(Type.STRUCT, merged.type());
+        Assert.assertEquals(1, ((StructSchema)merged).fields().size());
+        Assert.assertEquals(Type.DOUBLE, ((StructSchema)merged).field("field-one").type());
     }
 }

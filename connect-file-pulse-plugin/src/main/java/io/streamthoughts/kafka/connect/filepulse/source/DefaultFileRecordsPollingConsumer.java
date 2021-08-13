@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
-import io.streamthoughts.kafka.connect.filepulse.filter.FilterException;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
@@ -52,7 +51,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
     private final SourceTaskContext taskContext;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    private FileRecord<TypedStruct> latestPollRecord;
+    private FileRecord<TypedStruct> latestPolledRecord;
 
     private FileInputIterator<FileRecord<TypedStruct>> currentIterator;
 
@@ -134,11 +133,11 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
     public FileContext context() {
         if (currentIterator != null) {
             FileContext context = currentIterator.context();
-            if (latestPollRecord != null) {
+            if (latestPolledRecord != null) {
                 context = new FileContext(
                         context.key(),
                         context.metadata(),
-                        latestPollRecord.offset().toSourceOffset());
+                        latestPolledRecord.offset().toSourceOffset());
             }
             return context;
         }
@@ -162,39 +161,31 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             throw new IllegalStateException("FileRecordsPollingConsumer is closed, no more element can be returned");
         }
 
-        if (!hasNext()) return RecordsIterable.empty();
-
-        // Quickly iterate to lookup for a valid iterator
-        do {
-            final DelegateFileInputIterator candidate = queue.peek();
-            if (candidate.isOpen()) {
-                currentIterator = getOrCloseIteratorIfNoMoreRecord(candidate);
-            } else {
-                currentIterator = openAndGetIteratorOrNullIfInvalid(taskContext, candidate);
-            }
-        } while (hasNext() && currentIterator == null);
-
-        if (currentIterator == null) {
+        if (!hasNext())
             return RecordsIterable.empty();
-        }
 
-        final RecordsIterable<FileRecord<TypedStruct>> records = currentIterator.next();
+        currentIterator = findNextFileObjectIterator();
+
+        if (currentIterator == null)
+            return RecordsIterable.empty();
 
         Exception exception = null;
         try {
+            // Read the next records from the current iterator
+            final RecordsIterable<FileRecord<TypedStruct>> records = currentIterator.next();
+
+            // Apply the filter-chain in the returned records
             final RecordsIterable<FileRecord<TypedStruct>> filtered = pipeline.apply(
                     records,
                     currentIterator.hasNext()
             );
+            // May update the last polled records.
             if (!filtered.isEmpty()) {
-                latestPollRecord = filtered.last();
+                latestPolledRecord = filtered.last();
             }
-            return filtered;
-        } catch (final FilterException e) {
-            exception = e;
-            // ignore the error - and skip the current file.
-            return RecordsIterable.empty();
 
+            // Return record to the connect SourceTask
+            return filtered;
         } catch (final ConnectFilePulseException e) {
             exception = e;
             throw e;
@@ -208,6 +199,40 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
                 closeIterator(currentIterator, exception);
             }
         }
+    }
+
+    private FileInputIterator<FileRecord<TypedStruct>> findNextFileObjectIterator() {
+
+        if (queue.isEmpty()) return null;
+
+        FileInputIterator<FileRecord<TypedStruct>> ret;
+        // Quickly iterate to lookup for a valid iterator
+        do {
+            final DelegateFileInputIterator candidate = queue.peek();
+            if (candidate.isOpen()) {
+                ret = getOrCloseIteratorIfNoMoreRecord(candidate);
+            } else {
+                try {
+                    ret = openAndGetIteratorOrNullIfInvalid(candidate);
+                    if (ret == null) {
+                        var objectMeta = new GenericFileObjectMeta(candidate.getObjectURI());
+                        // Remove the current iterator and continue
+                        deleteFileQueueAndInvokeListener(new FileContext(candidate.key(), objectMeta), null);
+                    }
+                } catch (Exception e) {
+                    LOG.error(
+                        "Failed to open and initialize new iterator for object: {}.",
+                        candidate.getObjectURI()
+                    );
+                    final FileObjectMeta objectMeta = new GenericFileObjectMeta(candidate.getObjectURI());
+                    deleteFileQueueAndInvokeListener(new FileContext(candidate.key(), objectMeta), e);
+                    // Rethrow the exception.
+                    throw e;
+                }
+            }
+        } while (hasNext() && ret == null);
+
+        return ret;
     }
 
     /**
@@ -259,19 +284,16 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      * This method will return {@code null} if the iterator point
      * to either an invalid file or to an already been completed file.
      *
-     * @param context  the connect source task context
      * @param iterator the source file iterator
      * @return a new {@link FileInputIterator} instance or {@code null} if the iterator is invalid.
      */
     private FileInputIterator<FileRecord<TypedStruct>> openAndGetIteratorOrNullIfInvalid(
-            final SourceTaskContext context,
             final DelegateFileInputIterator iterator
     ) {
         // Re-check if the file is still valid.
         if (!iterator.isValid()) {
-            LOG.error("File does not exist or is not readable, skip entry and continue '{}'", iterator.getObjectURI());
-            var objectMeta = new GenericFileObjectMeta(iterator.getObjectURI());
-            deleteFileQueueAndInvokeListener(new FileContext(iterator.key(), objectMeta), null);
+            LOG.warn("File does not exist or is not readable. Skip entry and continue '{}'", iterator.getObjectURI());
+            // Return NULL so that the calling method can properly close the iterator.
             return null;
         }
 
@@ -282,29 +304,25 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
 
             if (!ignoreCommittedOffsets) {
                 committedOffset = offsetPolicy
-                        .getOffsetFor(context, metadata)
+                        .getOffsetFor(taskContext, metadata)
                         .orElse(FileObjectOffset.empty());
             } else {
                 committedOffset = FileObjectOffset.empty();
             }
         } catch (final Exception e) {
-            if (metadata == null) {
-                LOG.error(
-                        "Failed to load metadata for object file {}. Error: {}",
-                        iterator.getObjectURI(),
-                        e.getMessage()
-                );
-                metadata = new GenericFileObjectMeta(iterator.getObjectURI());
-                deleteFileQueueAndInvokeListener(new FileContext(iterator.key(), metadata), e);
-                return null;
-            } else {
+            if (metadata != null) {
                 LOG.warn(
-                        "Failed to load committed offset for object file {}." +
-                        " Previous offset will be ignored. Error: {}",
+                        "Failed to load committed offset for object file {}. " +
+                        "Previous offset will be ignored. Error: {}",
                         iterator.getObjectURI(),
                         e.getMessage()
                 );
                 committedOffset = FileObjectOffset.empty();
+            } else {
+                // Rethrow the exception if metadata cannot be loaded.
+                // The exception handling logic will be delegated to the calling method.
+                throw e;
+
             }
         }
 
@@ -312,28 +330,16 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
         boolean isAlreadyCompleted = committedOffset.position() >= metadata.contentLength();
         if (!ignoreCommittedOffsets && isAlreadyCompleted) {
             LOG.warn(
-                    "Detected source file already completed, skip entry and continue '{}'",
-                    iterator.getObjectURI());
-            deleteFileQueueAndInvokeListener(
-                    new FileContext(iterator.key(), metadata, committedOffset),
-                    null
+                "Detected source file already completed. Skip entry and continue '{}'",
+                iterator.getObjectURI()
             );
+            // Return NULL so that the calling method can properly close the iterator.
             return null;
         }
 
-        try {
-            iterator.open();
-            iterator.seekTo(committedOffset);
-            pipeline.init(iterator.context());
-        } catch (final Exception e) {
-            LOG.error(
-                    "Failed to initialized a new iterator for object file '{}'.",
-                    iterator.getObjectURI(),
-                    e
-            );
-            deleteFileQueueAndInvokeListener(new FileContext(iterator.key(), metadata), e);
-            return null;
-        }
+        iterator.open();
+        iterator.seekTo(committedOffset);
+        pipeline.init(iterator.context());
         if (hasListener()) {
             listener.onStart(iterator.context());
         }
@@ -365,14 +371,14 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
         }
     }
 
-    private void deleteFileQueueAndInvokeListener(final FileContext taskContext,
+    private void deleteFileQueueAndInvokeListener(final FileContext fileContext,
                                                   final Throwable exception) {
         queue.remove();
         if (hasListener()) {
             if (exception != null) {
-                listener.onFailure(taskContext, exception);
+                listener.onFailure(fileContext, exception);
             } else {
-                listener.onCompleted(taskContext);
+                listener.onCompleted(fileContext);
             }
         }
     }

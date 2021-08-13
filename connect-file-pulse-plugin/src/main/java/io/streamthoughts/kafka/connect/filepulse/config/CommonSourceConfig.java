@@ -50,7 +50,10 @@ public class CommonSourceConfig extends AbstractConfig {
     private static final String FS_SCAN_FILTERS_DOC           = "Filters classes which are used to apply list input files.";
 
     public static final String TASKS_FILE_READER_CLASS_CONFIG = "tasks.reader.class";
-    private static final String TASKS_FILE_READER_CLASS_DOC = "Class which is used by tasks to read an input file.";
+    private static final String TASKS_FILE_READER_CLASS_DOC   = "Class which is used by tasks to read an input file.";
+
+    public static final String TASKS_HALT_ON_ERROR_CONFIG     = "tasks.halt.on.error";
+    private static final String TASKS_HALT_ON_ERROR_DOC       = "Should a task halt when it encounters an error or continue to the next file.";
 
     public static final String OFFSET_STRATEGY_CLASS_CONFIG = "offset.policy.class";
     private static final String OFFSET_STRATEGY_CLASS_DOC = "Class which is used to determine the source partition and offset that uniquely identify a input record";
@@ -61,10 +64,10 @@ public class CommonSourceConfig extends AbstractConfig {
     private static final String FILTER_DOC = "List of filters aliases to apply on each value (order is important).";
 
     public static final String TASKS_FILE_STATUS_STORAGE_CLASS_CONFIG = "tasks.file.status.storage.class";
-    public static final String TASKS_FILE_STATUS_STORAGE_CLASS_DOC = "The FileObjectStateBackingStore class to be used for storing status state of file objects.";
+    private static final String TASKS_FILE_STATUS_STORAGE_CLASS_DOC = "The FileObjectStateBackingStore class to be used for storing status state of file objects.";
 
     public static final String TASK_PARTITIONER_CLASS_CONFIG = "task.partitioner.class";
-    public static final String TASK_PARTITIONER_CLASS_DOC    = "The TaskPartitioner to be used for partitioning files to tasks";
+    private static final String TASK_PARTITIONER_CLASS_DOC    = "The TaskPartitioner to be used for partitioning files to tasks";
 
     /**
      * Creates a new {@link CommonSourceConfig} instance.
@@ -99,6 +102,17 @@ public class CommonSourceConfig extends AbstractConfig {
                         groupCounter++,
                         ConfigDef.Width.NONE,
                         TASKS_FILE_READER_CLASS_CONFIG
+                )
+                .define(
+                        TASKS_HALT_ON_ERROR_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.HIGH,
+                        TASKS_HALT_ON_ERROR_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_HALT_ON_ERROR_CONFIG
                 )
                 .define(
                         OUTPUT_TOPIC_CONFIG,
@@ -155,8 +169,7 @@ public class CommonSourceConfig extends AbstractConfig {
                         TASK_PARTITIONER_CLASS_DOC
                 );
     }
-
-
+    
     public FileSystemListing<?> getFileSystemListing() {
         return getConfiguredInstance(FS_LISTING_CLASS_CONFIG, FileSystemListing.class);
     }
@@ -167,6 +180,10 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public TaskPartitioner getTaskPartitioner() {
         return this.getConfiguredInstance(TASK_PARTITIONER_CLASS_CONFIG, TaskPartitioner.class);
+    }
+
+    public boolean isTaskHaltOnError() {
+        return this.getBoolean(TASKS_HALT_ON_ERROR_CONFIG);
     }
 
     public SourceOffsetPolicy getSourceOffsetPolicy() {

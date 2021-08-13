@@ -174,22 +174,29 @@ public class FilePulseSourceTask extends SourceTask {
                     }
                 } else {
 
-                    final RecordsIterable<FileRecord<TypedStruct>> records = consumer.next();
+                    try {
+                        final RecordsIterable<FileRecord<TypedStruct>> records = consumer.next();
+                        if (!records.isEmpty()) {
+                            final FileContext context = consumer.context();
+                            LOG.debug("Returning {} records for {}", records.size(), context.metadata());
+                            results = records.stream()
+                                    .map(r -> buildSourceRecord(context, r))
+                                    .collect(Collectors.toList());
 
-                    if (!records.isEmpty()) {
-                        final FileContext context = consumer.context();
-                        LOG.debug("Returning {} records for {}", records.size(), context.metadata());
-                        results = records.stream()
-                                .map(r -> buildSourceRecord(context, r))
-                                .collect(Collectors.toList());
-
-                    // Check if the SourceTask is still running to
-                    // return immediately instead of waiting
-                    } else if (running.get() &&
-                               consumer.hasNext() &&
-                               consecutiveWaits.checkAndDecrement()) {
-                        busyWait();
-                        continue;
+                            // Check if the SourceTask is still running to
+                            // return immediately instead of waiting
+                        } else if (running.get() &&
+                                consumer.hasNext() &&
+                                consecutiveWaits.checkAndDecrement()) {
+                            busyWait();
+                            continue;
+                        }
+                    } catch (ConnectFilePulseException e) {
+                        if (taskConfig.isTaskHaltOnError()) {
+                            throw e;
+                        } else {
+                            LOG.error("Caught unexpected error while processing file. Ignore and continue", e);
+                        }
                     }
                 }
 

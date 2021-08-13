@@ -41,7 +41,7 @@ public class SourceTaskConfigTest {
         final SourceTaskConfig config = new SourceTaskConfig(new HashMap<>() {{
             put(CommonSourceConfig.OUTPUT_TOPIC_CONFIG, "Test");
             put(CommonSourceConfig.FS_LISTING_CLASS_CONFIG, MockFileSystemListing.class.getName());
-            put(CommonSourceConfig.TASKS_HALT_ON_ERROR, LocalRowFileInputReader.class.getName());
+            put(CommonSourceConfig.TASKS_FILE_READER_CLASS_CONFIG, LocalRowFileInputReader.class.getName());
             put(DefaultTaskFileURIProvider.Config.FILE_OBJECT_URIS_CONFIG, "/tmp");
             put(CommonSourceConfig.FILTER_CONFIG, "Test");
             put(CommonSourceConfig.FILTER_CONFIG + ".Test.type", AppendFilter.class.getName());

@@ -55,6 +55,9 @@ public class CommonSourceConfig extends AbstractConfig {
     public static final String TASKS_HALT_ON_ERROR_CONFIG     = "tasks.halt.on.error";
     private static final String TASKS_HALT_ON_ERROR_DOC       = "Should a task halt when it encounters an error or continue to the next file.";
 
+    public static final String TASKS_EMPTY_POLL_WAIT_MS_CONFIG = "tasks.empty.poll.wait.ms";
+    public static final String TASKS_EMPTY_POLL_WAIT_MS_DOC    = "The amount of time in millisecond a tasks should wait if a poll returns an empty list of records.";
+
     public static final String OFFSET_STRATEGY_CLASS_CONFIG = "offset.policy.class";
     private static final String OFFSET_STRATEGY_CLASS_DOC = "Class which is used to determine the source partition and offset that uniquely identify a input record";
     private static final String OFFSET_STRATEGY_CLASS_DEFAULT = DefaultSourceOffsetPolicy.class.getName();
@@ -115,6 +118,17 @@ public class CommonSourceConfig extends AbstractConfig {
                         TASKS_HALT_ON_ERROR_CONFIG
                 )
                 .define(
+                        TASKS_EMPTY_POLL_WAIT_MS_CONFIG,
+                        ConfigDef.Type.LONG,
+                        500,
+                        ConfigDef.Importance.LOW,
+                        TASKS_EMPTY_POLL_WAIT_MS_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_EMPTY_POLL_WAIT_MS_CONFIG
+                )
+                .define(
                         OUTPUT_TOPIC_CONFIG,
                         ConfigDef.Type.STRING,
                         ConfigDef.Importance.HIGH,
@@ -169,7 +183,7 @@ public class CommonSourceConfig extends AbstractConfig {
                         TASK_PARTITIONER_CLASS_DOC
                 );
     }
-    
+
     public FileSystemListing<?> getFileSystemListing() {
         return getConfiguredInstance(FS_LISTING_CLASS_CONFIG, FileSystemListing.class);
     }
@@ -184,6 +198,10 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public boolean isTaskHaltOnError() {
         return this.getBoolean(TASKS_HALT_ON_ERROR_CONFIG);
+    }
+
+    public long getTaskEmptyPollWaitMs() {
+        return this.getLong(TASKS_EMPTY_POLL_WAIT_MS_CONFIG);
     }
 
     public SourceOffsetPolicy getSourceOffsetPolicy() {

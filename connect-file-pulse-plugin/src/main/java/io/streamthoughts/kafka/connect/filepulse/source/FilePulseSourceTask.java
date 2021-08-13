@@ -51,8 +51,6 @@ public class FilePulseSourceTask extends SourceTask {
 
     private static final Integer NO_PARTITION = null;
 
-    private static final int DEFAULT_POLL_WAIT_MS = 500;
-
     public SourceTaskConfig taskConfig;
 
     private String topic;
@@ -216,8 +214,8 @@ public class FilePulseSourceTask extends SourceTask {
     }
 
     private void busyWait() throws InterruptedException {
-        LOG.trace("Waiting {} ms to poll next records", DEFAULT_POLL_WAIT_MS);
-        Thread.sleep(DEFAULT_POLL_WAIT_MS);
+        LOG.trace("Waiting {} ms to poll next records", taskConfig.getTaskEmptyPollWaitMs());
+        Thread.sleep(taskConfig.getTaskEmptyPollWaitMs());
     }
 
     /**

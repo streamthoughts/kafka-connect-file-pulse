@@ -36,7 +36,7 @@ import java.util.Map;
 
 public class DefaultJSONStructConverter implements JSONStructConverter {
 
-    private static final Map<ValueType, JsonFieldAccessor<?>> ACCESSORS = new HashMap<>();
+    private static final Map<ValueType, JsonFieldAccessor> ACCESSORS = new HashMap<>();
 
     /**
      * Creates a new {@link DefaultJSONStructConverter} instance.
@@ -50,13 +50,13 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
         ACCESSORS.put(ValueType.NULL, new NullJsonFieldAccessor());
     }
 
-    private static JsonFieldAccessor<?> getAccessorForType(final ValueType type) {
+    private static JsonFieldAccessor getAccessorForType(final ValueType type) {
         if (type == ValueType.INVALID) {
             throw new ReaderException(
                 "Error while reading value in JSON," +
                 " invalid type encounter - this is generally due to an unexpected character.");
         }
-        JsonFieldAccessor<?> accessor = ACCESSORS.get(type);
+        JsonFieldAccessor accessor = ACCESSORS.get(type);
         if (accessor == null) {
             throw new ReaderException("Error while reading value in JSON - Unknown type " + type);
         }
@@ -81,12 +81,12 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
 
     }
 
-    private interface JsonFieldAccessor<T> {
+    private interface JsonFieldAccessor {
 
         TypedValue read(final JsonIterator it) throws IOException;
     }
 
-    private static class NullJsonFieldAccessor implements JsonFieldAccessor<Object> {
+    private static class NullJsonFieldAccessor implements JsonFieldAccessor {
 
         @Override
         public TypedValue read(JsonIterator it) throws IOException {
@@ -95,7 +95,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
         }
     }
 
-    private static class NumberJsonFieldAccessor implements JsonFieldAccessor<Object> {
+    private static class NumberJsonFieldAccessor implements JsonFieldAccessor {
 
         @Override
         public TypedValue read(final JsonIterator it) throws IOException {
@@ -134,7 +134,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
             return TypedValue.string(it.readString());
         }
     }
-    private static class ArrayJsonFieldAccessor implements JsonFieldAccessor<List<?>> {
+    private static class ArrayJsonFieldAccessor implements JsonFieldAccessor {
 
 
         @Override
@@ -151,7 +151,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
             return TypedValue.array(array, type != null ? Schema.of(type) : SchemaSupplier.lazy(array).get());
         }
     }
-    private static class ObjectJsonFieldAccessor implements JsonFieldAccessor<TypedStruct> {
+    private static class ObjectJsonFieldAccessor implements JsonFieldAccessor {
 
         @Override
         public TypedValue read(final JsonIterator it) throws IOException {
@@ -160,7 +160,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
 
             for (String field = it.readObject(); field != null; field = it.readObject()) {
                 ValueType valueType = it.whatIsNext();
-                JsonFieldAccessor<?> accessor = getAccessorForType(valueType);
+                JsonFieldAccessor accessor = getAccessorForType(valueType);
                 TypedValue value = accessor.read(it);
                 struct.put(field, value);
             }

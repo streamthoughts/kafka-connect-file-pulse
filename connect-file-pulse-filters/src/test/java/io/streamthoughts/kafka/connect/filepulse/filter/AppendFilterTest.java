@@ -118,4 +118,15 @@ public class AppendFilterTest {
         RecordsIterable<TypedStruct> results = filter.apply(context, input, false);
         Assert.assertEquals("[foo, bar]", results.last().getArray("field").toString());
     }
+
+    @Test
+    public void shouldEmptyFieldGivenNullExpression() {
+        configs.put(AppendFilterConfig.APPEND_FIELD_CONFIG, "$value.field");
+        configs.put(AppendFilterConfig.APPEND_VALUE_CONFIG, "{{ null }}");
+        configs.put(AppendFilterConfig.APPEND_OVERWRITE_CONFIG, "true");
+        filter.configure(configs, alias -> null);
+        final TypedStruct input = TypedStruct.create().put("field", "foo");
+        RecordsIterable<TypedStruct> results = filter.apply(context, input, false);
+        Assert.assertNull(results.last().get("field").value());
+    }
 }

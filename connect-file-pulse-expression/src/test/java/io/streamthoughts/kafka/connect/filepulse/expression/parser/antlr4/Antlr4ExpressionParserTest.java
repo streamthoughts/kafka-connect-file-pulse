@@ -50,6 +50,14 @@ public class Antlr4ExpressionParserTest {
     }
 
     @Test
+    public void should_parse_value_expression_given_null_literal() {
+        Expression expression = new Antlr4ExpressionParser().parseExpression("null");
+        Assert.assertEquals("null", expression.originalExpression());
+        Assert.assertTrue(expression instanceof ValueExpression);
+        Assert.assertTrue(((ValueExpression) expression).value().isNull());
+    }
+
+    @Test
     public void should_parse_value_expression_given_integer_literal() {
         Expression expression = new Antlr4ExpressionParser().parseExpression("0");
         Assert.assertTrue(expression instanceof ValueExpression);

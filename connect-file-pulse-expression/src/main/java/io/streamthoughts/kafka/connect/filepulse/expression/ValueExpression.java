@@ -27,7 +27,7 @@ import java.util.Objects;
 
 public class ValueExpression extends AbstractExpression {
 
-    private final String value;
+    private final Object value;
 
     /**
      * Static helper to create a new {@link ValueExpression} for the given expression and value.
@@ -46,10 +46,11 @@ public class ValueExpression extends AbstractExpression {
      * @param value              the static value.
      */
     public ValueExpression(final String originalExpression,
-                           final String value) {
+                           final Object value) {
         super(originalExpression);
         this.value = value;
     }
+
 
     /**
      * {@inheritDoc}
@@ -65,15 +66,18 @@ public class ValueExpression extends AbstractExpression {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T readValue(final EvaluationContext context, final Class<T> expectedType) {
-        if (expectedType == String.class) {
-            return (T) value;
-        }
+        if (value == null)
+            return null;
+
+        if (expectedType == String.class)
+            return (T) value().getString();
+
         final List<PropertyConverter> converters = context.getPropertyConverter();
         return Converters.converts(converters, value, expectedType);
     }
 
     public TypedValue value() {
-        return TypedValue.string(value);
+        return TypedValue.any(value);
     }
 
     /**
@@ -117,6 +121,6 @@ public class ValueExpression extends AbstractExpression {
      */
     @Override
     public String toString() {
-        return value;
+        return value().getString();
     }
 }

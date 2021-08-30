@@ -19,7 +19,6 @@
 
 package io.streamthoughts.kafka.connect.filepulse.expression.parser.antlr4;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.FunctionExpression;
@@ -52,6 +51,9 @@ public class Antlr4ExpressionParser implements ExpressionParser {
 
     private static final String DEFAULT_ROOT_OBJECT = "value";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Expression parseExpression(final String expression) throws ExpressionException {
         return parseExpression(expression, DEFAULT_ROOT_OBJECT);
@@ -102,6 +104,7 @@ public class Antlr4ExpressionParser implements ExpressionParser {
 
     private static class ExpressionProvider extends ScELParserBaseListener {
 
+        public static final String NULL_STRING = "null";
         private final String originalExpression;
         private final String defaultScope;
 
@@ -110,7 +113,7 @@ public class Antlr4ExpressionParser implements ExpressionParser {
             this.defaultScope = defaultScope;
         }
 
-        private IdentityHashMap<ParserRuleContext, ContextExpressions> contexts = new IdentityHashMap<>();
+        private final IdentityHashMap<ParserRuleContext, ContextExpressions> contexts = new IdentityHashMap<>();
 
         private ContextExpressions current = new ContextExpressions(null);
 
@@ -209,10 +212,13 @@ public class Antlr4ExpressionParser implements ExpressionParser {
             final String originalExpression = ctx.getText();
 
             String value = originalExpression;
-            if (value.startsWith("'") && value.endsWith("'")) {
+            if (value.equalsIgnoreCase(NULL_STRING)) {
+                value = null;
+            } else if (value.startsWith("'") && value.endsWith("'")) {
                 value = value.substring(1);
                 value = value.substring(0, value.length() - 1);
             }
+
             current.expressions.add(new ValueExpression(originalExpression, value));
         }
     }

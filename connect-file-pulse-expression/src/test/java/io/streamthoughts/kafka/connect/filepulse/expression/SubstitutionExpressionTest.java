@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class SubstitutionExpressionTest {
 
@@ -31,11 +32,23 @@ public class SubstitutionExpressionTest {
     private static final String SUFFIX = "-suffix";
     private static final String PREFIX = "prefix-";
 
-    private static EvaluationContext context = new StandardEvaluationContext(new Object());
+    private static final EvaluationContext context = new StandardEvaluationContext(new Object());
 
     private static final String EVALUATED_VALUE = "value";
 
-    private static Expression DEFAULT_EXPRESSION = ValueExpression.of(EVALUATED_VALUE);
+    private static final Expression DEFAULT_EXPRESSION = ValueExpression.of(EVALUATED_VALUE);
+
+    @Test
+    public void testGivenNullExpressionReplacement() {
+        final String str = "{{ null }}";
+        SubstitutionExpression expression = new SubstitutionExpression(
+                str,
+                0,
+                str.length(),
+                new ValueExpression(str, null));
+
+        assertNull(expression.readValue(context));
+    }
 
     @Test
     public void testGivenSingleExpressionReplacement() {

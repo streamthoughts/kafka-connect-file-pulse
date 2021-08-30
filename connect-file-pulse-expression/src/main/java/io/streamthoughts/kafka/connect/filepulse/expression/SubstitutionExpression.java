@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -89,7 +90,7 @@ public class SubstitutionExpression extends AbstractExpression {
      */
     @Override
     public Object readValue(final EvaluationContext context) {
-        return readValue(context, TypedValue.class).value();
+        return Optional.ofNullable(readValue(context, TypedValue.class)).map(TypedValue::value).orElse(null);
     }
 
     /**
@@ -199,7 +200,8 @@ public class SubstitutionExpression extends AbstractExpression {
                 values.add(replacement.readValue(context, TypedValue.class));
             }
             if (values.size() == 1) {
-                return values.get(0).value();
+                final TypedValue typed = values.get(0);
+                return typed == null ? null : typed.value();
             }
             return values.stream().map(TypedValue::getString).collect(Collectors.joining());
         }

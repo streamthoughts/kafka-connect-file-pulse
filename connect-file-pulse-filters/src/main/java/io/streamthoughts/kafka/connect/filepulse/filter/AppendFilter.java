@@ -85,16 +85,13 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
 
             internalContext.setValue(record);
             final Object value = expression.readValue(readEvaluationContext);
+            internalContext.setValue(target);
 
-            if (value != null) {
-                internalContext.setValue(target);
-
-                final StandardEvaluationContext writeEvaluationContext = new StandardEvaluationContext(
+            final StandardEvaluationContext writeEvaluationContext = new StandardEvaluationContext(
                     internalContext,
                     internalContext.variables()
-                );
-                writeExpression.writeValue(value, writeEvaluationContext);
-            }
+            );
+            writeExpression.writeValue(value, writeEvaluationContext);
         }
         return RecordsIterable.of(target);
     }

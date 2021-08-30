@@ -24,7 +24,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.parser.antlr4.Antlr4
 
 public class ExpressionParsers  {
 
-    private static Antlr4ExpressionParser DEFAULT = new Antlr4ExpressionParser();
+    private static final Antlr4ExpressionParser DEFAULT = new Antlr4ExpressionParser();
 
     /**
      * Static helper method to parse an expression using default {@link ExpressionParser}.

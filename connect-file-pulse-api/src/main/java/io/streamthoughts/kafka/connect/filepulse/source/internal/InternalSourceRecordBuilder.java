@@ -33,7 +33,7 @@ public class InternalSourceRecordBuilder {
     private String topic;
     private Integer partition;
     private Supplier<SchemaAndValue> keySupplier;
-    private Supplier<SchemaAndValue> valueSupplier;
+    private final Supplier<SchemaAndValue> valueSupplier;
     private Long timestamp;
     private ConnectHeaders additionalHeaders;
 
@@ -56,7 +56,7 @@ public class InternalSourceRecordBuilder {
         Objects.requireNonNull(sourceOffset, "sourceOffset cannot be null");
         Objects.requireNonNull(metadata, "metadata cannot be null");
 
-        final SchemaAndValue key = (keySupplier != null) ? keySupplier.get() : null;
+        final SchemaAndValue key = keySupplier != null ? keySupplier.get() : null;
         final SchemaAndValue value = valueSupplier.get();
 
         if (key == null && value == null) {
@@ -64,7 +64,7 @@ public class InternalSourceRecordBuilder {
         }
 
         final ConnectHeaders headers = metadata.toConnectHeader();
-        if( additionalHeaders != null) {
+        if (additionalHeaders != null) {
             additionalHeaders.forEach(headers::add);
         }
 
@@ -73,10 +73,10 @@ public class InternalSourceRecordBuilder {
             sourceOffset,
             topic != null ? topic : defaultTopic,
             partition != null ? partition : defaultPartition,
-            key != null ? key.schema() :  null,
+            key != null ? key.schema() : null,
             key != null ? key.value() : null,
-            value.schema(),
-            value.value(),
+            value != null ? value.schema() : null,
+            value != null ? value.value() : null,
             timestamp,
             headers
         );

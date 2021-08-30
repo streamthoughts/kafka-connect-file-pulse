@@ -24,6 +24,7 @@ import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,18 +96,18 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
         while (iterator.hasNext()) {
             FileRecord<TypedStruct> record = iterator.next();
             boolean doHasNext = hasNext || iterator.hasNext();
-            FilterContext context = getContextFor(record, this.context.metadata());
+            FilterContext context = getContextFor(record.offset(), this.context.metadata());
             results.addAll(apply(context, record.value(), doHasNext));
         }
         return new RecordsIterable<>(results);
     }
 
-    private FilterContext getContextFor(final FileRecord<TypedStruct> record,
+    private FilterContext getContextFor(final FileRecordOffset offset,
                                         final FileObjectMeta metadata) {
         return FilterContextBuilder
             .newBuilder()
             .withMetadata(metadata)
-            .withOffset(record.offset())
+            .withOffset(offset)
             .build();
     }
 
@@ -247,7 +248,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
                 while (iterator.hasNext()) {
                     final FileRecord<TypedStruct> record = iterator.next();
                     // create a new context for buffered records.
-                    final FilterContext renewedContext = getContextFor(record, context.metadata());
+                    final FilterContext renewedContext = getContextFor(record.offset(), context.metadata());
                     filtered.addAll(onSuccess.apply(renewedContext, record.value(), iterator.hasNext()));
                 }
             } else {

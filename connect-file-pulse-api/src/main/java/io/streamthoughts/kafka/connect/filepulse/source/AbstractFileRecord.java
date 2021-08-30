@@ -32,10 +32,9 @@ public abstract class AbstractFileRecord<T> implements FileRecord<T> {
      */
     AbstractFileRecord(final FileRecordOffset offset,
                        final T value) {
-        Objects.requireNonNull(offset, "offset cannot be null");
-        Objects.requireNonNull(value, "value cannot be null");
+        this.offset = Objects.requireNonNull(offset, "offset cannot be null");
         this.value = value;
-        this.offset = offset;
+
     }
 
     /**

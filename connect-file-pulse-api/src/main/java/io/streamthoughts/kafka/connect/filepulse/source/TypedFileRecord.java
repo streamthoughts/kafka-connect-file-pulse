@@ -42,8 +42,8 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
     public TypedFileRecord(final FileRecordOffset offset,
                            final TypedStruct struct) {
         super(offset, struct);
-        this.internalSourceRecordBuilder = new InternalSourceRecordBuilder(
-            () -> struct.schema().map(ConnectSchemaMapper.INSTANCE, struct)
+        internalSourceRecordBuilder = new InternalSourceRecordBuilder(() ->
+            struct == null ? null : struct.schema().map(ConnectSchemaMapper.INSTANCE, struct)
         );
     }
 
@@ -91,8 +91,7 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                 if (key == null || key.isNull() ) {
                     return null;
                 }
-                return key.schema()
-                          .map(ConnectSchemaMapper.INSTANCE, key.value());
+                return key.schema().map(ConnectSchemaMapper.INSTANCE, key.value());
             }
         );
         return this;

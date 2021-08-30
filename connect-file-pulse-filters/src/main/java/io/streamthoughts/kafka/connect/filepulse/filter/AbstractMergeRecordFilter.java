@@ -24,13 +24,13 @@ import io.streamthoughts.kafka.connect.filepulse.data.merger.TypeValueMerger;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter<T>> extends AbstractRecordFilter<T> {
 
     private final TypeValueMerger merger = new DefaultTypeValueMerger();
-
 
     /**
      * {@inheritDoc}
@@ -44,8 +44,13 @@ public abstract class AbstractMergeRecordFilter<T extends AbstractRecordFilter<T
 
         final List<TypedStruct> merged = filtered
                 .stream()
-                .map(r -> merger.merge(record, r, overwrite()))
+                .map(it -> Optional.ofNullable(it)
+                    // only non-null records should be merged
+                    .map(o -> merger.merge(record, o, overwrite()))
+                    .orElse(null)
+                )
                 .collect(Collectors.toList());
+
         return new RecordsIterable<>(merged);
     }
 

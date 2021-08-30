@@ -28,6 +28,7 @@ import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,19 +81,25 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
 
         final Expression writeExpression = mayEvaluateWriteExpression(readEvaluationContext);
 
-        final TypedStruct target = TypedStruct.create();
-        for (final Expression expression : values) {
+        TypedStruct target = TypedStruct.create();
+        for (Iterator<Expression> iterator = values.iterator(); iterator.hasNext() && target != null; ) {
+            Expression expression = iterator.next();
 
-            internalContext.setValue(record);
+            internalContext.setValue(record); // set the readable value before evaluating the expression
             final Object value = expression.readValue(readEvaluationContext);
-            internalContext.setValue(target);
+
 
             final StandardEvaluationContext writeEvaluationContext = new StandardEvaluationContext(
                     internalContext,
                     internalContext.variables()
             );
+            internalContext.setValue(target); // set the writable value before evaluating the expression
             writeExpression.writeValue(value, writeEvaluationContext);
+
+            // We must retrieve the target-value from the context which be set to null by the expression.
+            target = internalContext.value();
         }
+
         return RecordsIterable.of(target);
     }
 
@@ -116,7 +123,7 @@ public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
      */
     @Override
     protected Set<String> overwrite() {
-        if (config.isOverwritten()) {
+        if (config.isOverwritten() && target != null) {
             return Collections.singleton(target);
         }
         return Collections.emptySet();

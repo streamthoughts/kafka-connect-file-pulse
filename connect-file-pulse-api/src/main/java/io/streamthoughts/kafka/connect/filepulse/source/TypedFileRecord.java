@@ -22,6 +22,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.source.internal.ConnectSchemaMapper;
 import io.streamthoughts.kafka.connect.filepulse.source.internal.InternalSourceRecordBuilder;
+import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.source.SourceRecord;
 
@@ -42,9 +43,8 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
     public TypedFileRecord(final FileRecordOffset offset,
                            final TypedStruct struct) {
         super(offset, struct);
-        internalSourceRecordBuilder = new InternalSourceRecordBuilder(() ->
-            struct == null ? null : struct.schema().map(ConnectSchemaMapper.INSTANCE, struct)
-        );
+        internalSourceRecordBuilder = new InternalSourceRecordBuilder();
+
     }
 
     /**
@@ -55,7 +55,20 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                                        final Map<String, ?> sourceOffset,
                                        final FileObjectMeta metadata,
                                        final String defaultTopic,
-                                       final Integer defaultPartition) {
+                                       final Integer defaultPartition,
+                                       final Schema connectSchema) {
+
+        final TypedStruct value = value();
+
+        if (connectSchema != null) {
+            internalSourceRecordBuilder.withValue(() ->
+                value == null ? null : ConnectSchemaMapper.INSTANCE.map(connectSchema, value)
+            );
+        } else {
+            internalSourceRecordBuilder.withValue(() ->
+                value == null ? null : ConnectSchemaMapper.INSTANCE.map(value.schema(), value)
+            );
+        }
         return internalSourceRecordBuilder.build(
             sourcePartition,
             sourceOffset,

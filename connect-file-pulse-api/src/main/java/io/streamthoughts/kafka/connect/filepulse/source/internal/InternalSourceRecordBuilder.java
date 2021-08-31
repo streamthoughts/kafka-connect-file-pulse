@@ -33,19 +33,14 @@ public class InternalSourceRecordBuilder {
     private String topic;
     private Integer partition;
     private Supplier<SchemaAndValue> keySupplier;
-    private final Supplier<SchemaAndValue> valueSupplier;
+    private Supplier<SchemaAndValue> valueSupplier;
     private Long timestamp;
     private ConnectHeaders additionalHeaders;
 
     /**
      * Creates a new {@link InternalSourceRecordBuilder} instance.
-     *
-     * @param valueSupplier the {@link Supplier} for toConnectSchema and value record-value.
      */
-    public InternalSourceRecordBuilder(final Supplier<SchemaAndValue> valueSupplier) {
-        Objects.requireNonNull(valueSupplier, "valueSupplier cannot be null");
-        this.valueSupplier = valueSupplier;
-    }
+    public InternalSourceRecordBuilder() {}
 
     public SourceRecord build(final Map<String, ?> sourcePartition,
                               final Map<String, ?> sourceOffset,
@@ -57,7 +52,7 @@ public class InternalSourceRecordBuilder {
         Objects.requireNonNull(metadata, "metadata cannot be null");
 
         final SchemaAndValue key = keySupplier != null ? keySupplier.get() : null;
-        final SchemaAndValue value = valueSupplier.get();
+        final SchemaAndValue value = valueSupplier != null ? valueSupplier.get() : null;
 
         if (key == null && value == null) {
             throw new InvalidRecordException("key and value cannot be both null");
@@ -80,6 +75,10 @@ public class InternalSourceRecordBuilder {
             timestamp,
             headers
         );
+    }
+
+    public void withValue(final Supplier<SchemaAndValue> valueSupplier) {
+        this.valueSupplier = valueSupplier;
     }
 
     public void withKey(final Supplier<SchemaAndValue> keySupplier) {

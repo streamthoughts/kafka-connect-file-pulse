@@ -18,11 +18,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
+import org.apache.kafka.connect.data.SchemaAndValue;
+
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * Default interface to map {@link Schema} and a value.
+ * Default interface to map {@link io.streamthoughts.kafka.connect.filepulse.data.Schema} and a value.
  *
  * @param <T>   target type.
  */
@@ -35,4 +37,6 @@ public interface SchemaMapperWithValue<T> {
     T map(final StructSchema schema, final TypedStruct value);
 
     T map(final SimpleSchema schema, final Object value);
+
+    SchemaAndValue map(final org.apache.kafka.connect.data.Schema schema, final TypedStruct value);
 }

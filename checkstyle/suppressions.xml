@@ -44,12 +44,9 @@
     <suppress checks="LineLength" files="GrokPatternCompiler.java"/>
     <suppress checks="LineLength" files="DefaultFileSystemMonitor.java"/>
     <suppress checks="LineLength" files="ComposeOffsetStrategy.java"/>
-    <suppress checks="LineLength" files=".*Config.java"/>
-    <!-- Those classes are copy from kafka-connect api-->
-    <suppress checks="LineLength" files="KafkaBasedLog.java"/>
-    <suppress checks="NPathComplexity" files="KafkaBasedLog.java"/>
     <suppress checks="NPathComplexity" files="StructSchema.java"/>
     <suppress checks="NPathComplexity" files="Schema.java"/>
+    <suppress checks="NPathComplexity" files="InternalSourceRecordBuilder.java"/>
     <suppress checks="CyclomaticComplexity" files="Schema.java"/>
     <suppress checks="LineLength" files="KafkaStateBackingStore.java"/>
     <suppress checks="NPathComplexity" files="DefaultFileRecordsPollingConsumer.java"/>
@@ -57,10 +54,11 @@
     <suppress checks="ParameterNumber" files="InternalFilterContext" />
     <suppress checks="Header" files="kafka-connect-source-file-pulse-version.properties"/>
     <suppress checks="Header" files="log4j.properties"/>
-
-    <suppress checks="Header" files="log4j.properties"/>
-
     <suppress checks="[a-zA-Z0-9]*" files="src/main/java/io/streamthoughts/kafka/connect/filepulse/expression/parser/antlr4/*"/>
     <suppress checks="BooleanExpressionComplexity" files="io.streamthoughts.kafka.connect.filepulse.internal.StringUtils"/>
-
+    <!-- Those classes are copy from kafka-connect api-->
+    <suppress checks="LineLength" files="KafkaBasedLog.java"/>
+    <suppress checks="NPathComplexity" files="KafkaBasedLog.java"/>
+    <!-- Classes used for configuration -->
+    <suppress checks="(LineLength|CyclomaticComplexity|NPathComplexity|JavaNCSS)" files=".*Config.java"/>
 </suppressions>

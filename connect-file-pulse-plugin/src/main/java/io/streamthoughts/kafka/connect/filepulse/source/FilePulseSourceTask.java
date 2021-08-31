@@ -246,7 +246,8 @@ public class FilePulseSourceTask extends SourceTask {
                     sourceOffsets,
                     context.metadata(),
                     topic,
-                    NO_PARTITION
+                    NO_PARTITION,
+                    taskConfig.getValueConnectSchema()
             );
         } catch (final Throwable t) {
             throw new ConnectFilePulseException(

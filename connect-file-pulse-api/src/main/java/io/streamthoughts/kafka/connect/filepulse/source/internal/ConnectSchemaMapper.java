@@ -169,8 +169,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
      */
     @Override
     public SchemaAndValue map(final StructSchema schema, final TypedStruct struct) {
-        final Schema connectSchema = schema.map(this);
-        return new SchemaAndValue(connectSchema, toConnectStruct(connectSchema, struct));
+        return map(schema.map(this), struct);
     }
 
     /**
@@ -179,6 +178,14 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
     @Override
     public SchemaAndValue map(final SimpleSchema schema, final Object value) {
         return new SchemaAndValue(schema.map(this), value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SchemaAndValue map(final Schema connectSchema, final TypedStruct value) {
+        return new SchemaAndValue(connectSchema, toConnectStruct(connectSchema, value));
     }
 
     private static Struct toConnectStruct(final Schema connectSchema, final TypedStruct struct) {

@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
+import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.source.SourceRecord;
 
 import java.util.Map;
@@ -51,6 +52,7 @@ public interface FileRecord<T> {
      * @param metadata          the {@link LocalFileObjectMeta} to be used.
      * @param defaultTopic      the default topic to be used.
      * @param defaultPartition  the default partition to be used.
+     * @param connectSchema     the connect Schema to be used which can be {@code null}.
      *
      * @return                  the new {@link SourceRecord} instance.
      */
@@ -59,5 +61,6 @@ public interface FileRecord<T> {
             final Map<String, ?> sourceOffset,
             final FileObjectMeta metadata,
             final String defaultTopic,
-            final Integer defaultPartition);
+            final Integer defaultPartition,
+            final Schema connectSchema);
 }

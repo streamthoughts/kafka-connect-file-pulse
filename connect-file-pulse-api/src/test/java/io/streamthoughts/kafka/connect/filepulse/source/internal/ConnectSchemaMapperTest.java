@@ -19,16 +19,13 @@
 package io.streamthoughts.kafka.connect.filepulse.source.internal;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.Struct;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -137,7 +134,7 @@ public class ConnectSchemaMapperTest {
         SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
         Assert.assertNotNull(schemaAndValue);
 
-        Struct connectStruct = (Struct)schemaAndValue.value();
+        Struct connectStruct = (Struct) schemaAndValue.value();
         Assert.assertNotNull(connectStruct.schema().field("field1"));
         Assert.assertNull(connectStruct.schema().field("field2"));
     }

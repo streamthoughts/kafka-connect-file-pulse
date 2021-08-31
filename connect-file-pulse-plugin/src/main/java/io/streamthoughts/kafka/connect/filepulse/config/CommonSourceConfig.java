@@ -18,8 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import com.jsoniter.JsonIterator;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
+import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
@@ -28,10 +30,15 @@ import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingSto
 import io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigException;
+import org.apache.kafka.connect.data.Schema;
+import org.apache.kafka.connect.data.SchemaBuilder;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  *
@@ -71,6 +78,9 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public static final String TASK_PARTITIONER_CLASS_CONFIG = "task.partitioner.class";
     private static final String TASK_PARTITIONER_CLASS_DOC    = "The TaskPartitioner to be used for partitioning files to tasks";
+
+    public static final String RECORD_VALUE_SCHEMA_CONFIG = "value.connect.schema";
+    public static final String RECORD_VALUE_SCHEMA_DOC = "The schema for the record-value";
 
     /**
      * Creates a new {@link CommonSourceConfig} instance.
@@ -161,6 +171,17 @@ public class CommonSourceConfig extends AbstractConfig {
                         TASKS_FILE_STATUS_STORAGE_CLASS_CONFIG
                 )
                 .define(
+                        RECORD_VALUE_SCHEMA_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.MEDIUM,
+                        RECORD_VALUE_SCHEMA_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        RECORD_VALUE_SCHEMA_CONFIG
+                )
+                .define(
                         FILTER_CONFIG,
                         ConfigDef.Type.LIST,
                         Collections.emptyList(),
@@ -213,5 +234,109 @@ public class CommonSourceConfig extends AbstractConfig {
                 TASKS_FILE_STATUS_STORAGE_CLASS_CONFIG,
                 FileObjectStateBackingStore.class
         );
+    }
+
+    public Schema getValueConnectSchema() {
+        return readSchema(RECORD_VALUE_SCHEMA_CONFIG);
+    }
+
+    private Schema readSchema(final String key) {
+        final String schema = this.getString(key);
+
+        if (StringUtils.isBlank(schema)) {
+            return null;
+        }
+
+        try {
+            return JsonIterator.deserialize(schema, ConfigSchema.class).get();
+        } catch (Exception e) {
+            throw new ConfigException("Failed to read schema for '" + key + "'", e);
+        }
+    }
+
+    public static class ConfigSchema implements Supplier<Schema> {
+
+        public Schema.Type type;
+        public boolean isOptional;
+        public String name;
+        public Integer version;
+        public Object defaultValue;
+        public String doc;
+        public Map<String, String> parameters;
+        public ConfigSchema keySchema;
+        public ConfigSchema valueSchema;
+        public Map<String, ConfigSchema> fieldSchemas;
+
+        @Override
+        public Schema get() {
+            final SchemaBuilder builder;
+            switch (this.type) {
+                case MAP:
+                    Objects.requireNonNull(keySchema, "keySchema cannot be null.");
+                    Objects.requireNonNull(valueSchema, "valueSchema cannot be null.");
+                    builder = SchemaBuilder.map(keySchema.get(), valueSchema.get());
+                    break;
+                case ARRAY:
+                    Objects.requireNonNull(valueSchema, "valueSchema cannot be null.");
+                    builder = SchemaBuilder.array(valueSchema.get());
+                    break;
+                default:
+                    builder = SchemaBuilder.type(type);
+                    break;
+            }
+
+            if (Schema.Type.STRUCT == type) {
+                for (Map.Entry<String, ConfigSchema> kvp : fieldSchemas.entrySet()) {
+                    builder.field(kvp.getKey(), kvp.getValue().get());
+                }
+            }
+
+            if (StringUtils.isNotBlank(name))
+                builder.name(name);
+
+            if (StringUtils.isNotBlank(doc))
+                builder.doc(doc);
+
+            if (null != defaultValue) {
+                Object value;
+                switch (type) {
+                    case INT8:
+                        value = ((Number) defaultValue).byteValue();
+                        break;
+                    case INT16:
+                        value = ((Number) defaultValue).shortValue();
+                        break;
+                    case INT32:
+                        value = ((Number) defaultValue).intValue();
+                        break;
+                    case INT64:
+                        value = ((Number) defaultValue).longValue();
+                        break;
+                    case FLOAT32:
+                        value = ((Number) defaultValue).floatValue();
+                        break;
+                    case FLOAT64:
+                        value = ((Number) defaultValue).doubleValue();
+                        break;
+                    default:
+                        value = defaultValue;
+                        break;
+                }
+                builder.defaultValue(value);
+            }
+
+            if (null != parameters) {
+                builder.parameters(parameters);
+            }
+
+            if (isOptional) {
+                builder.optional();
+            }
+
+            if (null != version) {
+                builder.version(version);
+            }
+            return builder.build();
+        }
     }
 }

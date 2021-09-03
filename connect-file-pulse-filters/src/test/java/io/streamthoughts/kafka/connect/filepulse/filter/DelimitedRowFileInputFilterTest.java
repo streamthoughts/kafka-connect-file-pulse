@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_COLUMNS_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG;
@@ -42,11 +43,9 @@ public class DelimitedRowFileInputFilterTest {
 
     private DelimitedRowFilter filter;
 
-
     private static final TypedStruct DEFAULT_STRUCT = TypedStruct.create()
         .put("message", "value1;2;true")
         .put("headers", Collections.singletonList("col1;col2;col3"));
-
 
     @Before
     public void setUp() {
@@ -101,6 +100,32 @@ public class DelimitedRowFileInputFilterTest {
         Assert.assertEquals("value3", output.getString("col3"));
     }
 
+    @Test
+    public void should_generate_column_names_given_records_with_different_size() {
+        configs.put(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG, "true");
+        filter.configure(configs, alias -> null);
+
+        TypedStruct input, output;
+
+        input = TypedStruct.create().put("message", "value1;value2;");
+        RecordsIterable<TypedStruct> iterable1 = filter.apply(null, input, false);
+        Assert.assertNotNull(iterable1);
+        Assert.assertEquals(1, iterable1.size());
+
+        output = iterable1.iterator().next();
+        Assert.assertNotNull(output.schema().field("column1"));
+        Assert.assertNotNull(output.schema().field("column2"));
+
+        input = TypedStruct.create().put("message", "value1;value2;value3");
+        RecordsIterable<TypedStruct> iterable2 = filter.apply(null, input, false);
+        Assert.assertNotNull(iterable2);
+        Assert.assertEquals(1, iterable2.size());
+
+        output = iterable2.iterator().next();
+        Assert.assertNotNull(output.schema().field("column1"));
+        Assert.assertNotNull(output.schema().field("column2"));
+        Assert.assertNotNull(output.schema().field("column3"));
+    }
 
     @Test(expected = DataException.class)
     public void should_fail_given_repeated_columns_names_and_duplicate_not_allowed() {

@@ -88,8 +88,8 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
 
     private boolean isMandatoryConfigsMissing() {
         return configs.schema() == null &&
-                configs.extractColumnName() == null &&
-                !configs.isAutoGenerateColumnNames();
+               configs.extractColumnName() == null &&
+               !configs.isAutoGenerateColumnNames();
     }
 
     /**
@@ -111,11 +111,20 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
         final String source = record.first(DEFAULT_SOURCE_FIELD).getString();
 
         String[] columnValues = splitColumnValues(source);
-        if (schema == null) {
+
+        if (schema == null || isSchemaDynamic()) {
             inferSchemaFromRecord(record, columnValues.length);
         }
         final TypedStruct struct = buildStructForFields(columnValues);
         return RecordsIterable.of(struct);
+    }
+
+    public boolean isSchemaDynamic() {
+        // Schema SHOULD be inferred for each record when columns name are auto generate.
+        // This rule is used to handle cases where records may have different number of columns.
+        return configs.extractColumnName() == null &&
+               configs.schema() == null &&
+               configs.isAutoGenerateColumnNames();
     }
 
     private void inferSchemaFromRecord(final TypedStruct record, int numColumns) {
@@ -126,7 +135,8 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
             String field = record.first(fieldName).getString();
             if (field == null) {
                 throw new FilterException(
-                        "Can't found field for name '" + fieldName + "' to determine columns names");
+                    "Cannot find field for name '" + fieldName + "' to determine columns names"
+                );
             }
             final List<String> columns = Arrays
                     .stream(splitColumnValues(field))
@@ -168,7 +178,8 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
     private TypedStruct buildStructForFields(final String[] fieldValues) {
         if (fieldValues.length > columnsTypesByIndex.size()) {
             throw new FilterException(
-                    "Error while reading delimited input row. Too large number of fields (" + fieldValues.length + ")");
+                "Error while reading delimited input row. Too large number of fields (" + fieldValues.length + ")"
+            );
         }
 
         TypedStruct struct = TypedStruct.create();

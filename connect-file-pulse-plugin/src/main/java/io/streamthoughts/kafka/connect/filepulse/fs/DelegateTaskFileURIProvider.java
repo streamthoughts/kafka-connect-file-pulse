@@ -55,10 +55,13 @@ public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
 
     private StateSnapshot<FileObject> fileState;
 
+    private boolean isFirstCall = true;
+
     /**
      * Creates a new {@link DelegateTaskFileURIProvider} instance.
      */
-    public DelegateTaskFileURIProvider() { }
+    public DelegateTaskFileURIProvider() {
+    }
 
     /**
      * {@inheritDoc}
@@ -84,10 +87,29 @@ public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
     @Override
     public List<URI> nextURIs() {
         refreshState();
-        final Collection<FileObjectMeta> filtered = FileObjectCandidatesFilter
-                .filter(sourceOffsetPolicy, fileState, fileSystemListing.listObjects())
-                .values();
+        final Collection<FileObjectMeta> filtered = FileObjectCandidatesFilter.filter(
+                sourceOffsetPolicy,
+                fileObjectKey -> {
+                    final FileObject fileObject = fileState.getForKey(fileObjectKey.original());
 
+                    if (fileObject == null)
+                        return true;
+
+                    switch (fileObject.status()) {
+                        case COMMITTED:
+                        case FAILED:
+                        case CLEANED:
+                            return false;
+                        case COMPLETED:
+                            return isFirstCall;
+                        default:
+                            return true;
+                    }
+                },
+                fileSystemListing.listObjects()
+        ).values();
+
+        isFirstCall = false;
         return partitioner.partitionForTask(filtered, config.getTaskCount(), config.getTaskId());
     }
 

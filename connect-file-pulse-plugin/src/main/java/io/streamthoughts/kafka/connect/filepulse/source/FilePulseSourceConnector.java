@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.Version;
-import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.config.SourceConnectorConfig;
 import io.streamthoughts.kafka.connect.filepulse.config.SourceTaskConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.CompositeFileListFilter;
@@ -111,20 +110,20 @@ public class FilePulseSourceConnector extends SourceConnector {
                     false
             );
 
+            partitioner = connectorConfig.getTaskPartitioner();
+
             final FileSystemListing<?> fileSystemListing = connectorConfig.getFileSystemListing();
             fileSystemListing.setFilter(new CompositeFileListFilter(connectorConfig.getFileSystemListingFilter()));
 
-            final FileCleanupPolicy cleaner = connectorConfig.getFileCleanupPolicy();
-            final SourceOffsetPolicy offsetPolicy = connectorConfig.getSourceOffsetPolicy();
-
-            partitioner = connectorConfig.getTaskPartitioner();
             monitor = new DefaultFileSystemMonitor(
                     connectorConfig.allowTasksReconfigurationAfterTimeoutMs(),
                     fileSystemListing,
-                    cleaner,
-                    offsetPolicy,
+                    connectorConfig.getFsCleanupPolicy(),
+                    connectorConfig.getFsCleanupPolicyPredicate(),
+                    connectorConfig.getSourceOffsetPolicy(),
                     sharedStore.get().getResource()
             );
+
             monitor.setFileSystemListingEnabled(!connectorConfig.isFileListingTaskDelegationEnabled());
             fsMonitorThread = new FileSystemMonitorThread(context, monitor, connectorConfig.getListingInterval());
             fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {

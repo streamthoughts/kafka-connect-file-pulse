@@ -27,18 +27,18 @@ import java.util.Objects;
 /**
  * Default class to report file state progression into Kafka.
  */
-public class KafkaFileStateReporter implements StateListener {
+public class FileObjectStateReporter implements StateListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaFileStateReporter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileObjectStateReporter.class);
 
     private final StateBackingStore<FileObject> store;
 
     /**
-     * Creates a new {@link KafkaFileStateReporter} instance.
+     * Creates a new {@link FileObjectStateReporter} instance.
      *
      * @param store         the store to be used.
      */
-    KafkaFileStateReporter(final StateBackingStore<FileObject> store) {
+    FileObjectStateReporter(final StateBackingStore<FileObject> store) {
         Objects.requireNonNull(store, "store can't be null");
         this.store = store;
     }
@@ -63,14 +63,25 @@ public class KafkaFileStateReporter implements StateListener {
     }
 
     /**
+     * Notify a state change for the specified source file.
+     *
+     * @param context   the object file context.
+     * @param status    the status.
+     */
+    void notify(final FileContext context, final FileObjectStatus status) {
+        notify(context.key(), context.metadata(), context.offset(), status);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void onScheduled(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Scheduling source file '{}'", context.metadata());
-        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.SCHEDULED);
+        notify(context, FileObjectStatus.SCHEDULED);
     }
+
 
     /**
      * {@inheritDoc}
@@ -78,7 +89,7 @@ public class KafkaFileStateReporter implements StateListener {
     @Override
     public void onInvalid(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
-        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.INVALID);
+        notify(context, FileObjectStatus.INVALID);
     }
 
     /**
@@ -88,7 +99,7 @@ public class KafkaFileStateReporter implements StateListener {
     public void onStart(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Starting to precess source file '{}'", context.metadata());
-        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.STARTED);
+        notify(context, FileObjectStatus.STARTED);
     }
 
 
@@ -99,7 +110,7 @@ public class KafkaFileStateReporter implements StateListener {
     public void onCompleted(final FileContext context) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.debug("Completed source file '{}'", context.metadata());
-        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.COMPLETED);
+        notify(context, FileObjectStatus.COMPLETED);
     }
 
     /**
@@ -109,7 +120,7 @@ public class KafkaFileStateReporter implements StateListener {
     public void onFailure(final FileContext context, final Throwable t) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.error("Error while processing source file '{}'", context.metadata(), t);
-        notify(context.key(), context.metadata(), context.offset(), FileObjectStatus.FAILED);
+        notify(context, FileObjectStatus.FAILED);
     }
 
 }

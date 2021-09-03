@@ -51,6 +51,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -80,8 +81,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
     // List of files to be scheduled.
     private final Map<FileObjectKey, FileObjectMeta> scanned = new ConcurrentHashMap<>();
 
-    // List of files for which an event of completion has been received - those files are waiting for cleanup
-    private final LinkedBlockingQueue<FileObject> completed = new LinkedBlockingQueue<>();
+    // List of files that are cleanable.
+    private final LinkedBlockingQueue<FileObject> cleanable = new LinkedBlockingQueue<>();
 
     private StateSnapshot<FileObject> fileState;
 
@@ -101,35 +102,40 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
     private final AtomicBoolean fileSystemListingEnabled = new AtomicBoolean(true);
 
+    private final Predicate<FileObjectStatus> cleanablePredicate;
+
     /**
      * Creates a new {@link DefaultFileSystemMonitor} instance.
      *
      * @param allowTasksReconfigurationAfterTimeoutMs {@code true} to allow tasks reconfiguration after a timeout.
      * @param fsListening                             the {@link FileSystemListing} to be used for listing object files.
-     * @param cleaner                                 the {@link GenericFileCleanupPolicy} to be used for cleaning object files.
+     * @param cleanPolicy                                 the {@link GenericFileCleanupPolicy} to be used for cleaning object files.
      * @param offsetPolicy                            the {@link SourceOffsetPolicy} to be used computing offset for object fileS.
      * @param store                                   the {@link StateBackingStore} used for storing object file cursor.
      */
     public DefaultFileSystemMonitor(final Long allowTasksReconfigurationAfterTimeoutMs,
                                     final FileSystemListing<?> fsListening,
-                                    final GenericFileCleanupPolicy cleaner,
+                                    final GenericFileCleanupPolicy cleanPolicy,
+                                    final Predicate<FileObjectStatus> cleanablePredicate,
                                     final SourceOffsetPolicy offsetPolicy,
                                     final StateBackingStore<FileObject> store) {
-        Objects.requireNonNull(fsListening, "fsListening should not be null");
-        Objects.requireNonNull(cleaner, "cleaner should not be null");
-        Objects.requireNonNull(offsetPolicy, "offsetPolicy should not be null");
-        Objects.requireNonNull(store, "store should not null");
+        Objects.requireNonNull(fsListening, "'fsListening' should not be null");
+        Objects.requireNonNull(cleanPolicy, "'cleanPolicy' should not be null");
+        Objects.requireNonNull(offsetPolicy, "'offsetPolicy' should not be null");
+        Objects.requireNonNull(store, "'store' should not null");
+        Objects.requireNonNull(cleanablePredicate, "'cleanablePredicate' should not null");
 
         this.fsListing = fsListening;
         this.allowTasksReconfigurationAfterTimeoutMs = allowTasksReconfigurationAfterTimeoutMs;
+        this.cleanablePredicate = cleanablePredicate;
 
-        if (cleaner instanceof FileCleanupPolicy) {
-            this.cleaner = new DelegateBatchFileCleanupPolicy((FileCleanupPolicy) cleaner);
-        } else if (cleaner instanceof BatchFileCleanupPolicy) {
-            this.cleaner = (BatchFileCleanupPolicy) cleaner;
+        if (cleanPolicy instanceof FileCleanupPolicy) {
+            this.cleaner = new DelegateBatchFileCleanupPolicy((FileCleanupPolicy) cleanPolicy);
+        } else if (cleanPolicy instanceof BatchFileCleanupPolicy) {
+            this.cleaner = (BatchFileCleanupPolicy) cleanPolicy;
         } else {
             throw new IllegalArgumentException("Cleaner must be one of 'FileCleanupPolicy', "
-                    + "'BatchFileCleanupPolicy'" + " not " + cleaner.getClass().getName());
+                    + "'BatchFileCleanupPolicy'" + " not " + cleanPolicy.getClass().getName());
         }
         this.cleaner.setStorage(fsListening.storage());
         this.offsetPolicy = offsetPolicy;
@@ -146,9 +152,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             public void onStateUpdate(final String key, final FileObject object) {
                 final FileObjectKey objectId = FileObjectKey.of(key);
                 final FileObjectStatus status = object.status();
-                if (status.isOneOf(FileObjectStatus.completed())) {
-                    LOG.debug("Received completed status for: {}", object);
-                    completed.add(object.withKey(objectId));
+                LOG.debug("Received status '{} 'for: {}", status, object);
+                if (cleanablePredicate.test(status)) {
+                    cleanable.add(object.withKey(objectId));
                     // We should always try to remove the object key from the list
                     // of last scanned files to avoid scheduling an object file that has just been completed.
                     if (scanned.remove(objectId) != null) {
@@ -184,9 +190,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 .entrySet()
                 .stream()
                 .map(it -> it.getValue().withKey(FileObjectKey.of(it.getKey())))
-                .filter(it -> it.status().isOneOf(FileObjectStatus.completed()))
-                .forEach(completed::add);
-        LOG.info("Finished recovering previously completed files : " + completed);
+                .filter(it -> cleanablePredicate.test(it.status()))
+                .forEach(cleanable::add);
+        LOG.info("Finished recovering previously completed files : " + cleanable);
     }
 
     private boolean readStatesToEnd(final Duration timeout) {
@@ -234,14 +240,14 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
     }
 
     private void cleanUpCompletedFiles() {
-        if (completed.isEmpty()) {
+        if (cleanable.isEmpty()) {
             LOG.debug("Skipped cleanup. No object file completed.");
             return;
         }
 
-        LOG.info("Cleaning up completed object files '{}'", completed.size());
-        final List<FileObject> cleanable = new ArrayList<>(completed.size());
-        completed.drainTo(cleanable);
+        LOG.info("Cleaning up completed object files '{}'", cleanable.size());
+        final List<FileObject> cleanable = new ArrayList<>(this.cleanable.size());
+        this.cleanable.drainTo(cleanable);
 
         FileCleanupPolicyResultSet cleaned = cleaner.apply(cleanable);
         cleaned.forEach((fileObject, result) -> {
@@ -250,7 +256,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 store.putAsync(key, fileObject.withStatus(FileObjectStatus.CLEANED));
             } else {
                 LOG.warn("Postpone clean up for object file: '{}'", fileObject.metadata().stringURI());
-                completed.add(fileObject);
+                this.cleanable.add(fileObject);
             }
         });
         LOG.info("Finished cleaning all completed object files");
@@ -278,8 +284,15 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         long took = Time.SYSTEM.milliseconds() - started;
         LOG.info("Completed object files listing. '{}' object files found in {}ms", objects.size(), took);
 
-        final Map<FileObjectKey, FileObjectMeta> toScheduled = FileObjectCandidatesFilter
-                .filter(offsetPolicy, store.snapshot(), objects);
+        final StateSnapshot<FileObject> snapshot = store.snapshot();
+        final Map<FileObjectKey, FileObjectMeta> toScheduled = FileObjectCandidatesFilter.filter(
+                offsetPolicy,
+                fileObjectKey -> {
+                    final FileObject fileObject = snapshot.getForKey(fileObjectKey.original());
+                    return !(fileObject != null && cleanablePredicate.test(fileObject.status()));
+                },
+                objects
+        );
 
         // Some scheduled files are still being processed, but new files are detected
         if (!noScheduledFiles) {
@@ -316,7 +329,6 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         // This is used to not trigger task reconfiguration before the connector is fully started.
         return !scanned.isEmpty() && running.get();
     }
-
 
     /**
      * {@inheritDoc}

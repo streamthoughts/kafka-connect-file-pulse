@@ -50,6 +50,11 @@ public enum FileObjectStatus {
     COMPLETED,
 
     /**
+     * The completed file is committed.
+     */
+    COMMITTED,
+
+    /**
      * The file processing failed.
      */
     FAILED,
@@ -58,14 +63,6 @@ public enum FileObjectStatus {
      * The file has been successfully clean up (depending of the configured strategy).
      */
     CLEANED;
-
-    public static FileObjectStatus[] started() {
-        return new FileObjectStatus[]{SCHEDULED, STARTED, READING};
-    }
-
-    public static FileObjectStatus[] completed() {
-        return new FileObjectStatus[]{COMPLETED, FAILED};
-    }
 
     public boolean isOneOf(final FileObjectStatus...states) {
         return Arrays.asList(states).contains(this);

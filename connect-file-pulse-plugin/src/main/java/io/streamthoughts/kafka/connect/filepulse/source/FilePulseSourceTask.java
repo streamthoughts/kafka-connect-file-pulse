@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -59,7 +60,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private SourceOffsetPolicy offsetPolicy;
 
-    private KafkaFileStateReporter reporter;
+    private FileObjectStateReporter reporter;
 
     private volatile FileContext contextToBeCommitted;
 
@@ -72,6 +73,8 @@ public class FilePulseSourceTask extends SourceTask {
     private final AtomicBoolean running = new AtomicBoolean(false);
 
     private final AtomicBoolean closed = new AtomicBoolean(false);
+
+    private final ConcurrentLinkedQueue<FileContext> completedToCommit = new ConcurrentLinkedQueue<>();
 
     /**
      * {@inheritDoc}
@@ -102,7 +105,14 @@ public class FilePulseSourceTask extends SourceTask {
                     true
             );
 
-            reporter = new KafkaFileStateReporter(sharedStore.get().getResource());
+            reporter = new FileObjectStateReporter(sharedStore.get().getResource()) {
+                @Override
+                public void onCompleted(final FileContext context) {
+                    super.onCompleted(context);
+                    completedToCommit.add(context);
+                }
+            };
+
             consumer = newFileRecordsPollingConsumer();
             consumer.setStateListener(reporter);
             fileURIProvider = taskConfig.getFileURIProvider();
@@ -224,12 +234,21 @@ public class FilePulseSourceTask extends SourceTask {
     @Override
     public void commit() {
         if (running.get() && contextToBeCommitted != null) {
-            reporter.notify(
-                contextToBeCommitted.key(),
-                contextToBeCommitted.metadata(),
-                contextToBeCommitted.offset(),
-                FileObjectStatus.READING
-            );
+            reporter.notify(contextToBeCommitted, FileObjectStatus.READING);
+        }
+
+        while (!completedToCommit.isEmpty()) {
+            final FileContext file = completedToCommit.poll();
+            LOG.info("Committed offset for file: {}", file.metadata());
+            safelyCommit(file);
+        }
+    }
+
+    private void safelyCommit(final FileContext committed) {
+        try {
+            reporter.notify(committed, FileObjectStatus.COMMITTED);
+        } catch (Exception e) {
+            LOG.warn("Failed to notify committed file: {}", context, e);
         }
     }
 

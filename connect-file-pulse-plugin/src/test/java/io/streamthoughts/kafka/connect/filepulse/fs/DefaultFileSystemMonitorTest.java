@@ -253,6 +253,7 @@ public class DefaultFileSystemMonitorTest {
                 Long.MAX_VALUE,
                 fsListing,
                 cleaner,
+                status -> List.of(FileObjectStatus.FAILED, FileObjectStatus.COMPLETED).contains(status),
                 OFFSET_MANAGER,
                 store
         );

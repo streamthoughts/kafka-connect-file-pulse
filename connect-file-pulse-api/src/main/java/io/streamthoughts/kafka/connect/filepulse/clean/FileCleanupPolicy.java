@@ -40,7 +40,12 @@ public interface FileCleanupPolicy extends
      */
     @Override
     default Boolean apply(final FileObject source) {
-        return source.status().equals(FileObjectStatus.COMPLETED) ? onSuccess(source) : onFailure(source);
+        final FileObjectStatus status = source.status();
+        return isSuccess(status) ? onSuccess(source) : onFailure(source);
+    }
+
+    private boolean isSuccess(final FileObjectStatus status) {
+        return status.equals(FileObjectStatus.COMPLETED) || status.equals(FileObjectStatus.COMMITTED);
     }
 
     boolean onSuccess(final FileObject source);

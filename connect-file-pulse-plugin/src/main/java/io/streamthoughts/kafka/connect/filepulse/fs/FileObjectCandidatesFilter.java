@@ -20,12 +20,9 @@ package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.config.SourceConnectorConfig;
 import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectKey;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
-import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +44,7 @@ public class FileObjectCandidatesFilter {
 
     private final SourceOffsetPolicy offsetPolicy;
 
-    private final StateSnapshot<FileObject> snapshot;
+    private final Predicate<FileObjectKey> predicate;
 
     /**
      * Creates a new {@link FileObjectCandidatesFilter} instance.
@@ -54,22 +52,22 @@ public class FileObjectCandidatesFilter {
      * @param offsetPolicy  the {@link SourceOffsetPolicy} instance.
      */
     public FileObjectCandidatesFilter(final SourceOffsetPolicy offsetPolicy,
-                                      final StateSnapshot<FileObject> snapshot) {
+                                      final Predicate<FileObjectKey> predicate) {
         this.offsetPolicy = Objects.requireNonNull(offsetPolicy, "'offsetPolicy' should not be null");
-        this.snapshot = Objects.requireNonNull(snapshot, "'snapshot' should not be null");
+        this.predicate = Objects.requireNonNull(predicate, "'snapshot' should not be null");
     }
 
     public static Map<FileObjectKey, FileObjectMeta> filter(final SourceOffsetPolicy offsetPolicy,
-                                                            final StateSnapshot<FileObject> snapshot,
+                                                            final Predicate<FileObjectKey> predicate,
                                                             final Collection<FileObjectMeta> candidates) {
-        return new FileObjectCandidatesFilter(offsetPolicy, snapshot).filter(candidates);
+        return new FileObjectCandidatesFilter(offsetPolicy, predicate).filter(candidates);
     }
 
     public Map<FileObjectKey, FileObjectMeta> filter(final Collection<FileObjectMeta> candidates) {
 
         final List<KeyValuePair<String, FileObjectMeta>> toScheduled = candidates.stream()
                 .map(source -> KeyValuePair.of(offsetPolicy.toPartitionJson(source), source))
-                .filter(kv -> maybeScheduled(snapshot, kv.key))
+                .filter(kv -> predicate.test(FileObjectKey.of(kv.key)))
                 .collect(Collectors.toList());
 
         // Looking for duplicates in sources files, i.e the OffsetPolicy generate two identical offsets for two files.
@@ -103,11 +101,5 @@ public class FileObjectCandidatesFilter {
         }
 
         return toScheduled.stream().collect(Collectors.toMap(kv -> FileObjectKey.of(kv.key), kv -> kv.value));
-    }
-
-    private boolean maybeScheduled(final StateSnapshot<FileObject> snapshot,
-                                   final String partition) {
-        return !snapshot.contains(partition) ||
-                snapshot.getForKey(partition).status().isOneOf(FileObjectStatus.started());
     }
 }

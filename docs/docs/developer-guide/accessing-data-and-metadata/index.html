@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/" />
 <meta property="article:published_time" content="2021-06-10T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-07-22T21:53:18+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2021-09-04T14:31:09+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Accessing Data and Metadata">
 <meta itemprop="description" content="The commons configuration for Connect File Pulse.
 ">
 <meta itemprop="datePublished" content="2021-06-10T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-07-22T21:53:18&#43;02:00" />
-<meta itemprop="wordCount" content="1225">
+<meta itemprop="dateModified" content="2021-09-04T14:31:09&#43;02:00" />
+<meta itemprop="wordCount" content="1226">
 
 
 
@@ -2884,8 +2884,8 @@ The available fields depend on the configured FileInputRecord.</p>
 <td><code>long</code></td>
 </tr>
 <tr>
-<td><code>$offset.row</code></td>
-<td>The row number of the record into the source</td>
+<td><code>$offset.rows</code></td>
+<td>The number of rows already read from the source file.</td>
 <td><code>long</code></td>
 </tr>
 </tbody>
@@ -2975,7 +2975,7 @@ This scope can be used to share user-defined variables between <a href="/kafka-c
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified July 22, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1b72a96286936cb467bc130dc2ca070b0d6d4887">docs(site): fix syntax for &#39;exists&#39; ScEL Built-in Function (#148) (1b72a96)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 4, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/20983ddacb0e693918f44b6a997f1e25e8da8e82">docs(site): fix documentation typos on metadata access (#165) (20983dd)</a>
 </div>
 </div>
 

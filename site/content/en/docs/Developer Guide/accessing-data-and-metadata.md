@@ -177,7 +177,7 @@ Information only available if `RowFilterReader` is configured.
 | `$offset.startPosition` | The start position of the record into the source file  | `long` |
 | `$offset.endPosition` | The end position of the record into the source file  | `long` |
 | `$offset.size` | The size in bytes  | `long` |
-| `$offset.row` | The row number of the record into the source | `long` |
+| `$offset.rows` | The number of rows already read from the source file.| `long` |
 
 Information only available if `BytesArrayInputReader` is configured.
 

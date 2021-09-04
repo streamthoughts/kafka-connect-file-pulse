@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import java.util.Optional;
+
 import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
 
 /**
@@ -60,7 +62,7 @@ public class AmazonS3ClientUtils {
      */
     public static AmazonS3 createS3Client(final AmazonS3ClientConfig config,
                                           final String url) {
-        ClientConfiguration clientConfiguration = PredefinedClientConfigurations.defaultConfig();
+        final ClientConfiguration clientConfiguration = PredefinedClientConfigurations.defaultConfig();
 
         AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
                 .withPathStyleAccessEnabled(config.isAwsS3PathStyleAccessEnabled())
@@ -68,10 +70,9 @@ public class AmazonS3ClientUtils {
                 .withClientConfiguration(clientConfiguration);
 
         final String region = config.getAwsS3Region();
-        if (isNotBlank(url)) {
-            builder = builder.withEndpointConfiguration(
-                new AwsClientBuilder.EndpointConfiguration(url, region)
-            );
+        final String endpoint = Optional.ofNullable(url).orElse(config.getAwsS3ServiceEndpoint());
+        if (isNotBlank(endpoint)) {
+            builder = builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(url, region));
         } else {
             builder.withRegion(region);
         }

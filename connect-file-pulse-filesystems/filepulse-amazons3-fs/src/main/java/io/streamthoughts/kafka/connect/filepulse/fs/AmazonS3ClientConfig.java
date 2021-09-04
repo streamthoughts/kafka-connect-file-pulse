@@ -48,6 +48,9 @@ public class AmazonS3ClientConfig extends AbstractConfig {
     public static final String AWS_SECRET_SESSION_TOKEN_CONFIG = "aws.secret.session.token";
     private static final String AWS_SECRET_SESSION_TOKEN_DOC = "AWS Secret Session Token";
 
+    public static final String AWS_S3_ENDPOINT_CONFIG = "aws.s3.service.endpoint";
+    private static final String AWS_S3_ENDPOINT_DOC = "AWS S3 custom service endpoint.";
+
     public static final String AWS_S3_REGION_CONFIG = "aws.s3.region";
     private static final String AWS_S3_REGION_DOC = "The AWS S3 Region, e.g. us-east-1";
     public static final String AWS_S3_REGION_DEFAULT = Regions.DEFAULT_REGION.getName();
@@ -94,6 +97,10 @@ public class AmazonS3ClientConfig extends AbstractConfig {
         return getString(AWS_S3_BUCKET_NAME_CONFIG);
     }
 
+    public String getAwsS3ServiceEndpoint() {
+        return getString(AWS_S3_ENDPOINT_CONFIG);
+    }
+
     public String getAwsS3BucketPrefix() {
         return getString(AWS_S3_BUCKET_PREFIX_CONFIG);
     }
@@ -135,6 +142,19 @@ public class AmazonS3ClientConfig extends AbstractConfig {
                         awsGroupCounter++,
                         ConfigDef.Width.NONE,
                         AWS_S3_BUCKET_PREFIX_CONFIG
+                )
+
+                .define(
+                        AWS_S3_ENDPOINT_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        new ConfigDef.NonEmptyString(),
+                        ConfigDef.Importance.MEDIUM,
+                        AWS_S3_ENDPOINT_DOC,
+                        GROUP_AWS,
+                        awsGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        AWS_S3_ENDPOINT_CONFIG
                 )
 
                 .define(

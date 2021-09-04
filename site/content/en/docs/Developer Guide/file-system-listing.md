@@ -59,6 +59,7 @@ The `AmazonS3FileSystemListing` class can be used for listing objects that exist
 | `aws.secret.access.key` | AWS Secret Access Key | `string` | - | HIGH |
 | `aws.secret.session.token` | AWS Secret Session Token | `string` | - | HIGH |
 | `aws.s3.region` | The AWS S3 Region, e.g. us-east-1 | `string` | `Regions.DEFAULT_REGION.getName()` | MEDIUM |
+| `aws.s3.service.endpoint` | AWS S3 custom service endpoint. | `string` | - | MEDIUM |
 | `aws.s3.path.style.access.enabled` | Configures the client to use path-style access for all requests. | `string` | - | MEDIUM |
 | `aws.s3.bucket.name` | The name of the Amazon S3 bucket.| `string` | - | HIGH |
 | `aws.s3.bucket.prefix` | The prefix to be used for restricting the listing of the objects in the bucket| `string` | - | MEDIUM |

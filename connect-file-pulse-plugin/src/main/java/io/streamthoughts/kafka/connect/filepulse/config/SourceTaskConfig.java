@@ -42,10 +42,10 @@ import java.util.stream.Collectors;
 public class SourceTaskConfig extends CommonSourceConfig {
 
     public static final String FILE_URIS_PROVIDER_CONFIG = "file.uris.provider";
-    private static final String FILE_URIS_PROVIDER_DOC    = "The FileURIProvider class to be used for retrieving the file URIs to process";
+    private static final String FILE_URIS_PROVIDER_DOC    = "The FileURIProvider class to be used for retrieving the file URIs to process.";
 
     private static final String OMIT_READ_COMMITTED_FILE_CONFIG = "ignore.committed.offsets";
-    private static final String OMIT_READ_COMMITTED_FILE_DOC = "Boolean indicating whether offsets check has to be performed, to avoid multiple (default : false)";
+    private static final String OMIT_READ_COMMITTED_FILE_DOC = "Should a task ignore committed offsets while scheduling a file (default : false).";
 
     private final EnrichedConnectorConfig enrichedConfig;
 
@@ -62,7 +62,7 @@ public class SourceTaskConfig extends CommonSourceConfig {
                         OMIT_READ_COMMITTED_FILE_CONFIG,
                         ConfigDef.Type.BOOLEAN,
                         false,
-                        ConfigDef.Importance.HIGH,
+                        ConfigDef.Importance.LOW,
                         OMIT_READ_COMMITTED_FILE_DOC
                 );
     }

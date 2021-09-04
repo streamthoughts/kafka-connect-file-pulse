@@ -75,4 +75,5 @@ An object file can be in the following states :
 * \[3\] **READING** : The task is still processing the file. An event is wrote into Kafka while committing offsets.
 * \[4\] **FAILED** : The file processing failed.
 * \[4\] **COMPLETED** : The task completes the processing of the file.
+* \[4\] **COMMITTED** : The task committed the offsets of the completed file.
 * \[5\] **CLEANED** :  The file has been successfully clean up by the connector (depends on the configured policy).

@@ -37,7 +37,7 @@ public class SourceConnectorConfig extends CommonSourceConfig {
 
     public static final String[] FS_CLEANUP_POLICY_EXECUTE_VALID_VALUES = {FileObjectStatus.COMPLETED.name(), FileObjectStatus.COMMITTED.name()};
     public static final String FS_CLEANUP_POLICY_EXECUTE_CONFIG = "fs.cleanup.policy.triggered.on";
-    private static final String FS_CLEANUP_POLICY_EXECUTE_DOC = "Specified the status when a file get cleanup. Valid values are: " + Arrays.toString(FS_CLEANUP_POLICY_EXECUTE_VALID_VALUES);
+    private static final String FS_CLEANUP_POLICY_EXECUTE_DOC = "Specify the status when a file get cleanup. Valid values are: " + Arrays.toString(FS_CLEANUP_POLICY_EXECUTE_VALID_VALUES);
 
     /* Settings for FileSystemMonitorThread */
     public static final String FS_LISTING_INTERVAL_MS_CONFIG  = "fs.listing.interval.ms";
@@ -105,7 +105,7 @@ public class SourceConnectorConfig extends CommonSourceConfig {
                         ConfigDef.Type.STRING,
                         FileObjectStatus.COMPLETED.name(),
                         ConfigDef.ValidString.in(FS_CLEANUP_POLICY_EXECUTE_VALID_VALUES),
-                        ConfigDef.Importance.LOW,
+                        ConfigDef.Importance.MEDIUM,
                         FS_CLEANUP_POLICY_EXECUTE_DOC
                 );
     }

@@ -26,8 +26,15 @@ These configurations are described in detail in subsequent chapters.
 | `fs.listing.class` | Class which is used to list eligible files from the scanned file system. | class | *-* | MEDIUM |
 | `fs.listing.filters` | Filters use to list eligible input files| list | *-* | MEDIUM |
 | `fs.listing.interval.ms` | Time interval (in milliseconds) at wish to scan input directory | long | *10000* | HIGH |
+| `fs.listing.task.delegation.enabled` | Boolean indicating whether the file listing process should be delegated to tasks. | boolean | *false* | LOW |
 | `fs.cleanup.policy.class` | The fully qualified name of the class which is used to cleanup files | class | *-* | HIGH |
+| `fs.cleanup.policy.triggered.on` | Specify the status when a file get cleanup. Valid values are: `COMPLETED`, `COMMITTED` | string | *COMPLETED* | MEDIUM |
 | `max.scheduled.files` | Maximum number of files that can be schedules to tasks. | long | *1000* | HIGH |
+| `task.partitioner.class` | The TaskPartitioner to be used for partitioning files to tasks. | class | `io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner` | HIGH |
+| `tasks.halt.on.error` | Should a task halt when it encounters an error or continue to the next file. | boolean | *false* | HIGH |
+| `tasks.empty.poll.wait.ms` | The amount of time in millisecond a tasks should wait if a poll returns an empty list of records. | long | *500* | HIGH |
+| `value.connect.schema` | The schema for the record-value. | string | *-* | MEDIUM |
+| `ignore.committed.offsets` | Should a task ignore committed offsets while scheduling a file. | boolean | *false* | LOW |
 
 **Properties for transforming object file record([Filters Chain Definition](/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/))**
 

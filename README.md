@@ -1,6 +1,10 @@
 # Kafka Connect File Pulse
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/LICENSE)
+[![Stars](https://img.shields.io/github/stars/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/github/stars/streamthoughts/kafka-connect-file-pulse)
+[![Forks](https://img.shields.io/github/forks/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/github/forks/streamthoughts/kafka-connect-file-pulse)
+[![DockerPull](https://img.shields.io/docker/pulls/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/docker/pulls/streamthoughts/kafka-connect-file-pulse)
+[![Issues](https://img.shields.io/github/issues/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/github/issues/streamthoughts/kafka-connect-file-pulse)
 [![CircleCI](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse.svg?style=svg)](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse)
 
 <p align="center">
@@ -9,7 +13,7 @@
 
 **Connect FilePulse** is a multipurpose, scalable and reliable, 
 [Kafka Connector](http://kafka.apache.org/documentation.html#connect) that makes it easy to parse, transform and stream any file, in any format, into Apache Kafka™.
-Connect FilePulse*
+It provides capabilities for reading files from: **local-filesystem**, **Amazon S3**, **Azure Storage** and **Google Cloud Storage**. 
 
 ## Motivation
 
@@ -27,8 +31,7 @@ fault tolerant and scalable framework for connecting Kafka with external systems
 The **Connect File Pulse** project aims to provide an easy-to-use solution, based on Kafka Connect,
 for streaming any type of data file with the Apache Kafka™ platform.
 
-
-Connect File Pulse is inspired by the features provided by **Elasticsearch** and **Logstash**.
+Some of the features of Connect File Pulse are inspired by the ingestion capabilities of **Elasticsearch** and **Logstash**.
 
 ## 🚀 Key Features Overview
 

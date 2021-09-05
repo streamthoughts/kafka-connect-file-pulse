@@ -273,6 +273,11 @@
   </url>
   
   <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</loc>
+    <lastmod>2021-09-05T16:06:06+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/configuration/</loc>
     <lastmod>2021-06-11T18:54:50+02:00</lastmod>
   </url>
@@ -289,12 +294,7 @@
   
   <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.3.x/developer-guide/configuration/</loc>
-    <lastmod>2021-09-04T14:51:12+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</loc>
-    <lastmod>2021-09-04T14:26:08+02:00</lastmod>
+    <lastmod>2021-09-05T16:06:06+02:00</lastmod>
   </url>
   
   <url>

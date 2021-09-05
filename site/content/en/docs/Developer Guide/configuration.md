@@ -1,5 +1,5 @@
 ---
-date: 2021-05-12
+date: 2021-09-05
 title: "Configuration"
 linkTitle: "Configuration"
 weight: 20
@@ -33,8 +33,8 @@ These configurations are described in detail in subsequent chapters.
 | `task.partitioner.class` | The TaskPartitioner to be used for partitioning files to tasks. | class | `io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner` | HIGH |
 | `tasks.halt.on.error` | Should a task halt when it encounters an error or continue to the next file. | boolean | *false* | HIGH |
 | `tasks.empty.poll.wait.ms` | The amount of time in millisecond a tasks should wait if a poll returns an empty list of records. | long | *500* | HIGH |
-| `value.connect.schema` | The schema for the record-value. | string | *-* | MEDIUM |
 | `ignore.committed.offsets` | Should a task ignore committed offsets while scheduling a file. | boolean | *false* | LOW |
+| `value.connect.schema` | The schema for the record-value. | string | *-* | MEDIUM |
 
 **Properties for transforming object file record([Filters Chain Definition](/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/))**
 
@@ -80,3 +80,155 @@ The `InMemoryFileObjectStateBackingStore` implement is not fault-tolerant and sh
 ## Examples
 
 Some configuration examples are available [here](https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples).
+
+## Defining Connect Record Schema
+
+The optional `value.connect.schema` config property can be used to set the connect-record schema that should be used.
+If there is no schema pass through the connector configuration, a schema will be resolved for each record produced.
+
+The `value.connect.schema` must be passed as a JSON string that respects the following schema (using Avro representation):
+
+```json
+{
+   "type":"record",
+   "name":"Schema",
+   "fields":[
+      {
+         "name":"name",
+         "type":"string",
+         "doc": "The name of this schema"
+      },
+      {
+         "name":"type",
+         "type":{
+            "type":"enum",
+            "name":"Type",
+            "symbols":[
+               "STRUCT",
+               "STRING",
+               "BOOLEAN",
+               "INT8",
+               "INT16",
+               "INT32",
+               "INT64",
+               "FLOAT32",
+               "FLOAT64",
+               "BYTES",
+               "MAP",
+               "ARRAY"
+            ]
+         },
+         "doc": "The type of this schema"
+      },
+      {
+         "name":"doc",
+         "type":[
+            "null",
+            "string"
+         ],
+         "default":null,  
+         "doc": "The documentation for this schema"
+      },
+      {
+         "name":"fieldSchemas",
+         "type":[
+            "null",
+            {
+               "type":"map",
+               "values":"Schema"
+            }
+         ],
+         "default":null,
+         "doc": "The fields for this Schema. Throws a DataException if this schema is not a struct."
+      },
+      {
+         "name":"valueSchema",
+         "type":[
+            "null",
+            {
+               "type":"map",
+               "values":"Schema"
+            }
+         ],
+         "default":null,
+         "doc": "The value schema for this map or array schema. Throws a DataException if this schema is not a map or array."
+      },
+      {
+         "name":"keySchema",
+         "type":[
+            "null",
+            {
+               "type":"map",
+               "values":"Schema"
+            }
+         ],
+         "default":null,
+         "doc": "The key schema for this map schema. Throws a DataException if this schema is not a map."
+      },
+      {
+         "name":"defaultValue",
+         "type":[
+            "null",
+            "string"
+         ],
+         "default":null
+      },
+      {
+         "name":"isOptional",
+         "type":"boolean",
+         "default":false,
+         "doc": "true if this field is optional, false otherwise"
+      },
+      {
+         "name":"version",
+         "type":[
+            "null",
+            "integer"
+         ],
+         "default":null,
+         "doc": "The optional version of the schema. If a version is included, newer versions *must* be larger than older ones."
+      }
+   ]
+}
+``` 
+
+**Example:**
+
+```json
+{
+   "name":"com.example.User",
+   "type":"STRUCT",
+   "isOptional":false,
+   "fieldSchemas":{
+      "id":{
+         "type":"INT64",
+         "isOptional":false
+      },
+      "first_name":{
+         "type":"STRING",
+         "isOptional":true
+      },
+      "last_name":{
+         "type":"STRING",
+         "isOptional":true
+      },
+      "email":{
+         "type":"STRING",
+         "isOptional":true
+      },
+      "gender":{
+         "type":"STRING",
+         "isOptional":true
+      },
+      "country":{
+         "type":"STRING",
+         "isOptional":true
+      },
+      "favorite_colors":{
+         "type":"ARRAY",
+         "isOptional":true,
+         "valueSchema": {"type": "STRING"}
+      }
+   }
+}
+```

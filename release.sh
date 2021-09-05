@@ -16,6 +16,8 @@ RELEASE_DOC_DIR="$DOC_BASEDIR/Archives/v$RELEASE_DOC_VERSION"
 RELEASE_DOC_LINK=$(echo "$RELEASE_VERSION" | sed -r 's/\.+/-/g')
 RELEASE_DOC_LINK=${RELEASE_DOC_LINK%??}
 
+git pull --rebase
+
 echo "Packaging project: $RELEASE_VERSION"
 ./mvnw  -B -q clean package >/dev/null 2>&1
 

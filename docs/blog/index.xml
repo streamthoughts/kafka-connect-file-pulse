@@ -14,6 +14,39 @@
     
     
     <item>
+      <title>Blog: Connect FilePulse 2.3 is Released 🚀</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/09/05/connect-filepulse-2.3-is-released/</link>
+      <pubDate>Sun, 05 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/09/05/connect-filepulse-2.3-is-released/</guid>
+      <description>
+        
+        
+        &lt;p&gt;&lt;strong&gt;This new release brings new capabilities and several bug fixes and improvements that make ConnectFilePulse still the more powerful Kafka Connect-based solution for processing files.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;full-release-notes&#34;&gt;Full Release Notes&lt;/h2&gt;
+&lt;p&gt;Connect File Pulse 2.3 can be downloaded from the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.3.0&#34;&gt;GitHub Releases Page&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;new-features&#34;&gt;New Features&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/3da6a5b&#34;&gt;3da6a5b&lt;/a&gt; feat(filesystems): add the capability to configure alternative AWS S3 endpoint (#172)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/608d1c2&#34;&gt;608d1c2&lt;/a&gt; feat(plugin): add new prop to cleanup on offset commit
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f6b443a&#34;&gt;f6b443a&lt;/a&gt; feat(api): allow to configure a record-value schema
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/befbc6f&#34;&gt;befbc6f&lt;/a&gt; feat(filters): add new NullValueFilter (#169)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d86804b&#34;&gt;d86804b&lt;/a&gt; feat(plugin): add new config tasks.empty.poll.wait.ms
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/39c37d9&#34;&gt;39c37d9&lt;/a&gt; feat(plugin): add new prop to configure if task should halt on error (#164)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7c219b8&#34;&gt;7c219b8&lt;/a&gt; feat(filesystems/api): enhance XMLFileInputReader to support data type inference (#163)&lt;/p&gt;
+&lt;h3 id=&#34;improvements--bugfixes&#34;&gt;Improvements &amp;amp; Bugfixes&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5314e20&#34;&gt;5314e20&lt;/a&gt; fix(filters): DelimtedRowFileInputFilter should compute schema for each record (#171)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/816f48a&#34;&gt;816f48a&lt;/a&gt; fix(filters): fix AppendFilter to set record-value to null (#167)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d2e776b&#34;&gt;d2e776b&lt;/a&gt; fix(api): fix connector should accept nullable record-cord (#170)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2266fc1&#34;&gt;2266fc1&lt;/a&gt; fix(expression): fix SCEL expression null&lt;/p&gt;
+&lt;h3 id=&#34;docs&#34;&gt;Docs&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/20983dd&#34;&gt;20983dd&lt;/a&gt; docs(site): fix documentation typos on metadata access (#165)
+&lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4eef25f&#34;&gt;4eef25f&lt;/a&gt; docs(site): add missing config prop&lt;/p&gt;
+&lt;p&gt;If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Blog: Connect FilePulse 2.2 is Released 🚀</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/08/10/connect-filepulse-2.2-is-released/</link>
       <pubDate>Tue, 10 Aug 2021 00:00:00 +0000</pubDate>

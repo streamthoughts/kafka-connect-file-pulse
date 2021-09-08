@@ -19,7 +19,7 @@ These configurations are described in detail in subsequent chapters.
 | `topic` | The default output topic to write | string | *-* | high |
 | `tasks.max` | The maximum number of tasks that should be created for this connector.  | string | *-* | high |
 
-**Properties for listing and cleaning object files ([FileSystemListing](/kafka-connect-file-pulse/docs/developer-guide/file-listing/))**
+**Properties for listing and cleaning object files ([FileSystemListing](/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/))**
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
@@ -30,6 +30,7 @@ These configurations are described in detail in subsequent chapters.
 | `fs.cleanup.policy.class` | The fully qualified name of the class which is used to cleanup files | class | *-* | HIGH |
 | `fs.cleanup.policy.triggered.on` | Specify the status when a file get cleanup. Valid values are: `COMPLETED`, `COMMITTED` | string | *COMPLETED* | MEDIUM |
 | `max.scheduled.files` | Maximum number of files that can be schedules to tasks. | long | *1000* | HIGH |
+| `allow.tasks.reconfiguration.after.timeout.ms` | Specify the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed. | long | *-* | LOW |
 | `task.partitioner.class` | The TaskPartitioner to be used for partitioning files to tasks. | class | `io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner` | HIGH |
 | `tasks.halt.on.error` | Should a task halt when it encounters an error or continue to the next file. | boolean | *false* | HIGH |
 | `tasks.empty.poll.wait.ms` | The amount of time in millisecond a tasks should wait if a poll returns an empty list of records. | long | *500* | HIGH |

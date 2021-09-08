@@ -61,4 +61,5 @@
     <suppress checks="NPathComplexity" files="KafkaBasedLog.java"/>
     <!-- Classes used for configuration -->
     <suppress checks="(LineLength|CyclomaticComplexity|NPathComplexity|JavaNCSS)" files=".*Config.java"/>
+    <suppress checks="(LineLength|CyclomaticComplexity|NPathComplexity|JavaNCSS)" files="SchemaUtils.java"/>
 </suppressions>

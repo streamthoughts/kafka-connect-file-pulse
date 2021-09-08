@@ -21,12 +21,13 @@ package io.streamthoughts.kafka.connect.filepulse.internal;
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
+import org.apache.kafka.connect.data.Schema.Type;
 import org.apache.kafka.connect.data.SchemaBuilder;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -34,104 +35,164 @@ import java.util.stream.Collectors;
  */
 public class SchemaUtils {
 
-    public static List<String> getAllFieldNames(final Schema schema) {
-        return schema.fields().stream().map(Field::name).collect(Collectors.toList());
-    }
+    /**
+     * @return the merged of two given {@link Schema}.
+     */
+    public static Schema merge(final Schema left, final Schema right) {
 
-    public static SchemaBuilder copySchemaBasics(final Schema source) {
-        return copySchemaBasics(source, new SchemaBuilder(source.type()));
-    }
+        if (left.equals(right)) return left;
 
-    public static SchemaBuilder copySchemaBasics(final Schema source, final SchemaBuilder builder) {
-        builder.name(source.name());
-        builder.version(source.version());
-        builder.doc(source.doc());
-
-        final Map<String, String> params = source.parameters();
-        if (params != null) {
-            builder.parameters(params);
+        if (left.type() == Type.ARRAY ||
+            right.type() == Type.ARRAY) {
+            return mergeArray(left, right);
         }
 
-        return builder;
+        // Struct cannot only be merged with another Struct
+        if (left.type() == Type.STRUCT &&
+            right.type() == Type.STRUCT
+        ) {
+            return mergeStruct(left, right);
+        }
+
+        // Map cannot only be merged with another Map
+        if (left.type() == Type.MAP &&
+            right.type() == Type.MAP) {
+            return mergeMap(left, right);
+        }
+
+        if (left.type() == right.type()) {
+            return left;
+        }
+
+        if (left.type() == Type.STRING || right.type() == Type.STRING)
+            return mergeMetadata(left, right, SchemaBuilder.string());
+
+        if ( (left.type() == Type.INT64 && right.type() == Type.INT32) ||
+             (right.type() == Type.INT64 && left.type() == Type.INT32)) {
+            return mergeMetadata(left, right, SchemaBuilder.int64());
+        }
+
+        if ( (left.type() == Type.FLOAT64 && isNumber(right.type())) ||
+             (right.type() == Type.FLOAT64 && isNumber(left.type()))) {
+            return mergeMetadata(left, right, SchemaBuilder.float64());
+        }
+
+        throw new DataException("Cannot merge incompatible schema type " + left.type() + "<>" + right.type());
     }
 
-    public static void merge(final Schema leftSchema,
-                             final Schema rightSchema,
-                             final SchemaBuilder builder,
-                             final Set<String> overwrite) {
-        final Map<String, Field> rightFields = groupFieldByName(rightSchema.fields());
-        for (Field leftField : leftSchema.fields()) {
-            final String leftFieldName = leftField.name();
+    private static Schema mergeMap(final Schema left, final Schema right) {
+        final SchemaBuilder merged = SchemaBuilder.map(
+                merge(left.keySchema(), right.keySchema()),
+                merge(left.valueSchema(), right.valueSchema())
+        );
 
-            boolean isOverwrite = overwrite.contains(leftFieldName);
+        return mergeMetadata(left, right, merged).build();
+    }
 
-            final Field rightField = rightFields.get(leftFieldName);
+    private static Schema mergeArray(final Schema left, final Schema right) {
+        final Schema valueSchema;
 
-            if (rightField == null) {
-                builder.field(leftFieldName, leftField.schema());
+        // Merge Array<?> with Array<?>
+        if (left.type() == Type.ARRAY &&
+            right.type() == Type.ARRAY) {
+            valueSchema = merge(left.valueSchema(), right.valueSchema());
+
+        // Merge Array<?> with ?
+        } else if (left.type() == Type.ARRAY) {
+            valueSchema = merge(left.valueSchema(), right);
+
+        // Merge ? with Array<?>
+        } else {
+            valueSchema = merge(left, right.valueSchema());
+        }
+        return SchemaBuilder
+                .array(valueSchema)
+                .optional()
+                .defaultValue(null)
+                .build();
+    }
+
+    private static Schema mergeStruct(final Schema left, final Schema right) {
+
+        if (!Objects.equals(left.name(), right.name()))
+            throw new DataException(
+                    "Cannot merge two schemas wih different name " + left.name() + "<>" + right.name());
+
+        final SchemaBuilder merged = mergeMetadata(left, right, new SchemaBuilder(Type.STRUCT));
+
+        final Map<String, Schema> remaining = left.fields()
+                .stream()
+                .collect(Collectors.toMap(Field::name, Field::schema));
+
+        // Iterator on RIGHT fields and compare to LEFT fields.
+        for (final Field rightField : right.fields()) {
+
+            final String name = rightField.name();
+
+            // field exist only on RIGHT schema.
+            if (!remaining.containsKey(name)) {
+                merged.field(name, rightField.schema());
                 continue;
             }
 
-            if (isOverwrite) {
-                continue; // skip the left field
+            // field exist on both LEFT and RIGHT schemas.
+            final Schema leftSchema = remaining.remove(name);
+
+            try {
+                final Schema fieldMergedSchema = merge(leftSchema, rightField.schema());
+                merged.field(name, fieldMergedSchema);
+            } catch (Exception e) {
+                throw new DataException("Failed to merge schemas for field '" + name + "'. ", e);
             }
-
-            checkIfFieldsCanBeMerged(leftField, rightField);
-
-            if (isTypeOf(leftField, Schema.Type.ARRAY)) {
-                builder.field(leftFieldName, leftField.schema());
-            } else {
-                final SchemaBuilder optionalArray = SchemaBuilder
-                        .array(leftField.schema())
-                        .optional();
-                builder.field(leftFieldName, optionalArray);
-            }
-            rightFields.remove(leftFieldName);
         }
-        // Copy all remaining fields from right struct.
-        for (Field f : rightFields.values()) {
-            Schema schema = f.schema();
-            builder.field(f.name(), schema);
-        }
+
+        // remaining fields that existing only on LEFT schema.
+        remaining.forEach(merged::field);
+
+        return merged;
     }
 
-    private static void checkIfFieldsCanBeMerged(final Field left, final Field right) {
-        final String name = left.name();
-        if (isTypeOf(left, Schema.Type.ARRAY)) {
-            Schema valueSchemaLeft = left.schema().valueSchema();
-            if (isTypeOf(right, Schema.Type.ARRAY)) {
-                Schema valueSchemaRight = right.schema().valueSchema();
-                throwIfTypesAreNotEqual(name, valueSchemaLeft, valueSchemaRight,
-                        "Cannot merge fields '%s' of type array with different value types : Array[%s]<>Array[%s]");
-            } else {
-                throwIfTypesAreNotEqual(name, valueSchemaLeft, right.schema(),
-                        "Cannot merge fields '%s' with different array value types : Array[%s]<>%s");
-            }
-        } else if (isTypeOf(right, Schema.Type.ARRAY)) {
-            Schema valueSchemaRight = right.schema().valueSchema();
-            throwIfTypesAreNotEqual(name, left.schema(), valueSchemaRight,
-                    "Cannot merge fields '%s' with different array value types : %s<>Array[%s]");
-        // neither left or right is of type array
-        } else {
-            throwIfTypesAreNotEqual(name, left.schema(), right.schema(),
-                    "Cannot merge fields '%s' with different types : %s<>%s");
+    private static SchemaBuilder mergeMetadata(final Schema left,
+                                               final Schema right,
+                                               final SchemaBuilder merged) {
+
+        merged.name(left.name());
+        merged.doc(left.doc());
+
+        if (left.isOptional() || right.isOptional()) {
+            merged.optional();
         }
-    }
 
-    private static void throwIfTypesAreNotEqual(final String field,
-                                                final Schema s1,
-                                                final Schema s2,
-                                                final String message) {
-        if (!s1.type().equals(s2.type())) {
-            throw new DataException(String.format(message, field, s1.type(), s2.type()));
+        if (left.defaultValue() != null) {
+            merged.defaultValue(left.defaultValue());
+        } else if (right.defaultValue() != null) {
+            merged.defaultValue(right.defaultValue());
         }
+
+        final Map<String, String> parameters = new HashMap<>();
+        if (left.parameters() != null) {
+            parameters.putAll(left.parameters());
+        }
+
+        if (right.parameters() != null) {
+            parameters.putAll(right.parameters());
+        }
+
+        if (!parameters.isEmpty()) {
+            merged.parameters(parameters);
+        }
+
+        return merged;
     }
 
-    public static boolean isTypeOf(final Field field, final Schema.Type type) {
-        return field.schema().type().equals(type);
+    private static boolean isInteger(final Type type) {
+        return type == Type.INT8 ||
+               type == Type.INT16 ||
+               type == Type.INT32 ||
+               type == Type.INT64;
     }
 
-    public static Map<String, Field> groupFieldByName(final Collection<Field> fields) {
-        return fields.stream().collect(Collectors.toMap(Field::name, f -> f));
+    private static boolean isNumber(final Type type) {
+        return isInteger(type) || Arrays.asList(Type.FLOAT32, Type.FLOAT64).contains(type);
     }
 }

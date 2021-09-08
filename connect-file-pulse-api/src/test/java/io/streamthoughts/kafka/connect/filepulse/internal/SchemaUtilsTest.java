@@ -23,212 +23,102 @@ import org.apache.kafka.connect.data.SchemaBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collections;
+import java.util.function.Function;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class SchemaUtilsTest {
 
-    private static final String DEFAULT_FIELD_ONE = "a";
-    private static final String DEFAULT_FIELD_TWO = "b";
+    private static final String DEFAULT_FIELD_A = "A";
+    private static final String DEFAULT_FIELD_B = "B";
 
     @Test
-    public void shouldMergeSchemaGivenTwoFieldsWithDifferentName() {
+    public void should_success_merge_given_two_identical_primitive_schemas() {
         Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.STRING_SCHEMA)
+                .field(DEFAULT_FIELD_A, Schema.STRING_SCHEMA)
                 .build();
+
         Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_TWO, Schema.STRING_SCHEMA)
+                .field(DEFAULT_FIELD_A, Schema.STRING_SCHEMA)
                 .build();
 
-        SchemaBuilder builder = SchemaBuilder.struct();
-        SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
+        Schema schema = SchemaUtils.merge(schemaLeft, schemaRight);
 
-        Schema schema = builder.build();
-
-        assertNotNull(schema.field(DEFAULT_FIELD_ONE));
-        assertEquals(Schema.Type.STRING, schema.field(DEFAULT_FIELD_ONE).schema().type());
-        assertNotNull(schema.field(DEFAULT_FIELD_TWO));
-        assertEquals(Schema.Type.STRING, schema.field(DEFAULT_FIELD_TWO).schema().type());
+        assertNotNull(schema.field(DEFAULT_FIELD_A));
+        assertEquals(Schema.STRING_SCHEMA, schema.field(DEFAULT_FIELD_A).schema());
     }
 
     @Test
-    public void shouldMergeSchemasGivenTwoFieldsWithDifferentTypeGivenOverride() {
+    public void should_success_merge_given_schema_with_two_distinct_field_name() {
         Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.STRING_SCHEMA)
+                .field(DEFAULT_FIELD_A, Schema.STRING_SCHEMA)
                 .build();
-
 
         Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.INT64_SCHEMA)
+                .field(DEFAULT_FIELD_B, Schema.STRING_SCHEMA)
                 .build();
 
-        SchemaBuilder builder = SchemaBuilder.struct();
-        SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.singleton(DEFAULT_FIELD_ONE));
+        Schema schema = SchemaUtils.merge(schemaLeft, schemaRight);
 
-        Schema schema = builder.build();
+        assertNotNull(schema.field(DEFAULT_FIELD_A));
+        assertEquals(Schema.Type.STRING, schema.field(DEFAULT_FIELD_A).schema().type());
 
-        assertNotNull(schema.field(DEFAULT_FIELD_ONE));
-        assertEquals(Schema.Type.INT64, schema.field(DEFAULT_FIELD_ONE).schema().type());
+        assertNotNull(schema.field(DEFAULT_FIELD_B));
+        assertEquals(Schema.Type.STRING, schema.field(DEFAULT_FIELD_B).schema().type());
     }
 
     @Test
-    public void shouldMergeSchemasGivenTwoFieldsWithSameNameIntoArray() {
+    public void should_success_merge_given_schemas_with_two_distinct_field_type() {
         Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.STRING_SCHEMA)
+                .field(DEFAULT_FIELD_A, Schema.STRING_SCHEMA)
                 .build();
+
 
         Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.STRING_SCHEMA)
+                .field(DEFAULT_FIELD_A, Schema.INT64_SCHEMA)
                 .build();
 
-        SchemaBuilder builder = SchemaBuilder.struct();
-        SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
+        Schema schema = SchemaUtils.merge(schemaLeft, schemaRight);
 
-        Schema schema = builder.build();
-
-        assertNotNull(schema.field(DEFAULT_FIELD_ONE));
-        assertEquals(Schema.Type.ARRAY, schema.field(DEFAULT_FIELD_ONE).schema().type());
+        assertNotNull(schema.field(DEFAULT_FIELD_A));
+        assertEquals(Schema.Type.STRING, schema.field(DEFAULT_FIELD_A).schema().type());
     }
 
     @Test
-    public void shouldMergeSchemasGivenLeftFieldWithArrayTypeEqualToRightField() {
+    public void should_success_merge_given_array_schema_and_primitive_schema() {
         Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, SchemaBuilder.array(SchemaBuilder.string()))
+                .field(DEFAULT_FIELD_A, SchemaBuilder.array(SchemaBuilder.string()))
                 .build();
 
         Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.STRING_SCHEMA)
+                .field(DEFAULT_FIELD_A, Schema.STRING_SCHEMA)
                 .build();
 
-        SchemaBuilder builder = SchemaBuilder.struct();
-        SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
+        Function<Schema, Void> assertions = s -> {
+            assertNotNull(s.field(DEFAULT_FIELD_A));
+            assertEquals(Schema.Type.ARRAY, s.field(DEFAULT_FIELD_A).schema().type());
+            return null;
+        };
 
-        Schema schema = builder.build();
-
-        assertNotNull(schema.field(DEFAULT_FIELD_ONE));
-        assertEquals(Schema.Type.ARRAY, schema.field(DEFAULT_FIELD_ONE).schema().type());
+        assertions.apply(SchemaUtils.merge(schemaLeft, schemaRight));
+        assertions.apply(SchemaUtils.merge(schemaRight, schemaLeft));
     }
 
     @Test
-    public void shouldMergeSchemasGivenRightFieldWithArrayTypeEqualToLeftField() {
+    public void should_success_merge_given_two_identical_array_schemas() {
         Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.STRING_SCHEMA)
+                .field(DEFAULT_FIELD_A, SchemaBuilder.array(SchemaBuilder.string()))
                 .build();
 
         Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, SchemaBuilder.array(SchemaBuilder.string()))
+                .field(DEFAULT_FIELD_A, SchemaBuilder.array(SchemaBuilder.string()))
                 .build();
 
-        SchemaBuilder builder = SchemaBuilder.struct();
-        SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
+        Schema schema = SchemaUtils.merge(schemaLeft, schemaRight);
 
-        Schema schema = builder.build();
-
-        assertNotNull(schema.field(DEFAULT_FIELD_ONE));
-        assertEquals(Schema.Type.ARRAY, schema.field(DEFAULT_FIELD_ONE).schema().type());
-    }
-
-    @Test
-    public void shouldMergeSchemasGivenTwoArrayFieldsWithEqualsValueType() {
-        Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, SchemaBuilder.array(SchemaBuilder.string()))
-                .build();
-
-        Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, SchemaBuilder.array(SchemaBuilder.string()))
-                .build();
-
-        SchemaBuilder builder = SchemaBuilder.struct();
-        SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
-
-        Schema schema = builder.build();
-
-        assertNotNull(schema.field(DEFAULT_FIELD_ONE));
-        assertEquals(Schema.Type.ARRAY, schema.field(DEFAULT_FIELD_ONE).schema().type());
-    }
-
-    @Test
-    public void shouldThrowExceptionGivenTwoSchemasWithSameFieldButDifferentType() {
-        Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.STRING_SCHEMA)
-                .build();
-
-
-        Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.INT64_SCHEMA)
-                .build();
-
-        SchemaBuilder builder = SchemaBuilder.struct();
-        try {
-            SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
-            fail("must throw an exception");
-        } catch (Exception e) {
-            Assert.assertEquals("Cannot merge fields 'a' with different types : STRING<>INT64", e.getMessage());
-        }
-    }
-
-    @Test
-    public void shouldThrowExceptionGivenLeftFieldWithArrayTypeNotEqualToRightField() {
-        Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, SchemaBuilder.array(SchemaBuilder.string()))
-                .build();
-
-
-        Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, Schema.INT64_SCHEMA)
-                .build();
-
-        SchemaBuilder builder = SchemaBuilder.struct();
-        try {
-            SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
-            fail("must throw an exception");
-        } catch (Exception e) {
-            Assert.assertEquals("Cannot merge fields 'a' with different array value types : Array[STRING]<>INT64", e.getMessage());
-        }
-    }
-
-    @Test
-    public void shouldThrowExceptionGivenRightFieldWithArrayTypeNotEqualToLeftField() {
-        Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE,  Schema.INT64_SCHEMA)
-                .build();
-
-
-        Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, SchemaBuilder.array(SchemaBuilder.string()))
-                .build();
-
-        SchemaBuilder builder = SchemaBuilder.struct();
-        try {
-            SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
-            fail("must throw an exception");
-        } catch (Exception e) {
-            Assert.assertEquals("Cannot merge fields 'a' with different array value types : INT64<>Array[STRING]", e.getMessage());
-        }
-    }
-
-    @Test
-    public void shouldThrowExceptionGivenTwoArrayFieldWithDifferentType() {
-        Schema schemaLeft = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, SchemaBuilder.array(SchemaBuilder.int64()))
-                .build();
-
-
-        Schema schemaRight = SchemaBuilder.struct()
-                .field(DEFAULT_FIELD_ONE, SchemaBuilder.array(SchemaBuilder.string()))
-                .build();
-
-        SchemaBuilder builder = SchemaBuilder.struct();
-        try {
-            SchemaUtils.merge(schemaLeft, schemaRight, builder, Collections.emptySet());
-            fail("must throw an exception");
-        } catch (Exception e) {
-            Assert.assertEquals(
-                String.format(
-                    "Cannot merge fields '%s' of type array with different value types : Array[INT64]<>Array[STRING]",
-                    DEFAULT_FIELD_ONE),
-                    e.getMessage());
-        }
+        assertNotNull(schema.field(DEFAULT_FIELD_A));
+        assertEquals(Schema.Type.ARRAY, schema.field(DEFAULT_FIELD_A).schema().type());
     }
 }

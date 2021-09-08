@@ -26,6 +26,7 @@ import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilterPipeline;
 import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreAccess;
+import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
 import org.slf4j.Logger;
@@ -76,6 +77,8 @@ public class FilePulseSourceTask extends SourceTask {
 
     private final ConcurrentLinkedQueue<FileContext> completedToCommit = new ConcurrentLinkedQueue<>();
 
+    private Schema valueSchema;
+
     /**
      * {@inheritDoc}
      */
@@ -97,6 +100,7 @@ public class FilePulseSourceTask extends SourceTask {
         connectorGroupName = props.get(CONNECT_NAME_CONFIG);
         offsetPolicy = taskConfig.getSourceOffsetPolicy();
         topic = taskConfig.topic();
+        valueSchema = taskConfig.getValueConnectSchema();
 
         try {
             sharedStore = new StateBackingStoreAccess(
@@ -260,14 +264,21 @@ public class FilePulseSourceTask extends SourceTask {
         final Map<String, ?> sourceOffsets = offsetPolicy.toOffsetMap(record.offset().toSourceOffset());
 
         try {
-            return record.toSourceRecord(
+            final SourceRecord result = record.toSourceRecord(
                     sourcePartition,
                     sourceOffsets,
                     context.metadata(),
                     topic,
                     NO_PARTITION,
-                    taskConfig.getValueConnectSchema()
+                    valueSchema,
+                    taskConfig.isValueConnectSchemaMergeEnabled()
             );
+
+            if (taskConfig.isValueConnectSchemaMergeEnabled()) {
+                valueSchema = result.valueSchema();
+            }
+            return result;
+
         } catch (final Throwable t) {
             throw new ConnectFilePulseException(
                 "Failed to convert data into connect record: '" + context.metadata().uri() + "'",

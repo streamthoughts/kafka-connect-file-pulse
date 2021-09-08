@@ -62,5 +62,6 @@ public interface FileRecord<T> {
             final FileObjectMeta metadata,
             final String defaultTopic,
             final Integer defaultPartition,
-            final Schema connectSchema);
+            final Schema connectSchema,
+            final boolean connectSchemaMergeEnabled);
 }

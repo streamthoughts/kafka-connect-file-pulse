@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils;
 import io.streamthoughts.kafka.connect.filepulse.source.internal.ConnectSchemaMapper;
 import io.streamthoughts.kafka.connect.filepulse.source.internal.InternalSourceRecordBuilder;
 import org.apache.kafka.connect.data.Schema;
@@ -44,7 +45,6 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                            final TypedStruct struct) {
         super(offset, struct);
         internalSourceRecordBuilder = new InternalSourceRecordBuilder();
-
     }
 
     /**
@@ -56,19 +56,33 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                                        final FileObjectMeta metadata,
                                        final String defaultTopic,
                                        final Integer defaultPartition,
-                                       final Schema connectSchema) {
+                                       final Schema connectSchema,
+                                       final boolean connectSchemaMergeEnabled) {
 
         final TypedStruct value = value();
 
-        if (connectSchema != null) {
+        final Schema valueSchema;
+        if (connectSchemaMergeEnabled && value != null) {
+            Schema recordValueSchema = value.schema().map(ConnectSchemaMapper.INSTANCE);
+            if (connectSchema != null) {
+                valueSchema = SchemaUtils.merge(connectSchema, recordValueSchema);
+            } else {
+                valueSchema = recordValueSchema;
+            }
+        } else {
+            valueSchema = connectSchema;
+        }
+
+        if (valueSchema != null) {
             internalSourceRecordBuilder.withValue(() ->
-                value == null ? null : ConnectSchemaMapper.INSTANCE.map(connectSchema, value)
+                value == null ? null : ConnectSchemaMapper.INSTANCE.map(valueSchema, value)
             );
         } else {
             internalSourceRecordBuilder.withValue(() ->
                 value == null ? null : ConnectSchemaMapper.INSTANCE.map(value.schema(), value)
             );
         }
+
         return internalSourceRecordBuilder.build(
             sourcePartition,
             sourceOffset,

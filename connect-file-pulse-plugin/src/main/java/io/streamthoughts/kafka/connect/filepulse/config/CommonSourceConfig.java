@@ -82,6 +82,11 @@ public class CommonSourceConfig extends AbstractConfig {
     public static final String RECORD_VALUE_SCHEMA_CONFIG = "value.connect.schema";
     public static final String RECORD_VALUE_SCHEMA_DOC = "The schema for the record-value";
 
+    public static final String RECORD_VALUE_SCHEMA_MERGE_ENABLE_CONFIG = "merge.value.connect.schemas";
+    public static final String RECORD_VALUE_SCHEMA_MERGE_ENABLE_DOC = "Specify if schemas deriving from record-values should be recursively merged. " +
+            "If set to true, then schemas deriving from a record will be merged with the schema of the last produced record. " +
+            "If `value.connect.schema` is set, then the provided schema will be merged with the schema deriving from the first generated record.";
+
     /**
      * Creates a new {@link CommonSourceConfig} instance.
      */
@@ -182,6 +187,17 @@ public class CommonSourceConfig extends AbstractConfig {
                         RECORD_VALUE_SCHEMA_CONFIG
                 )
                 .define(
+                        RECORD_VALUE_SCHEMA_MERGE_ENABLE_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.LOW,
+                        RECORD_VALUE_SCHEMA_MERGE_ENABLE_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        RECORD_VALUE_SCHEMA_MERGE_ENABLE_CONFIG
+                )
+                .define(
                         FILTER_CONFIG,
                         ConfigDef.Type.LIST,
                         Collections.emptyList(),
@@ -238,6 +254,10 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public Schema getValueConnectSchema() {
         return readSchema(RECORD_VALUE_SCHEMA_CONFIG);
+    }
+
+    public boolean isValueConnectSchemaMergeEnabled() {
+        return getBoolean(RECORD_VALUE_SCHEMA_MERGE_ENABLE_CONFIG);
     }
 
     private Schema readSchema(final String key) {

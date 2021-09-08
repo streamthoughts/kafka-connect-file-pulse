@@ -85,6 +85,21 @@ public class MapSchema implements Schema {
      * {@inheritDoc}
      */
     @Override
+    public Schema merge(final Schema o) {
+        if (this.equals(o)) return this;
+
+        if (o instanceof MapSchema) {
+            final MapSchema that = (MapSchema)o;
+            return new MapSchema(this.valueSchema().merge(that.valueSchema()));
+        }
+
+        throw new DataException("Cannot merge incompatible schema type " + this.type() + "<>" + o.type());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MapSchema)) return false;

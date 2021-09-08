@@ -83,10 +83,10 @@ public class ArraySchema implements Schema {
 
         if (o instanceof ArraySchema) {
             final ArraySchema that = (ArraySchema)o;
-            return Schema.array(valueSchema.merge(that.valueSchema));
+            return Schema.array(this.valueSchema().merge(that.valueSchema()));
         }
 
-        return Schema.array(valueSchema.merge(o));
+        return Schema.array(this.valueSchema().merge(o));
     }
 
     /**

@@ -65,19 +65,66 @@ public class SimpleSchema implements Schema {
         SCHEMAS_KEYED_BY_TYPE.put(type, this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Type type() {
         return type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T> T map(final SchemaMapper<T> mapper) {
         return mapper.map(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object) {
         return mapper.map(this, object);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Schema merge(final Schema that) {
+        if (this.equals(that)) return this;
+
+        if (this.type() == that.type()) {
+            return this;
+        }
+
+        if (!that.type().isPrimitive()) {
+            // Let's try to reverse the merge. e.g., this can handle case where
+            // trying to merge PRIMITIVE with ARRAY.
+            return that.merge(this);
+        }
+
+        if (this.type() == Type.STRING || that.type() == Type.STRING)
+            return Schema.string();
+
+        if ((this.type() == Type.LONG && that.type() == Type.INTEGER) ||
+            (that.type() == Type.LONG && this.type() == Type.INTEGER)) {
+            return Schema.int64();  // return LONG
+        }
+
+        if ( (this.type() == Type.DOUBLE && that.type().isNumber()) ||
+             (that.type() == Type.DOUBLE && this.type().isNumber())) {
+            return Schema.float64(); // return DOUBLE
+        }
+
+        throw new DataException("Cannot merge incompatible schema type " + this.type() + "<>" + that.type());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

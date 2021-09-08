@@ -21,6 +21,9 @@ package io.streamthoughts.kafka.connect.filepulse.data;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+
 public class StructSchemaTest {
 
     @Test
@@ -51,14 +54,21 @@ public class StructSchemaTest {
                 .namespace("namespace")
                 .field("field-1", new StructSchema().field("field-3", Schema.int32()));
 
-        final Schema merged = schema1.merge(schema2);
-        Assert.assertNotNull(merged);
-        Assert.assertEquals(1, ((StructSchema)merged).fields().size());
-        Assert.assertEquals(Type.STRUCT, ((StructSchema)merged).field("field-1").type());
-        final StructSchema nested = (StructSchema)((StructSchema) merged).field("field-1").schema();
-        Assert.assertEquals(2, nested.fields().size());
-        Assert.assertEquals(Type.STRING, nested.field("field-2").type());
-        Assert.assertEquals(Type.INTEGER, nested.field("field-3").type());
+        Function<Schema, Void> assertions = schema -> {
+            Assert.assertNotNull(schema);
+            Assert.assertEquals(1, ((StructSchema)schema).fields().size());
+            Assert.assertEquals(Type.STRUCT, ((StructSchema)schema).field("field-1").type());
+
+            final StructSchema nested = (StructSchema)((StructSchema) schema).field("field-1").schema();
+            Assert.assertEquals(2, nested.fields().size());
+            Assert.assertEquals(Type.STRING, nested.field("field-2").type());
+            Assert.assertEquals(Type.INTEGER, nested.field("field-3").type());
+
+            return null;
+        };
+
+        assertions.apply(schema1.merge(schema2));
+        assertions.apply(schema2.merge(schema1));
     }
 
     @Test
@@ -73,14 +83,42 @@ public class StructSchemaTest {
                 .namespace("namespace")
                 .field("field-1", new StructSchema().field("field-3", Schema.int32()));
 
-        final Schema merged = schema1.merge(schema2);
-        Assert.assertNotNull(merged);
-        Assert.assertEquals(1, ((StructSchema)merged).fields().size());
-        Assert.assertEquals(Type.ARRAY, ((StructSchema)merged).field("field-1").type());
-        final StructSchema nested = (StructSchema)((ArraySchema)((StructSchema) merged).field("field-1").schema()).valueSchema();
-        Assert.assertEquals(2, nested.fields().size());
-        Assert.assertEquals(Type.STRING, nested.field("field-2").type());
-        Assert.assertEquals(Type.INTEGER, nested.field("field-3").type());
+        Function<Schema, Void> assertions = schema -> {
+            Assert.assertNotNull(schema);
+            Assert.assertEquals(1, ((StructSchema)schema).fields().size());
+            Assert.assertEquals(Type.ARRAY, ((StructSchema)schema).field("field-1").type());
+            final StructSchema nested = (StructSchema)((ArraySchema)((StructSchema) schema).field("field-1").schema()).valueSchema();
+            Assert.assertEquals(2, nested.fields().size());
+            Assert.assertEquals(Type.STRING, nested.field("field-2").type());
+            Assert.assertEquals(Type.INTEGER, nested.field("field-3").type());
+            return null;
+        };
+
+        assertions.apply(schema1.merge(schema2));
+        assertions.apply(schema2.merge(schema1));
+    }
+
+    @Test
+    public void should_success_merge_given_two_schemas_with_array_primitive() {
+        final StructSchema schema1 = new StructSchema()
+                .name("test")
+                .namespace("namespace")
+                .field("field-1", Schema.string());
+
+        final StructSchema schema2 = new StructSchema()
+                .name("test")
+                .namespace("namespace")
+                .field("field-1", Schema.array(Schema.string()));
+
+        Function<Schema, Void> assertions = schema -> {
+            Assert.assertNotNull(schema);
+            Assert.assertEquals(Type.ARRAY, ((StructSchema) schema).field("field-1").type());
+            Assert.assertEquals(Type.STRING, ((ArraySchema) ((StructSchema) schema).field("field-1").schema()).valueSchema().type());
+            return null;
+        };
+
+        assertions.apply(schema1.merge(schema2));
+        assertions.apply(schema2.merge(schema1));
     }
 
     @Test
@@ -95,12 +133,17 @@ public class StructSchemaTest {
                 .namespace("namespace")
                 .field("field-two", Schema.int32());
 
-        final Schema merged = schema1.merge(schema2);
-        Assert.assertNotNull(merged);
-        Assert.assertEquals(Type.STRUCT, merged.type());
-        Assert.assertEquals(2, ((StructSchema)merged).fields().size());
-        Assert.assertEquals(Type.STRING, ((StructSchema)merged).field("field-one").type());
-        Assert.assertEquals(Type.INTEGER, ((StructSchema)merged).field("field-two").type());
+        Function<Schema, Void> assertions = schema -> {
+            Assert.assertNotNull(schema);
+            Assert.assertEquals(Type.STRUCT, schema.type());
+            Assert.assertEquals(2, ((StructSchema)schema).fields().size());
+            Assert.assertEquals(Type.STRING, ((StructSchema)schema).field("field-one").type());
+            Assert.assertEquals(Type.INTEGER, ((StructSchema)schema).field("field-two").type());
+            return null;
+        };
+
+        assertions.apply(schema1.merge(schema2));
+        assertions.apply(schema2.merge(schema1));
     }
 
     @Test(expected = DataException.class)

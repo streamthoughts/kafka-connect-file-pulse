@@ -29,15 +29,20 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.json.XMLParserConfiguration;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class XmlToJsonFilter extends AbstractMergeRecordFilter<XmlToJsonFilter>  {
+public class XmlToJsonFilter extends AbstractMergeRecordFilter<XmlToJsonFilter> {
 
     private XmlToJsonFilterConfig config;
 
     private XMLParserConfiguration xmlParserConfiguration;
+
     /**
      * {@inheritDoc}
      */
@@ -55,8 +60,8 @@ public class XmlToJsonFilter extends AbstractMergeRecordFilter<XmlToJsonFilter> 
         config = new XmlToJsonFilterConfig(props);
 
         xmlParserConfiguration = new XMLParserConfiguration()
-            .withKeepStrings(config.getXmlParserKeepStrings())
-            .withcDataTagName(config.getCDataTagName());
+                .withKeepStrings(config.getXmlParserKeepStrings())
+                .withcDataTagName(config.getCDataTagName());
     }
 
     /**
@@ -65,14 +70,33 @@ public class XmlToJsonFilter extends AbstractMergeRecordFilter<XmlToJsonFilter> 
     @Override
     protected RecordsIterable<TypedStruct> apply(final FilterContext context,
                                                  final TypedStruct record) throws FilterException {
+
+        final TypedValue value = checkIsNotNull(record.get(config.source()));
+        switch (value.type()) {
+            case STRING:
+                final String xml = value.getString();
+                if (StringUtils.isBlank(value.getString())) {
+                    return RecordsIterable.empty();
+                }
+                return xmlToJson(new StringReader(xml));
+            case BYTES:
+                byte[] bytes = value.getBytes();
+                if (bytes.length == 0) {
+                    return RecordsIterable.empty();
+                }
+                return xmlToJson(new InputStreamReader(new ByteArrayInputStream(bytes), config.charset()));
+            default:
+                throw new FilterException(
+                        "Invalid field '" + config.source() + "' was passed through the " +
+                        "connector's configuration'. " +
+                        "Cannot parse field of type '" + value.type() + "' to XML."
+                );
+        }
+    }
+
+    private RecordsIterable<TypedStruct> xmlToJson(final Reader xml) {
         try {
-            final String payload = checkIsNotNull(record.get(config.source())).getString();
-
-            if (StringUtils.isBlank(payload)) {
-                return RecordsIterable.empty();
-            }
-
-            final JSONObject xmlJSONObj = XML.toJSONObject(payload, xmlParserConfiguration);
+            final JSONObject xmlJSONObj = XML.toJSONObject(xml, xmlParserConfiguration);
             final String jsonString = xmlJSONObj.toString(0);
             return RecordsIterable.of(TypedStruct.create().put(config.source(), jsonString));
         } catch (JSONException e) {
@@ -92,7 +116,7 @@ public class XmlToJsonFilter extends AbstractMergeRecordFilter<XmlToJsonFilter> 
         if (value.isNull()) {
             throw new FilterException(
                     "Invalid field '" + config.source() + "' was passed through the connector's configuration'. " +
-                    "Cannot parse null or empty value to XML."
+                            "Cannot parse null or empty value to XML."
             );
         }
         return value;

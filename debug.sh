@@ -39,7 +39,7 @@ if [[ "$BUILD" == "true" ]]; then
 fi
 
 echo -e "\n🐳 Stopping previous Kafka Docker-Compose stack..."
-(cd "$BASEDIR"; docker-compose -f ./docker-compose-debug.yml down)
+(cd "$BASEDIR"; docker-compose -f ./docker-compose-debug.yml down --remove-orphans)
 
 echo -e "\n🐳 Starting Kafka Docker-Compose stack..."
 (cd "$BASEDIR"; docker-compose -f ./docker-compose-debug.yml up -d --scale connect=$SCALE)

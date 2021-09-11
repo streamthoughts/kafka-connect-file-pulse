@@ -25,11 +25,39 @@ package io.streamthoughts.kafka.connect.filepulse.data;
  */
 public interface SchemaMapper<T> {
 
-    T map(final MapSchema schema);
+    /**
+     * Map the given {@link MapSchema} to the target type T.
+     *
+     * @param schema        the {@link Schema}.
+     * @param optional      {@code true} if the schema should be optional.
+     * @return              T
+     */
+    T map(final MapSchema schema, final boolean optional);
 
-    T map(final ArraySchema schema);
+    /**
+     * Map the given {@link ArraySchema} to the target type T.
+     *
+     * @param schema        the {@link Schema}.
+     * @param optional      {@code true} if the schema should be optional.
+     * @return              T
+     */
+    T map(final ArraySchema schema, final boolean optional);
 
-    T map(final StructSchema schema);
+    /**
+     * Map the given {@link StructSchema} to the target type T.
+     *
+     * @param schema        the {@link Schema}.
+     * @param optional      {@code true} if the schema should be optional.
+     * @return              T
+     */
+    T map(final StructSchema schema, final boolean optional);
 
-    T map(final SimpleSchema schema);
+    /**
+     * Map the given {@link SimpleSchema} to the target type T.
+     *
+     * @param schema        the {@link Schema}.
+     * @param optional      {@code true} if the schema should be optional.
+     * @return              T
+     */
+    T map(final SimpleSchema schema, final boolean optional);
 }

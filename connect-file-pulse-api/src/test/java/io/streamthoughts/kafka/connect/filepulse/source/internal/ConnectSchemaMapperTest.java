@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.Struct;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -31,6 +32,13 @@ import java.util.Map;
 
 public class ConnectSchemaMapperTest {
 
+    private ConnectSchemaMapper mapper;
+
+    @Before
+    public void setUp() {
+        mapper = new ConnectSchemaMapper();
+    }
+
     @Test
     public void should_map_given_simple_typed_struct() {
 
@@ -38,7 +46,7 @@ public class ConnectSchemaMapperTest {
                 .put("field1", "value1")
                 .put("field2", "value2");
 
-        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        SchemaAndValue schemaAndValue = struct.schema().map(mapper, struct, false);
         Assert.assertNotNull(schemaAndValue);
 
         Struct connectStruct = (Struct)schemaAndValue.value();
@@ -51,7 +59,7 @@ public class ConnectSchemaMapperTest {
         TypedStruct struct = TypedStruct.create()
                 .put("field1", TypedStruct.create().put("field2", "value2"));
 
-        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        SchemaAndValue schemaAndValue = struct.schema().map(mapper, struct, false);
         Assert.assertNotNull(schemaAndValue);
 
         Struct connectStruct = (Struct)schemaAndValue.value();
@@ -67,7 +75,7 @@ public class ConnectSchemaMapperTest {
         TypedStruct struct = TypedStruct.create()
                 .put("field1", Collections.singletonList("value"));
 
-        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        SchemaAndValue schemaAndValue = struct.schema().map(mapper, struct, false);
         Assert.assertNotNull(schemaAndValue);
 
         Struct connectStruct = (Struct)schemaAndValue.value();
@@ -82,7 +90,7 @@ public class ConnectSchemaMapperTest {
         TypedStruct struct = TypedStruct.create()
                 .put("field1", Collections.singletonList(TypedStruct.create().put("field2", "value")));
 
-        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        SchemaAndValue schemaAndValue = struct.schema().map(mapper, struct, false);
         Assert.assertNotNull(schemaAndValue);
 
         Struct connectStruct = (Struct)schemaAndValue.value();
@@ -97,7 +105,7 @@ public class ConnectSchemaMapperTest {
         TypedStruct struct = TypedStruct.create()
                 .put("field1", Collections.singletonMap("field2", "value"));
 
-        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        SchemaAndValue schemaAndValue = struct.schema().map(mapper, struct, false);
         Assert.assertNotNull(schemaAndValue);
 
         Struct connectStruct = (Struct)schemaAndValue.value();
@@ -116,7 +124,7 @@ public class ConnectSchemaMapperTest {
                     TypedStruct.create().put("field3", "value")
                 ));
 
-        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        SchemaAndValue schemaAndValue = struct.schema().map(mapper, struct, false);
         Assert.assertNotNull(schemaAndValue);
 
         Struct connectStruct = (Struct)schemaAndValue.value();
@@ -131,7 +139,7 @@ public class ConnectSchemaMapperTest {
                 .put("field1", "value1")
                 .put("field2", Schema.none(), null);
 
-        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        SchemaAndValue schemaAndValue = struct.schema().map(mapper, struct, false);
         Assert.assertNotNull(schemaAndValue);
 
         Struct connectStruct = (Struct) schemaAndValue.value();
@@ -145,7 +153,7 @@ public class ConnectSchemaMapperTest {
                 .put("field1", "value1")
                 .put("field2", Schema.array(Collections.emptyList(), null), Collections.emptyList());
 
-        SchemaAndValue schemaAndValue = struct.schema().map(ConnectSchemaMapper.INSTANCE, struct);
+        SchemaAndValue schemaAndValue = struct.schema().map(mapper, struct, false);
         Assert.assertNotNull(schemaAndValue);
 
         Struct connectStruct = (Struct)schemaAndValue.value();
@@ -159,6 +167,25 @@ public class ConnectSchemaMapperTest {
         Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("foo_bar"));
         Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("foo.bar"));
         Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("_foo_bar"));
+    }
+
+    @Test
+    public void should_map_given_struct_with_duplicate_schema() {
+        final TypedStruct struct = TypedStruct.create()
+                .put("field1", TypedStruct.create("Foo")
+                        .put("field1", "val")
+                        .put("field2", "val"))
+                .put("field2", TypedStruct.create("Foo")
+                        .put("field2", "val")
+                        .put("field3", "val")
+                );
+
+        final org.apache.kafka.connect.data.Schema connectSchema = new ConnectSchemaMapper()
+                .map(struct.schema(), false);
+        Assert.assertEquals(
+                connectSchema.field("field1").schema(),
+                connectSchema.field("field2").schema()
+        );
     }
 
 }

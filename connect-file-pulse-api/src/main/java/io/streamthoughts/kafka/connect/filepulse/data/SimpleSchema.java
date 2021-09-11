@@ -77,16 +77,16 @@ public class SimpleSchema implements Schema {
      * {@inheritDoc}
      */
     @Override
-    public <T> T map(final SchemaMapper<T> mapper) {
-        return mapper.map(this);
+    public <T> T map(SchemaMapper<T> mapper, boolean optional) {
+        return mapper.map(this, optional);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object) {
-        return mapper.map(this, object);
+    public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object, final boolean optional) {
+        return mapper.map(this, object, optional);
     }
 
     /**

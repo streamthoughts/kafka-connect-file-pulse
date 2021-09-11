@@ -29,6 +29,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.schema.SchemaContext;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaAndValue;
@@ -50,8 +51,9 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
 
     private static final Object DEFAULT_NULL_VALUE = null;
 
-    public static final ConnectSchemaMapper INSTANCE = new ConnectSchemaMapper();
     private static final Pattern REGEX = Pattern.compile("[_\\-.]");
+
+    private final SchemaContext context = new SchemaContext();
 
     static String normalizeSchemaName(final String name) {
         return Arrays
@@ -65,38 +67,41 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
      * {@inheritDoc}
      */
     @Override
-    public Schema map(final MapSchema schema) {
-        final Schema keySchema = schema.keySchema().map(this);
-        final Schema valueSchema = schema.valueSchema().map(this);
-        return asNullableAndOptional(SchemaBuilder.map(keySchema, valueSchema)).build();
+    public Schema map(final MapSchema schema, final boolean optional) {
+        final Schema keySchema = schema.keySchema().map(this, optional);
+        final Schema valueSchema = schema.valueSchema().map(this, optional);
+
+        final SchemaBuilder builder = SchemaBuilder.map(keySchema, valueSchema);
+        return (optional ? asNullableAndOptional(builder) : builder).build();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Schema map(final ArraySchema schema) {
-        Schema valueSchema = schema.valueSchema().map(this);
-        return asNullableAndOptional(SchemaBuilder.array(valueSchema)).build();
+    public Schema map(final ArraySchema schema, final boolean optional) {
+        final Schema valueSchema = schema.valueSchema().map(this, optional);
+
+        final SchemaBuilder builder = SchemaBuilder.array(valueSchema);
+        return (optional ? asNullableAndOptional(builder) : builder).build();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Schema map(final StructSchema schema) {
-        SchemaBuilder sb = SchemaBuilder.struct();
-
+    public Schema map(final StructSchema schema, final boolean optional) {
         String schemaName = schema.name();
-        if (schemaName != null) {
-            if (schema.namespace() != null) {
-                schemaName = schema.namespace() + "." + schemaName;
-            }
-            sb.name(schemaName);
+        if (schemaName != null && schema.namespace() != null) {
+            schemaName = schema.namespace() + "." + schemaName;
         }
 
-        if (schema.doc() != null) {
-            sb.doc(schema.doc());
+        final SchemaBuilder sb = SchemaBuilder.struct()
+                .name(schemaName)
+                .doc(schema.doc());
+
+        if (optional) {
+            sb.optional();
         }
 
         for (final TypedField field : schema) {
@@ -104,31 +109,31 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
             final io.streamthoughts.kafka.connect.filepulse.data.Schema fieldSchema = field.schema();
             // Ignore schema NULL because cannot determine the expected type.
             if (fieldSchema.type() != Type.NULL && fieldSchema.isResolvable()) {
-                mayUpdateSchemaName(fieldSchema, fieldName);
-                sb.field(fieldName, fieldSchema.map(this)).optional();
+                String fieldSchemaName = normalizeSchemaName(fieldName);
+                mayUpdateSchemaWithName(fieldSchema, fieldSchemaName);
+                sb.field(fieldName, fieldSchema.map(this, true));
             } else {
                 LOG.debug("Ignore field '{}', schema type is either NULL or cannot be resolved.", fieldName);
             }
         }
-        return sb.build();
+        return context.buildSchemaWithCyclicSchemaWrapper(sb.build());
     }
-
-    private void mayUpdateSchemaName(final io.streamthoughts.kafka.connect.filepulse.data.Schema schema,
-                                     final String fieldName) {
+    private void mayUpdateSchemaWithName(final io.streamthoughts.kafka.connect.filepulse.data.Schema schema,
+                                         final String schemaName) {
         if (schema.type() == Type.ARRAY) {
             final ArraySchema arraySchema = (ArraySchema) schema;
-            mayUpdateSchemaName(arraySchema.valueSchema(), fieldName);
+            mayUpdateSchemaWithName(arraySchema.valueSchema(), schemaName);
         }
 
         if (schema.type() == Type.MAP) {
             final MapSchema mapSchema = (MapSchema) schema;
-            mayUpdateSchemaName(mapSchema.valueSchema(), fieldName);
+            mayUpdateSchemaWithName(mapSchema.valueSchema(), schemaName);
         }
 
         if (schema.type() == Type.STRUCT) {
             final StructSchema structSchema = (StructSchema) schema;
             if (structSchema.name() == null) {
-                structSchema.name(normalizeSchemaName(fieldName));
+                structSchema.name(schemaName);
             }
         }
     }
@@ -137,8 +142,9 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
      * {@inheritDoc}
      */
     @Override
-    public Schema map(final SimpleSchema schema) {
-        return asNullableAndOptional(new SchemaBuilder(schema.type().schemaType())).build();
+    public Schema map(final SimpleSchema schema, final boolean optional) {
+        final SchemaBuilder builder = new SchemaBuilder(schema.type().schemaType());
+        return (optional ? asNullableAndOptional(builder) : builder).build();
     }
 
     private static SchemaBuilder asNullableAndOptional(final SchemaBuilder sb) {
@@ -149,8 +155,8 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue map(final MapSchema schema, final Map<String, ?> map) {
-        Schema connectSchema = schema.map(this);
+    public SchemaAndValue map(final MapSchema schema, final Map<String, ?> map, final boolean optional) {
+        Schema connectSchema = schema.map(this, optional);
         return new SchemaAndValue(connectSchema, map);
     }
 
@@ -158,8 +164,8 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue map(final ArraySchema schema, final Collection<?> array) {
-        Schema connectSchema = schema.map(this);
+    public SchemaAndValue map(final ArraySchema schema, final Collection<?> array, final boolean optional) {
+        Schema connectSchema = schema.map(this, optional);
 
         return new SchemaAndValue(connectSchema, array);
     }
@@ -168,16 +174,16 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue map(final StructSchema schema, final TypedStruct struct) {
-        return map(schema.map(this), struct);
+    public SchemaAndValue map(final StructSchema schema, final TypedStruct struct, final boolean optional) {
+        return map(schema.map(this, optional), struct);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SchemaAndValue map(final SimpleSchema schema, final Object value) {
-        return new SchemaAndValue(schema.map(this), value);
+    public SchemaAndValue map(final SimpleSchema schema, final Object value, final boolean optional) {
+        return new SchemaAndValue(schema.map(this, optional), value);
     }
 
     /**

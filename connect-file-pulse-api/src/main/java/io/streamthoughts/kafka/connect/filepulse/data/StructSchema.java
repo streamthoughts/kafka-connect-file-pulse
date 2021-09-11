@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class StructSchema implements Schema, Iterable<TypedField> {
 
@@ -149,7 +151,11 @@ public class StructSchema implements Schema, Iterable<TypedField> {
      */
     @Override
     public Iterator<TypedField> iterator() {
-        return Collections.unmodifiableCollection(fields.values()).iterator();
+        return this.fields.values()
+            .stream()
+            .sorted(Comparator.comparing(TypedField::name))
+            .collect(Collectors.toUnmodifiableList())
+            .iterator();
     }
 
     /**
@@ -224,16 +230,16 @@ public class StructSchema implements Schema, Iterable<TypedField> {
      * {@inheritDoc}
      */
     @Override
-    public <T> T map(final SchemaMapper<T> mapper) {
-        return mapper.map(this);
+    public <T> T map(SchemaMapper<T> mapper, boolean optional) {
+        return mapper.map(this, optional);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object) {
-        return mapper.map(this, (TypedStruct) object);
+    public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object, final boolean optional) {
+        return mapper.map(this, (TypedStruct) object, optional);
     }
 
     /**

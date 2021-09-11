@@ -181,13 +181,11 @@ public interface Schema {
      * @param <T>       the new type.
      * @return          the schema mapped to T.
      */
-    default <T> T map(final SchemaMapper<T> mapper) {
-        throw new UnsupportedOperationException("this method is not supported for schema of type : " + type());
-    }
+    <T> T map(final SchemaMapper<T> mapper, final boolean optional);
 
-    default <T> T map(final SchemaMapperWithValue<T> mapper, Object object) {
-        throw new UnsupportedOperationException("this method is not supported for schema of type : " + type());
-    }
+    <T> T map(final SchemaMapperWithValue<T> mapper,
+                      final Object object,
+                      final boolean optional);
 
     /**
      * Merges this schema with the given one.
@@ -209,11 +207,33 @@ public interface Schema {
 
         static EmptySchema INSTANCE = new EmptySchema();
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Type type() {
             return Type.NULL;
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <T> T map(final SchemaMapper<T> mapper, final boolean optional) {
+            throw new UnsupportedOperationException("this method is not supported for schema of type : " + type());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <T> T map(final SchemaMapperWithValue<T> mapper, final Object object, final boolean optional) {
+            throw new UnsupportedOperationException("this method is not supported for schema of type : " + type());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String toString() {
             return "[type="+Type.NULL+"]";

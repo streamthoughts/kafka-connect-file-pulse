@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.internal.SchemaUtils;
+import io.streamthoughts.kafka.connect.filepulse.schema.SchemaMerger;
 import io.streamthoughts.kafka.connect.filepulse.source.internal.ConnectSchemaMapper;
 import io.streamthoughts.kafka.connect.filepulse.source.internal.InternalSourceRecordBuilder;
 import org.apache.kafka.connect.data.Schema;
@@ -35,6 +35,7 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
 
     private final InternalSourceRecordBuilder internalSourceRecordBuilder;
 
+    private final ConnectSchemaMapper mapper = new ConnectSchemaMapper();
     /**
      * Creates a new {@link TypedFileRecord} instance.
      *
@@ -63,9 +64,9 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
 
         final Schema valueSchema;
         if (connectSchemaMergeEnabled && value != null) {
-            Schema recordValueSchema = value.schema().map(ConnectSchemaMapper.INSTANCE);
+            Schema recordValueSchema = value.schema().map(mapper, false);
             if (connectSchema != null) {
-                valueSchema = SchemaUtils.merge(connectSchema, recordValueSchema);
+                valueSchema = SchemaMerger.merge(connectSchema, recordValueSchema);
             } else {
                 valueSchema = recordValueSchema;
             }
@@ -75,11 +76,11 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
 
         if (valueSchema != null) {
             internalSourceRecordBuilder.withValue(() ->
-                value == null ? null : ConnectSchemaMapper.INSTANCE.map(valueSchema, value)
+                value == null ? null : mapper.map(valueSchema, value)
             );
         } else {
             internalSourceRecordBuilder.withValue(() ->
-                value == null ? null : ConnectSchemaMapper.INSTANCE.map(value.schema(), value)
+                value == null ? null : mapper.map(value.schema(), value, false)
             );
         }
 
@@ -118,7 +119,7 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                 if (key == null || key.isNull() ) {
                     return null;
                 }
-                return key.schema().map(ConnectSchemaMapper.INSTANCE, key.value());
+                return key.schema().map(mapper, key.value(), false);
             }
         );
         return this;

@@ -30,13 +30,14 @@ import java.util.Map;
  */
 public interface SchemaMapperWithValue<T> {
 
-    T map(final MapSchema schema, final Map<String, ?> value);
+    T map(final MapSchema schema, final Map<String, ?> value, final boolean optional);
 
-    T map(final ArraySchema schema, final Collection<?> value);
+    T map(final ArraySchema schema, final Collection<?> value, final boolean optional);
 
-    T map(final StructSchema schema, final TypedStruct value);
+    T map(final StructSchema schema, final TypedStruct value, final boolean optional);
 
-    T map(final SimpleSchema schema, final Object value);
+    T map(final SimpleSchema schema, final Object value, final boolean optional);
 
-    SchemaAndValue map(final org.apache.kafka.connect.data.Schema schema, final TypedStruct value);
+    SchemaAndValue map(final org.apache.kafka.connect.data.Schema schema,
+                       final TypedStruct value);
 }

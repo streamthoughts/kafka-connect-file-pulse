@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.internal;
+package io.streamthoughts.kafka.connect.filepulse.schema;
 
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
@@ -27,12 +27,12 @@ import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
-public class SchemaUtilsTest {
+public class SchemaMergerTest {
 
     private static final String DEFAULT_FIELD_A = "A";
     private static final String DEFAULT_FIELD_B = "B";
+    private static final String DEFAULT_FIELD_C = "C";
 
     @Test
     public void should_success_merge_given_two_identical_primitive_schemas() {
@@ -44,7 +44,7 @@ public class SchemaUtilsTest {
                 .field(DEFAULT_FIELD_A, Schema.STRING_SCHEMA)
                 .build();
 
-        Schema schema = SchemaUtils.merge(schemaLeft, schemaRight);
+        Schema schema = SchemaMerger.merge(schemaLeft, schemaRight);
 
         assertNotNull(schema.field(DEFAULT_FIELD_A));
         assertEquals(Schema.STRING_SCHEMA, schema.field(DEFAULT_FIELD_A).schema());
@@ -60,7 +60,7 @@ public class SchemaUtilsTest {
                 .field(DEFAULT_FIELD_B, Schema.STRING_SCHEMA)
                 .build();
 
-        Schema schema = SchemaUtils.merge(schemaLeft, schemaRight);
+        Schema schema = SchemaMerger.merge(schemaLeft, schemaRight);
 
         assertNotNull(schema.field(DEFAULT_FIELD_A));
         assertEquals(Schema.Type.STRING, schema.field(DEFAULT_FIELD_A).schema().type());
@@ -80,7 +80,7 @@ public class SchemaUtilsTest {
                 .field(DEFAULT_FIELD_A, Schema.INT64_SCHEMA)
                 .build();
 
-        Schema schema = SchemaUtils.merge(schemaLeft, schemaRight);
+        Schema schema = SchemaMerger.merge(schemaLeft, schemaRight);
 
         assertNotNull(schema.field(DEFAULT_FIELD_A));
         assertEquals(Schema.Type.STRING, schema.field(DEFAULT_FIELD_A).schema().type());
@@ -102,8 +102,8 @@ public class SchemaUtilsTest {
             return null;
         };
 
-        assertions.apply(SchemaUtils.merge(schemaLeft, schemaRight));
-        assertions.apply(SchemaUtils.merge(schemaRight, schemaLeft));
+        assertions.apply(SchemaMerger.merge(schemaLeft, schemaRight));
+        assertions.apply(SchemaMerger.merge(schemaRight, schemaLeft));
     }
 
     @Test
@@ -116,9 +116,56 @@ public class SchemaUtilsTest {
                 .field(DEFAULT_FIELD_A, SchemaBuilder.array(SchemaBuilder.string()))
                 .build();
 
-        Schema schema = SchemaUtils.merge(schemaLeft, schemaRight);
+        Schema schema = SchemaMerger.merge(schemaLeft, schemaRight);
 
         assertNotNull(schema.field(DEFAULT_FIELD_A));
         assertEquals(Schema.Type.ARRAY, schema.field(DEFAULT_FIELD_A).schema().type());
+    }
+
+    @Test
+    public void should_success_merge_given_duplicate_schemas() {
+        final Schema duplicatedSchema2V1 = SchemaBuilder.struct()
+                .name("Duplicate2")
+                .field("field1", SchemaBuilder.string().build())
+                .build();
+
+        final Schema duplicateSchema2V2 = SchemaBuilder.struct()
+                .name("Duplicate2")
+                .field("field2", SchemaBuilder.string().build())
+                .build();
+
+        final Schema duplicatedSchema1V1 = SchemaBuilder
+                .struct()
+                .name("Duplicate")
+                .field("field1", SchemaBuilder.string().build())
+                .build();
+
+        final Schema duplicatedSchema1V2 = SchemaBuilder
+                .struct()
+                .name("Duplicate")
+                .field("field2", SchemaBuilder.string().build())
+                .field("field3", duplicateSchema2V2)
+                .build();
+
+        Schema schemaLeft = SchemaBuilder.struct()
+                .field(DEFAULT_FIELD_A, duplicatedSchema1V1)
+                .field(DEFAULT_FIELD_B, duplicatedSchema2V1)
+                .build();
+
+        Schema schemaRight = SchemaBuilder.struct()
+                .field(DEFAULT_FIELD_C, duplicatedSchema1V2)
+                .build();
+
+        Schema schema = SchemaMerger.merge(schemaLeft, schemaRight);
+        Assert.assertNotNull(schema);
+        Assert.assertEquals(
+                schema.field(DEFAULT_FIELD_A).schema(),
+                schema.field(DEFAULT_FIELD_C).schema()
+        );
+
+        Assert.assertEquals(
+                schema.field(DEFAULT_FIELD_B).schema(),
+                schema.field(DEFAULT_FIELD_C).schema().field("field3").schema()
+        );
     }
 }

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
+package io.streamthoughts.kafka.connect.filepulse.xml;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
@@ -42,9 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig.FORCE_ARRAY_ON_FIELDS_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig.XPATH_QUERY_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig.XPATH_RESULT_TYPE_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.xml.XMLFileInputReaderConfig.withKeyPrefix;
 
 public class XMLFileInputIteratorTest {
 
@@ -53,8 +51,8 @@ public class XMLFileInputIteratorTest {
 
     @Test
     public void should_read_all_records_given_valid_xpath_expression() throws IOException {
-        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(
-                Collections.singletonMap(XPATH_QUERY_CONFIG, "//broker")
+        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(Collections.singletonMap(
+                XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "//broker")
         );
 
         try (
@@ -73,8 +71,8 @@ public class XMLFileInputIteratorTest {
 
     @Test
     public void should_read_all_records_given_root_xpath_expression() throws IOException {
-        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(
-                Collections.singletonMap(XPATH_QUERY_CONFIG, "/cluster")
+        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(Collections.singletonMap(
+                XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "/cluster")
         );
 
         try (
@@ -102,8 +100,8 @@ public class XMLFileInputIteratorTest {
     @Test
     public void should_ignore_white_space_and_nl_nodes() throws IOException {
 
-        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(
-                Collections.singletonMap(XPATH_QUERY_CONFIG, "/")
+        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(Collections.singletonMap(
+                XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "/")
         );
 
         try (
@@ -119,8 +117,8 @@ public class XMLFileInputIteratorTest {
     @Test
     public void should_read_record_given_document_with_cdata_node() throws IOException {
 
-        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(
-                Collections.singletonMap(XPATH_QUERY_CONFIG, "/")
+        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(Collections.singletonMap(
+               XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "/")
         );
 
         try (var iterator = createXMLFileInputIterator(config, CDATA_TEST_XML_DOCUMENT)) {
@@ -135,8 +133,8 @@ public class XMLFileInputIteratorTest {
     @Test
     public void should_read_record_given_document_with_comment_node() throws IOException {
 
-        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(
-                Collections.singletonMap(XPATH_QUERY_CONFIG, "/")
+        final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(Collections.singletonMap(
+               XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "/")
         );
 
         try (var iterator = createXMLFileInputIterator(config, COMMENT_TEST_XML_DOCUMENT)) {
@@ -151,8 +149,8 @@ public class XMLFileInputIteratorTest {
     @Test
     public void should_read_record_given_node_xpath_expression() throws IOException {
         final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(new HashMap<String, String>() {{
-            put(XPATH_QUERY_CONFIG, "(//broker)[1]/topicPartition/logSize/text()");
-            put(XPATH_RESULT_TYPE_CONFIG, "STRING");
+            put(XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "(//broker)[1]/topicPartition/logSize/text()");
+            put(XMLFileInputReaderConfig.XPATH_RESULT_TYPE_CONFIG, "STRING");
         }});
 
         try (var iterator = createXMLFileInputIterator(config, DEFAULT_TEST_XML_DOCUMENT)) {
@@ -167,8 +165,8 @@ public class XMLFileInputIteratorTest {
     @Test
     public void should_read_record_given_valid_force_array_fields() throws IOException {
         final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(new HashMap<String, String>() {{
-            put(XPATH_QUERY_CONFIG, "//broker[1]");
-            put(FORCE_ARRAY_ON_FIELDS_CONFIG, "broker.topicPartition, broker.topicPartition.numSegments");
+            put(XMLFileInputReaderConfig.XPATH_QUERY_CONFIG, "//broker[1]");
+            put(withKeyPrefix(XMLFileInputReaderConfig.XML_FORCE_ARRAY_ON_FIELDS_CONFIG), "broker.topicPartition, broker.topicPartition.numSegments");
         }});
 
         try (var iterator = createXMLFileInputIterator(config, DEFAULT_TEST_XML_DOCUMENT)) {
@@ -189,7 +187,7 @@ public class XMLFileInputIteratorTest {
     @Test
     public void should_read_record_given_valid_force_array_fields_and_default_xpath() throws IOException {
         final XMLFileInputReaderConfig config = new XMLFileInputReaderConfig(new HashMap<String, String>() {{
-            put(FORCE_ARRAY_ON_FIELDS_CONFIG, "cluster.broker.topicPartition");
+            put(withKeyPrefix(XMLCommonConfig.XML_FORCE_ARRAY_ON_FIELDS_CONFIG), "cluster.broker.topicPartition");
         }});
 
         try (var iterator = createXMLFileInputIterator(config, DEFAULT_TEST_XML_DOCUMENT)) {
@@ -231,7 +229,6 @@ public class XMLFileInputIteratorTest {
                                                    final String expectedId,
                                                    final String expectedNum) {
         Assert.assertEquals(expectedId, struct.getString("id"));
-
 
         TypedStruct topicPartition = struct.first("topicPartition").getStruct();
         Assert.assertNotNull(topicPartition);

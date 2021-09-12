@@ -56,7 +56,7 @@ public class XmlToJsonFilterConfig extends CommonFilterConfig {
         int filterGroupCounter = 0;
         return new ConfigDef(CommonFilterConfig.configDef())
                 .define(withOverwrite(FILTER, filterGroupCounter++))
-                .define(withSource(FILTER, filterGroupCounter++))
+                .define(getSourceConfigKey(FILTER, filterGroupCounter++))
                 .define(
                         XML_PARSER_KEEP_STRINGS_CONFIG,
                         ConfigDef.Type.BOOLEAN,

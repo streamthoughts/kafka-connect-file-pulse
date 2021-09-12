@@ -43,6 +43,11 @@
             <artifactId>kafka-connect-avro-converter</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>kafka-connect-file-pulse-dataformat</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

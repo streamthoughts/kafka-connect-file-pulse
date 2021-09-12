@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class CommonFilterConfig extends AbstractConfig {
 
-    private static final String GROUP_FILTER = "FILTER";
+    private static final String GROUP_FILTER = "Filter";
 
     public static final String ON_FAILURE_CONFIG = "withOnFailure";
     public static final String ON_FAILURE_DOC = "List of filters aliases to apply on each value after failure (order is important).";
@@ -68,7 +68,17 @@ public class CommonFilterConfig extends AbstractConfig {
      * @param originals the originals configuration.
      */
     public CommonFilterConfig(final ConfigDef def, final Map<?, ?> originals) {
-        super(def, originals);
+        this(def, originals, true);
+    }
+
+    /**
+     * Creates a new {@link CommonFilterConfig} instance.
+     *
+     * @param def       the {@link ConfigDef} instance.
+     * @param originals the originals configuration.
+     */
+    public CommonFilterConfig(final ConfigDef def, final Map<?, ?> originals, final boolean doLog) {
+        super(def, originals, doLog);
     }
 
     public FilterCondition condition() {
@@ -119,7 +129,11 @@ public class CommonFilterConfig extends AbstractConfig {
         );
     }
 
-    public static ConfigDef.ConfigKey withSource(final String group, final int groupCounter) {
+    public static ConfigDef.ConfigKey getSourceConfigKey() {
+        return getSourceConfigKey(null, -1);
+    }
+
+    public static ConfigDef.ConfigKey getSourceConfigKey(final String group, final int groupCounter) {
         return new ConfigDef.ConfigKey(
                 CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG,
                 ConfigDef.Type.STRING,

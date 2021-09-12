@@ -37,6 +37,7 @@
         <module>connect-file-pulse-plugin</module>
         <module>connect-file-pulse-expression</module>
         <module>connect-file-pulse-filesystems</module>
+        <module>connect-file-pulse-dataformat</module>
     </modules>
 
     <developers>

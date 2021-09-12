@@ -82,6 +82,12 @@
         </dependency>
 
         <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>kafka-connect-file-pulse-dataformat</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20210307</version>

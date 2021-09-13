@@ -38,6 +38,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Replac
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Split;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.StartsWith;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Trim;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.UnixTimestamp;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Uppercase;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Uuid;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class ExpressionFunctionExecutors {
      * Creates a new {@link ExpressionFunctionExecutors} instance.
      */
     private ExpressionFunctionExecutors() {
-        // TODO function registration is hard-coded
+        // List of built-in expression functions to register.
         register(new Lowercase());
         register(new Uppercase());
         register(new Converts());
@@ -85,6 +86,7 @@ public class ExpressionFunctionExecutors {
         register(new Hash());
         register(new Md5());
         register(new Split());
+        register(new UnixTimestamp());
     }
 
     @SuppressWarnings("unchecked")
@@ -106,8 +108,9 @@ public class ExpressionFunctionExecutors {
         return new ExpressionFunctionExecutor(functionName, function, prepared);
     }
 
-    private void register(final ExpressionFunction function) {
-        LOG.info("Registered expression function '" + function.name() + "'");
+    public void register(final ExpressionFunction function) {
+        Objects.requireNonNull(function, "'function' should not be null");
+        LOG.info("Registered built-in expression function '{}'", function.name() );
         functions.put(function.name(), function);
     }
 }

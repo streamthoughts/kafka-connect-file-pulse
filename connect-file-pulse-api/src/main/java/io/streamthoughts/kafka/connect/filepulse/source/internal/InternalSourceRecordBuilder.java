@@ -77,6 +77,14 @@ public class InternalSourceRecordBuilder {
         );
     }
 
+    public String topic() {
+        return topic;
+    }
+
+    public Integer partition() {
+        return partition;
+    }
+
     public void withValue(final Supplier<SchemaAndValue> valueSupplier) {
         this.valueSupplier = valueSupplier;
     }

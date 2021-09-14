@@ -51,11 +51,9 @@ public class FilePulseSourceTask extends SourceTask {
 
     private static final String CONNECT_NAME_CONFIG = "name";
 
-    private static final Integer NO_PARTITION = null;
-
     public SourceTaskConfig taskConfig;
 
-    private String topic;
+    private String defaultTopic;
 
     private DefaultFileRecordsPollingConsumer consumer;
 
@@ -77,7 +75,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private final ConcurrentLinkedQueue<FileContext> completedToCommit = new ConcurrentLinkedQueue<>();
 
-    private Schema valueSchema;
+    private Map<String, Schema> valueSchemas = new HashMap<>();
 
     /**
      * {@inheritDoc}
@@ -99,8 +97,8 @@ public class FilePulseSourceTask extends SourceTask {
         taskConfig = new SourceTaskConfig(configProperties);
         connectorGroupName = props.get(CONNECT_NAME_CONFIG);
         offsetPolicy = taskConfig.getSourceOffsetPolicy();
-        topic = taskConfig.topic();
-        valueSchema = taskConfig.getValueConnectSchema();
+        valueSchemas.put(taskConfig.topic(), taskConfig.getValueConnectSchema());
+        defaultTopic = taskConfig.topic();
 
         try {
             sharedStore = new StateBackingStoreAccess(
@@ -268,15 +266,16 @@ public class FilePulseSourceTask extends SourceTask {
                     sourcePartition,
                     sourceOffsets,
                     context.metadata(),
-                    topic,
-                    NO_PARTITION,
-                    valueSchema,
+                    defaultTopic,
+                    null,
+                    topic -> valueSchemas.get(topic),
                     taskConfig.isValueConnectSchemaMergeEnabled()
             );
 
             if (taskConfig.isValueConnectSchemaMergeEnabled()) {
-                valueSchema = result.valueSchema();
+                valueSchemas.put(result.topic(), result.valueSchema());
             }
+
             return result;
 
         } catch (final Throwable t) {

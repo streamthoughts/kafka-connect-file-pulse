@@ -22,6 +22,7 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.source.SourceRecord;
 
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * An object representing a single record value that was read from an input file.
@@ -47,12 +48,12 @@ public interface FileRecord<T> {
     /**
      * Transforms this file record into a connect {@link SourceRecord} instance.
      *
-     * @param sourcePartition   the source partition.
-     * @param sourceOffset      the source offset.
-     * @param metadata          the {@link LocalFileObjectMeta} to be used.
-     * @param defaultTopic      the default topic to be used.
-     * @param defaultPartition  the default partition to be used.
-     * @param connectSchema     the connect Schema to be used which can be {@code null}.
+     * @param sourcePartition       the source partition.
+     * @param sourceOffset          the source offset.
+     * @param metadata              the {@link LocalFileObjectMeta} to be used.
+     * @param defaultTopic          the default topic to be used.
+     * @param defaultPartition      the default partition to be used.
+     * @param connectSchemaSupplier the connect Schema to be used which can be {@code null}.
      *
      * @return                  the new {@link SourceRecord} instance.
      */
@@ -62,6 +63,6 @@ public interface FileRecord<T> {
             final FileObjectMeta metadata,
             final String defaultTopic,
             final Integer defaultPartition,
-            final Schema connectSchema,
+            final Function<String, Schema> connectSchemaSupplier,
             final boolean connectSchemaMergeEnabled);
 }

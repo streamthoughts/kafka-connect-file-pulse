@@ -28,6 +28,9 @@ import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.source.SourceRecord;
 
 import java.util.Map;
+import java.util.function.Function;
+
+import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
 
 public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
 
@@ -57,12 +60,14 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                                        final FileObjectMeta metadata,
                                        final String defaultTopic,
                                        final Integer defaultPartition,
-                                       final Schema connectSchema,
+                                       final Function<String, Schema> connectSchemaSupplier,
                                        final boolean connectSchemaMergeEnabled) {
 
         final TypedStruct value = value();
-
         final Schema valueSchema;
+        final Schema connectSchema = connectSchemaSupplier.apply(
+            isNotBlank(internalSourceRecordBuilder.topic()) ? internalSourceRecordBuilder.topic() : defaultTopic
+        );
         if (connectSchemaMergeEnabled && value != null) {
             Schema recordValueSchema = value.schema().map(mapper, false);
             if (connectSchema != null) {

@@ -23,8 +23,10 @@ import org.apache.kafka.common.config.ConfigDef;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -44,7 +46,10 @@ public class XMLCommonConfig extends AbstractConfig {
     private static final String XML_EXCLUDE_EMPTY_ELEMENTS_DOC = "Specifies that the reader should exclude element having no field (default: false).";
 
     public static final String XML_EXCLUDE_NODE_ATTRIBUTES_CONFIG = "xml.exclude.node.attributes";
-    private static final String XML_EXCLUDE_NODE_ATTRIBUTES_DOC = "Specifies that the reader should exclude node attributes (default: false).";
+    private static final String XML_EXCLUDE_NODE_ATTRIBUTES_DOC = "Specifies that the reader should exclude all node attributes (default: false).";
+
+    public static final String XML_EXCLUDE_NODE_ATTRIBUTES_IN_NAMESPACES_CONFIG = "xml.exclude.node.attributes.in.namespaces";
+    private static final String XML_EXCLUDE_NODE_ATTRIBUTES_IN_NAMESPACES_DOC = "Specifies that the reader should only exclude node attributes in the defined list of namespaces.";
 
     public static final String XML_DATA_TYPE_INFERENCE_ENABLED_CONFIG = "xml.data.type.inference.enabled";
     private static final String XML_DATA_TYPE_INFERENCE_ENABLED_DOC = "Specifies that the reader should try to infer the type of data nodes. (default: false).";
@@ -81,6 +86,10 @@ public class XMLCommonConfig extends AbstractConfig {
 
     public boolean isNodeAttributesExcluded() {
         return getBoolean(withKeyPrefix(XML_EXCLUDE_NODE_ATTRIBUTES_CONFIG));
+    }
+
+    public Set<String> getExcludeNodeAttributesInNamespaces() {
+        return new HashSet<>(getList(withKeyPrefix(XML_EXCLUDE_NODE_ATTRIBUTES_IN_NAMESPACES_CONFIG)));
     }
 
     public boolean isDataTypeInferenceEnabled() {
@@ -155,6 +164,17 @@ public class XMLCommonConfig extends AbstractConfig {
                         filterGroupCounter++,
                         ConfigDef.Width.NONE,
                         keyPrefix + XML_EXCLUDE_NODE_ATTRIBUTES_CONFIG
+                )
+                .define(
+                        keyPrefix + XML_EXCLUDE_NODE_ATTRIBUTES_IN_NAMESPACES_CONFIG,
+                        ConfigDef.Type.LIST,
+                        Collections.emptyList(),
+                        ConfigDef.Importance.LOW,
+                        XML_EXCLUDE_NODE_ATTRIBUTES_IN_NAMESPACES_DOC,
+                        group,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        keyPrefix + XML_EXCLUDE_NODE_ATTRIBUTES_IN_NAMESPACES_CONFIG
                 )
                 .define(
                         keyPrefix + XML_DATA_TYPE_INFERENCE_ENABLED_CONFIG,

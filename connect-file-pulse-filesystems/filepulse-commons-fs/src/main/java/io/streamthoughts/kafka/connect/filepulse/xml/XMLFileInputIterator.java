@@ -82,7 +82,8 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
 
         this.converter = new XMLNodeToStructConverter()
                 .setExcludeEmptyElement(config.isEmptyElementExcluded())
-                .setExcludeNodeAttributes(config.isNodeAttributesExcluded())
+                .setExcludeAllAttributes(config.isNodeAttributesExcluded())
+                .setExcludeAttributesInNamespaces(config.getExcludeNodeAttributesInNamespaces())
                 .setForceArrayFields(FieldPaths.from(config.forceArrayFields()))
                 .setTypeInferenceEnabled(config.isDataTypeInferenceEnabled());
 

@@ -34,10 +34,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -58,9 +62,11 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private boolean excludeEmptyElement = false;
 
-    private boolean excludeNodeAttributes = false;
+    private boolean excludeAllAttributes = false;
 
     private boolean isTypeInferenceEnabled = false;
+
+    private Set<String> excludeAttributesInNamespaces = Collections.emptySet();
 
     private FieldPaths forceArrayFields = FieldPaths.empty();
 
@@ -69,11 +75,15 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         return this;
     }
 
-    public XMLNodeToStructConverter setExcludeNodeAttributes(boolean excludeNodeAttributes) {
-        this.excludeNodeAttributes = excludeNodeAttributes;
+    public XMLNodeToStructConverter setExcludeAllAttributes(boolean excludeAllAttributes) {
+        this.excludeAllAttributes = excludeAllAttributes;
         return this;
     }
 
+    public XMLNodeToStructConverter setExcludeAttributesInNamespaces(final Set<String> excludeAttributesInNamespaces) {
+        this.excludeAttributesInNamespaces = Collections.unmodifiableSet(excludeAttributesInNamespaces);
+        return this;
+    }
 
     public XMLNodeToStructConverter setForceArrayFields(final FieldPaths forceArrayFields) {
         this.forceArrayFields = forceArrayFields;
@@ -107,7 +117,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
         // Create a new Struct container object for holding all node elements, i.e., child nodes and attributes.
         TypedStruct container = TypedStruct.create();
-        addAllNodeAttributes(container, node.getAttributes());
+        getNotExcludedNodeAttributes(node).forEach(container::put);
         for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
             // Text nodes always return #text" as the node name, so it's best to use the parent node name instead.
             final String childNodeName = isTextNode(child) ? nodeName : determineNodeName(child);
@@ -159,16 +169,35 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private Optional<TypedValue> readTextNodeValue(final Node node, final TypedValue data) {
         // Check if TextNode as no attribute
-        final NamedNodeMap attributes = node.getAttributes();
-        if (attributes == null || attributes.getLength() == 0) {
+        final Map<String, String> attributes = getNotExcludedNodeAttributes(node);
+        if (attributes.isEmpty()) {
             return Optional.of(data);
         }
 
         // Else, create a Struct container
         final TypedStruct container = TypedStruct.create();
-        addAllNodeAttributes(container, attributes);
+        attributes.forEach(container::put);
         container.put(DEFAULT_TEXT_NODE_FIELD_NAME, data);
         return Optional.of(TypedValue.struct(container));
+    }
+
+    private Map<String, String> getNotExcludedNodeAttributes(final Node node) {
+        final NamedNodeMap nodeMap = node.getAttributes();
+        if (excludeAllAttributes || nodeMap == null || nodeMap.getLength() == 0)  {
+            return Collections.emptyMap();
+        }
+
+        final Map<String, String> attributes = new HashMap<>();
+        for (int i = 0; i < nodeMap.getLength(); i++) {
+            Attr attr = (Attr) nodeMap.item(i);
+            if (!excludeAttributesInNamespaces.contains(attr.getNamespaceURI())) {
+                String attrName = determineNodeName(attr);
+                if (isNotXmlNamespace(attr)) {
+                    attributes.put(attrName, attr.getNodeValue());
+                }
+            }
+        }
+        return attributes;
     }
 
     private static TypedStruct enrichStructWithObject(final TypedStruct container,
@@ -257,19 +286,6 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private static boolean isNodeOfType(final Node node, int textNode) {
         return node.getNodeType() == textNode;
-    }
-
-    private void addAllNodeAttributes(final TypedStruct struct,
-                                      final NamedNodeMap attributes) {
-        if (excludeNodeAttributes || attributes == null) return;
-
-        for (int i = 0; i < attributes.getLength(); i++) {
-            Attr attr = (Attr) attributes.item(i);
-            String attrName = determineNodeName(attr);
-            if (isNotXmlNamespace(attr)) {
-                struct.put(attrName, attr.getNodeValue());
-            }
-        }
     }
 
     private static boolean isNotXmlNamespace(final Node node) {

@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class FilterContextBuilder {
 
-    private FilterError exception;
+    private FilterError error;
     private FileObjectMeta metadata;
     private FileRecordOffset offset;
     private String topic;
@@ -65,7 +65,7 @@ public class FilterContextBuilder {
                 .withOffset(original.offset())
                 .withVariables(original.variables())
                 .withHeaders(original.headers())
-                .withException(original.error());
+                .withError(original.error());
     }
 
     FilterContextBuilder withVariables(final Map<String, Object> variables) {
@@ -108,8 +108,8 @@ public class FilterContextBuilder {
         return this;
     }
 
-    FilterContextBuilder withException(final FilterError exception) {
-        this.exception = exception;
+    FilterContextBuilder withError(final FilterError exception) {
+        this.error = exception;
         return this;
     }
 
@@ -125,7 +125,7 @@ public class FilterContextBuilder {
                 timestamp,
                 key,
                 headers,
-                exception,
+                error,
                 variables);
     }
 }

@@ -195,7 +195,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
 
                     if (filter.onFailure() != null) {
                         final FilterContext errorContext = FilterContextBuilder.newBuilder(context)
-                                .withException(new FilterError(e.getLocalizedMessage(), filter.label()))
+                                .withError(FilterError.of(e, filter.label()))
                                 .build();
                         filtered.addAll(filter.onFailure().apply(errorContext, record, hasNext));
                     } else {

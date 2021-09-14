@@ -72,6 +72,7 @@ public class XmlToStructFilter extends AbstractRecordFilter<XmlToStructFilter> {
         var filterConfig = new XmlToStructFilterConfig(configs);
         this.converter = new XMLNodeToStructConverter()
             .setExcludeEmptyElement(filterConfig.isEmptyElementExcluded())
+            .setExcludeNodeAttributes(filterConfig.isNodeAttributesExcluded())
             .setForceArrayFields(FieldPaths.from(filterConfig.forceArrayFields()))
             .setTypeInferenceEnabled(filterConfig.isDataTypeInferenceEnabled());
 

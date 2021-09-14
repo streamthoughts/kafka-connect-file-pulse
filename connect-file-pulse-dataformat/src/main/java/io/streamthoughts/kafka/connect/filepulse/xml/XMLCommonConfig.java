@@ -43,6 +43,9 @@ public class XMLCommonConfig extends AbstractConfig {
     public static final String XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG = "xml.exclude.empty.elements";
     private static final String XML_EXCLUDE_EMPTY_ELEMENTS_DOC = "Specifies that the reader should exclude element having no field (default: false).";
 
+    public static final String XML_EXCLUDE_NODE_ATTRIBUTES_CONFIG = "xml.exclude.node.attributes";
+    private static final String XML_EXCLUDE_NODE_ATTRIBUTES_DOC = "Specifies that the reader should exclude node attributes (default: false).";
+
     public static final String XML_DATA_TYPE_INFERENCE_ENABLED_CONFIG = "xml.data.type.inference.enabled";
     private static final String XML_DATA_TYPE_INFERENCE_ENABLED_DOC = "Specifies that the reader should try to infer the type of data nodes. (default: false).";
 
@@ -74,6 +77,10 @@ public class XMLCommonConfig extends AbstractConfig {
 
     public boolean isEmptyElementExcluded() {
         return getBoolean(withKeyPrefix(XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG));
+    }
+
+    public boolean isNodeAttributesExcluded() {
+        return getBoolean(withKeyPrefix(XML_EXCLUDE_NODE_ATTRIBUTES_CONFIG));
     }
 
     public boolean isDataTypeInferenceEnabled() {
@@ -137,6 +144,17 @@ public class XMLCommonConfig extends AbstractConfig {
                         filterGroupCounter++,
                         ConfigDef.Width.NONE,
                         keyPrefix + XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG
+                )
+                .define(
+                        keyPrefix + XML_EXCLUDE_NODE_ATTRIBUTES_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.LOW,
+                        XML_EXCLUDE_NODE_ATTRIBUTES_DOC,
+                        group,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        keyPrefix + XML_EXCLUDE_NODE_ATTRIBUTES_CONFIG
                 )
                 .define(
                         keyPrefix + XML_DATA_TYPE_INFERENCE_ENABLED_CONFIG,

@@ -58,6 +58,8 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private boolean excludeEmptyElement = false;
 
+    private boolean excludeNodeAttributes = false;
+
     private boolean isTypeInferenceEnabled = false;
 
     private FieldPaths forceArrayFields = FieldPaths.empty();
@@ -66,6 +68,12 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         this.excludeEmptyElement = excludeEmptyElement;
         return this;
     }
+
+    public XMLNodeToStructConverter setExcludeNodeAttributes(boolean excludeNodeAttributes) {
+        this.excludeNodeAttributes = excludeNodeAttributes;
+        return this;
+    }
+
 
     public XMLNodeToStructConverter setForceArrayFields(final FieldPaths forceArrayFields) {
         this.forceArrayFields = forceArrayFields;
@@ -149,7 +157,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         return isTypeInferenceEnabled ? TypedValue.parse(text) : TypedValue.string(text);
     }
 
-    private static Optional<TypedValue> readTextNodeValue(final Node node, final TypedValue data) {
+    private Optional<TypedValue> readTextNodeValue(final Node node, final TypedValue data) {
         // Check if TextNode as no attribute
         final NamedNodeMap attributes = node.getAttributes();
         if (attributes == null || attributes.getLength() == 0) {
@@ -240,7 +248,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private static boolean isTextNode(final Node n) {
         return isNodeOfType(n, Node.TEXT_NODE) ||
-                isNodeOfType(n, Node.CDATA_SECTION_NODE);
+               isNodeOfType(n, Node.CDATA_SECTION_NODE);
     }
 
     private static boolean isElementNode(final Node n) {
@@ -251,9 +259,9 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         return node.getNodeType() == textNode;
     }
 
-    private static void addAllNodeAttributes(final TypedStruct struct,
-                                             final NamedNodeMap attributes) {
-        if (attributes == null) return;
+    private void addAllNodeAttributes(final TypedStruct struct,
+                                      final NamedNodeMap attributes) {
+        if (excludeNodeAttributes || attributes == null) return;
 
         for (int i = 0; i < attributes.getLength(); i++) {
             Attr attr = (Attr) attributes.item(i);

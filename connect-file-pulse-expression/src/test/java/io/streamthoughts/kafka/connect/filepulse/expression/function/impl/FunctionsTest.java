@@ -221,7 +221,7 @@ public class FunctionsTest {
 
     @Test
     public void should_execute_or_function() {
-        Expression expressionTrue =  parseExpression("{{ or(true, false) }}");
+        Expression expressionTrue = parseExpression("{{ or(true, false) }}");
         Expression expressionFalse = parseExpression("{{ or(false, false) }}");
         Assert.assertTrue(expressionTrue.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
         Assert.assertFalse(expressionFalse.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
@@ -229,8 +229,24 @@ public class FunctionsTest {
 
     @Test
     public void should_execute_and_function() {
-        Expression expressionTrue =  parseExpression("{{ and(true, true) }}");
+        Expression expressionTrue = parseExpression("{{ and(true, true) }}");
         Expression expressionFalse = parseExpression("{{ and(true, false) }}");
+        Assert.assertTrue(expressionTrue.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
+        Assert.assertFalse(expressionFalse.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
+    }
+
+    @Test
+    public void should_execute_greater_than_function() {
+        Expression expressionTrue = parseExpression("{{ gt(2, 1) }}");
+        Expression expressionFalse = parseExpression("{{ gt(1, 2) }}");
+        Assert.assertTrue(expressionTrue.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
+        Assert.assertFalse(expressionFalse.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
+    }
+
+    @Test
+    public void should_execute_less_than_function() {
+        Expression expressionTrue = parseExpression("{{ lt(1, 2) }}");
+        Expression expressionFalse = parseExpression("{{ lt(2, 1) }}");
         Assert.assertTrue(expressionTrue.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
         Assert.assertFalse(expressionFalse.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
     }

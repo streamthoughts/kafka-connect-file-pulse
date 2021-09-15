@@ -28,9 +28,11 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.EndsWi
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Equals;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Exists;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.ExtractArray;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.GreaterThan;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Hash;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.If;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.IsNull;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.LessThan;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Lowercase;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Md5;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Matches;
@@ -93,6 +95,8 @@ public class ExpressionFunctionExecutors {
         register(new If());
         register(new And());
         register(new Or());
+        register(new GreaterThan());
+        register(new LessThan());
     }
 
     @SuppressWarnings("unchecked")

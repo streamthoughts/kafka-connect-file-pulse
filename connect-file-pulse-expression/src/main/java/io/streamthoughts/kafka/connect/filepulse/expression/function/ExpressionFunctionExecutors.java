@@ -28,6 +28,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Equals
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Exists;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.ExtractArray;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Hash;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.If;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.IsNull;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Lowercase;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Md5;
@@ -87,6 +88,7 @@ public class ExpressionFunctionExecutors {
         register(new Md5());
         register(new Split());
         register(new UnixTimestamp());
+        register(new If());
     }
 
     @SuppressWarnings("unchecked")

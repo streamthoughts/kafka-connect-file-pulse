@@ -19,6 +19,8 @@
 
 package io.streamthoughts.kafka.connect.filepulse.expression.parser.antlr4;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.data.internal.TypeConverter;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.FunctionExpression;
@@ -130,7 +132,7 @@ public class Antlr4ExpressionParser implements ExpressionParser {
         }
 
         @Override
-        public void exitSubstitutionExpression(ScELParser.SubstitutionExpressionContext ctx) {
+        public void exitSubstitutionExpression(final ScELParser.SubstitutionExpressionContext ctx) {
 
             final SubstitutionExpression substitution = new SubstitutionExpression(originalExpression);
             while (!current.expressions.isEmpty()) {
@@ -141,13 +143,13 @@ public class Antlr4ExpressionParser implements ExpressionParser {
         }
 
         @Override
-        public void enterSubstitutionStrExpression(ScELParser.SubstitutionStrExpressionContext ctx) {
+        public void enterSubstitutionStrExpression(final ScELParser.SubstitutionStrExpressionContext ctx) {
             current = new ContextExpressions(current);
             contexts.put(ctx, current);
         }
 
         @Override
-        public void exitSubstitutionStrExpression(ScELParser.SubstitutionStrExpressionContext ctx) {
+        public void exitSubstitutionStrExpression(final ScELParser.SubstitutionStrExpressionContext ctx) {
             final ContextExpressions contextExpression = contexts.remove(ctx);
 
             final int start = ctx.LineSubstExprStart().getSymbol().getStartIndex();
@@ -173,7 +175,7 @@ public class Antlr4ExpressionParser implements ExpressionParser {
         }
 
         @Override
-        public void exitFunctionDeclaration(ScELParser.FunctionDeclarationContext ctx) {
+        public void exitFunctionDeclaration(final ScELParser.FunctionDeclarationContext ctx) {
             final ContextExpressions contextExpression = contexts.remove(ctx);
 
             final ArrayDeque<Expression> argsExpressions = contextExpression.expressions;
@@ -198,7 +200,7 @@ public class Antlr4ExpressionParser implements ExpressionParser {
         }
 
         @Override
-        public void exitPropertyDeclaration(ScELParser.PropertyDeclarationContext ctx) {
+        public void exitPropertyDeclaration(final ScELParser.PropertyDeclarationContext ctx) {
             final PropertyExpression expression = new PropertyExpression(
                     ctx.getText(),
                     ctx.scope() != null ? ctx.scope().getText() : defaultScope,
@@ -208,17 +210,18 @@ public class Antlr4ExpressionParser implements ExpressionParser {
         }
 
         @Override
-        public void exitValue(ScELParser.ValueContext ctx) {
+        public void exitValue(final ScELParser.ValueContext ctx) {
             final String originalExpression = ctx.getText();
 
-            String value = originalExpression;
-            if (value.equalsIgnoreCase(NULL_STRING)) {
+            Object value;
+            if (originalExpression.equalsIgnoreCase(NULL_STRING)) {
                 value = null;
-            } else if (value.startsWith("'") && value.endsWith("'")) {
-                value = value.substring(1);
-                value = value.substring(0, value.length() - 1);
+            } else if (originalExpression.startsWith("'") && originalExpression.endsWith("'")) {
+                final String s = originalExpression.substring(1);
+                value = s.substring(0, s.length() - 1);
+            } else {
+                value = TypedValue.parse(originalExpression).value();
             }
-
             current.expressions.add(new ValueExpression(originalExpression, value));
         }
     }

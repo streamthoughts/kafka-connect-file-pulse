@@ -197,14 +197,25 @@ public class FunctionsTest {
     }
 
     @Test
-    public void should_execute_hash_functions() {
+    public void should_execute_hash_function() {
         Expression expression = parseExpression("{{ hash('hello') }}");
         Assert.assertEquals("2132663229", expression.readValue(EMPTY_CONTEXT, TypedValue.class).getString());
     }
 
     @Test
-    public void should_execute_md5_functions() {
+    public void should_execute_md5_function() {
         Expression expression = parseExpression("{{ md5('hello') }}");
         Assert.assertEquals("5d41402abc4b2a76b9719d911017c592", expression.readValue(EMPTY_CONTEXT, TypedValue.class).getString());
+    }
+
+    @Test
+    public void should_execute_if_function() {
+        Expression expressionTrue =  parseExpression("{{ if(exists($value, 'field'), true, false) }}");
+        Expression expressionFalse =  parseExpression("{{ if(exists($value, 'dummy'), true, false) }}");
+        StandardEvaluationContext context = new StandardEvaluationContext(
+            TypedStruct.create().put("value", TypedStruct.create().put("field", ""))
+        );
+        Assert.assertTrue(expressionTrue.readValue(context, TypedValue.class).value());
+        Assert.assertFalse(expressionFalse.readValue(context, TypedValue.class).value());
     }
 }

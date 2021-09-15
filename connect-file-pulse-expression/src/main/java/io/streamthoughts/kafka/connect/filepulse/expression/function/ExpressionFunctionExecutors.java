@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.And;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Concat;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.ConcatWs;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Converts;
@@ -35,6 +36,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Md5;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Matches;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Nlv;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Length;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Or;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.ReplaceAll;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.Split;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.impl.StartsWith;
@@ -89,6 +91,8 @@ public class ExpressionFunctionExecutors {
         register(new Split());
         register(new UnixTimestamp());
         register(new If());
+        register(new And());
+        register(new Or());
     }
 
     @SuppressWarnings("unchecked")

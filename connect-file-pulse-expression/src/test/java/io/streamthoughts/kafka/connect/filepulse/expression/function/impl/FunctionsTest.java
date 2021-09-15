@@ -218,4 +218,20 @@ public class FunctionsTest {
         Assert.assertTrue(expressionTrue.readValue(context, TypedValue.class).value());
         Assert.assertFalse(expressionFalse.readValue(context, TypedValue.class).value());
     }
+
+    @Test
+    public void should_execute_or_function() {
+        Expression expressionTrue =  parseExpression("{{ or(true, false) }}");
+        Expression expressionFalse = parseExpression("{{ or(false, false) }}");
+        Assert.assertTrue(expressionTrue.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
+        Assert.assertFalse(expressionFalse.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
+    }
+
+    @Test
+    public void should_execute_and_function() {
+        Expression expressionTrue =  parseExpression("{{ and(true, true) }}");
+        Expression expressionFalse = parseExpression("{{ and(true, false) }}");
+        Assert.assertTrue(expressionTrue.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
+        Assert.assertFalse(expressionFalse.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
+    }
 }

@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Class which is used to determinate if a a list of file can be processed.
+ * Class which is used to determinate if a list of file can be processed.
  */
 public class FileObjectCandidatesFilter {
 
@@ -70,7 +70,7 @@ public class FileObjectCandidatesFilter {
                 .filter(kv -> predicate.test(FileObjectKey.of(kv.key)))
                 .collect(Collectors.toList());
 
-        // Looking for duplicates in sources files, i.e the OffsetPolicy generate two identical offsets for two files.
+        // Looking for duplicates in object files, i.e., the OffsetPolicy generates two identical offsets for two files.
         final Stream<Map.Entry<String, List<KeyValuePair<String, FileObjectMeta>>>> entryStream = toScheduled
                 .stream()
                 .collect(Collectors.groupingBy(kv -> kv.key))

@@ -289,7 +289,10 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 offsetPolicy,
                 fileObjectKey -> {
                     final FileObject fileObject = snapshot.getForKey(fileObjectKey.original());
-                    return !(fileObject != null && cleanablePredicate.test(fileObject.status()));
+                    if (fileObject == null) return true;
+
+                    final FileObjectStatus status = fileObject.status();
+                    return !(cleanablePredicate.test(status) || status.isDone());
                 },
                 objects
         );
@@ -378,6 +381,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                         LOG.warn("Failed to read state changelog while scheduling object files. Timeout.");
                     }
 
+                    // Check if all scanned object-files can be schedule.
                     if (scanned.size() <= maxFilesToSchedule) {
                         scheduled.putAll(scanned);
                     } else {
@@ -388,10 +392,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                         }
                     }
 
-                    partitions = scanned.values()
-                            .stream()
-                            .sorted(BY_LAST_MODIFIED)
-                            .collect(Collectors.toList());
+                    partitions = new ArrayList<>(scheduled.values());
 
                     attempts++;
                     if (changed.get()) {
@@ -411,10 +412,17 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             }
 
             if (partitions.isEmpty()) {
-                LOG.warn("Filesystem could not be scanned quickly enough, " +
-                        "or no object file was detected after starting the connector.");
+                LOG.warn(
+                    "Filesystem could not be scanned quickly enough, " +
+                    "or no object file was detected after starting the connector."
+                );
             }
-            return partitions;
+
+            // Sort all object files by the last-modified date before returning
+            return partitions
+                    .stream()
+                    .sorted(BY_LAST_MODIFIED)
+                    .collect(Collectors.toList());
         } finally {
             scanned.clear();
             taskReconfigurationRequested.set(false);

@@ -60,11 +60,15 @@ public enum FileObjectStatus {
     FAILED,
 
     /**
-     * The file has been successfully clean up (depending of the configured strategy).
+     * The file has been successfully clean up (depending on the configured strategy).
      */
     CLEANED;
 
     public boolean isOneOf(final FileObjectStatus...states) {
         return Arrays.asList(states).contains(this);
+    }
+
+    public boolean isDone() {
+        return isOneOf(COMMITTED, FAILED, CLEANED);
     }
 }

@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.fs;
 import io.streamthoughts.kafka.connect.filepulse.config.CommonSourceConfig;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.TaskPartitioner;
 import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreAccess;
@@ -95,16 +96,15 @@ public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
                     if (fileObject == null)
                         return true;
 
-                    switch (fileObject.status()) {
-                        case COMMITTED:
-                        case FAILED:
-                        case CLEANED:
-                            return false;
-                        case COMPLETED:
-                            return isFirstCall;
-                        default:
-                            return true;
-                    }
+                    final FileObjectStatus status = fileObject.status();
+
+                    // If an object file is marked as COMPLETED (i.e. not COMMITTED) we should only consider
+                    // it processable the first time this method is called.
+                    if (status == FileObjectStatus.COMPLETED)
+                        return isFirstCall;
+
+                    // Otherwise, only return true if the is file not already done.DelegateTaskFileURIProvider
+                    return !status.isDone();
                 },
                 fileSystemListing.listObjects()
         ).values();

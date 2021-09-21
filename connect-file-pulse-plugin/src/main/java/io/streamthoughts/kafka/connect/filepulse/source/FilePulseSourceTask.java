@@ -75,7 +75,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private final ConcurrentLinkedQueue<FileContext> completedToCommit = new ConcurrentLinkedQueue<>();
 
-    private Map<String, Schema> valueSchemas = new HashMap<>();
+    private final Map<String, Schema> valueSchemas = new HashMap<>();
 
     /**
      * {@inheritDoc}
@@ -172,15 +172,23 @@ public class FilePulseSourceTask extends SourceTask {
                             "Completed all object files. FilePulse source task is transitioning to " +
                             "IDLE state while waiting for new reconfiguration request from source connector."
                         );
-                        // we can safely close resources for this task
                         running.set(false);
-                        closeResources();
+
+                        // we can safely close resources for this task if no more completed
+                        // object files need to be committed
+                        if (completedToCommit.isEmpty()) {
+                            closeResources();
+                        }
+
                         synchronized (this) {
                             // Wait for the source task being stopped by the TaskWorker
                             this.wait();
                         }
-                        // Return directly as resources are already closed
-                        return null;
+
+                        if (closed.get()) {
+                            // Return directly as resources are already closed
+                            return null;
+                        }
                     }
                 } else {
 
@@ -215,7 +223,7 @@ public class FilePulseSourceTask extends SourceTask {
                 return results;
             }
         } catch (final Throwable t) {
-            // This task has failed, so close any resources (may be reopened if needed) before throwing
+            // This task has failed, so close any resources (maybe reopened if needed) before throwing
             closeResources();
             throw t;
         }
@@ -239,10 +247,12 @@ public class FilePulseSourceTask extends SourceTask {
             reporter.notify(contextToBeCommitted, FileObjectStatus.READING);
         }
 
-        while (!completedToCommit.isEmpty()) {
-            final FileContext file = completedToCommit.poll();
-            LOG.info("Committed offset for file: {}", file.metadata());
-            safelyCommit(file);
+        if (!closed.get()) {
+            while (!completedToCommit.isEmpty()) {
+                final FileContext file = completedToCommit.poll();
+                LOG.info("Committed offset for file: {}", file.metadata());
+                safelyCommit(file);
+            }
         }
     }
 
@@ -268,7 +278,7 @@ public class FilePulseSourceTask extends SourceTask {
                     context.metadata(),
                     defaultTopic,
                     null,
-                    topic -> valueSchemas.get(topic),
+                    valueSchemas::get,
                     taskConfig.isValueConnectSchemaMergeEnabled()
             );
 
@@ -320,6 +330,7 @@ public class FilePulseSourceTask extends SourceTask {
             } finally {
                 contextToBeCommitted = null;
                 consumer = null;
+                reporter = null;
                 closeSharedStateBackingStore();
                 LOG.info("Closed resources FilePulse source task");
             }

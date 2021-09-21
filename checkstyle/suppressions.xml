@@ -48,6 +48,7 @@
     <suppress checks="NPathComplexity" files="Schema.java"/>
     <suppress checks="NPathComplexity" files="InternalSourceRecordBuilder.java"/>
     <suppress checks="CyclomaticComplexity" files="Schema.java"/>
+    <suppress checks="CyclomaticComplexity" files="FilePulseSourceTask.java"/>
     <suppress checks="LineLength" files="KafkaStateBackingStore.java"/>
     <suppress checks="NPathComplexity" files="DefaultFileRecordsPollingConsumer.java"/>
     <suppress checks="NPathComplexity" files="DefaultFileSystemMonitor.java"/>

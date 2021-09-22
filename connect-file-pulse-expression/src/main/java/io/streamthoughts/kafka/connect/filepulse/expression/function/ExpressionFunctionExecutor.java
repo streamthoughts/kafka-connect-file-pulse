@@ -20,46 +20,44 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
-import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 public class ExpressionFunctionExecutor {
 
     private final String name;
 
-    private final ExpressionFunction function;
+    private final ExpressionFunction.Instance instance;
 
-    private final Arguments<ExpressionArgument> arguments;
+    private final Arguments arguments;
 
     /**
      * Creates a new {@link ExpressionFunctionExecutor} instance.
      *
      * @param name          the function name;
-     * @param function      the function.
+     * @param instance      the function instance.
      * @param arguments     the function arguments.
      */
     ExpressionFunctionExecutor(final String name,
-                               final ExpressionFunction function,
-                               final Arguments<ExpressionArgument> arguments) {
-        Objects.requireNonNull(name, "name cannot be null");
-        Objects.requireNonNull(function, "function cannot be null");
-        Objects.requireNonNull(arguments, "arguments cannot be null");
-        this.name = name;
-        this.function = function;
-        this.arguments = arguments;
+                               final ExpressionFunction.Instance instance,
+                               final Arguments arguments) {
+        this.name = Objects.requireNonNull(name, "name cannot be null");
+        this.instance = Objects.requireNonNull(instance, "instance cannot be null");
+        this.arguments = Objects.requireNonNull(arguments, "arguments cannot be null");
     }
 
     public TypedValue execute(final EvaluationContext context) {
 
-        Arguments<GenericArgument> evaluated = arguments.evaluate(context);
-        Arguments<GenericArgument> arguments = function.validate(this.arguments.evaluate(context));
-        if (!arguments.valid()) {
-            final String errorMessages = arguments.buildErrorMessage();
-            throw new ExpressionException(
-                "Invalid arguments for function '" + function.name() + "' : " + errorMessages);
-        }
-        return function.apply(evaluated);
+        final ExecutionContext executionContext = new ExecutionContext();
+
+        IntStream.range(0, arguments.size()).forEachOrdered(i -> {
+            final Argument argument = arguments.get(i);
+            final TypedValue value = argument.evaluate(context);
+            executionContext.addArgument(argument.name(), i, value);
+        });
+
+        return instance.invoke(executionContext);
     }
 
     /**
@@ -71,6 +69,7 @@ public class ExpressionFunctionExecutor {
         if (!(o instanceof ExpressionFunctionExecutor)) return false;
         ExpressionFunctionExecutor that = (ExpressionFunctionExecutor) o;
         return Objects.equals(name, that.name) &&
+                Objects.equals(instance, that.instance) &&
                 Objects.equals(arguments, that.arguments);
     }
 

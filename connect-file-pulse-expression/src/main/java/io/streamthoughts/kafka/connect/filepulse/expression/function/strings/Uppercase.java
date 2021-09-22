@@ -19,37 +19,18 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractTransformExpressionFunction;
 
 /**
  * Simple function to uppercase a string field.
  */
-public class Uppercase implements ExpressionFunction {
-
-    private static final String FIELD_ARG = "field";
+public class Uppercase extends AbstractTransformExpressionFunction {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments<?> prepare(final Expression[] args) {
-        if (args.length == 0) {
-            return new Arguments<>(new MissingArgumentValue(FIELD_ARG));
-        }
-        return new Arguments<>(new ExpressionArgument(FIELD_ARG, args[0]));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final TypedValue field = args.valueOf(FIELD_ARG);
-        return TypedValue.string(field.getString().toUpperCase());
+    public TypedValue transform(final TypedValue value) {
+        return TypedValue.string(value.getString().toUpperCase());
     }
 }

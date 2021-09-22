@@ -19,9 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.conditions;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 
 import java.math.BigDecimal;
 
@@ -39,10 +37,12 @@ public class GreaterThan implements ExpressionFunction {
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final TypedValue left = (TypedValue) args.get(0).value();
-        final TypedValue right = (TypedValue) args.get(1).value();
-        final int i = new BigDecimal(left.getString()).compareTo(new BigDecimal(right.getString()));
-        return TypedValue.bool(i >= 1);
+    public Instance get() {
+        return context -> {
+            final BigDecimal value1 = new BigDecimal(context.get(0).getString());
+            final BigDecimal value2 = new BigDecimal(context.get(1).getString());
+            final int i = value1.compareTo(value2);
+            return TypedValue.bool(i >= 1);
+        };
     }
 }

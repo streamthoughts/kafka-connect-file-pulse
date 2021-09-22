@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -22,70 +22,78 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public class Split implements ExpressionFunction {
 
-    private static final String FIELD_ARG = "field";
-    private static final String REGEX_ARG = "separator";
-    private static final String LIMIT_ARG = "limit";
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments<?> prepare(final Expression[] args) {
-        if (args.length < 2) {
-            return Arguments.of(
-                new MissingArgumentValue(FIELD_ARG),
-                new MissingArgumentValue(REGEX_ARG)
-            );
-        }
-
-        int limitArgument = 0;
-        if (args.length ==3 ) {
-            limitArgument =  ((ValueExpression) args[2]).value().getInt();
-        }
-
-        final String regex = ((ValueExpression) args[1]).value().getString();
-        Object regexArgument;
-        if (StringUtils.isFastSplit(regex)) {
-            regexArgument = regex;
-        } else {
-            regexArgument = Pattern.compile(regex);
-        }
-
-        return Arguments.of(
-            new ExpressionArgument(FIELD_ARG, args[0]),
-            new GenericArgument<>(REGEX_ARG, regexArgument),
-            new GenericArgument<>(LIMIT_ARG, limitArgument)
-        );
+    public ExpressionFunction.Instance get() {
+        return new SplitInstance(name());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(Arguments<GenericArgument> args) {
-        TypedValue field = args.valueOf(FIELD_ARG);
-        Object regex = args.valueOf(REGEX_ARG);
-        Integer limit = args.valueOf(LIMIT_ARG);
+    static class SplitInstance implements ExpressionFunction.Instance {
 
-        final String[] split;
-        if (regex instanceof Pattern) {
-            split = ((Pattern)regex).split(field.getString(), limit);
-        } else  {
-            split = field.getString().split(regex.toString(), limit);
+        private static final String FIELD_ARG = "field_expr";
+        private static final String REGEX_ARG = "separator";
+        private static final String LIMIT_ARG = "limit";
+
+        private final String name;
+
+        private Function<String, String[]> function;
+
+        SplitInstance(final String name) {
+            this.name = Objects.requireNonNull(name, "'name' should not be null");
         }
-        return TypedValue.array(Arrays.asList(split), Type.STRING);
+
+        private String syntax() {
+            return String.format("syntax %s(%s, %s [, %s])",  name, FIELD_ARG, REGEX_ARG, LIMIT_ARG);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Arguments prepare(final Expression[] args) {
+            if (args.length > 3) {
+                throw new ExpressionException("Too many arguments: " + syntax());
+            }
+            if (args.length < 2) {
+                throw new ExpressionException("Missing required arguments: " + syntax());
+            }
+
+            final int limit = args.length == 3 ? ((ValueExpression) args[2]).value().getInt() : 0;
+
+            final String regex = ((ValueExpression) args[1]).value().getString();
+            if (StringUtils.isFastSplit(regex)) {
+                function = s -> s.split(regex, limit);
+            } else {
+                final Pattern splitPattern = Pattern.compile(regex);
+                function = s -> splitPattern.split(s, limit);
+            }
+
+            return Arguments.of(FIELD_ARG, args[0]);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+            final String field = context.get(0).getString();
+            return TypedValue.array(Arrays.asList(function.apply(field)), Type.STRING);
+        }
     }
 }

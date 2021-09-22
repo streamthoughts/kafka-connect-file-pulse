@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -21,11 +21,12 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.Argument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,43 +42,62 @@ public class ConcatWs implements ExpressionFunction {
      * {@inheritDoc}
      */
     @Override
-    public Arguments<?> prepare(final Expression[] args) {
-        if (args.length < 3) {
-            return Arguments.of(
-                new MissingArgumentValue(SEPARATOR_ARG),
-                new MissingArgumentValue(PREFIX_ARG),
-                new MissingArgumentValue(SUFFIX_ARG)
-            );
-        }
+    public Instance get() {
+        return new Instance() {
 
-        List<ExpressionArgument> arguments = new ArrayList<>(args.length);
-        arguments.add(new ExpressionArgument(SEPARATOR_ARG, args[0]));
-        arguments.add(new ExpressionArgument(PREFIX_ARG, args[1]));
-        arguments.add(new ExpressionArgument(SUFFIX_ARG, args[2]));
+            private String syntax() {
+                return String.format(
+                    "syntax %s(<%s>, <%s>, <%s> [, <expressions])",
+                    name(),
+                    SEPARATOR_ARG,
+                    PREFIX_ARG,
+                    SUFFIX_ARG
+                );
+            }
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public Arguments prepare(final Expression[] args) {
+                if (args.length < 3) {
+                    throw new ExpressionException("Missing required arguments: " + syntax());
+                }
 
-        for (int i = 3; i < args.length; i++) {
-            arguments.add(new ExpressionArgument("expr" + (i-2), args[i]));
-        }
+                List<Argument> arguments = new ArrayList<>(args.length);
+                arguments.add(new ExpressionArgument(SEPARATOR_ARG, args[0]));
+                arguments.add(new ExpressionArgument(PREFIX_ARG, args[1]));
+                arguments.add(new ExpressionArgument(SUFFIX_ARG, args[2]));
 
-        return new Arguments<>(arguments);
-    }
+                for (int i = 3; i < args.length; i++) {
+                    arguments.add(new ExpressionArgument("expr" + (i-2), args[i]));
+                }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(Arguments<GenericArgument> args) {
+                return new Arguments(arguments);
+            }
 
-        final String delimiter = ((TypedValue)args.get(0).value()).getString();
-        final String prefix = ((TypedValue)args.get(1).value()).getString();
-        final String suffix = ((TypedValue)args.get(2).value()).getString();
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+                return apply(
+                        context.get(0).getString(),
+                        context.get(1).getString(),
+                        context.get(2).getString(),
+                        context.get(3, context.size())
+                );
+            }
 
-        List<GenericArgument> values = args.get(3, args.size());
-        String concat = values.stream()
-            .map(it -> (TypedValue) it.value())
-            .filter(TypedValue::isNotNull)
-            .map(TypedValue::getString)
-            .collect(Collectors.joining(delimiter, prefix, suffix));
-        return TypedValue.string(concat);
+            public TypedValue apply(final String delimiter,
+                                    final String prefix,
+                                    final String suffix,
+                                    final List<TypedValue> values) {
+                String concat = values.stream()
+                        .filter(TypedValue::isNotNull)
+                        .map(TypedValue::getString)
+                        .collect(Collectors.joining(delimiter, prefix, suffix));
+                return TypedValue.string(concat);
+            }
+        };
     }
 }

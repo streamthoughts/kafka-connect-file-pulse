@@ -17,12 +17,10 @@
  * limitations under the License.
  */
 
-package io.streamthoughts.kafka.connect.filepulse.expression.function.time;
+package io.streamthoughts.kafka.connect.filepulse.expression.function.datetime;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 
 /**
  * Function to return the current Unix timestamp in seconds.
@@ -33,7 +31,7 @@ public class UnixTimestamp implements ExpressionFunction {
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        return TypedValue.int64(System.currentTimeMillis());
+    public Instance get() {
+        return context -> TypedValue.int64(System.currentTimeMillis());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -22,15 +22,15 @@ import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Returns the element at the specified position in an array field.
@@ -44,48 +44,54 @@ public class ExtractArray implements ExpressionFunction {
      * {@inheritDoc}
      */
     @Override
-    public Arguments<?> prepare(final Expression[] args) {
-        if (args.length < 2) {
-            return Arguments.of(
-                new MissingArgumentValue(ARRAY_ARG),
-                new MissingArgumentValue(INDEX_ARG)
-            );
-        }
-
-        try {
-            return Arguments.of(
-                new ExpressionArgument(ARRAY_ARG, args[0]),
-                new GenericArgument<>(INDEX_ARG, ((ValueExpression)args[1]).value().getInt())
-            );
-        } catch (DataException e) {
-            return Arguments.of(
-                new ExpressionArgument(ARRAY_ARG, args[0]),
-                new GenericArgument<>(INDEX_ARG, (ValueExpression)args[1], "must be of type 'integer'")
-            );
-        }
+    public ExpressionFunction.Instance get() {
+        return new ExtractArrayInstance(name());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Arguments<GenericArgument> validate(final Arguments<GenericArgument> args) {
-        GenericArgument argument = args.get(0);
-        TypedValue value = (TypedValue) argument.value();
-        if (value.type() != Type.ARRAY) {
-            argument.addErrorMessage("Expected type ARRAY, was " + value.type());
-        }
-        return args;
-    }
+    static class ExtractArrayInstance implements ExpressionFunction.Instance {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final TypedValue typed = args.valueOf(ARRAY_ARG);
-        final Integer index = args.valueOf(INDEX_ARG);
-        List<Object> list = new ArrayList<>(typed.getArray());
-        return TypedValue.any(list.get(index));
+        private int index;
+
+        private final String name;
+
+        ExtractArrayInstance(final String name) {
+            this.name = Objects.requireNonNull(name, "'name' should not be null");
+        }
+
+        private String syntax() {
+            return String.format("syntax %s(<%s>, <%s>)", name, ARRAY_ARG, INDEX_ARG);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Arguments prepare(final Expression[] args) {
+            if (args.length < 2) {
+                throw new ExpressionException("Missing arguments: " + syntax());
+            }
+
+            try {
+                this.index = ((ValueExpression) args[1]).value().getInt();
+                return Arguments.of(ARRAY_ARG, args[0], INDEX_ARG, args[1]);
+            } catch (DataException e) {
+                throw new ExpressionException("Invalid argument: '" + INDEX_ARG + "' must be of type 'integer'");
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+            final TypedValue value = context.get(0);
+
+            if (value.type() != Type.ARRAY) {
+                throw new ExpressionException("Expected type ARRAY, was " + value.type());
+            }
+
+            List<Object> list = new ArrayList<>(value.getArray());
+            return TypedValue.any(list.get(index));
+        }
     }
 }

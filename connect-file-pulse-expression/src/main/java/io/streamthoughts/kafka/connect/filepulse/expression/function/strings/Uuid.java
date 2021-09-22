@@ -20,16 +20,20 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 
 import java.util.UUID;
 
+/**
+ * @see UUID#randomUUID().
+ */
 public class Uuid implements ExpressionFunction {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        return TypedValue.string(UUID.randomUUID().toString());
+    public Instance get() {
+        return ctx -> TypedValue.string(UUID.randomUUID().toString());
     }
 }

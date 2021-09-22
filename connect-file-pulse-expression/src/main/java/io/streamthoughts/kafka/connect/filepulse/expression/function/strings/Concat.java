@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -20,12 +20,9 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
 
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class Concat implements ExpressionFunction {
 
@@ -33,12 +30,14 @@ public class Concat implements ExpressionFunction {
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(Arguments<GenericArgument> args) {
-        String concat = StreamSupport.stream(args.spliterator(), false)
-            .map(it -> (TypedValue) it.value())
-            .filter(TypedValue::isNotNull)
-            .map(TypedValue::getString)
-            .collect(Collectors.joining("", "", ""));
-        return TypedValue.string(concat);
+    public Instance get() {
+        return context -> {
+            String concat = context.values()
+                    .stream()
+                    .filter(TypedValue::isNotNull)
+                    .map(TypedValue::getString)
+                    .collect(Collectors.joining("", "", ""));
+            return TypedValue.string(concat);
+        };
     }
 }

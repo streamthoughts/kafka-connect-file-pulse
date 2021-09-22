@@ -19,11 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.conditions;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-
-import java.util.stream.StreamSupport;
 
 public class Or implements ExpressionFunction {
 
@@ -31,13 +27,13 @@ public class Or implements ExpressionFunction {
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final boolean result = StreamSupport
-                .stream(args.spliterator(), false)
-                .map(it -> (TypedValue) it.value())
-                .filter(TypedValue::isNotNull)
-                .anyMatch(TypedValue::getBool);
-
-        return TypedValue.bool(result);
+    public Instance get() {
+        return context -> {
+            final boolean match = context.values()
+                    .stream()
+                    .filter(TypedValue::isNotNull)
+                    .anyMatch(TypedValue::getBool);
+            return TypedValue.bool(match);
+        };
     }
 }

@@ -82,7 +82,7 @@ public class Antlr4ExpressionParserTest {
         assertSubstitutionException(
             expression,
             strExpression.replaceAll("\"",""),
-            "[startIndex=0, endIndex=28, expressions=[$., [originalExpression=lowercase($.field), function=[name='lowercase', arguments=[{name='field', value=[originalExpression=$.field, rootObject=value, attribute=field], errorMessages=[]}]]]]]"
+            "[startIndex=0, endIndex=28, expressions=[$., [originalExpression=lowercase($.field), function=[name='lowercase', arguments=[{name='field_expr', value=[originalExpression=$.field, rootObject=value, attribute=field]}]]]]]"
         );
     }
 
@@ -116,7 +116,7 @@ public class Antlr4ExpressionParserTest {
         assertSubstitutionException(
             expression,
             strExpression.replaceAll("\"",""),
-            "[startIndex=0, endIndex=23, expressions=[[originalExpression=lowercase($scope), function=[name='lowercase', arguments=[{name='field', value=[originalExpression=$scope, rootObject=scope, attribute=null], errorMessages=[]}]]]]]"
+            "[startIndex=0, endIndex=23, expressions=[[originalExpression=lowercase($scope), function=[name='lowercase', arguments=[{name='field_expr', value=[originalExpression=$scope, rootObject=scope, attribute=null]}]]]]]"
         );
     }
 
@@ -127,8 +127,8 @@ public class Antlr4ExpressionParserTest {
         assertSubstitutionException(
             expression,
             strExpression.replaceAll("\"",""),
-            "[startIndex=0, endIndex=30, expressions=[[originalExpression=extract_array($.values,0), function=[name='extract_array', arguments=[{name='array', value=[originalExpression=$.values, rootObject=value, attribute=values], errorMessages=[]}, {name='index', value=0, errorMessages=[]}]]]]]",
-            "[startIndex=31, endIndex=61, expressions=[[originalExpression=extract_array($.values,1), function=[name='extract_array', arguments=[{name='array', value=[originalExpression=$.values, rootObject=value, attribute=values], errorMessages=[]}, {name='index', value=1, errorMessages=[]}]]]]]"
+            "[startIndex=0, endIndex=30, expressions=[[originalExpression=extract_array($.values,0), function=[name='extract_array', arguments=[{name='array', value=[originalExpression=$.values, rootObject=value, attribute=values]}, {name='index', value=0}]]]]]",
+            "[startIndex=31, endIndex=61, expressions=[[originalExpression=extract_array($.values,1), function=[name='extract_array', arguments=[{name='array', value=[originalExpression=$.values, rootObject=value, attribute=values]}, {name='index', value=1}]]]]]"
         );
     }
 
@@ -170,12 +170,12 @@ public class Antlr4ExpressionParserTest {
 
     @Test
     public void should_parse_function_expression_given_property() {
-        Expression expression = new Antlr4ExpressionParser().parseExpression("{{ lowercase($scope.attr) }}");
+        Expression expression = new Antlr4ExpressionParser().parseExpression("{{lowercase($scope.attr) }}");
 
         assertFunctionException(
             expression,
             "lowercase($scope.attr)",
-            "[name='lowercase', arguments=[{name='field', value=[originalExpression=$scope.attr, rootObject=scope, attribute=attr], errorMessages=[]}]]"
+            "[name='lowercase', arguments=[{name='field_expr', value=[originalExpression=$scope.attr, rootObject=scope, attribute=attr]}]]"
         );
     }
 
@@ -186,7 +186,7 @@ public class Antlr4ExpressionParserTest {
         assertFunctionException(
             expression,
             "starts_with($scope.attr,'foo')",
-            "[name='starts_with', arguments=[{name='field', value=[originalExpression=$scope.attr, rootObject=scope, attribute=attr], errorMessages=[]}, {name='prefix', value=foo, errorMessages=[]}]]"
+            "[name='starts_with', arguments=[{name='field_expr', value=[originalExpression=$scope.attr, rootObject=scope, attribute=attr]}, {name='prefix', value=foo}]]"
         );
     }
 
@@ -197,7 +197,7 @@ public class Antlr4ExpressionParserTest {
         assertFunctionException(
             expression,
             "replace_all(lowercase($.field),'\\\\s','-')",
-            "[name='replace_all', arguments=[{name='field', value=[originalExpression=lowercase($.field), function=[name='lowercase', arguments=[{name='field', value=[originalExpression=$.field, rootObject=value, attribute=field], errorMessages=[]}]]], errorMessages=[]}, {name='pattern', value=\\\\s, errorMessages=[]}, {name='replacement', value=-, errorMessages=[]}]]"
+            "[name='replace_all', arguments=[{name='field_expr', value=[originalExpression=lowercase($.field), function=[name='lowercase', arguments=[{name='field_expr', value=[originalExpression=$.field, rootObject=value, attribute=field]}]]]}, {name='pattern', value=\\\\s}, {name='replacement', value=-}]]"
         );
     }
 
@@ -209,7 +209,7 @@ public class Antlr4ExpressionParserTest {
         assertFunctionException(
             expression,
             "lowercase(extract_array($.values,0))",
-            "[name='lowercase', arguments=[{name='field', value=[originalExpression=extract_array($.values,0), function=[name='extract_array', arguments=[{name='array', value=[originalExpression=$.values, rootObject=value, attribute=values], errorMessages=[]}, {name='index', value=0, errorMessages=[]}]]], errorMessages=[]}]]"
+            "[name='lowercase', arguments=[{name='field_expr', value=[originalExpression=extract_array($.values,0), function=[name='extract_array', arguments=[{name='array', value=[originalExpression=$.values, rootObject=value, attribute=values]}, {name='index', value=0}]]]}]]"
         );
     }
 

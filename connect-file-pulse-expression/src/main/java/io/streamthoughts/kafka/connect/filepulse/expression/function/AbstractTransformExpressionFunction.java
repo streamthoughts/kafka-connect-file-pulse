@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,19 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
+package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
-public class StartsWith implements ExpressionFunction {
+public abstract class AbstractTransformExpressionFunction implements ExpressionFunction {
 
     private static final String FIELD_ARG = "field_expr";
-    private static final String PREFIX_ARG = "prefix";
+
+    public abstract TypedValue transform(final TypedValue value);
 
     /**
      * {@inheritDoc}
@@ -37,23 +35,18 @@ public class StartsWith implements ExpressionFunction {
     public Instance get() {
         return new Instance() {
 
-            private String syntax() {
-                return String.format("syntax %s(<%s>, <%s>)", name(), FIELD_ARG, PREFIX_ARG);
-            }
-
             /**
              * {@inheritDoc}
              */
             @Override
             public Arguments prepare(final Expression[] args) {
-                if (args.length > 2) {
-                    throw new ExpressionException("Too many arguments: " + syntax());
-                }
-                if (args.length < 2) {
-                    throw new ExpressionException("Missing required arguments: " + syntax());
+                if (args.length < 1) {
+                    throw new ExpressionException(String.format(
+                            "Missing required arguments: %s(<%s>)", name(), FIELD_ARG)
+                    );
                 }
 
-                return Arguments.of(FIELD_ARG, args[0], PREFIX_ARG, args[1]);
+                return Arguments.of(FIELD_ARG, args[0]);
             }
 
             /**
@@ -61,9 +54,7 @@ public class StartsWith implements ExpressionFunction {
              */
             @Override
             public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
-                TypedValue field = context.get(0);
-                TypedValue prefix = context.get(1);
-                return TypedValue.bool(field.getString().startsWith(prefix.getString()));
+                return transform(context.get(0));
             }
         };
     }

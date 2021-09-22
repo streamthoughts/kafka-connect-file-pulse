@@ -20,15 +20,16 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
-import org.apache.kafka.connect.data.SchemaAndValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Default interface to define a function that can be used into an expression.
  */
-public interface ExpressionFunction {
+public interface ExpressionFunction extends Supplier<ExpressionFunction.Instance> {
 
     /**
      * Returns the case-insensitive function name.
@@ -40,39 +41,47 @@ public interface ExpressionFunction {
     }
 
     /**
-     * Prepares the arguments that will be passed to {@link #validate(Arguments)}.
-     *
-     * @param args  list of {@link TypedValue} arguments.
-     * @return  an instance of {@link Arguments}.
+     * @return a new {@link Instance}.
      */
-    default Arguments<?> prepare(final Expression[] args) {
-        if (args.length == 0) return Arguments.empty();
-        List<Argument> arguments = new ArrayList<>();
-        for (int i = 0; i < args.length; i++) {
-            arguments.add(new ExpressionArgument(String.valueOf(i), args[i]));
+    @Override
+    Instance get();
+
+    @FunctionalInterface
+    interface Instance {
+
+        /**
+         * Prepares the arguments that will be evaluated and used to build
+         * the {@link ExecutionContext} pass then through the {@link #invoke}.
+         *
+         * @param args  list of {@link TypedValue} arguments.
+         * @return  an instance of {@link Arguments}.
+         */
+        default Arguments prepare(final Expression[] args) throws ExpressionException {
+            if (args.length == 0) return Arguments.empty();
+            List<Argument> arguments = new ArrayList<>();
+            for (int i = 0; i < args.length; i++) {
+                arguments.add(new ExpressionArgument(String.valueOf(i), args[i]));
+            }
+            return new Arguments(arguments);
         }
-        return new Arguments<>(arguments);
+
+        /**
+         * Executes the function with the specific context.
+         *
+         * @param context   the {@link ExecutionContext}.
+         * @return          the function result.
+         *
+         * @throws ExpressionException if the function execution failed.
+         */
+        TypedValue invoke(final ExecutionContext context) throws ExpressionException;
     }
 
     /**
-     * Checks whether this function accepts the given arguments.
+     * Helper method to compute a default function name.
      *
-     * @param   arguments the arguments value to be checked.
-     * @return  {@code true} if this function can be executed with the given arguments.
+     * @param function  the {@link ExpressionFunction}.
+     * @return          a string name.
      */
-    default Arguments<GenericArgument> validate(final Arguments<GenericArgument> arguments) {
-        return arguments;
-    }
-
-    /**
-     * Executes the function on the specified value for the specified arguments.
-     *
-     * @param args  the function arguments.
-     *
-     * @return  a new {@link SchemaAndValue}.
-     */
-    TypedValue apply(final Arguments<GenericArgument> args);
-
     static String functionNameFor(final ExpressionFunction function) {
         // simple class name conversion to camelCase
         StringBuilder b = new StringBuilder();

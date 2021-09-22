@@ -20,30 +20,30 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.collections.ExtractArray;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.And;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.Equals;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.GreaterThan;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.If;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.LessThan;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.Or;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.datetime.UnixTimestamp;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Converts;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Exists;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.IsNull;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Nlv;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Concat;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ConcatWs;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Converts;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.EndsWith;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.Equals;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Exists;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.collections.ExtractArray;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.GreaterThan;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Hash;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.If;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.IsNull;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.LessThan;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Lowercase;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Md5;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Matches;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Nlv;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Length;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.Or;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Lowercase;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Matches;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Md5;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ReplaceAll;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Split;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.StartsWith;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Trim;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.time.UnixTimestamp;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Uppercase;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Uuid;
 import org.slf4j.Logger;
@@ -59,7 +59,8 @@ public class ExpressionFunctionExecutors {
 
     private static final ExpressionFunctionExecutors INSTANCE = new ExpressionFunctionExecutors();
 
-    public static ExpressionFunctionExecutor resolve(final String functionName, final Expression[] arguments) {
+    public static ExpressionFunctionExecutor resolve(final String functionName,
+                                                     final Expression[] arguments) {
         return INSTANCE.make(functionName, arguments);
     }
 
@@ -99,23 +100,29 @@ public class ExpressionFunctionExecutors {
         register(new LessThan());
     }
 
-    @SuppressWarnings("unchecked")
     private ExpressionFunctionExecutor make(final String functionName, final Expression[] arguments) {
         Objects.requireNonNull(functionName, "functionName cannot be null");
         boolean exists = functions.containsKey(functionName);
         if (!exists) {
-            throw new ExpressionException("Invalid expression, function does not exist '" + functionName + "'. "
-                    + "Valid functions are : " + functions.keySet());
+            throw new ExpressionException(
+                    "Invalid expression, function does not exist '" + functionName + "'. "
+                    + "Valid functions are : " + functions.keySet()
+            );
         }
 
-        ExpressionFunction function = functions.get(functionName);
-        final Arguments prepared = function.prepare(arguments);
+        final ExpressionFunction function = functions.get(functionName);
 
-        if (!prepared.valid()) {
-            final String errorMessages = prepared.buildErrorMessage();
-            throw new ExpressionException("Invalid arguments for function '" + functionName + "' : " + errorMessages);
+        final ExpressionFunction.Instance instance = function.get();
+
+        final Arguments prepared;
+        try {
+            prepared = instance.prepare(arguments);
+        } catch (Exception e) {
+            throw new ExpressionException("Failed to prepare function '" + functionName + "': " + e.getMessage());
         }
-        return new ExpressionFunctionExecutor(functionName, function, prepared);
+
+        return new ExpressionFunctionExecutor(functionName, instance, prepared);
+
     }
 
     public void register(final ExpressionFunction function) {

@@ -18,57 +18,24 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
-import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
-public class GenericArgument<T> implements Argument {
+public class GenericArgument implements Argument {
 
     private final String name;
-    private final T value;
-    private final List<String> errorMessages;
+    private final Object value;
 
     /**
      * Creates a new {@link GenericArgument} instance.
      *
-     * @param name  the argument name.
-     * @param value the argument value.
+     * @param name          the argument name.
+     * @param value         the argument value.
      */
     public GenericArgument(final String name,
-                           final T value) {
-        this(name, value, new LinkedList<>());
-    }
-
-    /**
-     * Creates a new {@link GenericArgument} instance.
-     *
-     * @param name  the argument name.
-     * @param value the argument value.
-     * @param errorMessage the argument error if is invalid.
-     */
-    public GenericArgument(final String name,
-                            final T value,
-                            final String errorMessage) {
-        this(name, value, Collections.singletonList(errorMessage));
-    }
-
-    /**
-     * Creates a new {@link GenericArgument} instance.
-     *
-     * @param name  the argument name.
-     * @param value the argument value.
-     * @param errorMessages the argument error if is invalid.
-     */
-    public GenericArgument(final String name,
-                            final T value,
-                            final List<String> errorMessages) {
+                           final Object value) {
         Objects.requireNonNull(name, "name can't be null");
         this.name = name;
         this.value = value;
-        this.errorMessages = errorMessages;
     }
 
     /**
@@ -83,35 +50,7 @@ public class GenericArgument<T> implements Argument {
      * {@inheritDoc}
      */
     @Override
-    public T value() {
-        return value;
-    }
-
-    public void addErrorMessage(final String errorMessage) {
-        this.errorMessages.add(errorMessage);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> errorMessages() {
-        return errorMessages;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isValid() {
-        return errorMessages.isEmpty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object evaluate(EvaluationContext context) {
+    public Object value() {
         return value;
     }
 
@@ -124,8 +63,7 @@ public class GenericArgument<T> implements Argument {
         if (!(o instanceof GenericArgument)) return false;
         GenericArgument that = (GenericArgument) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(value, that.value) &&
-                Objects.equals(errorMessages, that.errorMessages);
+                Objects.equals(value, that.value);
     }
 
     /**
@@ -133,7 +71,7 @@ public class GenericArgument<T> implements Argument {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, value, errorMessages);
+        return Objects.hash(name, value);
     }
 
     /**
@@ -144,7 +82,6 @@ public class GenericArgument<T> implements Argument {
         return "{" +
                 "name='" + name + '\'' +
                 ", value=" + value +
-                ", errorMessages=" + errorMessages +
                 '}';
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -20,52 +20,23 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractTransformExpressionFunction;
 
 /**
  * Simple function to retrieve the size of a array or a string field.
  */
-public class Length implements ExpressionFunction {
-
-    private static final String FIELD_ARG = "field";
+public class Length extends AbstractTransformExpressionFunction {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments<?> prepare(final Expression[] args) {
-        if (args.length == 0) {
-            return new Arguments<>(new MissingArgumentValue(FIELD_ARG));
-        }
-        return Arguments.of(new ExpressionArgument(FIELD_ARG, args[0]));
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Arguments<GenericArgument> validate(final Arguments<GenericArgument> args) {
-        GenericArgument argument = args.get(0);
-        TypedValue value = (TypedValue) argument.value();
+    public TypedValue transform(final TypedValue value) {
         if (value.type() != Type.ARRAY && value.type() != Type.STRING) {
-             argument.addErrorMessage("Expected type [ARRAY|STRING], was " + value.type());
+            throw new ExpressionException("Expected type [ARRAY|STRING], was " + value.type());
         }
-        return args;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        TypedValue field = args.valueOf(FIELD_ARG);
-        int size = (field.type() == Type.ARRAY) ? field.getArray().size() : ((String)field.value()).length();
+        int size = value.type() == Type.ARRAY ? value.getArray().size() : value.getString().length();
         return TypedValue.int32(size);
     }
 }

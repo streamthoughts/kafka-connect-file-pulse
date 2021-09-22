@@ -19,19 +19,22 @@
 
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
-
-import java.util.List;
 
 public interface Argument {
 
+    /**
+     * @return the name of this argument.
+     */
     String name();
 
+    /**
+     * @return the value of this argument.
+     */
     Object value();
 
-    List<String> errorMessages();
-
-    boolean isValid();
-
-    Object evaluate(final EvaluationContext context) ;
+    default TypedValue evaluate(final EvaluationContext context) {
+        throw new UnsupportedOperationException();
+    }
 }

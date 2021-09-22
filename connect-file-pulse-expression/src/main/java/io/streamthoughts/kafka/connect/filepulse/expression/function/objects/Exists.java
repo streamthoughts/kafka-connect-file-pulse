@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -22,58 +22,57 @@ import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
 public class Exists implements ExpressionFunction {
 
-    private static final String OBJECT_ARG = "object";
-    private static final String FIELD_ARG = "field";
+    private static final String OBJECT_ARG = "object_expr";
+    private static final String FIELD_ARG = "field_expr";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments<?> prepare(final Expression[] args) {
-        if (args.length < 2) {
-            return Arguments.of(
-                new MissingArgumentValue(OBJECT_ARG),
-                new MissingArgumentValue(FIELD_ARG)
-            );
-        }
-        return Arguments.of(
-            new ExpressionArgument(OBJECT_ARG, args[0]),
-            new ExpressionArgument(FIELD_ARG, args[1])
-        );
-    }
+    public Instance get() {
+        return new Instance() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Arguments<GenericArgument> validate(final Arguments<GenericArgument> args) {
-        GenericArgument argument = args.get(0);
-        TypedValue value = (TypedValue) argument.value();
-        if (value.type() != Type.STRUCT && value.type() != Type.NULL) {
-            argument.addErrorMessage("Expected type [STRUCT|NULL], was " + value.type());
-        }
-        return args;
-    }
+            private String syntax() {
+                return String.format("syntax %s(<%s>, <%s>)", name(), OBJECT_ARG, FIELD_ARG);
+            }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        TypedValue object = args.valueOf(OBJECT_ARG);
-        TypedValue path = args.valueOf(FIELD_ARG);
-        if (object.type() == Type.NULL) return TypedValue.bool(false);
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public Arguments prepare(final Expression[] args) {
+                  if (args.length < 2) {
+                    throw new ExpressionException("Missing required arguments: " + syntax());
+                }
 
-        final TypedStruct struct = object.getStruct();
-        final boolean exists = struct.exists(path.getString());
-        return TypedValue.bool(exists);
+                return Arguments.of(OBJECT_ARG, args[0], FIELD_ARG, args[1]);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+                final TypedValue object = context.get(OBJECT_ARG);
+                final TypedValue path = context.get(FIELD_ARG);
+
+                if (object.type() != Type.STRUCT && object.type() != Type.NULL) {
+                    throw new ExpressionException("Expected type [STRUCT|NULL], was " + object.type());
+                }
+
+                if (object.type() == Type.NULL) return TypedValue.bool(false);
+
+                final TypedStruct struct = object.getStruct();
+                final boolean exists = struct.exists(path.getString());
+                return TypedValue.bool(exists);
+            }
+        };
     }
 }

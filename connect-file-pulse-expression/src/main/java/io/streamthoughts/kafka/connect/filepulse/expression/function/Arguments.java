@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
-import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,19 +27,39 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
-public class Arguments<T extends Argument> implements Iterable<T> {
+public class Arguments implements Iterable<Argument> {
 
-    @SafeVarargs
-    public static <T extends Argument> Arguments<T> of(final T... arguments) {
-        return new Arguments<>(Arrays.asList(arguments));
+    public static Arguments of(final Argument... arguments) {
+        return new Arguments(Arrays.asList(arguments));
     }
 
-    public static <T extends Argument> Arguments<T> empty() {
-        return new Arguments<T>() {
+    public static Arguments of(final String name1, final Expression expression1) {
+        return of(new ExpressionArgument(name1, expression1));
+    }
+
+    public static Arguments of(final String name1, final Expression expression1,
+                               final String name2, final Expression expression2) {
+        return of(
+                new ExpressionArgument(name1, expression1),
+                new ExpressionArgument(name2, expression2)
+        );
+    }
+
+    public static Arguments of(final String name1, final Expression expression1,
+                               final String name2, final Expression expression2,
+                               final String name3, final Expression expression3) {
+        return of(
+                new ExpressionArgument(name1, expression1),
+                new ExpressionArgument(name2, expression2),
+                new ExpressionArgument(name3, expression3)
+        );
+    }
+
+    public static Arguments empty() {
+        return new Arguments() {
             @Override
-            public Iterator<T> iterator() {
+            public Iterator<Argument> iterator() {
                 return Collections.emptyIterator();
             }
 
@@ -50,7 +70,7 @@ public class Arguments<T extends Argument> implements Iterable<T> {
         };
     }
 
-    private final List<T> arguments;
+    private final List<Argument> arguments;
 
     /**
      * Creates a new {@link Arguments} instance.
@@ -64,7 +84,7 @@ public class Arguments<T extends Argument> implements Iterable<T> {
      *
      * @param argument the single argument.
      */
-    public Arguments(final T argument) {
+    public Arguments(final Argument argument) {
         this(Collections.singletonList(argument));
     }
 
@@ -73,11 +93,11 @@ public class Arguments<T extends Argument> implements Iterable<T> {
      * @param arguments the list of arguments.
      *
      */
-    public Arguments(final List<T> arguments) {
+    public Arguments(final List<Argument> arguments) {
         this.arguments = arguments;
     }
 
-    private Arguments<T> add(final T argument) {
+    private Arguments add(final Argument argument) {
         arguments.add(argument);
         return this;
     }
@@ -90,11 +110,11 @@ public class Arguments<T extends Argument> implements Iterable<T> {
      * @throws IndexOutOfBoundsException if the index is out of range
      *         ({@code index < 0 || index >= size()})
      */
-    public T get(final int index) {
+    public Argument get(final int index) {
         return arguments.get(index);
     }
 
-    public List<T> get(final int index, final int to) {
+    public List<Argument> get(final int index, final int to) {
         return arguments.subList(index, to);
     }
 
@@ -103,59 +123,22 @@ public class Arguments<T extends Argument> implements Iterable<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public <V> V valueOf(final String name) {
+    public <V> Optional<V> valueOf(final String name) {
         Objects.requireNonNull(name, "name cannot be null");
         Optional<Object> value = arguments
             .stream()
             .filter(a -> a.name().equals(name))
             .findFirst()
             .map(Argument::value);
-        if (value.isPresent()) return (V) value.get();
 
-        throw new IllegalArgumentException("No argument with name '" + name + "'");
-    }
-
-    Arguments<GenericArgument> evaluate(final EvaluationContext context) {
-        Arguments<GenericArgument> evaluated = new Arguments<>();
-        for (T arg : arguments) {
-            Object value = arg.evaluate(context);
-            evaluated.add(new GenericArgument<>(arg.name(), value));
-        }
-        return evaluated;
-    }
-
-    public boolean valid() {
-        return StreamSupport
-            .stream(this.spliterator(), true)
-            .allMatch(Argument::isValid);
-    }
-
-    String buildErrorMessage() {
-        final StringBuilder errors = new StringBuilder();
-        for (T value : arguments) {
-            if (!value.errorMessages().isEmpty()) {
-                List<String> errorMessages = value.errorMessages();
-                for (String error : errorMessages) {
-                    errors
-                        .append("\n\t")
-                        .append("Invalid argument with name='")
-                        .append(value.name()).append("'")
-                        .append(", value=")
-                        .append("'").append(value.value()).append("'")
-                        .append(" - ")
-                        .append(error)
-                        .append("\n\t");
-                }
-            }
-        }
-        return errors.toString();
+        return (Optional<V>) value;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Iterator<T> iterator() {
+    public Iterator<Argument> iterator() {
         return arguments.iterator();
     }
 

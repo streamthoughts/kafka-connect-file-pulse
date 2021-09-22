@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -20,41 +20,53 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.objects;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
 /**
  * Replace a null value with a non-null value.
  */
 public class Nlv implements ExpressionFunction {
 
-    private static final String FIELD_ARG = "field";
-    private static final String DEFAULT_ARG = "default";
+    private static final String FIELD_ARG = "field_expr";
+    private static final String DEFAULT_ARG = "default_expr";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments<?> prepare(final Expression[] args) {
-        if (args.length < 2) {
-            return new Arguments<>(new MissingArgumentValue(DEFAULT_ARG));
-        }
+    public Instance get() {
+        return new Instance() {
 
-        return Arguments.of(
-            new ExpressionArgument(FIELD_ARG, args[0]),
-            new ExpressionArgument(DEFAULT_ARG, args[1])
-        );
-    }
+            private String syntax() {
+                return String.format("syntax %s(<%s>, <%s>)", name(), FIELD_ARG, DEFAULT_ARG);
+            }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final TypedValue field = args.valueOf(FIELD_ARG);
-        return field.isNull() ? args.valueOf(DEFAULT_ARG) : field;
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public Arguments prepare(final Expression[] args) {
+                if (args.length > 2) {
+                    throw new ExpressionException("Too many arguments: " + syntax());
+                }
+                if (args.length < 2) {
+                    throw new ExpressionException("Missing required arguments: " + syntax());
+                }
+
+                return Arguments.of(FIELD_ARG, args[0], DEFAULT_ARG, args[1]);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+                final TypedValue field = context.get(FIELD_ARG);
+                return field.isNull() ? context.get(DEFAULT_ARG) : field;
+            }
+        };
     }
 }

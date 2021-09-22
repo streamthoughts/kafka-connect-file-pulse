@@ -23,22 +23,26 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 
-public class ExpressionArgument extends GenericArgument<Expression> {
+import java.util.Objects;
+
+public class ExpressionArgument extends GenericArgument {
 
     /**
      * Creates a new {@link ExpressionArgument} instance.
+     *
      * @param name          the argument name.
      * @param expression    the argument expression.
      */
-    public ExpressionArgument(final String name, final Expression expression) {
-        super(name, expression);
+    public ExpressionArgument(final String name,
+                              final Expression expression) {
+        super(name, Objects.requireNonNull(expression, "'expression should not be null"));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypedValue evaluate(EvaluationContext context) {
-        return value().readValue(context, TypedValue.class);
+    public TypedValue evaluate(final EvaluationContext context) {
+        return ((Expression)value()).readValue(context, TypedValue.class);
     }
 }

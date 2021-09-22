@@ -123,7 +123,7 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
 
 
     private Method findMethodForProperty(final Class target, final Predicate<Method> predicate) {
-        Optional<Method> optional = Arrays.stream(target.getDeclaredMethods())
+        Optional<Method> optional = Arrays.stream(target.getMethods())
                 .filter(predicate)
                 .findAny();
         return optional.orElse(null);

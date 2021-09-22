@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -20,46 +20,65 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Matches implements ExpressionFunction {
 
-    private static final String FIELD_ARG = "field";
+    private static final String FIELD_ARG = "field_expr";
     private static final String PATTERN_ARG = "pattern";
 
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments prepare(final Expression[] args) {
-        if (args.length < 2) {
-            return new Arguments<>(new MissingArgumentValue(PATTERN_ARG));
-        }
-
-        final String pattern = ((ValueExpression)args[1]).value().getString();
-        return Arguments.of(
-            new ExpressionArgument(FIELD_ARG, args[0]),
-            new GenericArgument<>(PATTERN_ARG, Pattern.compile(pattern))
-        );
+    public ExpressionFunction.Instance get() {
+        return new Instance(name());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final TypedValue field = args.valueOf(FIELD_ARG);
-        final Pattern pattern = args.valueOf(PATTERN_ARG);
-        final String value = field.value();
-        final boolean matches = pattern.matcher(value).matches();
-        return TypedValue.bool(matches);
+    static class Instance implements ExpressionFunction.Instance {
+
+        private Pattern pattern;
+
+        private final String name;
+
+        public Instance(final String name) {
+            this.name = Objects.requireNonNull(name, "'name' should not be null");
+        }
+
+        private String syntax() {
+            return String.format("syntax %s(<%s>, <%s>)", name, FIELD_ARG, PATTERN_ARG);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Arguments prepare(final Expression[] args) {
+            if (args.length > 2) {
+                throw new ExpressionException("Too many arguments: " + syntax());
+            }
+            if (args.length < 2) {
+                throw new ExpressionException("Missing required arguments: " + syntax());
+            }
+
+            this.pattern =  Pattern.compile(((ValueExpression)args[1]).value().getString());
+            return Arguments.of(FIELD_ARG, args[0]);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+            final String value = context.get(0).value();
+            return TypedValue.bool(pattern.matcher(value).matches());
+        }
     }
 }

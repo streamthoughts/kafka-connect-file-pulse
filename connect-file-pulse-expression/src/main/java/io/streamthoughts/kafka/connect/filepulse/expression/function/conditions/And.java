@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -19,11 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function.conditions;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-
-import java.util.stream.StreamSupport;
 
 public class And implements ExpressionFunction {
 
@@ -31,12 +27,11 @@ public class And implements ExpressionFunction {
      * {@inheritDoc}
      */
     @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final boolean result = StreamSupport
-                .stream(args.spliterator(), false)
-                .map(it -> (TypedValue) it.value())
-                .filter(TypedValue::isNotNull)
-                .allMatch(TypedValue::getBool);
-        return TypedValue.bool(result);
+    public Instance get() {
+        return context -> TypedValue.bool(
+                context.values().stream()
+                        .filter(TypedValue::isNotNull)
+                        .allMatch(TypedValue::getBool)
+        );
     }
 }

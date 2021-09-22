@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2019-2021 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -20,41 +20,50 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.GenericArgument;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.MissingArgumentValue;
 
 public class EndsWith implements ExpressionFunction {
 
-    private static final String STRING_ARG = "string";
+    private static final String FIELD_ARG = "field_expr";
     private static final String SUFFIX_ARG = "suffix";
 
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public Arguments prepare(final Expression[] args) {
-        if (args.length < 2) {
-            return Arguments.of(
-                new MissingArgumentValue(STRING_ARG),
-                new MissingArgumentValue(SUFFIX_ARG));
-        }
+    public Instance get() {
+        return new Instance() {
 
-        return Arguments.of(
-            new ExpressionArgument(STRING_ARG, args[0]),
-            new ExpressionArgument(SUFFIX_ARG, args[1]));
-    }
+            private String syntax() {
+                return String.format("syntax %s(<%s>, <%s>)",  name(), FIELD_ARG, SUFFIX_ARG);
+            }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TypedValue apply(final Arguments<GenericArgument> args) {
-        final TypedValue string = args.valueOf(STRING_ARG);
-        final TypedValue prefix = args.valueOf(SUFFIX_ARG);
-        return TypedValue.bool(string.getString().endsWith(prefix.getString()));
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public Arguments prepare(final Expression[] args) {
+                if (args.length > 2) {
+                    throw new ExpressionException("Too many arguments: " + syntax());
+                }
+                if (args.length < 2) {
+                    throw new ExpressionException("Missing required arguments: " + syntax());
+                }
+                return Arguments.of(FIELD_ARG, args[0], SUFFIX_ARG, args[1]);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+                final TypedValue string = context.get(FIELD_ARG);
+                final TypedValue prefix = context.get(SUFFIX_ARG);
+                return TypedValue.bool(string.getString().endsWith(prefix.getString()));
+            }
+        };
     }
 }

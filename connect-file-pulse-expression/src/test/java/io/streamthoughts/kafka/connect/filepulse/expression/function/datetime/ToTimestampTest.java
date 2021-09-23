@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 import static io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers.parseExpression;
@@ -38,7 +39,9 @@ public class ToTimestampTest {
     public void should_parse_given_local_date() {
         // Given
         Expression expression =  parseExpression("{{ to_timestamp($date, 'yyyy-MM-dd') }}");
-        StandardEvaluationContext context = new StandardEvaluationContext(Map.of("date", "2021-04-01"));
+        StandardEvaluationContext context = new StandardEvaluationContext(new HashMap<>() {{
+            put("date", "2021-04-01");
+        }});
 
         // When
         TypedValue result = expression.readValue(context, TypedValue.class);
@@ -52,7 +55,9 @@ public class ToTimestampTest {
     public void should_parse_given_local_date_with_hour() {
         // Given
         Expression expression =  parseExpression("{{ to_timestamp($date, 'yyyy-MM-dd HH') }}");
-        StandardEvaluationContext context = new StandardEvaluationContext(Map.of("date", "2021-04-01 10"));
+        StandardEvaluationContext context = new StandardEvaluationContext(new HashMap<>() {{
+            put("date", "2021-04-01 10");
+        }});
 
         // When
         TypedValue result = expression.readValue(context, TypedValue.class);
@@ -66,7 +71,9 @@ public class ToTimestampTest {
     public void should_parse_given_local_date_with_hour_and_zid() {
         // Given
         Expression expression =  parseExpression("{{ to_timestamp($date, 'yyyy-MM-dd HH', 'America/New_York') }}");
-        StandardEvaluationContext context = new StandardEvaluationContext(Map.of("date", "2021-04-01 10"));
+        StandardEvaluationContext context = new StandardEvaluationContext(new HashMap<>() {{
+            put("date", "2021-04-01 10");
+        }});
 
         // When
         TypedValue result = expression.readValue(context, TypedValue.class);

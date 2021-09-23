@@ -65,7 +65,7 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
 
         try {
             Method method = findGetterByKeyMethodForProperty(type);
-            if (method != null) {
+            if (method != null && method.canAccess(target)) {
                 return method.invoke(target, name);
             }
             return null;

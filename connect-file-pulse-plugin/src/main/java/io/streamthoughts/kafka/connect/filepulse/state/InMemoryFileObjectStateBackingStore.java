@@ -26,28 +26,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * In-memory {@link StateBackingStore} implementation.
+ * An in-memory {@link StateBackingStore} implementation that uses an LRU cache based on HashMap.
  */
 public class InMemoryFileObjectStateBackingStore implements FileObjectStateBackingStore {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryFileObjectStateBackingStore.class);
 
-    private final ConcurrentHashMap<String, FileObject> objects = new ConcurrentHashMap<>();
+    private static final int DEFAULT_MAX_SIZE_CAPACITY = 10_000;
+
+    private final Map<String, FileObject> objects;
 
     private StateBackingStore.UpdateListener<FileObject> listener;
 
     private final AtomicBoolean started = new AtomicBoolean(false);
 
-    public InMemoryFileObjectStateBackingStore() { }
+    public InMemoryFileObjectStateBackingStore() {
+        this.objects = Collections.synchronizedMap(createLRUCache(DEFAULT_MAX_SIZE_CAPACITY));
+    }
 
     @VisibleForTesting
     public InMemoryFileObjectStateBackingStore(final Map<String, FileObject> objects) {
+        this();
         this.objects.putAll(objects);
     }
 
@@ -149,5 +154,14 @@ public class InMemoryFileObjectStateBackingStore implements FileObjectStateBacki
     @VisibleForTesting
     public UpdateListener<FileObject> getListener() {
         return listener;
+    }
+
+    private static <K, V> Map<K, V> createLRUCache(final int maxCacheSize) {
+        return new LinkedHashMap<>(maxCacheSize + 1, 1.01f, true) {
+            @Override
+            protected boolean removeEldestEntry(final Map.Entry<K, V> eldest) {
+                return size() > maxCacheSize;
+            }
+        };
     }
 }

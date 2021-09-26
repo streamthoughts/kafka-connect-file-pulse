@@ -528,6 +528,11 @@
   </url>
   
   <url>
+    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</loc>
+    <lastmod>2021-09-26T23:38:11+02:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/accessing-data-and-metadata/</loc>
     <lastmod>2021-06-16T22:39:32+02:00</lastmod>
   </url>
@@ -545,11 +550,6 @@
   <url>
     <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.3.x/developer-guide/accessing-data-and-metadata/</loc>
     <lastmod>2021-09-04T14:51:12+02:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</loc>
-    <lastmod>2021-09-04T14:31:09+02:00</lastmod>
   </url>
   
   <url>

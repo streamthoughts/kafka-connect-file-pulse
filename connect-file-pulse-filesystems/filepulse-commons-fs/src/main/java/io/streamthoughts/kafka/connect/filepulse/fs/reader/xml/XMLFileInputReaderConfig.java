@@ -16,8 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.xml;
+package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
 
+import io.streamthoughts.kafka.connect.filepulse.xml.XMLCommonConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
 import javax.xml.xpath.XPathConstants;

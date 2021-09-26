@@ -68,6 +68,8 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private Set<String> excludeAttributesInNamespaces = Collections.emptySet();
 
+    private String attributePrefix = "";
+
     private FieldPaths forceArrayFields = FieldPaths.empty();
 
     public XMLNodeToStructConverter setExcludeEmptyElement(boolean excludeEmptyElement) {
@@ -82,6 +84,11 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     public XMLNodeToStructConverter setExcludeAttributesInNamespaces(final Set<String> excludeAttributesInNamespaces) {
         this.excludeAttributesInNamespaces = Collections.unmodifiableSet(excludeAttributesInNamespaces);
+        return this;
+    }
+
+    public XMLNodeToStructConverter setAttributePrefix(final String attributePrefix) {
+        this.attributePrefix = attributePrefix;
         return this;
     }
 
@@ -193,7 +200,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
             if (!excludeAttributesInNamespaces.contains(attr.getNamespaceURI())) {
                 String attrName = determineNodeName(attr);
                 if (isNotXmlNamespace(attr)) {
-                    attributes.put(attrName, attr.getNodeValue());
+                    attributes.put(attributePrefix + attrName, attr.getNodeValue());
                 }
             }
         }

@@ -75,7 +75,8 @@ public class XmlToStructFilter extends AbstractRecordFilter<XmlToStructFilter> {
             .setExcludeAllAttributes(filterConfig.isNodeAttributesExcluded())
             .setExcludeAttributesInNamespaces(filterConfig.getExcludeNodeAttributesInNamespaces())
             .setForceArrayFields(FieldPaths.from(filterConfig.forceArrayFields()))
-            .setTypeInferenceEnabled(filterConfig.isDataTypeInferenceEnabled());
+            .setTypeInferenceEnabled(filterConfig.isDataTypeInferenceEnabled())
+            .setAttributePrefix(filterConfig.getAttributePrefix());
 
         this.reader = new XMLDocumentReader(
             filterConfig.isNamespaceAwareEnabled(),

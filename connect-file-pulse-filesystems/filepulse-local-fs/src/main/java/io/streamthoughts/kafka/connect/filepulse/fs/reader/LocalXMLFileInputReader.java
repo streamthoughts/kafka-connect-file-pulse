@@ -19,8 +19,8 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.xml.XMLFileInputIteratorFactory;
-import io.streamthoughts.kafka.connect.filepulse.xml.XMLFileInputReaderConfig;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputIteratorFactory;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;

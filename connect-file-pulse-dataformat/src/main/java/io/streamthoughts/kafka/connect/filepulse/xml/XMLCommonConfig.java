@@ -52,7 +52,10 @@ public class XMLCommonConfig extends AbstractConfig {
     private static final String XML_EXCLUDE_NODE_ATTRIBUTES_IN_NAMESPACES_DOC = "Specifies that the reader should only exclude node attributes in the defined list of namespaces.";
 
     public static final String XML_DATA_TYPE_INFERENCE_ENABLED_CONFIG = "xml.data.type.inference.enabled";
-    private static final String XML_DATA_TYPE_INFERENCE_ENABLED_DOC = "Specifies that the reader should try to infer the type of data nodes. (default: false).";
+    private static final String XML_DATA_TYPE_INFERENCE_ENABLED_DOC = "Specifies that the reader should try to infer the type of data nodes (default: false).";
+
+    public static final String XML_ATTRIBUTE_PREFIX_CONFIG = "xml.attribute.prefix";
+    public static final String XML_ATTRIBUTE_PREFIX_DOC = "If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: '').";
 
     private final String keyPrefix;
 
@@ -90,6 +93,10 @@ public class XMLCommonConfig extends AbstractConfig {
 
     public Set<String> getExcludeNodeAttributesInNamespaces() {
         return new HashSet<>(getList(withKeyPrefix(XML_EXCLUDE_NODE_ATTRIBUTES_IN_NAMESPACES_CONFIG)));
+    }
+
+    public String getAttributePrefix() {
+        return getString(withKeyPrefix(XML_ATTRIBUTE_PREFIX_CONFIG));
     }
 
     public boolean isDataTypeInferenceEnabled() {
@@ -186,6 +193,17 @@ public class XMLCommonConfig extends AbstractConfig {
                         filterGroupCounter++,
                         ConfigDef.Width.NONE,
                         keyPrefix + XML_EXCLUDE_EMPTY_ELEMENTS_CONFIG
+                )
+                .define(
+                        keyPrefix + XML_ATTRIBUTE_PREFIX_CONFIG,
+                        ConfigDef.Type.STRING,
+                        "",
+                        ConfigDef.Importance.LOW,
+                        XML_ATTRIBUTE_PREFIX_DOC,
+                        group,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        keyPrefix + XML_ATTRIBUTE_PREFIX_CONFIG
                 );
 
         for (ConfigDef.ConfigKey configKey : additional) {

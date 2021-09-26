@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.xml;
+package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
 
 import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
@@ -29,6 +29,8 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
+import io.streamthoughts.kafka.connect.filepulse.xml.XMLDocumentReader;
+import io.streamthoughts.kafka.connect.filepulse.xml.XMLNodeToStructConverter;
 import net.sf.saxon.lib.NamespaceConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,12 +87,8 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                 .setExcludeAllAttributes(config.isNodeAttributesExcluded())
                 .setExcludeAttributesInNamespaces(config.getExcludeNodeAttributesInNamespaces())
                 .setForceArrayFields(FieldPaths.from(config.forceArrayFields()))
-                .setTypeInferenceEnabled(config.isDataTypeInferenceEnabled());
-
-        System.setProperty(
-                "javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON,
-                "net.sf.saxon.xpath.XPathFactoryImpl"
-        );
+                .setTypeInferenceEnabled(config.isDataTypeInferenceEnabled())
+                .setAttributePrefix(config.getAttributePrefix());
 
         final QName qName = new QName("http://www.w3.org/1999/XSL/Transform", config.resultType());
 

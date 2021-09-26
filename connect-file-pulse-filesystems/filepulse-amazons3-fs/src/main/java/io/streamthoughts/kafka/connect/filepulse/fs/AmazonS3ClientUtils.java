@@ -72,9 +72,9 @@ public class AmazonS3ClientUtils {
         final String region = config.getAwsS3Region();
         final String endpoint = Optional.ofNullable(url).orElse(config.getAwsS3ServiceEndpoint());
         if (isNotBlank(endpoint)) {
-            builder = builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(url, region));
+            builder = builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region));
         } else {
-            builder.withRegion(region);
+            builder = builder.withRegion(region);
         }
         return builder.build();
     }

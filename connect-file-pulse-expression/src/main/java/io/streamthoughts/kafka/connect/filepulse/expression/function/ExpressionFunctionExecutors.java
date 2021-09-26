@@ -27,6 +27,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.
 import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.If;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.LessThan;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.Or;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.datetime.TimestampDiff;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.datetime.ToTimestamp;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.datetime.UnixTimestamp;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Converts;
@@ -95,6 +96,7 @@ public class ExpressionFunctionExecutors {
         register(new Split());
         register(new UnixTimestamp());
         register(new ToTimestamp());
+        register(new TimestampDiff());
         register(new If());
         register(new And());
         register(new Or());

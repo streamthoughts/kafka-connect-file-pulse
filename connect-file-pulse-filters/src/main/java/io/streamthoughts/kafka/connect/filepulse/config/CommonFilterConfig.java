@@ -111,7 +111,7 @@ public class CommonFilterConfig extends AbstractConfig {
         return getString(CommonFilterConfig.FILTER_SOURCE_FIELD_CONFIG);
     }
 
-    public static ConfigDef.ConfigKey withOverwrite(final String group, final int groupCounter) {
+    public static ConfigDef.ConfigKey getOverwriteConfigKey(final String group, final int groupCounter) {
         return new ConfigDef.ConfigKey(
                 CommonFilterConfig.FILTER_OVERWRITE_CONFIG,
                 ConfigDef.Type.LIST,

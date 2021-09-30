@@ -58,7 +58,7 @@ public class MoveFilterConfig extends CommonFilterConfig {
     public static ConfigDef configDef() {
         int filterGroupCounter = 0;
         return new ConfigDef(CommonFilterConfig.configDef())
-                .define(withOverwrite(GROUP_MOVE, filterGroupCounter++))
+                .define(getOverwriteConfigKey(GROUP_MOVE, filterGroupCounter++))
                 .define(getSourceConfigKey(GROUP_MOVE, filterGroupCounter++))
                 .define(
                         MOVE_TARGET_CONFIG,

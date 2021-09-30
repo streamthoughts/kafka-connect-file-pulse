@@ -76,7 +76,7 @@ public class JSONFilterConfig extends CommonFilterConfig {
     public static ConfigDef configDef() {
         int filterGroupCounter = 0;
         return new ConfigDef(CommonFilterConfig.configDef())
-                .define(withOverwrite(JSON_FILTER, filterGroupCounter++))
+                .define(getOverwriteConfigKey(JSON_FILTER, filterGroupCounter++))
                 .define(getSourceConfigKey(JSON_FILTER, filterGroupCounter++))
                 .define(
                         JSON_TARGET_CONFIG,

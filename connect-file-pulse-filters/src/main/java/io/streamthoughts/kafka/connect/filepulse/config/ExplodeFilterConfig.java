@@ -39,7 +39,7 @@ public class ExplodeFilterConfig extends CommonFilterConfig {
     public static ConfigDef configDef() {
         int filterGroupCounter = 0;
         return new ConfigDef(CommonFilterConfig.configDef())
-                .define(withOverwrite(FILTER_EXPLODE, filterGroupCounter++))
+                .define(getOverwriteConfigKey(FILTER_EXPLODE, filterGroupCounter++))
                 .define(getSourceConfigKey(FILTER_EXPLODE, filterGroupCounter++));
     }
 }

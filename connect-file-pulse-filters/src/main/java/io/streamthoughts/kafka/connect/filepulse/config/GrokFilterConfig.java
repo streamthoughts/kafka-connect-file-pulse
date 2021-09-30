@@ -46,7 +46,7 @@ public class GrokFilterConfig extends CommonFilterConfig {
         int filterGroupCounter = 0;
         final ConfigDef def = new ConfigDef(CommonFilterConfig.configDef())
                 .define(getSourceConfigKey(GROK_FILTER, filterGroupCounter++))
-                .define(withOverwrite(GROK_FILTER, filterGroupCounter++));
+                .define(getOverwriteConfigKey(GROK_FILTER, filterGroupCounter++));
         for (ConfigDef.ConfigKey configKey : GrokConfig.configDef().configKeys().values()) {
             def.define(new ConfigDef.ConfigKey(
                     configKey.name,

@@ -1,5 +1,5 @@
 ---
-date: 2021-06-10
+date: 2021-09-30
 title: "Processing Filters"
 linkTitle: "Processing Filters"
 weight: 80
@@ -23,10 +23,13 @@ These filters are available for use with Kafka Connect File Pulse:
 | [GroupRowFilter](#grouprowfilter)  | Regroups multiple following messages into a single message by composing a grouping key| |
 | [JoinFilter](#joinfilter)  | Joins values of an array field with a specified separator | |
 | [JSONFilter](#jsonfilter)  | Unmarshallings a JSON message field's value to a complex struct | |
-| [MultiRowFilter](#multirowfilter)  | Combines following message lines into single one by combining patterns | |
 | [MoveFilter](#movefilter)  | Moves an existing record field's value to a specific target path | `v1.5.0` |
+| [MultiRowFilter](#multirowfilter)  | Combines following message lines into single one by combining patterns | |
+| [NullValueFilter](#nullvaluefilter)  | Combines following message lines into single one by combining patterns | `v2.3.0` |
 | [RenameFilter](#renamefilter)  | Renames a message field | |
 | [SplitFilter](#splitfilter)  | Splits a message field's value to array | |
+| [XmlToJsonFilter](#xmltojsonfilter)  | Parses an XML record-field and convert it to a JSON string | `v2.4.0` |
+| [XmlToStructFilter](#xmltostructfilter)  | Parses an XML record-field into STRUCT | `v2.4.0` |
 
 ## AppendFilter
 
@@ -48,10 +51,13 @@ value or a value extracted from another existing field using  [ScEL](/kafka-conn
 
 The following examples shows how to use the `AppendFilter` to concat two values from the array field named `values`
 using a [substitution expression](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#string-substitution). 
-The concat value is then added to the a field named `result`.
+The concat value is then added to the field named `result`.
 
 **Configuration**
+
 ```properties
+filters=SubstituteFilter
+filters.SubstituteFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.SubstituteFilter.field="$.result"
 filters.SubstituteFilter.value="{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}"
 ```
@@ -79,7 +85,7 @@ We have actually omitted the [expression scope](/kafka-connect-file-pulse/docs/d
 By default, if no scope is defined in an expression, the scope `$value` is implicitly applied.
 Hence, we could have used the fully expression `$value.result` which is similar to the simplified expression `result`.
 
-But, you can perfectly used another expression scope. For example, you can leverage the `AppendFilter` to dynamically
+But, you can perfectly use another expression scope. For example, you can leverage the `AppendFilter` to dynamically
 resolve the record-key or the output topic based on the record data.
 
 The following configuration show how to use the `$topic` scope : 
@@ -107,7 +113,7 @@ filters.SubstituteFilter.value="my-topic-{{ lowercase(extract_array($.values,0))
 } 
 ```
 
-Finally the `AppendFilter` can also accept an substitution expression for the property field. 
+Finally, the `AppendFilter` can also accept a substitution expression for the property field. 
 This allows to dynamically determine the name of the field to be added.
 
 The following examples show how to use a property expression to get the named of the field from a
@@ -195,18 +201,20 @@ The `DateFilter` converts a field's value containing a date to a unix epoch time
 
 | Configuration |   Description |   Type    |   Default |   Importance  |
 | --------------| --------------|-----------| --------- | ------------- |
-| `field` | The field to get the date from .   | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
-| `target` | The target field.    | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
-| `timezone` | The timezone to use for parsing date.  | string | *UTC* | high |
-| `locale` | The locale to use for parsing date. | string | *en_EN* | high |
-| `formats` | List of the expected date formats. | list | *-* | high |
+| `field`       | The field to get the date from .   | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
+| `target`      | The target field.    | string([ScEL supported](/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/)) | *-* | high |
+| `timezone`    | The timezone to use for parsing date.  | string | *UTC* | high |
+| `locale`      | The locale to use for parsing date. | string | *en_EN* | high |
+| `formats`     | List of the expected date formats. | list | *-* | high |
 
 ### Examples
         
 ```properties
-filters.MyDateFilter.field="$.date"
-filters.MyDateFilter.target="$.timestamp"
-filters.MyDateFilter.formats="yyyy-MM-dd'T'HH:mm:ss"
+filters=ParseISODate
+filters.ParseISODate.type=io.streamthoughts.kafka.connect.filepulse.filter.DateFilter
+filters.ParseISODate.field="$.date"
+filters.ParseISODate.target="$.timestamp"
+filters.ParseISODate.formats="yyyy-MM-dd'T'HH:mm:ss"
 ```
 
 **Input**
@@ -251,6 +259,7 @@ The following example shows the use of the `DelimitedRowFilter` to split the `me
 The name of each column is extracted from the fields `headers`.
 
 ```properties
+filters=ParseDelimitedRow
 filters.ParseDelimitedRow.extractColumnNam="headers"
 filters.ParseDelimitedRow.separator="\\|"
 filters.ParseDelimitedRow.trimColumn="true"
@@ -408,6 +417,7 @@ The `GrokFilter`is based on: https://github.com/streamthoughts/kafka-connect-tra
 The following example shows the usage of **GrokFilter** to parse and extract fields from application log message.
 
 ```properties
+filters=ParseLog4jLog
 filters.ParseLog4jLog.pattern="%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}"
 filters.ParseLog4jLog.overwrite="message"
 filters.ParseLog4jLog.source="message"
@@ -522,6 +532,19 @@ filters.MyMoveFilter.target=moved
 { "record" : { "moved": "foo" } }
 ```
 
+## NullValueFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.NullValueFilter`.
+
+The `NullValueFilter` is used to empty a record-value to null.
+
+### Example
+
+```properties
+filters=NullValueIfDeleteOp
+filters.NullValueIfDeleteOp.type=io.streamthoughts.kafka.connect.filepulse.filter.NullValueFilter
+filters.NullValueIfDeleteOp.if={{ equals($value.op, 'DELETE') }}
+```
 
 ## RenameFilter
 
@@ -540,8 +563,10 @@ The `RenameFilter` is used to rename a specified field.
 ### Examples
 
 ```properties
-filters.MyRenameFilter.field=input
-filters.MyRenameFilter.target=renamed
+filters=RenameInputField
+filters.RenameInputField.type=io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter
+filters.RenameInputField.field=input
+filters.RenameInputField.target=renamed
 ```
 
 **Input**
@@ -574,17 +599,15 @@ The `SplitFilter` splits a field's value of type string into an array by using a
 **Configuration**
 
 ```properties
-filters.MySplitterFilter.split=input
-filters.MySplitterFilter.separator=,
+filters=SplitInputField
+filters.SplitInputField.type=io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter
+filters.SplitInputField.split=input
+filters.SplitInputField.separator=,
 ```
 
 **Input**
 ```json
-{
-  "record" : {
-    "input": "val0,val1,val2"
-  }
-}
+{ "record" : { "input": "val0,val1,val2" } }
 ```
 
 **Output**
@@ -595,4 +618,66 @@ filters.MySplitterFilter.separator=,
     "output": [ "val0", "val1", "val2"]
   }
 }
+```
+
+## XmlToJsonFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.XmlToJsonFilter`.
+
+The `XmlToJsonFilter` parses and converts an XML record-field it to a JSON string. 
+This is filter is based on the `org.json.XML` library.
+
+### Configuration
+
+| Configuration             |   Description |   Type    |   Default |   Importance  |
+| --------------------------| --------------|-----------| --------- | ------------- |
+| `source`                  | The input field on which to apply the filter. | string | `"message"`| high |
+| `source.charset`          | The charset to be used for reading the source.  | string | `"UTF-8"` | high |
+| `xml.parser.keep.strings` | When parsing the XML into JSON, specifies if values should be kept as strings (true), or if they should try to be guessed into JSON values (numeric, boolean, string)  | boolean | `false` | high |
+| `xml.parser.cDataTagName` | The name of the key in a JSON Object that indicates a CDATA section.  | string | `"value"` | high |
+
+
+### Example
+
+**Configuration**
+
+```properties
+filters=XmlToJson
+filters.XmlToJson.type=io.streamthoughts.kafka.connect.filepulse.filter.XmlToJsonFilter
+filters.XmlToJson.xml.parser.keep.strings=false
+filters.XmlToJson.xml.parser.cDataTagName=data
+```
+
+## XmlToStructFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter`.
+
+The `XmlToStructFilter` parses an XML record-field into STRUCT
+
+### Configuration
+
+| Configuration                               |   Description |   Type    |   Default |   Importance  |
+| --------------------------------------------| --------------|-----------| --------- | ------------- |
+| `source`                                    | The input field on which to apply the filter. | string | `"message"`| high |
+| `xml.force.array.on.fields`                 | The comma-separated list of fields for which an array-type must be forced | `List` | `-` | High |                                                
+| `xml.parser.validating.enabled`             | Specifies that the parser will validate documents as they are parsed (default: false).";
+| `xml.parser.namespace.aware.enabled`        | Specifies that the XML parser will provide support for XML namespaces (default: false).";
+| `xml.exclude.empty.elements`                | Specifies that the reader should exclude element having no field (default: false).";
+| `xml.exclude.node.attributes`               | Specifies that the reader should exclude all node attributes (default: false).";
+| `xml.exclude.node.attributes.in.namespaces` | Specifies that the reader should only exclude node attributes in the defined list of namespaces.";
+| `xml.data.type.inference.enabled`           | Specifies that the reader should try to infer the type of data nodes (default: false).";
+| `xml.attribute.prefix`                      | If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: '').";
+
+### Example
+
+**Configuration**
+
+```properties
+filters=XmlToStruct
+filters.ParseXmlDocument.type=io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter
+filters.ParseXmlDocument.source=message
+filters.ParseXmlDocument.xml.parser.validating.enabled=true
+filters.ParseXmlDocument.xml.parser.namespace.aware.enabled=true
+filters.ParseXmlDocument.xml.exclude.empty.elements=true
+filters.ParseXmlDocument.xml.data.type.inference.enabled=true
 ```

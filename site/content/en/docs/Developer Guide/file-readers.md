@@ -1,5 +1,5 @@
 ---
-date: 2021-06-10
+date: 2021-09-30
 title: "File Readers"
 linkTitle: "File Readers"
 weight: 40
@@ -82,12 +82,19 @@ The `<PREFIX>XMLFileInputReader`s can be used to read XML files.
 
 ### Configuration
 
-| Configuration |   Description |   Type    |   Default |   Importance  |
-| --------------| --------------|-----------| --------- | ------------- |
-|`xpath.expression` | The XPath expression used extract data from XML input files | `String` | `/` | High | 
-|`xpath.result.type` | The expected result type for the XPath expression in [NODESET, STRING] | `String` | `NODESET` | High | 
-|`force.array.on.fields` | The comma-separated list of fields for which an array-type must be forced | `List` | `-` | High |                                                
-
+| Configuration                                     | Since   | Description |   Type    |   Default     |   Importance  |
+| --------------------------------------------------| --------|-------------| --------- | ------------- |-------------- |
+|`reader.xpath.expression`                          |         | The XPath expression used extract data from XML input files | `String` | `/` | High | 
+|`reader.xpath.result.type`                         |         | The expected result type for the XPath expression in [NODESET, STRING] | `String` | `NODESET` | High | 
+|`reader.xml.force.array.on.fields`                 |         | The comma-separated list of fields for which an array-type must be forced | `List` | `-` | High |                                                
+|`reader.xml.parser.validating.enabled`             | `2.2.0` | Specifies that the parser will validate documents as they are parsed (default: false).";
+|`reader.xml.parser.namespace.aware.enabled`        | `2.2.0` | Specifies that the XML parser will provide support for XML namespaces (default: false).";
+|`reader.xml.exclude.empty.elements`                | `2.2.0` | Specifies that the reader should exclude element having no field (default: false).";
+|`reader.xml.exclude.node.attributes`               | `2.4.0` | Specifies that the reader should exclude all node attributes (default: false).";
+|`reader.xml.exclude.node.attributes.in.namespaces` | `2.4.0` | Specifies that the reader should only exclude node attributes in the defined list of namespaces.";
+|`reader.xml.data.type.inference.enabled`           | `2.3.0` | Specifies that the reader should try to infer the type of data nodes (default: false).";
+|`reader.xml.attribute.prefix`                      | `2.4.0` | If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: '').";
+    
 ## XxxMetadataFileInputReader
 
 The `FileInputMetadataReader`s can be used to send a single record per file containing metadata, i.e.: `name`, `path`, `hash`, `lastModified`, `size`, etc.

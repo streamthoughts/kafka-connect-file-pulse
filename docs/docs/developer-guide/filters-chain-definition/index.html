@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/" />
-<meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-08-13T20:07:02+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-09-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-30T22:40:39+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Filter Chain Definition">
 <meta itemprop="description" content="Learn how to define complex pipelines to transform and structure your data before integration into Kafka.
 ">
-<meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-08-13T20:07:02&#43;02:00" />
-<meta itemprop="wordCount" content="342">
+<meta itemprop="datePublished" content="2020-09-30T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-09-30T22:40:39&#43;02:00" />
+<meta itemprop="wordCount" content="388">
 
 
 
@@ -2872,7 +2872,7 @@ filters.ParseLog4jLog.overwrite=logmessage
 <td></td>
 </tr>
 <tr>
-<td><a href="./filters#delimitedrowfilter">DelimitedRowFilter</a></td>
+<td><a href="../filters#delimitedrowfilter">DelimitedRowFilter</a></td>
 <td>Parses a message field's value containing columns delimited by a separator into a struct</td>
 <td></td>
 </tr>
@@ -2882,12 +2882,12 @@ filters.ParseLog4jLog.overwrite=logmessage
 <td></td>
 </tr>
 <tr>
-<td><a href="../filters#excludeFilter">ExcludeFilter</a></td>
+<td><a href="../filters#excludefilter">ExcludeFilter</a></td>
 <td>Excludes one or more fields from the input record.</td>
 <td><code>v1.4.0</code></td>
 </tr>
 <tr>
-<td><a href="../filters#explodeFilter">ExplodeFilter</a></td>
+<td><a href="../filters#explodefilter">ExplodeFilter</a></td>
 <td>Explodes an array or list field into separate records.</td>
 <td><code>v1.4.0</code></td>
 </tr>
@@ -2917,9 +2917,19 @@ filters.ParseLog4jLog.overwrite=logmessage
 <td></td>
 </tr>
 <tr>
+<td><a href="../filters#movefilter">MoveFilter</a></td>
+<td>Moves an existing record field's value to a specific target path</td>
+<td><code>v1.5.0</code></td>
+</tr>
+<tr>
 <td><a href="../filters#multirowfilter">MultiRowFilter</a></td>
 <td>Combines following message lines into single one by combining patterns</td>
 <td></td>
+</tr>
+<tr>
+<td><a href="../filters#nullvaluefilter">NullValueFilter</a></td>
+<td>Combines following message lines into single one by combining patterns</td>
+<td><code>v2.3.0</code></td>
 </tr>
 <tr>
 <td><a href="../filters#renamefilter">RenameFilter</a></td>
@@ -2931,6 +2941,16 @@ filters.ParseLog4jLog.overwrite=logmessage
 <td>Splits a message field's value to array</td>
 <td></td>
 </tr>
+<tr>
+<td><a href="../filters#xmltojsonfilter">XmlToJsonFilter</a></td>
+<td>Parses an XML record-field and convert it to a JSON string</td>
+<td><code>v2.4.0</code></td>
+</tr>
+<tr>
+<td><a href="../filters#xmltostructfilter">XmlToStructFilter</a></td>
+<td>Parses an XML record-field into STRUCT</td>
+<td><code>v2.4.0</code></td>
+</tr>
 </tbody>
 </table>
 <h2 id="difference-between-kafka-connect-single-message-transforms-smt-functionality">Difference between Kafka Connect Single Message Transforms (SMT) functionality</h2>
@@ -2940,7 +2960,7 @@ For example, they can be used to split one input message to multiple messages or
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 13, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f11d77dc9d238cdcc72f1980a20b6b1f144dcd5b">docs(site): fix links (f11d77d)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 30, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/643469f8dc33ec3b204aede9be9a38520804b0b4">site(docs): update documentations (643469f)</a>
 </div>
 </div>
 

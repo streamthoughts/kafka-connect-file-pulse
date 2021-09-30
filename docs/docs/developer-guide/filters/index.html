@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/" />
-<meta property="article:published_time" content="2021-06-10T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-06-10T22:22:50+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2021-09-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-30T22:40:39+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Processing Filters">
 <meta itemprop="description" content="The list of available transformation filters.
 ">
-<meta itemprop="datePublished" content="2021-06-10T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-06-10T22:22:50&#43;02:00" />
-<meta itemprop="wordCount" content="2126">
+<meta itemprop="datePublished" content="2021-09-30T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-09-30T22:40:39&#43;02:00" />
+<meta itemprop="wordCount" content="2483">
 
 
 
@@ -2853,6 +2853,11 @@
         <li><a href="#examples12">Examples</a></li>
       </ul>
     </li>
+    <li><a href="#nullvaluefilter">NullValueFilter</a>
+      <ul>
+        <li><a href="#example">Example</a></li>
+      </ul>
+    </li>
     <li><a href="#renamefilter">RenameFilter</a>
       <ul>
         <li><a href="#configuration14">Configuration</a></li>
@@ -2862,7 +2867,19 @@
     <li><a href="#splitfilter">SplitFilter</a>
       <ul>
         <li><a href="#configuration15">Configuration</a></li>
-        <li><a href="#example">Example</a></li>
+        <li><a href="#example1">Example</a></li>
+      </ul>
+    </li>
+    <li><a href="#xmltojsonfilter">XmlToJsonFilter</a>
+      <ul>
+        <li><a href="#configuration16">Configuration</a></li>
+        <li><a href="#example2">Example</a></li>
+      </ul>
+    </li>
+    <li><a href="#xmltostructfilter">XmlToStructFilter</a>
+      <ul>
+        <li><a href="#configuration17">Configuration</a></li>
+        <li><a href="#example3">Example</a></li>
       </ul>
     </li>
   </ul>
@@ -2985,14 +3002,19 @@
 <td></td>
 </tr>
 <tr>
+<td><a href="#movefilter">MoveFilter</a></td>
+<td>Moves an existing record field's value to a specific target path</td>
+<td><code>v1.5.0</code></td>
+</tr>
+<tr>
 <td><a href="#multirowfilter">MultiRowFilter</a></td>
 <td>Combines following message lines into single one by combining patterns</td>
 <td></td>
 </tr>
 <tr>
-<td><a href="#movefilter">MoveFilter</a></td>
-<td>Moves an existing record field's value to a specific target path</td>
-<td><code>v1.5.0</code></td>
+<td><a href="#nullvaluefilter">NullValueFilter</a></td>
+<td>Combines following message lines into single one by combining patterns</td>
+<td><code>v2.3.0</code></td>
 </tr>
 <tr>
 <td><a href="#renamefilter">RenameFilter</a></td>
@@ -3003,6 +3025,16 @@
 <td><a href="#splitfilter">SplitFilter</a></td>
 <td>Splits a message field's value to array</td>
 <td></td>
+</tr>
+<tr>
+<td><a href="#xmltojsonfilter">XmlToJsonFilter</a></td>
+<td>Parses an XML record-field and convert it to a JSON string</td>
+<td><code>v2.4.0</code></td>
+</tr>
+<tr>
+<td><a href="#xmltostructfilter">XmlToStructFilter</a></td>
+<td>Parses an XML record-field into STRUCT</td>
+<td><code>v2.4.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -3049,9 +3081,11 @@ value or a value extracted from another existing field using  <a href="/kafka-co
 <h3 id="examples">Examples</h3>
 <p>The following examples shows how to use the <code>AppendFilter</code> to concat two values from the array field named <code>values</code>
 using a <a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#string-substitution">substitution expression</a>.
-The concat value is then added to the a field named <code>result</code>.</p>
+The concat value is then added to the field named <code>result</code>.</p>
 <p><strong>Configuration</strong></p>
-<pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;$.result&quot;
+<pre><code class="language-properties" data-lang="properties">filters=SubstituteFilter
+filters.SubstituteFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.SubstituteFilter.field=&quot;$.result&quot;
 filters.SubstituteFilter.value=&quot;{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}&quot;
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
@@ -3070,7 +3104,7 @@ filters.SubstituteFilter.value=&quot;{{ extract_array($.values,0) }}-{{ extract_
 We have actually omitted the <a href="/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#scopes">expression scope</a> <code>$value</code>.
 By default, if no scope is defined in an expression, the scope <code>$value</code> is implicitly applied.
 Hence, we could have used the fully expression <code>$value.result</code> which is similar to the simplified expression <code>result</code>.</p>
-<p>But, you can perfectly used another expression scope. For example, you can leverage the <code>AppendFilter</code> to dynamically
+<p>But, you can perfectly use another expression scope. For example, you can leverage the <code>AppendFilter</code> to dynamically
 resolve the record-key or the output topic based on the record data.</p>
 <p>The following configuration show how to use the <code>$topic</code> scope :</p>
 <pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;$topic&quot;
@@ -3088,7 +3122,7 @@ filters.SubstituteFilter.value=&quot;my-topic-{{ lowercase(extract_array($.value
     <span style="color:#204a87;font-weight:bold">&#34;value&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;World&#34;</span><span style="color:#000;font-weight:bold">]</span>
   <span style="color:#000;font-weight:bold">}</span>
 <span style="color:#000;font-weight:bold">}</span> 
-</code></pre></div><p>Finally the <code>AppendFilter</code> can also accept an substitution expression for the property field.
+</code></pre></div><p>Finally, the <code>AppendFilter</code> can also accept a substitution expression for the property field.
 This allows to dynamically determine the name of the field to be added.</p>
 <p>The following examples show how to use a property expression to get the named of the field from a</p>
 <pre><code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&quot;$.target&quot;
@@ -3227,9 +3261,11 @@ filters.BooleanConverter.to=&quot;BOOLEAN&quot;
 </tbody>
 </table>
 <h3 id="examples2">Examples</h3>
-<pre><code class="language-properties" data-lang="properties">filters.MyDateFilter.field=&quot;$.date&quot;
-filters.MyDateFilter.target=&quot;$.timestamp&quot;
-filters.MyDateFilter.formats=&quot;yyyy-MM-dd'T'HH:mm:ss&quot;
+<pre><code class="language-properties" data-lang="properties">filters=ParseISODate
+filters.ParseISODate.type=io.streamthoughts.kafka.connect.filepulse.filter.DateFilter
+filters.ParseISODate.field=&quot;$.date&quot;
+filters.ParseISODate.target=&quot;$.timestamp&quot;
+filters.ParseISODate.formats=&quot;yyyy-MM-dd'T'HH:mm:ss&quot;
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
@@ -3299,7 +3335,8 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 <h3 id="examples3">Examples</h3>
 <p>The following example shows the use of the <code>DelimitedRowFilter</code> to split the <code>message</code> field using <code>|</code> as a separator character.
 The name of each column is extracted from the fields <code>headers</code>.</p>
-<pre><code class="language-properties" data-lang="properties">filters.ParseDelimitedRow.extractColumnNam=&quot;headers&quot;
+<pre><code class="language-properties" data-lang="properties">filters=ParseDelimitedRow
+filters.ParseDelimitedRow.extractColumnNam=&quot;headers&quot;
 filters.ParseDelimitedRow.separator=&quot;\\|&quot;
 filters.ParseDelimitedRow.trimColumn=&quot;true&quot;
 filters.ParseDelimitedRow.type=&quot;io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&quot;
@@ -3525,7 +3562,8 @@ filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 </table>
 <h3 id="examples8">Examples</h3>
 <p>The following example shows the usage of <strong>GrokFilter</strong> to parse and extract fields from application log message.</p>
-<pre><code class="language-properties" data-lang="properties">filters.ParseLog4jLog.pattern=&quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&quot;
+<pre><code class="language-properties" data-lang="properties">filters=ParseLog4jLog
+filters.ParseLog4jLog.pattern=&quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&quot;
 filters.ParseLog4jLog.overwrite=&quot;message&quot;
 filters.ParseLog4jLog.source=&quot;message&quot;
 filters.ParseLog4jLog.type=&quot;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&quot;
@@ -3763,7 +3801,14 @@ filters.MyMoveFilter.target=moved
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;field&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;child&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;foo&#34;</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span>
 </code></pre></div><p><strong>Output</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;moved&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;foo&#34;</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span>
-</code></pre></div><h2 id="renamefilter">RenameFilter</h2>
+</code></pre></div><h2 id="nullvaluefilter">NullValueFilter</h2>
+<p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.NullValueFilter</code>.</p>
+<p>The <code>NullValueFilter</code> is used to empty a record-value to null.</p>
+<h3 id="example">Example</h3>
+<pre><code class="language-properties" data-lang="properties">filters=NullValueIfDeleteOp
+filters.NullValueIfDeleteOp.type=io.streamthoughts.kafka.connect.filepulse.filter.NullValueFilter
+filters.NullValueIfDeleteOp.if={{ equals($value.op, 'DELETE') }}
+</code></pre><h2 id="renamefilter">RenameFilter</h2>
 <p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter</code>.</p>
 <p>The <code>RenameFilter</code> is used to rename a specified field.</p>
 <h3 id="configuration14">Configuration</h3>
@@ -3802,8 +3847,10 @@ filters.MyMoveFilter.target=moved
 </tbody>
 </table>
 <h3 id="examples13">Examples</h3>
-<pre><code class="language-properties" data-lang="properties">filters.MyRenameFilter.field=input
-filters.MyRenameFilter.target=renamed
+<pre><code class="language-properties" data-lang="properties">filters=RenameInputField
+filters.RenameInputField.type=io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter
+filters.RenameInputField.field=input
+filters.RenameInputField.target=renamed
 </code></pre><p><strong>Input</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;input&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;foo&#34;</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span>
 </code></pre></div><p><strong>Output</strong></p>
@@ -3846,16 +3893,14 @@ filters.MyRenameFilter.target=renamed
 </tr>
 </tbody>
 </table>
-<h3 id="example">Example</h3>
+<h3 id="example1">Example</h3>
 <p><strong>Configuration</strong></p>
-<pre><code class="language-properties" data-lang="properties">filters.MySplitterFilter.split=input
-filters.MySplitterFilter.separator=,
+<pre><code class="language-properties" data-lang="properties">filters=SplitInputField
+filters.SplitInputField.type=io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter
+filters.SplitInputField.split=input
+filters.SplitInputField.separator=,
 </code></pre><p><strong>Input</strong></p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#204a87;font-weight:bold">&#34;input&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;val0,val1,val2&#34;</span>
-  <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span> <span style="color:#204a87;font-weight:bold">&#34;input&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;val0,val1,val2&#34;</span> <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">}</span>
 </code></pre></div><p><strong>Output</strong></p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#204a87;font-weight:bold">&#34;record&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
@@ -3863,10 +3908,151 @@ filters.MySplitterFilter.separator=,
     <span style="color:#204a87;font-weight:bold">&#34;output&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span> <span style="color:#4e9a06">&#34;val0&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;val1&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;val2&#34;</span><span style="color:#000;font-weight:bold">]</span>
   <span style="color:#000;font-weight:bold">}</span>
 <span style="color:#000;font-weight:bold">}</span>
-</code></pre></div>
+</code></pre></div><h2 id="xmltojsonfilter">XmlToJsonFilter</h2>
+<p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.XmlToJsonFilter</code>.</p>
+<p>The <code>XmlToJsonFilter</code> parses and converts an XML record-field it to a JSON string.
+This is filter is based on the <code>org.json.XML</code> library.</p>
+<h3 id="configuration16">Configuration</h3>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source</code></td>
+<td>The input field on which to apply the filter.</td>
+<td>string</td>
+<td><code>&quot;message&quot;</code>| high</td>
+<td></td>
+</tr>
+<tr>
+<td><code>source.charset</code></td>
+<td>The charset to be used for reading the source.</td>
+<td>string</td>
+<td><code>&quot;UTF-8&quot;</code></td>
+<td>high</td>
+</tr>
+<tr>
+<td><code>xml.parser.keep.strings</code></td>
+<td>When parsing the XML into JSON, specifies if values should be kept as strings (true), or if they should try to be guessed into JSON values (numeric, boolean, string)</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>high</td>
+</tr>
+<tr>
+<td><code>xml.parser.cDataTagName</code></td>
+<td>The name of the key in a JSON Object that indicates a CDATA section.</td>
+<td>string</td>
+<td><code>&quot;value&quot;</code></td>
+<td>high</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example2">Example</h3>
+<p><strong>Configuration</strong></p>
+<pre><code class="language-properties" data-lang="properties">filters=XmlToJson
+filters.XmlToJson.type=io.streamthoughts.kafka.connect.filepulse.filter.XmlToJsonFilter
+filters.XmlToJson.xml.parser.keep.strings=false
+filters.XmlToJson.xml.parser.cDataTagName=data
+</code></pre><h2 id="xmltostructfilter">XmlToStructFilter</h2>
+<p>The following provides usage information for : <code>io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter</code>.</p>
+<p>The <code>XmlToStructFilter</code> parses an XML record-field into STRUCT</p>
+<h3 id="configuration17">Configuration</h3>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source</code></td>
+<td>The input field on which to apply the filter.</td>
+<td>string</td>
+<td><code>&quot;message&quot;</code>| high</td>
+<td></td>
+</tr>
+<tr>
+<td><code>xml.force.array.on.fields</code></td>
+<td>The comma-separated list of fields for which an array-type must be forced</td>
+<td><code>List</code></td>
+<td><code>-</code></td>
+<td>High</td>
+</tr>
+<tr>
+<td><code>xml.parser.validating.enabled</code></td>
+<td>Specifies that the parser will validate documents as they are parsed (default: false).&quot;;</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>xml.parser.namespace.aware.enabled</code></td>
+<td>Specifies that the XML parser will provide support for XML namespaces (default: false).&quot;;</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>xml.exclude.empty.elements</code></td>
+<td>Specifies that the reader should exclude element having no field (default: false).&quot;;</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>xml.exclude.node.attributes</code></td>
+<td>Specifies that the reader should exclude all node attributes (default: false).&quot;;</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>xml.exclude.node.attributes.in.namespaces</code></td>
+<td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&quot;;</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>xml.data.type.inference.enabled</code></td>
+<td>Specifies that the reader should try to infer the type of data nodes (default: false).&quot;;</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>xml.attribute.prefix</code></td>
+<td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: &lsquo;').&quot;;</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="example3">Example</h3>
+<p><strong>Configuration</strong></p>
+<pre><code class="language-properties" data-lang="properties">filters=XmlToStruct
+filters.ParseXmlDocument.type=io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter
+filters.ParseXmlDocument.source=message
+filters.ParseXmlDocument.xml.parser.validating.enabled=true
+filters.ParseXmlDocument.xml.parser.namespace.aware.enabled=true
+filters.ParseXmlDocument.xml.exclude.empty.elements=true
+filters.ParseXmlDocument.xml.data.type.inference.enabled=true
+</code></pre>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified June 10, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/533018998e9d9b5adbc6712a64f088e5c87402bb">docs(site): fix cleanup page and typo (5330189)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 30, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/643469f8dc33ec3b204aede9be9a38520804b0b4">site(docs): update documentations (643469f)</a>
 </div>
 </div>
 

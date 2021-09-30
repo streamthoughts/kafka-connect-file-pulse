@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/" />
-<meta property="article:published_time" content="2020-05-21T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-24T15:06:19+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:published_time" content="2020-09-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-30T22:40:39+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Conditional Execution">
 <meta itemprop="description" content="Learn how to conditionally execute a transformation filter.
 ">
-<meta itemprop="datePublished" content="2020-05-21T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-24T15:06:19&#43;02:00" />
-<meta itemprop="wordCount" content="293">
+<meta itemprop="datePublished" content="2020-09-30T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-09-30T22:40:39&#43;02:00" />
+<meta itemprop="wordCount" content="347">
 
 
 
@@ -2817,7 +2817,7 @@
 	<p>A conditional property <code>if</code> can be configured on each filter to determine if that filter should be applied or skipped.
 When a filter is skipped, message flow to the next filter without any modification.</p>
 <p><code>if</code> configuration accepts a Simple Connect Expression that must return to <code>true</code> or <code>false</code>.
-If the configured expression does not evaluate to a boolean value the filter chain will failed.</p>
+If the configured expression does not evaluate to a boolean value the filter chain will fail.</p>
 <p>The<code>if</code> property supports (<a href="accessing-data-and-metadata">simple expression</a>)</p>
 <p>The boolean value returned from the filter condition can be inverted by setting the property <code>invert</code> to <code>true</code>.</p>
 <p>For example, the below filter will only be applied on message having a log message containing &ldquo;BadCredentialsException&rdquo;</p>
@@ -2826,62 +2826,93 @@ filters.TagSecurityException.if={{ contains(data.logmessage, BadCredentialsExcep
 filters.TagSecurityException.invert=false
 filters.TagSecurityException.field=tags
 filters.TagSecurityException.values=SecurityAlert
-</code></pre><p>These boolean functions are available for use with <code>if</code> configuration :</p>
+</code></pre><p>These conditional functions are available for use with the <code>if</code> config property :</p>
 <table>
 <thead>
 <tr>
 <th>Function</th>
+<th>Since</th>
 <th>Description</th>
 <th>Syntax</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>and</code></td>
+<td><code>2.4.0</code></td>
+<td>Checks if all of the given conditional expressions are <code>true</code>.</td>
+<td><code>{{ and(booleanExpression1, booleanExpression2, ...) }}</code></td>
+</tr>
+<tr>
 <td><code>contains</code></td>
+<td></td>
 <td>Returns <code>true</code> if an array field's value contains the specified value</td>
-<td><code>{% raw %}{{ contains(field, value) }}{% endraw %}</code></td>
+<td><code>{{ contains(field, value) }}</code></td>
 </tr>
 <tr>
 <td><code>ends_with</code></td>
+<td></td>
 <td>Returns <code>true</code> if an a string field's value end with the specified string suffix</td>
-<td><code>{% raw %}{{ ends_with(field, suffix) }}{% endraw %}</code></td>
+<td><code>{{ ends_with(field, suffix) }}</code></td>
 </tr>
 <tr>
 <td><code>equals</code></td>
+<td></td>
 <td>Returns <code>true</code> if an a string or number fields's value equals the specified value</td>
-<td><code>{% raw %}{{ equals(field, value) }}{% endraw %}</code></td>
+<td><code>{{ equals(field, value) }}</code></td>
 </tr>
 <tr>
 <td><code>exists</code></td>
+<td></td>
 <td>Returns <code>true</code> if an the specified field exists</td>
-<td><code>{% raw %}{{ exists(struct, field) }}{% endraw %}</code></td>
+<td><code>{{ exists(struct, field) }}{% endraw %}</code></td>
+</tr>
+<tr>
+<td><code>gt</code></td>
+<td><code>2.4.0</code></td>
+<td>Executes &ldquo;<em>greater than operation</em>&rdquo; on two values and returns <code>true</code> if the first value is greater than the second value, <code>false</code>, otherwise.</td>
+<td><code>{{ gt(expressionValue1, expressionValue2) }}</code></td>
 </tr>
 <tr>
 <td><code>is_null</code></td>
+<td></td>
 <td>Returns <code>true</code> if a field's value is null</td>
-<td><code>{% raw %}{{ is_null(field) }}{% endraw %}</code></td>
+<td><code>{{ is_null(field) }}</code></td>
+</tr>
+<tr>
+<td><code>lt</code></td>
+<td><code>2.4.0</code></td>
+<td>Executes &ldquo;<em>less than operation</em>&rdquo; on two values and returns <code>true</code> if the first value is less than the second value, <code>false</code>, otherwise.</td>
+<td><code>{{ lt(expressionValue1, expressionValue2) }}</code></td>
 </tr>
 <tr>
 <td><code>matches</code></td>
+<td></td>
 <td>Returns <code>true</code> if a field's value match the specified regex</td>
-<td><code>{% raw %}{{ matches(field, regex) }}{% endraw %}</code></td>
+<td><code>{{ matches(field, regex) }}</code></td>
 </tr>
 <tr>
 <td><code>starts_with</code></td>
+<td></td>
 <td>Returns <code>true</code> if an a string field's value start with the specified string prefix</td>
-<td><code>{% raw %}{{ starts_with(field, prefix) }}{% endraw %}</code></td>
+<td><code>{{ starts_with(field, prefix) }}</code></td>
+</tr>
+<tr>
+<td><code>or</code></td>
+<td><code>2.4.0</code></td>
+<td>Checks if at least one of the given conditional expressions is <code>true</code>..</td>
+<td><code>{{ or(booleanExpression1, booleanExpression2, ...) }}</code></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Limitations</strong> :</p>
 <ul>
-<li><code>if</code> property does not support binary operator and then a single condition can be configured.</li>
-<li>condition cannot be used to easily create pipeline branching.</li>
+<li>conditions cannot be used to easily create pipeline branching.</li>
 </ul>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 24, 2020: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/eac35f6000be2dc0832fcc7273429416adadb613">update(site): fix typo and add processing filter examples (eac35f6)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 30, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/643469f8dc33ec3b204aede9be9a38520804b0b4">site(docs): update documentations (643469f)</a>
 </div>
 </div>
 

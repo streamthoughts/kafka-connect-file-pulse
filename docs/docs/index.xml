@@ -4442,6 +4442,220 @@ file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
     
     <item>
       <title>Docs: File Readers</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link>
+      <pubDate>Thu, 30 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The &lt;code&gt;FilePulseSourceTask&lt;/code&gt; uses the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java&#34;&gt;FileInputReader&lt;/a&gt;.
+configured in the connector&#39;s configuration for reading object files (i.e., &lt;code&gt;tasks.reader.class&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Currently, Connect FilePulse provides the following &lt;code&gt;FileInputReader&lt;/code&gt; implementations :&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Amazon S3&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3AvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3BytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3RowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3XMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AmazonS3MetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Azure Blob Storage&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageRowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AzureBlobStorageMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Google Cloud Storage&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;GcsAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsRowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GcsMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Local Filesystem&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;LocalAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalRowFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LocalMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;rowfileinputreader-default&#34;&gt;RowFileInputReader (default)&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RowFileInputReader&lt;/code&gt;s can be used to read files line by line.
+This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.&lt;/p&gt;
+&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;file.encoding&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The text file encoding to use&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;String&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;UTF_8&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;High&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;buffer.initial.bytes.size&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The initial buffer size used to read input files.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;String&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;4096&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;min.read.records&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The minimum number of records to read from file before returning to task.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;1&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;skip.headers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The number of rows to be skipped in the beginning of file.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;skip.footers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The number of rows to be skipped at the end of file.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;read.max.wait.ms&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The maximum time to wait in milliseconds for more bytes after hitting end of file.&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Long&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;xxxbytesarrayinputreader&#34;&gt;XxxBytesArrayInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;BytesArrayInputReader&lt;/code&gt;s create a single byte array record from a source file.&lt;/p&gt;
+&lt;h2 id=&#34;xxxavrofileinputreader&#34;&gt;XxxAvroFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;AvroFileInputReader&lt;/code&gt;s can be used to read Avro files.&lt;/p&gt;
+&lt;h2 id=&#34;xxxxmlfileinputreader&#34;&gt;XxxXMLFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;XMLFileInputReader&lt;/code&gt;s can be used to read XML files.&lt;/p&gt;
+&lt;h3 id=&#34;configuration1&#34;&gt;Configuration&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Configuration&lt;/th&gt;
+&lt;th&gt;Since&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;Type&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Importance&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xpath.expression&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;The XPath expression used extract data from XML input files&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;String&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;High&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xpath.result.type&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;The expected result type for the XPath expression in [NODESET, STRING]&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;String&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;NODESET&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;High&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xml.force.array.on.fields&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;The comma-separated list of fields for which an array-type must be forced&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;List&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;-&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;High&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xml.parser.validating.enabled&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2.2.0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Specifies that the parser will validate documents as they are parsed (default: false).&amp;quot;;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xml.parser.namespace.aware.enabled&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2.2.0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Specifies that the XML parser will provide support for XML namespaces (default: false).&amp;quot;;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xml.exclude.empty.elements&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2.2.0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Specifies that the reader should exclude element having no field (default: false).&amp;quot;;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xml.exclude.node.attributes&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2.4.0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Specifies that the reader should exclude all node attributes (default: false).&amp;quot;;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xml.exclude.node.attributes.in.namespaces&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2.4.0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Specifies that the reader should only exclude node attributes in the defined list of namespaces.&amp;quot;;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xml.data.type.inference.enabled&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2.3.0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Specifies that the reader should try to infer the type of data nodes (default: false).&amp;quot;;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;reader.xml.attribute.prefix&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2.4.0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: &amp;lsquo;&#39;).&amp;quot;;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;xxxmetadatafileinputreader&#34;&gt;XxxMetadataFileInputReader&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata, i.e.: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: File Readers</title>
       <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/file-readers/</link>
       <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
       
@@ -4908,160 +5122,6 @@ This reader creates one record per row. It should be used for reading delimited 
       <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.3.x/developer-guide/file-readers/</guid>
-      <description>
-        
-        
-        &lt;p&gt;The &lt;code&gt;FilePulseSourceTask&lt;/code&gt; uses the &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java&#34;&gt;FileInputReader&lt;/a&gt;.
-configured in the connector&#39;s configuration for reading object files (i.e., &lt;code&gt;tasks.reader.class&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;Currently, Connect FilePulse provides the following &lt;code&gt;FileInputReader&lt;/code&gt; implementations :&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Amazon S3&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;AmazonS3AvroFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AmazonS3BytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AmazonS3RowFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AmazonS3XMLFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AmazonS3MetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Azure Blob Storage&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;AzureBlobStorageAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AzureBlobStorageBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AzureBlobStorageRowFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AzureBlobStorageXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AzureBlobStorageMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Google Cloud Storage&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;GcsAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;GcsBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;GcsRowFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;GcsXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;GcsMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Local Filesystem&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;package: &lt;code&gt;io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;LocalAvroFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;LocalBytesArrayInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;LocalRowFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;LocalXMLFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;LocalMetadataFileInputReader&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;rowfileinputreader-default&#34;&gt;RowFileInputReader (default)&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;RowFileInputReader&lt;/code&gt;s can be used to read files line by line.
-This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.&lt;/p&gt;
-&lt;h3 id=&#34;configuration&#34;&gt;Configuration&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;th&gt;Type&lt;/th&gt;
-&lt;th&gt;Default&lt;/th&gt;
-&lt;th&gt;Importance&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;file.encoding&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The text file encoding to use&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;String&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;UTF_8&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;High&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;buffer.initial.bytes.size&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The initial buffer size used to read input files.&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;String&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;4096&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;min.read.records&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The minimum number of records to read from file before returning to task.&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;1&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;skip.headers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The number of rows to be skipped in the beginning of file.&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;0&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;skip.footers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The number of rows to be skipped at the end of file.&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;Integer&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;0&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;read.max.wait.ms&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The maximum time to wait in milliseconds for more bytes after hitting end of file.&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;Long&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;0&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;xxxbytesarrayinputreader&#34;&gt;XxxBytesArrayInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;BytesArrayInputReader&lt;/code&gt;s create a single byte array record from a source file.&lt;/p&gt;
-&lt;h2 id=&#34;xxxavrofileinputreader&#34;&gt;XxxAvroFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;AvroFileInputReader&lt;/code&gt;s can be used to read Avro files.&lt;/p&gt;
-&lt;h2 id=&#34;xxxxmlfileinputreader&#34;&gt;XxxXMLFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;&amp;lt;PREFIX&amp;gt;XMLFileInputReader&lt;/code&gt;s can be used to read XML files.&lt;/p&gt;
-&lt;h3 id=&#34;configuration1&#34;&gt;Configuration&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Configuration&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;th&gt;Type&lt;/th&gt;
-&lt;th&gt;Default&lt;/th&gt;
-&lt;th&gt;Importance&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;xpath.expression&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The XPath expression used extract data from XML input files&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;String&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;/&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;High&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;xpath.result.type&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The expected result type for the XPath expression in [NODESET, STRING]&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;String&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;NODESET&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;High&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;force.array.on.fields&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The comma-separated list of fields for which an array-type must be forced&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;List&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;-&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;High&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2 id=&#34;xxxmetadatafileinputreader&#34;&gt;XxxMetadataFileInputReader&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;FileInputMetadataReader&lt;/code&gt;s can be used to send a single record per file containing metadata, i.e.: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;path&lt;/code&gt;, &lt;code&gt;hash&lt;/code&gt;, &lt;code&gt;lastModified&lt;/code&gt;, &lt;code&gt;size&lt;/code&gt;, etc.&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: File Readers</title>
-      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link>
-      <pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid>
       <description>
         
         

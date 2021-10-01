@@ -28,6 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kafka-connect-filepulse-commons-fs</artifactId>
+    <name>Kafka Connect Source File Pulse Common FS</name>
 
     <properties>
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
@@ -45,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-file-pulse-dataformat</artifactId>
+            <artifactId>kafka-connect-filepulse-dataformat</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -25,11 +25,11 @@
 
     <parent>
         <groupId>io.streamthoughts</groupId>
-        <artifactId>kafka-connect-file-pulse-reactor</artifactId>
+        <artifactId>kafka-connect-filepulse-reactor</artifactId>
         <version>2.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>kafka-connect-file-pulse-filters</artifactId>
+    <artifactId>kafka-connect-filepulse-filters</artifactId>
 
     <name>Kafka Connect Source File Pulse Filters</name>
     <description>Connect File Pulse is a multi-purpose source connector for streaming files from a local filesystem to Kafka.</description>
@@ -65,13 +65,13 @@
 
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-file-pulse-api</artifactId>
+            <artifactId>kafka-connect-filepulse-api</artifactId>
             <version>${version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-file-pulse-expression</artifactId>
+            <artifactId>kafka-connect-filepulse-expression</artifactId>
             <version>${version}</version>
         </dependency>
 
@@ -83,7 +83,7 @@
 
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-file-pulse-dataformat</artifactId>
+            <artifactId>kafka-connect-filepulse-dataformat</artifactId>
             <version>${project.version}</version>
         </dependency>
 

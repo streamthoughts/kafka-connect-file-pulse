@@ -93,11 +93,6 @@
             <version>20210307</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.jsoniter</groupId>
-            <artifactId>jsoniter</artifactId>
-        </dependency>
-
         <!-- START test dependencies-->
         <dependency>
             <groupId>junit</groupId>

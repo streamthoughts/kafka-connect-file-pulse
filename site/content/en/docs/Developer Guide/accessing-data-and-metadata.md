@@ -89,6 +89,7 @@ ScEL supports a number of predefined functions that can be used to apply a singl
 | `matches`        |         | Returns `true` if a field's value match the specified regex | `{{ matches(field_expr, 'regex') }}` |
 | `md5`            |         | Computes the MD5 hash of string expression  | `{{ md5(field_expr) }}` |
 | `nlv`            |         | Sets a default value if a field's value is null | `{{ length(array) }}` |
+| `not`            | `2.4.0` | Reverses a boolean value | `{{ not(booleanExpression) }}` |
 | `or`             | `2.4.0` | Checks if at least one of the given conditional expressions is `true`..  | `{{ or(booleanExpression1, booleanExpression2, ...) }}` |
 | `replace_all `   |         | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string. | `{{ replace_all(field_expr, 'regex', 'replacement') }}` |
 | `split`          |         | Split a string field's value into an array using the specified regex or character | `{{ split(field_expr, regex) }}` or  `{{ split(field_expr, regex, limit) }}` |

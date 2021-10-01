@@ -35,7 +35,7 @@ These conditional functions are available for use with the `if` config property 
 | `contains`    |         | Returns `true` if an array field's value contains the specified value  | `{{ contains(field, value) }}` |
 | `ends_with`   |         | Returns `true` if an a string field's value end with the specified string suffix | `{{ ends_with(field, suffix) }}` |
 | `equals`      |         | Returns `true` if an a string or number fields's value equals the specified value | `{{ equals(field, value) }}` |
-| `exists`      |         | Returns `true` if an the specified field exists | `{{ exists(struct, field) }}{% endraw %}` |
+| `exists`      |         | Returns `true` if an the specified field exists | `{{ exists(struct, field) }}` |
 | `gt`          | `2.4.0` | Executes "*greater than operation*" on two values and returns `true` if the first value is greater than the second value, `false`, otherwise. | `{{ gt(expressionValue1, expressionValue2) }}` |
 | `is_null`     |         | Returns `true` if a field's value is null | `{{ is_null(field) }}` |
 | `lt`          | `2.4.0` | Executes "*less than operation*" on two values and returns `true` if the first value is less than the second value, `false`, otherwise. | `{{ lt(expressionValue1, expressionValue2) }}` |

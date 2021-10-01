@@ -26,6 +26,10 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
  */
 public interface JSONStructConverter {
 
+    static JSONStructConverter createDefault() {
+        return new DefaultJSONStructConverter();
+    }
+
     /**
      * Gets a {@link TypedStruct} instance for the specified value.
      *

@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.json.DefaultJSONStructConverter;
+import io.streamthoughts.kafka.connect.filepulse.json.JSONStructConverter;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
 
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 public class JSONFilter extends AbstractMergeRecordFilter<JSONFilter> {
 
-    private final DefaultJSONStructConverter converter = new DefaultJSONStructConverter();
+    private final JSONStructConverter converter = JSONStructConverter.createDefault();
 
     private JSONFilterConfig configs;
 

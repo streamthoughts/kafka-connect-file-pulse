@@ -41,7 +41,7 @@ public class DefaultJSONStructConverter implements JSONStructConverter {
     /**
      * Creates a new {@link DefaultJSONStructConverter} instance.
      */
-    public DefaultJSONStructConverter() {
+    DefaultJSONStructConverter() {
         ACCESSORS.put(ValueType.ARRAY, new ArrayJsonFieldAccessor());
         ACCESSORS.put(ValueType.STRING, new StringJsonFieldAccessor());
         ACCESSORS.put(ValueType.OBJECT, new ObjectJsonFieldAccessor());

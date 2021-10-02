@@ -22,7 +22,6 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 
 import java.util.Objects;
-import java.util.stream.IntStream;
 
 public class ExpressionFunctionExecutor {
 
@@ -48,16 +47,7 @@ public class ExpressionFunctionExecutor {
     }
 
     public TypedValue execute(final EvaluationContext context) {
-
-        final ExecutionContext executionContext = new ExecutionContext();
-
-        IntStream.range(0, arguments.size()).forEachOrdered(i -> {
-            final Argument argument = arguments.get(i);
-            final TypedValue value = argument.evaluate(context);
-            executionContext.addArgument(argument.name(), i, value);
-        });
-
-        return instance.invoke(executionContext);
+        return instance.invoke(context, arguments);
     }
 
     /**

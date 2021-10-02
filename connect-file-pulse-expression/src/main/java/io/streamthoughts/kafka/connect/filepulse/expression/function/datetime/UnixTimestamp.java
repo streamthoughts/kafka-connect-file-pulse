@@ -32,6 +32,6 @@ public class UnixTimestamp implements ExpressionFunction {
      */
     @Override
     public Instance get() {
-        return context -> TypedValue.int64(System.currentTimeMillis());
+        return (context, args) -> TypedValue.int64(System.currentTimeMillis());
     }
 }

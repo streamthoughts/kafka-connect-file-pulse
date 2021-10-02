@@ -22,9 +22,10 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExpressionFunctionInstance;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Argument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionArgument;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
@@ -43,7 +44,7 @@ public class ConcatWs implements ExpressionFunction {
      */
     @Override
     public Instance get() {
-        return new Instance() {
+        return new AbstractExpressionFunctionInstance() {
 
             private String syntax() {
                 return String.format(
@@ -79,7 +80,7 @@ public class ConcatWs implements ExpressionFunction {
              * {@inheritDoc}
              */
             @Override
-            public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+            public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
                 return apply(
                         context.get(0).getString(),
                         context.get(1).getString(),

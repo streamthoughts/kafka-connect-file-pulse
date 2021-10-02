@@ -21,6 +21,8 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.conditions
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
+import java.util.stream.StreamSupport;
+
 public class Or implements ExpressionFunction {
 
     /**
@@ -28,9 +30,10 @@ public class Or implements ExpressionFunction {
      */
     @Override
     public Instance get() {
-        return context -> {
-            final boolean match = context.values()
-                    .stream()
+        return (context, args) -> {
+            final boolean match = StreamSupport
+                    .stream(args.spliterator(), false)
+                    .map(argument -> argument.evaluate(context))
                     .filter(TypedValue::isNotNull)
                     .anyMatch(TypedValue::getBool);
             return TypedValue.bool(match);

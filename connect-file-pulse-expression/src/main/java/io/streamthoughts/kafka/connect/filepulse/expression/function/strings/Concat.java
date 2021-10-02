@@ -23,6 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class Concat implements ExpressionFunction {
 
@@ -31,12 +32,13 @@ public class Concat implements ExpressionFunction {
      */
     @Override
     public Instance get() {
-        return context -> {
-            String concat = context.values()
-                    .stream()
-                    .filter(TypedValue::isNotNull)
-                    .map(TypedValue::getString)
-                    .collect(Collectors.joining("", "", ""));
+        return (context, args) -> {
+            String concat = StreamSupport
+                .stream(args.spliterator(), false)
+                .map(argument -> argument.evaluate(context))
+                .filter(TypedValue::isNotNull)
+                .map(TypedValue::getString)
+                .collect(Collectors.joining("", "", ""));
             return TypedValue.string(concat);
         };
     }

@@ -60,7 +60,7 @@ public class ExpressionFunctionExecutors {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExpressionFunctionExecutors.class);
 
-    private static final ExpressionFunctionExecutors INSTANCE = new ExpressionFunctionExecutors();
+    public static final ExpressionFunctionExecutors INSTANCE = new ExpressionFunctionExecutors();
 
     public static ExpressionFunctionExecutor resolve(final String functionName,
                                                      final Expression[] arguments) {

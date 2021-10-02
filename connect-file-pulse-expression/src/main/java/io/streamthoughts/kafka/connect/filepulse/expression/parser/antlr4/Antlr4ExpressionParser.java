@@ -20,7 +20,6 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.parser.antlr4;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.data.internal.TypeConverter;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.FunctionExpression;
@@ -169,7 +168,7 @@ public class Antlr4ExpressionParser implements ExpressionParser {
         }
 
         @Override
-        public void enterFunctionDeclaration(ScELParser.FunctionDeclarationContext ctx) {
+        public void enterFunctionDeclaration(final ScELParser.FunctionDeclarationContext ctx) {
             current = new ContextExpressions(current);
             contexts.put(ctx, current);
         }

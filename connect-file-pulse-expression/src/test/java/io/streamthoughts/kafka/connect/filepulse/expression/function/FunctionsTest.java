@@ -222,14 +222,6 @@ public class FunctionsTest {
     }
 
     @Test
-    public void should_execute_and_function() {
-        Expression expressionTrue = parseExpression("{{ and(true, true) }}");
-        Expression expressionFalse = parseExpression("{{ and(true, false) }}");
-        Assert.assertTrue(expressionTrue.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
-        Assert.assertFalse(expressionFalse.readValue(new StandardEvaluationContext(new Object()), TypedValue.class).value());
-    }
-
-    @Test
     public void should_execute_greater_than_function() {
         Expression expressionTrue = parseExpression("{{ gt(2, 1) }}");
         Expression expressionFalse = parseExpression("{{ gt(1, 2) }}");

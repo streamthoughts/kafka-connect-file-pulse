@@ -22,8 +22,9 @@ import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExpressionFunctionInstance;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
 /**
@@ -39,7 +40,7 @@ public class Converts implements ExpressionFunction {
      */
     @Override
     public Instance get() {
-        return new Instance() {
+        return new AbstractExpressionFunctionInstance() {
 
             private String syntax() {
                 return String.format("syntax %s(<%s>, <%s>)", name(), FIELD_ARG, TYPE_ARG);
@@ -60,7 +61,7 @@ public class Converts implements ExpressionFunction {
              * {@inheritDoc}
              */
             @Override
-            public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+            public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
                 final TypedValue value = context.get(FIELD_ARG);
                 final TypedValue type  = context.get(TYPE_ARG);
                 return value.as(Type.valueOf(type.value()));

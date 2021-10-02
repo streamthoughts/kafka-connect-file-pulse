@@ -22,8 +22,9 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExpressionFunctionInstance;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class ReplaceAll implements ExpressionFunction {
         return new Instance(name());
     }
 
-    static class Instance implements ExpressionFunction.Instance {
+    static class Instance extends AbstractExpressionFunctionInstance {
 
         private Pattern pattern;
 
@@ -82,7 +83,7 @@ public class ReplaceAll implements ExpressionFunction {
          * {@inheritDoc}
          */
         @Override
-        public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+        public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
             final TypedValue replacement = context.get(REPLACEMENT_ARG);
             final TypedValue value = context.get(FIELD_ARG);
             final String matched = pattern.matcher(value.getString()).replaceAll(replacement.getString());

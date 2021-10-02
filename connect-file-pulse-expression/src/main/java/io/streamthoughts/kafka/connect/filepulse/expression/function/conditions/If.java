@@ -21,8 +21,9 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.conditions
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExpressionFunctionInstance;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
 public class If implements ExpressionFunction {
@@ -36,7 +37,7 @@ public class If implements ExpressionFunction {
      */
     @Override
     public Instance get() {
-        return new Instance() {
+        return new AbstractExpressionFunctionInstance() {
 
             private String syntax() {
                 return String.format(
@@ -68,7 +69,7 @@ public class If implements ExpressionFunction {
              * {@inheritDoc}
              */
             @Override
-            public TypedValue invoke(final ExecutionContext ctx) throws ExpressionException {
+            public TypedValue invoke(final EvaluatedExecutionContext ctx) throws ExpressionException {
                 final TypedValue condition = ctx.get(BOOLEAN_EXPRESSION_ARG);
                 return condition.getBool() ? ctx.get(VALUE_IF_TRUE_ARG) : ctx.get(VALUE_IF_FALSE_ARG);
             }

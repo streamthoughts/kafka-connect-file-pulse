@@ -24,8 +24,9 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExpressionFunctionInstance;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 
@@ -44,7 +45,7 @@ public class Split implements ExpressionFunction {
         return new SplitInstance(name());
     }
 
-    static class SplitInstance implements ExpressionFunction.Instance {
+    static class SplitInstance extends AbstractExpressionFunctionInstance {
 
         private static final String FIELD_ARG = "field_expr";
         private static final String REGEX_ARG = "separator";
@@ -91,7 +92,7 @@ public class Split implements ExpressionFunction {
          * {@inheritDoc}
          */
         @Override
-        public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+        public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
             final String field = context.get(0).getString();
             return TypedValue.array(Arrays.asList(function.apply(field)), Type.STRING);
         }

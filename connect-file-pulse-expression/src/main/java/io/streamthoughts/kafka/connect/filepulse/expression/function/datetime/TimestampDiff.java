@@ -23,8 +23,9 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExpressionFunctionInstance;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
 import java.time.Instant;
@@ -43,7 +44,7 @@ public class TimestampDiff implements ExpressionFunction {
         return new TimestampDiffInstance();
     }
 
-    public static class TimestampDiffInstance implements ExpressionFunction.Instance {
+    public static class TimestampDiffInstance extends AbstractExpressionFunctionInstance {
 
         private static final String CHRONO_UNIT_ARG = "unit";
         private static final String EPOCH_MILLI_1_ARG = "epoch_millis_expr1";
@@ -66,7 +67,7 @@ public class TimestampDiff implements ExpressionFunction {
             );
         }
 
-        public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+        public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
             final Long epochTimeLeft = context.get(1).getLong();
             final Long epochTimeRight = context.get(2).getLong();
 

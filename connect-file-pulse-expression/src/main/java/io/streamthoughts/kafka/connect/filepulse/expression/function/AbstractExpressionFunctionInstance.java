@@ -19,43 +19,37 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
+import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 
-public abstract class AbstractTransformExpressionFunction implements ExpressionFunction {
+import java.util.stream.IntStream;
 
-    private static final String FIELD_ARG = "field_expr";
-
-    public abstract TypedValue transform(final TypedValue value);
+public abstract class AbstractExpressionFunctionInstance implements ExpressionFunction.Instance {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Instance get() {
-        return new AbstractExpressionFunctionInstance() {
+    public TypedValue invoke(final EvaluationContext context,
+                             final Arguments arguments) throws ExpressionException {
 
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Arguments prepare(final Expression[] args) {
-                if (args.length < 1) {
-                    throw new ExpressionException(String.format(
-                            "Missing required arguments: %s(<%s>)", name(), FIELD_ARG)
-                    );
-                }
+        final EvaluatedExecutionContext executionContext = new EvaluatedExecutionContext();
 
-                return Arguments.of(FIELD_ARG, args[0]);
-            }
+        IntStream.range(0, arguments.size()).forEachOrdered(i -> {
+            final Argument argument = arguments.get(i);
+            final TypedValue value = argument.evaluate(context);
+            executionContext.addArgument(argument.name(), i, value);
+        });
 
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
-                return transform(context.get(0));
-            }
-        };
+        return invoke(executionContext);
     }
+
+    /**
+     * Executes the function with the specific context.
+     *
+     * @param context the {@link EvaluatedExecutionContext}.
+     * @return the function result.
+     * @throws ExpressionException if the function execution failed.
+     */
+    public abstract TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException;
 }

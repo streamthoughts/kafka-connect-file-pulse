@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 
@@ -51,7 +52,7 @@ public interface ExpressionFunction extends Supplier<ExpressionFunction.Instance
 
         /**
          * Prepares the arguments that will be evaluated and used to build
-         * the {@link ExecutionContext} pass then through the {@link #invoke}.
+         * the {@link EvaluatedExecutionContext} pass then through the {@link #invoke}.
          *
          * @param args  list of {@link TypedValue} arguments.
          * @return  an instance of {@link Arguments}.
@@ -66,14 +67,14 @@ public interface ExpressionFunction extends Supplier<ExpressionFunction.Instance
         }
 
         /**
-         * Executes the function with the specific context.
+         * Executes this function instance with the specified context and argument.
          *
-         * @param context   the {@link ExecutionContext}.
-         * @return          the function result.
-         *
-         * @throws ExpressionException if the function execution failed.
+         * @param context       the {@link EvaluationContext}.
+         * @param arguments     the {@link Arguments}.
+         * @return              the function result.
          */
-        TypedValue invoke(final ExecutionContext context) throws ExpressionException;
+        TypedValue invoke(final EvaluationContext context,
+                          final Arguments arguments) throws ExpressionException;
     }
 
     /**

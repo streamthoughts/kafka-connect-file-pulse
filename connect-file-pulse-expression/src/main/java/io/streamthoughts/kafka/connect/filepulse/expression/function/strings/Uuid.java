@@ -34,6 +34,6 @@ public class Uuid implements ExpressionFunction {
      */
     @Override
     public Instance get() {
-        return ctx -> TypedValue.string(UUID.randomUUID().toString());
+        return (context, args) -> TypedValue.string(UUID.randomUUID().toString());
     }
 }

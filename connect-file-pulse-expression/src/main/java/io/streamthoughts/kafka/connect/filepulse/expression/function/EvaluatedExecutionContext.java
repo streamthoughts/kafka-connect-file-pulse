@@ -26,15 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ExecutionContext {
+public class EvaluatedExecutionContext {
 
     private final Map<Integer, TypedValue> argumentByIndex;
     private final Map<String, TypedValue> argumentByName;
 
     /**
-     * Creates a new {@link ExecutionContext} instance.
+     * Creates a new {@link EvaluatedExecutionContext} instance.
      */
-    ExecutionContext() {
+    EvaluatedExecutionContext() {
         this.argumentByName = new HashMap<>();
         this.argumentByIndex = new HashMap<>();
     }

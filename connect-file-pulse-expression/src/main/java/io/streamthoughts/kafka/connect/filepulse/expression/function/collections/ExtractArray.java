@@ -24,8 +24,9 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExpressionFunctionInstance;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.ExecutionContext;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class ExtractArray implements ExpressionFunction {
         return new ExtractArrayInstance(name());
     }
 
-    static class ExtractArrayInstance implements ExpressionFunction.Instance {
+    static class ExtractArrayInstance extends AbstractExpressionFunctionInstance {
 
         private int index;
 
@@ -83,7 +84,7 @@ public class ExtractArray implements ExpressionFunction {
          * {@inheritDoc}
          */
         @Override
-        public TypedValue invoke(final ExecutionContext context) throws ExpressionException {
+        public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
             final TypedValue value = context.get(0);
 
             if (value.type() != Type.ARRAY) {

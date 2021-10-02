@@ -61,6 +61,12 @@ public class Equals implements ExpressionFunction {
                 final TypedValue left = context.get(OBJECT_L_ARG);
                 final TypedValue right = context.get(OBJECT_R_ARG);
 
+                if (left.isNull() && right.isNull())
+                    return TypedValue.bool(true);
+
+                if (left.isNull() || right.isNull())
+                    return TypedValue.bool(false);
+
                 // attempt to convert argument value to the field value before applying equality.
                 final Object leftValue = left.value();
                 final Object rightValue = right.as(left.type()).value();

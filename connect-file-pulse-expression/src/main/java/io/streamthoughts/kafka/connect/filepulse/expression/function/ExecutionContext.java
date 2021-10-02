@@ -44,23 +44,44 @@ public class ExecutionContext {
         this.argumentByIndex.put(index, value);
     }
 
+    /**
+     * Retrieves the argument to which the specified index is mapped.
+     *
+     * @param index the argument index.
+     * @return      the {@link TypedValue}.
+     * @throws      IndexOutOfBoundsException if the given index is out of range.
+     */
     public TypedValue get(final int index) {
-        return Optional.ofNullable(argumentByIndex.get(index)).orElseThrow(IndexOutOfBoundsException::new);
+        if (!argumentByIndex.containsKey(index)) {
+            throw new IndexOutOfBoundsException(index);
+        }
+        return Optional.ofNullable(argumentByIndex.get(index)).orElse(TypedValue.none());
     }
 
+    /**
+     * Retrieves the argument to which the specified name is mapped.
+     *
+     * @param name  the argument name.
+     * @return      the {@link TypedValue}.
+     */
     public TypedValue get(final String name) {
-        return argumentByName.get(name);
+        return Optional.ofNullable(argumentByName.get(name)).orElse(TypedValue.none());
     }
 
     public List<TypedValue> get(final int index, final int to) {
         return values().subList(index, to);
     }
 
-
+    /**
+     * @return the number of arguments.
+     */
     public int size() {
         return argumentByName.size();
     }
 
+    /**
+     * @return values for all arguments.
+     */
     public List<TypedValue> values() {
         return new ArrayList<>(argumentByIndex.values());
     }

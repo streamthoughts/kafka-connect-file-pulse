@@ -33,6 +33,10 @@ import java.util.Objects;
  */
 public class TypedValue implements GettableByType {
 
+    public static TypedValue none() {
+        return new TypedValue(Schema.none(), null);
+    }
+
     private final Object value;
     private final SchemaSupplier schema;
 

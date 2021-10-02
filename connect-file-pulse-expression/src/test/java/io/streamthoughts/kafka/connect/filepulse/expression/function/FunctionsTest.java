@@ -135,12 +135,6 @@ public class FunctionsTest {
     }
 
     @Test
-    public void should_execute_equals_function() {
-        Expression expression = parseExpression("{{ equals('foo', 'foo') }}");
-        Assert.assertTrue(expression.readValue(EMPTY_CONTEXT, TypedValue.class).value());
-    }
-
-    @Test
     public void should_execute_end_with_function() {
         Expression expressionTrue = parseExpression("{{ ends_with('FOO-suffix', 'suffix') }}");
         Expression expressionFalse = parseExpression("{{ ends_with('FOO-suffix', 'bad') }}");

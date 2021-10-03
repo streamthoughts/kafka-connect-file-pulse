@@ -221,7 +221,7 @@
                         <version>3.2.0</version>
                         <configuration>
                             <doclint>none</doclint><!-- Turnoff all checks -->
-                            <source>8</source>
+                            <source>11</source>
                         </configuration>
                         <executions>
                             <execution>

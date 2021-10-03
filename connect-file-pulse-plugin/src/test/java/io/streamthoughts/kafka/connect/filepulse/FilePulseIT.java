@@ -33,8 +33,10 @@ public class FilePulseIT extends AbstractKafkaConnectTest {
 
     @Test
     public void testConnectorPluginsIsLoaded() {
+
+        List<Map<String, String>> plugins;
         final Response response = doGetRequest("http://" + getConnectWorker() + "/connector-plugins");
-        List<Map<String, String>> plugins = response.jsonPath().getList("$");
+        plugins = response.jsonPath().getList("$");
 
         for (final Map<String, String> plugin : plugins) {
             String connectorClass = plugin.get("class");

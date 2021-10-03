@@ -66,11 +66,11 @@ public class AbstractKafkaConnectTest {
     private static final String CONNECT_PLUGIN_PATH     = "/usr/share/java/";
 
     private static final String DOCKER_USERNAME         = "confluentinc";
-    private static final String DOCKER_CONFLUENT_TAG    = "6.2.0";
+    private static final String DOCKER_CONFLUENT_TAG    = "6.2.1";
     private static final String CP_ZOOKEEPER_IMAGE      = "cp-zookeeper";
     private static final String CP_KAFKA_IMAGE          = "cp-kafka";
     private static final String CP_CONNECT_IMAGE        = "cp-kafka-connect-base";
-    private static final String CONNECTOR_DIR_NAME      = "kafka-connect-file-pulse-plugin";
+    private static final String CONNECTOR_DIR_NAME      = "kafka-connect-filepulse-plugin";
 
     @ClassRule
     public static Network NETWORK = Network.newNetwork();
@@ -140,7 +140,7 @@ public class AbstractKafkaConnectTest {
                 .withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", CP_CONNECT_IMAGE)
                 .withEnv("CONNECT_PLUGIN_PATH", CONNECT_PLUGIN_PATH)
                 .withEnv("CONNECT_BOOTSTRAP_SERVERS", KAFKA_NETWORK_ALIAS + ":29092")
-                .waitingFor(forHttp("/"))
+                .waitingFor(forHttp("/connector-plugins"))
                 .withFileSystemBind(getConnectPluginsDistDir(), CONNECT_PLUGIN_PATH + CONNECTOR_DIR_NAME + "/", BindMode.READ_WRITE);
     }
 

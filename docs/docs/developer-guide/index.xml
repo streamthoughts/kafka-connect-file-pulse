@@ -1324,6 +1324,12 @@ the first element present in the array field &lt;code&gt;$.values&lt;/code&gt;.&
 &lt;td&gt;&lt;code&gt;{{ length(array) }}&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
+&lt;td&gt;&lt;code&gt;not&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2.4.0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Reverses a boolean value&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;{{ not(booleanExpression) }}&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
 &lt;td&gt;&lt;code&gt;or&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;2.4.0&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;Checks if at least one of the given conditional expressions is &lt;code&gt;true&lt;/code&gt;..&lt;/td&gt;
@@ -1715,7 +1721,7 @@ filters.TagSecurityException.values=SecurityAlert
 &lt;td&gt;&lt;code&gt;exists&lt;/code&gt;&lt;/td&gt;
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;Returns &lt;code&gt;true&lt;/code&gt; if an the specified field exists&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;{{ exists(struct, field) }}{% endraw %}&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;{{ exists(struct, field) }}&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;gt&lt;/code&gt;&lt;/td&gt;

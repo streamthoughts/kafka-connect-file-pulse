@@ -1,0 +1,51 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kafka Connect File Pulse – Project Info</title>
+    <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/project-info/</link>
+    <description>Recent content in Project Info on Kafka Connect File Pulse</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 09 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/project-info/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Getting the code</title>
+      <link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/project-info/getting_the_code/</link>
+      <pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/project-info/getting_the_code/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;prerequisites-for-building-connect-file-pulse&#34;&gt;Prerequisites for building Connect File Pulse&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Git&lt;/li&gt;
+&lt;li&gt;Maven (we recommend version 3.5.3)&lt;/li&gt;
+&lt;li&gt;Java 11&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;building-connect-file-pulse&#34;&gt;Building Connect File Pulse&lt;/h2&gt;
+&lt;p&gt;The code of Connect File Pulse is kept in GitHub. You can check it out like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ git clone https://github.com/streamthoughts/kafka-connect-file-pulse.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The project uses Maven, you can build it like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ &lt;span style=&#34;color:#204a87&#34;&gt;cd&lt;/span&gt; kafka-connect-file-pulse
+$ mvn clean package -DskipTests
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Confluent Hub&lt;/h4&gt;
+Connect File Pulse is packaged into an archive
+file compatible with &lt;a href=&#34;https://docs.confluent.io/current/connect/managing/confluent-hub/client.html&#34;&gt;confluent-hub client&lt;/a&gt;.
+&lt;/div&gt;
+
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

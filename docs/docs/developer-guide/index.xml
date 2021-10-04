@@ -1836,13 +1836,23 @@ filters.Log4jGrokFilter.ignoreFailure=true
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;code&gt;$error.message&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The error message&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;$error.exceptionMessage&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The exception message&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;$error.exceptionStacktrace&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The exception stack-trace&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;$error.exceptionClassName&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The exception class name&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;$error.filter&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The failed filter name&lt;/td&gt;
+&lt;td&gt;The name of the filter that threw the exception&lt;/td&gt;
 &lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -1858,7 +1868,7 @@ filters.Log4jGrokFilter.overwrite=message
 filters.Log4jGrokFilter.withOnFailure=AppendError
 
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
-filters.AppendError.field=$.errorMessage
+filters.AppendError.field=$.exceptionMessage
 filters.AppendError.value={{ $error.message }}
 &lt;/code&gt;&lt;/pre&gt;
       </description>

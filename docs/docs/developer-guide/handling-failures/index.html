@@ -26,13 +26,13 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/" />
 <meta property="article:published_time" content="2021-03-30T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-03-30T15:19:06+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
+<meta property="article:modified_time" content="2021-10-04T22:39:55+02:00" /><meta property="og:site_name" content="Kafka Connect File Pulse" />
 <meta itemprop="name" content="Handling Failures">
 <meta itemprop="description" content="Learn how to handle failures thrown while processing of records by the filter chain.
 ">
 <meta itemprop="datePublished" content="2021-03-30T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-03-30T15:19:06&#43;02:00" />
-<meta itemprop="wordCount" content="250">
+<meta itemprop="dateModified" content="2021-10-04T22:39:55&#43;02:00" />
+<meta itemprop="wordCount" content="266">
 
 
 
@@ -3176,13 +3176,23 @@ filters.Log4jGrokFilter.ignoreFailure=true
 </thead>
 <tbody>
 <tr>
-<td><code>$error.message</code></td>
-<td>The error message</td>
+<td><code>$error.exceptionMessage</code></td>
+<td>The exception message</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>$error.exceptionStacktrace</code></td>
+<td>The exception stack-trace</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>$error.exceptionClassName</code></td>
+<td>The exception class name</td>
 <td><code>string</code></td>
 </tr>
 <tr>
 <td><code>$error.filter</code></td>
-<td>The failed filter name</td>
+<td>The name of the filter that threw the exception</td>
 <td><code>string</code></td>
 </tr>
 </tbody>
@@ -3198,12 +3208,12 @@ filters.Log4jGrokFilter.overwrite=message
 filters.Log4jGrokFilter.withOnFailure=AppendError
 
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
-filters.AppendError.field=$.errorMessage
+filters.AppendError.field=$.exceptionMessage
 filters.AppendError.value={{ $error.message }}
 </code></pre>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified March 30, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b692dc35236c0858019fea42a92768da47779636">docs(site): fix handling failure example (b692dc3)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 4, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ae058294e293402adbb36c9365196efedc57140d">docs(site): add release 2.4 blog post (ae05829)</a>
 </div>
 </div>
 

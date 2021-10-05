@@ -102,45 +102,45 @@ filters.AppendErrorClassNameToHeader.value={{ $error.exceptionClassName }}
 Connect File Pulse 2.4 can be downloaded from the [GitHub Releases Page](https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.4.0). 
 
 ### Features
-[67683d5](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/67683d5) feat(expression): add built-in SCeL expression function NOT
-[7fea775](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7fea775) feat(dataformat): add config to specify a prefix used to prepend XML attributes (#176)
-[4fc2cb9](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4fc2cb9) feat(expression): add expression function TimestampDiff
-[9d72e47](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9d72e47) feat(expression): add expression function ToTimestamp
-[0644cb9](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0644cb9) feat(expressions): add built-in function 'gt' and 'lt' to ScEL
-[e4375c8](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e4375c8) feat(expressions): add built-in function 'or' and 'and' to ScEL
-[28a6126](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/28a6126) feat(expressions): add built-in function 'if' to ScEL
-[4fe77fd](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4fe77fd) feat(api): add access to error stacktrace in filter chain
-[b9c0a40](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b9c0a40) feat(dataformat): add new config prop to exclude node attributes in namespaces (#175)
-[8f648c8](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8f648c8) feat(dataformat): add new config props to exclude all XML attributes (#174)
-[355b6e4](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/355b6e4) feat(expression): add UnixTimestamp expression function
-[5a62f03](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5a62f03) feat(filters): add new XmlToStructFilter
-[9cad2fa](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9cad2fa) feat(filters): add new simple XmlToJsonFilter
-[0e29ce2](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0e29ce2) feat(plugin): add capability to merge schemas deriving from records
+* [67683d5](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/67683d5) feat(expression): add built-in SCeL expression function NOT
+* [7fea775](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7fea775) feat(dataformat): add config to specify a prefix used to prepend XML attributes (#176)
+* [4fc2cb9](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4fc2cb9) feat(expression): add expression function TimestampDiff
+* [9d72e47](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9d72e47) feat(expression): add expression function ToTimestamp
+* [0644cb9](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0644cb9) feat(expressions): add built-in function 'gt' and 'lt' to ScEL
+* [e4375c8](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e4375c8) feat(expressions): add built-in function 'or' and 'and' to ScEL
+* [28a6126](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/28a6126) feat(expressions): add built-in function 'if' to ScEL
+* [4fe77fd](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4fe77fd) feat(api): add access to error stacktrace in filter chain
+* [b9c0a40](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b9c0a40) feat(dataformat): add new config prop to exclude node attributes in namespaces (#175)
+* [8f648c8](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8f648c8) feat(dataformat): add new config props to exclude all XML attributes (#174)
+* [355b6e4](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/355b6e4) feat(expression): add UnixTimestamp expression function
+* [5a62f03](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5a62f03) feat(filters): add new XmlToStructFilter
+* [9cad2fa](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9cad2fa) feat(filters): add new simple XmlToJsonFilter
+* [0e29ce2](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0e29ce2) feat(plugin): add capability to merge schemas deriving from records
 
 ### Improvements & Bugfixes
-[165a908](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/165a908) refactor(expressions): allow functions to not evaluate all expression args
-[4e9f84d](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4e9f84d) fix(expressions): fix equals SCeL expression should support null argument (#187)
-[7bdc787](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7bdc787) fix(filesystems): fix regression on AmazonS3Client configuration (#184)
-[d76bac0](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d76bac0) fix(plugin): refactor InMemoryFileObjectStateBackingStore to use an LRU cache (#183)
-[50200f7](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/50200f7) fix(plugin): fix resources must not be closed while files are not committed
-[17e9efb](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/17e9efb) fix(plugin): fix regression cleanup object files should not be rescheduled (#178)
-[e2f74b2](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2f74b2) fix(api): fix schemas should be merged per target topic
-[03bab9a](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/03bab9a) fix(api): enhance mapping to connect schema to handle duplicate schema
-[760d98b](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/760d98b) fix(filters): XmlToJson should support bytes input
-[99c374f](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/99c374f) fix(api): fix schema behavior on array merge
+* [165a908](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/165a908) refactor(expressions): allow functions to not evaluate all expression args
+* [4e9f84d](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4e9f84d) fix(expressions): fix equals SCeL expression should support null argument (#187)
+* [7bdc787](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7bdc787) fix(filesystems): fix regression on AmazonS3Client configuration (#184)
+* [d76bac0](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d76bac0) fix(plugin): refactor InMemoryFileObjectStateBackingStore to use an LRU cache (#183)
+* [50200f7](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/50200f7) fix(plugin): fix resources must not be closed while files are not committed
+* [17e9efb](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/17e9efb) fix(plugin): fix regression cleanup object files should not be rescheduled (#178)
+* [e2f74b2](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2f74b2) fix(api): fix schemas should be merged per target topic
+* [03bab9a](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/03bab9a) fix(api): enhance mapping to connect schema to handle duplicate schema
+* [760d98b](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/760d98b) fix(filters): XmlToJson should support bytes input
+* [99c374f](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/99c374f) fix(api): fix schema behavior on array merge
 
 ## Sub-Tasks
-[e9cd483](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e9cd483) fix(build): normalize artefact-ids
-[2b8d260](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2b8d260) refactor(filters): relocate json packages
-[4d13731](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4d13731) refactor(filters): cleanup classes
-[f3179a7](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f3179a7) refactor(expression): refactor expression function api
-[bf3fc31](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bf3fc31) refactor(expression): reorganize packages for built-in functions
+* [e9cd483](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e9cd483) fix(build): normalize artefact-ids
+* [2b8d260](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2b8d260) refactor(filters): relocate json packages
+* [4d13731](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4d13731) refactor(filters): cleanup classes
+* [f3179a7](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f3179a7) refactor(expression): refactor expression function api
+* [bf3fc31](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bf3fc31) refactor(expression): reorganize packages for built-in functions
 
 ### Docs
-[643469f](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/643469f) site(docs): update documentations
-[be29aae](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/be29aae) docs(site): add new function descriptions
-[2a9a119](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2a9a119) docs(site): fix missing config property
-[7533d2f](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7533d2f) docs(site): improve installation guide
-[71a9ebe](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/71a9ebe) docs(site): add doc for defining schema
+* [643469f](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/643469f) site(docs): update documentations
+* [be29aae](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/be29aae) docs(site): add new function descriptions
+* [2a9a119](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2a9a119) docs(site): fix missing config property
+* [7533d2f](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7533d2f) docs(site): improve installation guide
+* [71a9ebe](https://github.com/streamthoughts/kafka-connect-file-pulse/commit/71a9ebe) docs(site): add doc for defining schema
 
 If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!

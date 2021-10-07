@@ -34,25 +34,25 @@ import java.util.Objects;
  */
 public class InternalFilterContext extends Environment implements FilterContext {
 
-    private ConnectHeaders headers;
+    private final ConnectHeaders headers;
 
-    private FileObjectMeta metadata;
+    private final FileObjectMeta metadata;
 
-    private FilterError exception;
+    private final FilterError exception;
 
-    private FileRecordOffset offset;
+    private final FileRecordOffset offset;
 
     private String topic;
 
     private Integer partition;
 
-    private Long timestamp;
+    private final Long timestamp;
 
     private TypedStruct value;
 
     private String key;
 
-    private Map<String, Object> variables;
+    private final Map<String, Object> variables;
 
     /**
      * Creates a new {@link InternalFilterContext} instance.

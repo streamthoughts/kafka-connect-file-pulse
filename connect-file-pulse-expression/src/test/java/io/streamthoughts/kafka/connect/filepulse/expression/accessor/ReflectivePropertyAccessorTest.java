@@ -24,10 +24,12 @@ import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationCo
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ReflectivePropertyAccessorTest {
 
-    private StandardEvaluationContext context = new StandardEvaluationContext(new Object());
-
+    private final StandardEvaluationContext context = new StandardEvaluationContext(new Object());
 
     @Test(expected = AccessException.class)
     public void should_thrown_when_writing_invalid_property_using_getter_method_given_pojo() {
@@ -45,48 +47,56 @@ public class ReflectivePropertyAccessorTest {
     public void should_write_property_using_setter_method_given_pojo_and_expected_parameter() {
         ReflectivePropertyAccessor accessor = new ReflectivePropertyAccessor();
         DummyObject object = new DummyObject(null);
-        accessor.write(context, object, "field", "foo");
-        Assert.assertEquals("foo", object.field);
+        accessor.write(context, object, "value", "foo");
+        Assert.assertEquals("foo", object.value);
     }
 
     @Test
     public void should_write_null_property_using_setter_method_given_pojo_and_expected_parameter() {
         ReflectivePropertyAccessor accessor = new ReflectivePropertyAccessor();
         DummyObject object = new DummyObject("foo");
-        accessor.write(context, object, "field", null);
-        Assert.assertEquals(null, object.field);
+        accessor.write(context, object, "value", null);
+        Assert.assertNull(object.value);
     }
 
     @Test
     public void should_write_property_using_setter_method_given_pojo() {
         ReflectivePropertyAccessor accessor = new ReflectivePropertyAccessor();
         DummyObject object = new DummyObject(null);
-        accessor.write(context, object, "field", TypedValue.string("foo"));
-        Assert.assertEquals("foo", object.field);
+        accessor.write(context, object, "value", TypedValue.string("foo"));
+        Assert.assertEquals("foo", object.value);
     }
 
     @Test
     public void should_read_property_using_getter_method_given_pojo() {
         ReflectivePropertyAccessor accessor = new ReflectivePropertyAccessor();
-        Object object = accessor.read(context, new DummyObject("foo"), "field");
+        Object object = accessor.read(context, new DummyObject("foo"), "value");
+        Assert.assertEquals("foo", object);
+    }
+
+    @Test
+    public void should_read_property_given_dotted_path() {
+        ReflectivePropertyAccessor accessor = new ReflectivePropertyAccessor();
+        Map<String, String> map = new HashMap<>();
+        map.put("key", "foo");
+        Object object = accessor.read(context, new DummyObject(map), "value.key");
         Assert.assertEquals("foo", object);
     }
 
     public static class DummyObject {
 
-        private String field;
+        private Object value;
 
-        DummyObject(String myField) {
-            this.field = myField;
+        DummyObject(Object value) {
+            this.value = value;
         }
 
-        public String getField() {
-            return field;
+        public Object getValue() {
+            return value;
         }
 
-        public void setField(String field) {
-            this.field = field;
+        public void setValue(Object value) {
+            this.value = value;
         }
     }
-
 }

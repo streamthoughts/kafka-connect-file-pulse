@@ -39,7 +39,7 @@ public class TypedValueConverter implements PropertyConverter {
      * {@inheritDoc}
      */
     @Override
-    public boolean canConvert(final Object o, final Class classType) {
+    public boolean canConvert(final Object o, final Class<?> classType) {
         return true;
     }
 

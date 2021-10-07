@@ -27,7 +27,7 @@ public class PrimitiveConverter implements PropertyConverter {
      * {@inheritDoc}
      */
     @Override
-    public boolean canConvert(final Object o, final Class classType) {
+    public boolean canConvert(final Object o, final Class<?> classType) {
         return Type.forClass(classType) != null;
     }
     /**

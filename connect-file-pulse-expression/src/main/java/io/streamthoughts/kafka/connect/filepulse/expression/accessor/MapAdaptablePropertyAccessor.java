@@ -32,6 +32,7 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
 
     private static final String GET_METHOD_NAME = "get";
     private static final String PUT_METHOD_NAME = "put";
+    private static final String DOT = ".";
 
     /**
      * {@inheritDoc}
@@ -55,23 +56,64 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Object read(final EvaluationContext context,
-                           final Object target,
-                           final String name) throws AccessException {
+                       final Object target,
+                       final String name) throws AccessException {
         Objects.requireNonNull(target, "target cannot be null");
         Objects.requireNonNull(name, "name cannot be null");
 
         Class<?> type = target instanceof Class ? (Class<?>) target : target.getClass();
 
+        return Map.class.isAssignableFrom(type) ?
+                readFromMapObject(context, (Map) target, name) :
+                readFromMapAdaptableObject(context, target, name, type);
+    }
+
+    private Object readFromMapAdaptableObject(final EvaluationContext context,
+                                              final Object target,
+                                              final String key,
+                                              final Class<?> type) {
         try {
             Method method = findGetterByKeyMethodForProperty(type);
             if (method != null && method.canAccess(target)) {
-                return method.invoke(target, name);
+                final Object result = method.invoke(target, key);
+
+                if (result != null) return result;
+
+                // If result is NULL, then we need to check whether the given key represents a dotted path.
+                if (isDotPropertyAccessPath(key)) {
+                    String[] split = key.split("\\.", 2);
+                    Object rootObject = method.invoke(target, split[0]);
+                    if (rootObject != null) {
+                        return new PropertyAccessors(context).readPropertyValue(rootObject, split[1]);
+                    }
+                }
             }
-            return null;
+            throw new AccessException("Cannot access map property with key '" + key + "'. Entry does not exist.");
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new AccessException(e.getMessage());
         }
+    }
+
+    private Object readFromMapObject(final EvaluationContext context,
+                                     final Map<String, Object> target,
+                                     final String key) {
+
+        if (target.containsKey(key)) return target.get(key);
+
+        // If key does NOT exist, then we need to check whether the given key uses dotted-notation.
+        if (isDotPropertyAccessPath(key)) {
+            final String[] split = key.split("\\.", 2);
+            final String rootKey = split[0];
+            if (target.containsKey(rootKey)) {
+                Object rootObject = target.get(rootKey);
+                if (rootObject != null) {
+                    return new PropertyAccessors(context).readPropertyValue(rootObject, split[1]);
+                }
+            }
+        }
+        throw new AccessException("Cannot access map property with key '" + key + "'. Entry does not exist.");
     }
 
     /**
@@ -90,10 +132,11 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
 
         if (method == null) {
             throw new AccessException(
-                String.format(
-                    "Cannot found access method for attribute %s on class %s",
-                    name,
-                    target.getClass().getCanonicalName())
+                    String.format(
+                            "Cannot found access method for attribute %s on class %s",
+                            name,
+                            target.getClass().getCanonicalName()
+                    )
             );
         }
 
@@ -102,8 +145,6 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new AccessException(e.getMessage());
         }
-
-
     }
 
     /**
@@ -117,25 +158,25 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
     }
 
 
-    private Method findGetterByKeyMethodForProperty(final Class target) {
-        return findMethodForProperty(target, method -> isAccessibleByKey(method, GET_METHOD_NAME));
+    private Method findGetterByKeyMethodForProperty(final Class<?> target) {
+        return findMethodForProperty(target, this::isAccessibleByKey);
     }
 
 
-    private Method findMethodForProperty(final Class target, final Predicate<Method> predicate) {
+    private Method findMethodForProperty(final Class<?> target, final Predicate<Method> predicate) {
         Optional<Method> optional = Arrays.stream(target.getMethods())
                 .filter(predicate)
                 .findAny();
         return optional.orElse(null);
     }
 
-    private Method findSetterByKeyMethodForProperty(final Class target, final Object newValue) {
+    private Method findSetterByKeyMethodForProperty(final Class<?> target, final Object newValue) {
         return findMethodForProperty(target, method -> isSettableByKeyAssignableFrom(method, newValue));
     }
 
-    private boolean isAccessibleByKey(final Method m, final String accessName) {
+    private boolean isAccessibleByKey(final Method m) {
         String methodName = m.getName();
-        if (methodName.equals(accessName) && m.getParameterCount() == 1) {
+        if (methodName.equals(GET_METHOD_NAME) && m.getParameterCount() == 1) {
             Class<?>[] parameterTypes = m.getParameterTypes();
             return parameterTypes[0].isAssignableFrom(String.class);
         }
@@ -151,5 +192,9 @@ public class MapAdaptablePropertyAccessor implements PropertyAccessor {
             return isStringKey && isObjectValue;
         }
         return false;
+    }
+
+    private static boolean isDotPropertyAccessPath(final String name) {
+        return name.contains(DOT);
     }
 }

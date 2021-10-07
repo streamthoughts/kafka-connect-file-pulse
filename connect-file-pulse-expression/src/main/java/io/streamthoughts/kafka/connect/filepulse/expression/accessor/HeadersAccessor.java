@@ -64,7 +64,8 @@ public class HeadersAccessor implements PropertyAccessor {
 
         Iterator<Header> it = headers.allWithName(name);
 
-        List<Object> values = StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
+        List<Object> values = StreamSupport
+            .stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
             .map(Header::value)
             .collect(Collectors.toList());
         return TypedValue.array(values, Type.STRING);

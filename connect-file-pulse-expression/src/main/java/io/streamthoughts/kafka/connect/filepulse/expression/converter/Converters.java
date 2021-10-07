@@ -18,7 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.converter;
 
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,25 +32,42 @@ import java.util.stream.Collectors;
 public class Converters {
 
     /**
-     *  Converts an object to a specific target type using a specified list of {@link PropertyConverter}.
+     * Converts an object to a specific target type using a specified list of {@link PropertyConverter}.
      *
-     * @param converters    the list of {@link PropertyConverter} which can be used.
-     * @param object        the object to be converted.
-     * @param classType     the {@link Class} of expected type.
-     * @param <T>           the target type.
-     * @return              the converted object of type T.
-     *
+     * @param converters the list of {@link PropertyConverter} which can be used.
+     * @param object     the object to be converted.
+     * @param classType  the {@link Class} of expected type.
+     * @param <T>        the target type.
+     * @return the converted object of type T.
      * @throws ConversionException if an error occurred while converting object o.
      */
+    @SuppressWarnings("unchecked")
     public static <T> T converts(final List<PropertyConverter> converters,
                                  final Object object,
                                  final Class<T> classType) throws ConversionException {
 
         final List<PropertyConverter> resolved = resolves(converters, object, classType);
 
+        if (resolved.isEmpty()) {
+            if (object == null) return null;
+
+            final Object objectToConvert = object.getClass().equals(TypedValue.class) ?
+                    ((TypedValue) object).value() : object;
+
+            if (classType.isAssignableFrom(objectToConvert.getClass())) {
+                return (T) objectToConvert;
+            }
+
+            throw new ConversionException(
+                    String.format(
+                            "Cannot found any property converter for type '%s' and object %s",
+                            classType.getCanonicalName(),
+                            object.getClass().getCanonicalName())
+            );
+        }
         Iterator<PropertyConverter> it = resolved.iterator();
         T converted = null;
-        while (it.hasNext() && converted == null ) {
+        while (it.hasNext() && converted == null) {
             PropertyConverter converter = it.next();
             converted = converter.convert(object, classType);
         }
@@ -56,11 +76,11 @@ public class Converters {
 
     private static List<PropertyConverter> resolves(final List<PropertyConverter> converters,
                                                     final Object object,
-                                                    final Class classType) {
+                                                    final Class<?> classType) {
 
         List<PropertyConverter> specificConverters = findSpecificConverterToConvert(converters, object, classType);
         if (!specificConverters.isEmpty()) {
-           return specificConverters;
+            return specificConverters;
         }
 
         List<PropertyConverter> genericConverters = findGenericConverterToRead(converters, object, classType);
@@ -68,18 +88,12 @@ public class Converters {
             return genericConverters;
         }
 
-        throw new ConversionException(
-                String.format(
-                        "Cannot found any property converter for type '%s' and object %s",
-                        classType.getCanonicalName(),
-                        object.getClass().getCanonicalName())
-        );
-
+        return Collections.emptyList();
     }
 
     private static List<PropertyConverter> findGenericConverterToRead(final List<PropertyConverter> converters,
                                                                       final Object object,
-                                                                      final Class classType) {
+                                                                      final Class<?> classType) {
         return converters
                 .stream()
                 .filter(converter -> !isSpecificConverter(converter))
@@ -89,7 +103,7 @@ public class Converters {
 
     private static List<PropertyConverter> findSpecificConverterToConvert(final List<PropertyConverter> converters,
                                                                           final Object object,
-                                                                          final Class classType) {
+                                                                          final Class<?> classType) {
         return converters
                 .stream()
                 .filter(converter -> isConverterSpecificForType(classType, converter))

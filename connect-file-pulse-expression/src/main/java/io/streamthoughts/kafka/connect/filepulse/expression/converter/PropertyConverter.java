@@ -36,7 +36,7 @@ public interface PropertyConverter {
      * @param classType the target type.
      * @return          {@code true} if is convertible.
      */
-    boolean canConvert(final Object o, final Class classType);
+    boolean canConvert(final Object o, final Class<?> classType);
 
     /**
      * Converts an object to a specified target type.

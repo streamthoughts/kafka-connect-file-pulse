@@ -28,6 +28,7 @@ public class ReflectivePropertyAccessor implements PropertyAccessor {
 
     private static final String GETTER_PREFIX = "get";
     private static final String SETTER_PREFIX = "set";
+    private static final String DOT = ".";
 
     /**
      * {@inheritDoc}
@@ -57,6 +58,16 @@ public class ReflectivePropertyAccessor implements PropertyAccessor {
                 method.setAccessible(true);
                 return method.invoke(target);
             }
+
+            if (isDotPropertyAccessPath(name)) {
+                String[] split = name.split("\\.", 2);
+                Method rootMethod = findGetterMethodForProperty(type, split[0]);
+                if (rootMethod != null || (rootMethod = findAccessMethodForProperty(type, name)) != null) {
+                    rootMethod.setAccessible(true);
+                    Object rootObject = rootMethod.invoke(target);
+                    return new PropertyAccessors(context).readPropertyValue(rootObject, split[1]);
+                }
+            }
         } catch (Exception e) {
             throw new AccessException(e.getMessage());
         }
@@ -64,7 +75,9 @@ public class ReflectivePropertyAccessor implements PropertyAccessor {
             String.format(
                 "Cannot found getter method for attribute '%s' on class '%s'",
                 name,
-                target.getClass()));
+                target.getClass()
+            )
+        );
     }
 
     /**
@@ -116,7 +129,7 @@ public class ReflectivePropertyAccessor implements PropertyAccessor {
         return true;
     }
 
-    private Method findGetterMethodForProperty(final Class target, final String name) {
+    private Method findGetterMethodForProperty(final Class<?> target, final String name) {
         for (Method m : target.getMethods()) {
             String methodName = m.getName();
             if (methodName.equals(GETTER_PREFIX + getMethodSuffixForProperty(name))) {
@@ -126,7 +139,7 @@ public class ReflectivePropertyAccessor implements PropertyAccessor {
         return null;
     }
 
-    private Method findSetterMethodForProperty(final Class target, final String name) {
+    private Method findSetterMethodForProperty(final Class<?> target, final String name) {
         for (Method m : target.getDeclaredMethods()) {
             String methodName = m.getName();
             if (methodName.equals(SETTER_PREFIX + getMethodSuffixForProperty(name))) {
@@ -136,7 +149,7 @@ public class ReflectivePropertyAccessor implements PropertyAccessor {
         return null;
     }
 
-    private Method findAccessMethodForProperty(final Class target, final String name) {
+    private Method findAccessMethodForProperty(final Class<?> target, final String name) {
         for (Method m : target.getMethods()) {
             String methodName = m.getName();
             if (methodName.equals(name)) {
@@ -148,5 +161,9 @@ public class ReflectivePropertyAccessor implements PropertyAccessor {
 
     private String getMethodSuffixForProperty(final String name) {
         return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    }
+
+    private static boolean isDotPropertyAccessPath(final String name) {
+        return name.contains(DOT);
     }
 }

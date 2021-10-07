@@ -70,8 +70,7 @@ public class StructFieldAccessor implements PropertyAccessor {
             }
         }
 
-        throw new AccessException(
-                "Can't access field '" + name + "' from Struct - field does not exist");
+        throw new AccessException("Can't access field '" + name + "' from Struct - field does not exist");
     }
 
     /**

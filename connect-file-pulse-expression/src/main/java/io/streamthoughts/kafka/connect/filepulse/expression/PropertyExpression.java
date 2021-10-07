@@ -18,16 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression;
 
-import io.streamthoughts.kafka.connect.filepulse.expression.accessor.AccessException;
-import io.streamthoughts.kafka.connect.filepulse.expression.accessor.PropertyAccessor;
+import io.streamthoughts.kafka.connect.filepulse.expression.accessor.PropertyAccessors;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.Converters;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class PropertyExpression extends AbstractExpression {
 
@@ -74,7 +70,9 @@ public class PropertyExpression extends AbstractExpression {
         Objects.requireNonNull(context, " context cannot be null");
         Objects.requireNonNull(expectedType, " expectedType cannot be null");
 
-        Object returned = getValueForProperty(context, context.rootObject(), rootObject);
+        final PropertyAccessors accessors = new PropertyAccessors(context);
+
+        Object returned = accessors.readPropertyValue(context.rootObject(), rootObject);
 
         if (attribute != null) {
             if (returned == null) {
@@ -83,7 +81,7 @@ public class PropertyExpression extends AbstractExpression {
                     + rootObject + "' returned null."
                 );
             }
-            returned = getValueForProperty(context, returned, attribute);
+            returned = accessors.readPropertyValue(returned, attribute);
         }
 
         if (returned != null && expectedType.isAssignableFrom(returned.getClass())) {
@@ -101,151 +99,20 @@ public class PropertyExpression extends AbstractExpression {
     public void writeValue(final Object value, final EvaluationContext context) {
         final Object target = context.rootObject();
 
+        final PropertyAccessors accessors = new PropertyAccessors(context);
+
         if (attribute == null) {
-            setValueForProperty(context, target, rootObject, value);
+            accessors.writeValueForProperty(target, rootObject, value);
         } else {
-            Object returned = getValueForProperty(context, target, rootObject);
+            Object returned = accessors.readPropertyValue(target, rootObject);
             if (returned == null) {
                 throw new ExpressionException(
                         "Cannot evaluate attribute expression '" + attribute + "', root object '"
                                 + rootObject + "' returned null."
                 );
             }
-            setValueForProperty(context, returned, attribute, value);
+            accessors.writeValueForProperty(returned, attribute, value);
         }
-    }
-
-    private void setValueForProperty(final EvaluationContext context,
-                                     final Object target,
-                                     final String name,
-                                     final Object newValue) {
-
-        List<PropertyAccessor> specificAccessors = findSpecificAccessorsToWrite(context, target, name);
-        if (!specificAccessors.isEmpty() && evaluateWriters(context, target, name, newValue, specificAccessors)) {
-            return;
-        }
-
-        List<PropertyAccessor> genericAccessors = findGenericAccessorsToWrite(context, target, name);
-        if (!genericAccessors.isEmpty() && evaluateWriters(context, target, name, newValue, genericAccessors)) {
-            return;
-        }
-
-        if (specificAccessors.isEmpty() && genericAccessors.isEmpty()) {
-            throw new AccessException(String.format(
-                "Can't found any property accessor for type '%s' and property %s",
-                target.getClass().getCanonicalName(),
-                name)
-            );
-        }
-    }
-
-    private Object getValueForProperty(final EvaluationContext context,
-                                       final Object target,
-                                       final String name) {
-
-        List<PropertyAccessor> specificAccessors = findSpecificAccessorsToRead(context, target, name);
-        if (!specificAccessors.isEmpty()) {
-            Object value = evaluateReaders(context, target, name, specificAccessors);
-            if (value != null) return value;
-        }
-
-        List<PropertyAccessor> genericAccessors = findGenericAccessorsToRead(context, target, name);
-        if (!genericAccessors.isEmpty()) {
-            return evaluateReaders(context, target, name, genericAccessors);
-        }
-
-        throw new AccessException(
-            String.format(
-                "Can't found any property accessor for type '%s' and property %s",
-                target.getClass().getCanonicalName(),
-                name)
-        );
-    }
-
-    private Boolean evaluateWriters(final EvaluationContext context,
-                                    final Object target,
-                                    final String name,
-                                    final Object newValue,
-                                    final List<PropertyAccessor> specifics) {
-        Iterator<PropertyAccessor> it = specifics.iterator();
-        boolean run = false;
-        while (it.hasNext() && !run) {
-            PropertyAccessor accessor = it.next();
-            accessor.write(context, target, name, newValue);
-            run = true;
-        }
-        return run;
-    }
-
-    private Object evaluateReaders(final EvaluationContext context,
-                                   final Object target,
-                                   final String name,
-                                   final List<PropertyAccessor> specifics) {
-        Iterator<PropertyAccessor> it = specifics.iterator();
-        Object value = null;
-        while (it.hasNext() && value == null ) {
-            PropertyAccessor accessor = it.next();
-            value = accessor.read(context, target, name);
-        }
-        return value;
-    }
-
-    private List<PropertyAccessor> findGenericAccessorsToWrite(final EvaluationContext context,
-                                                               final Object target,
-                                                               final String name) {
-        return context.getPropertyAccessors()
-            .stream()
-            .filter(accessor -> !isSpecificAccessor(accessor))
-            .filter(accessor -> accessor.canWrite(context, target, name))
-            .collect(Collectors.toList());
-    }
-
-    private List<PropertyAccessor> findSpecificAccessorsToWrite(final EvaluationContext context,
-                                                                final Object target,
-                                                                final String name) {
-        Class<?> type = target instanceof Class ? (Class<?>) target : target.getClass();
-        return context.getPropertyAccessors()
-            .stream()
-            .filter(accessor -> isAccessorSpecificForType(type, accessor))
-            .filter(accessor -> accessor.canWrite(context, target, name))
-            .collect(Collectors.toList());
-    }
-
-    private List<PropertyAccessor> findGenericAccessorsToRead(final EvaluationContext context,
-                                                              final Object target,
-                                                              final String name) {
-        return context.getPropertyAccessors()
-            .stream()
-            .filter(accessor -> !isSpecificAccessor(accessor))
-            .filter(accessor -> accessor.canRead(context, target, name))
-            .collect(Collectors.toList());
-    }
-
-    private List<PropertyAccessor> findSpecificAccessorsToRead(final EvaluationContext context,
-                                                               final Object target,
-                                                               final String name) {
-        Class<?> type = target instanceof Class ? (Class<?>) target : target.getClass();
-        return context.getPropertyAccessors()
-            .stream()
-            .filter(accessor -> isAccessorSpecificForType(type, accessor))
-            .filter(accessor -> accessor.canRead(context, target, name))
-            .collect(Collectors.toList());
-    }
-
-    private boolean isAccessorSpecificForType(final Class<?> type, PropertyAccessor accessor) {
-        if (isSpecificAccessor(accessor)) {
-            Class<?>[] specificTargetClasses = accessor.getSpecificTargetClasses();
-            List<Class<?>> l = Arrays
-                .stream(specificTargetClasses)
-                .filter(clazz -> clazz.isAssignableFrom(type))
-                .collect(Collectors.toList());
-            return l.size() > 0;
-        }
-        return false;
-    }
-
-    private boolean isSpecificAccessor(final PropertyAccessor accessor) {
-        return accessor.getSpecificTargetClasses() != null && accessor.getSpecificTargetClasses().length > 0;
     }
 
     /**

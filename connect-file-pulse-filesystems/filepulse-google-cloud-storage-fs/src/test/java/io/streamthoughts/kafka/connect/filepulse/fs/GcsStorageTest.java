@@ -34,18 +34,17 @@ import java.nio.charset.StandardCharsets;
 
 public class GcsStorageTest {
 
-    private static final String testBucketName = "test-bucket";
+    private static final String TEST_BUCKET_NAME = "TEST_BUCKET";
 
-    private Storage service;
     private GcsStorage storage;
     public static final String TEST_BLOB_PATH = "test/path/foo.txt";
-    public static final URI TEST_BLOB_URI = URI.create("gc://" + testBucketName + "/" + TEST_BLOB_PATH);
+    public static final URI TEST_BLOB_URI = URI.create("gcs://" + TEST_BUCKET_NAME + "/" + TEST_BLOB_PATH);
 
     @Before
     public void setUp() {
-        service = LocalStorageHelper.getOptions().getService();
+        Storage service = LocalStorageHelper.getOptions().getService();
         BlobInfo blobInfo = BlobInfo
-                .newBuilder(BlobId.of(testBucketName, TEST_BLOB_PATH))
+                .newBuilder(BlobId.of(TEST_BUCKET_NAME, TEST_BLOB_PATH))
                 .build();
         service.create(blobInfo, "randomContent".getBytes(StandardCharsets.UTF_8));
         storage = new GcsStorage(service);
@@ -65,5 +64,10 @@ public class GcsStorageTest {
     @Test
     public void should_get_blob_given_valid_uri() throws IOException {
         Assert.assertNotNull(storage.getBlob(TEST_BLOB_URI));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void should_throw_given_invalid_uri_schema() throws IOException {
+        storage.getBlob(URI.create("s3://bucket/blob"));
     }
 }

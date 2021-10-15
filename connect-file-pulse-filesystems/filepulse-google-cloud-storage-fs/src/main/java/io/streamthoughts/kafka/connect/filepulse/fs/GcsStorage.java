@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.channels.Channels;
 import java.util.HashMap;
 import java.util.Objects;
@@ -45,8 +44,6 @@ public class GcsStorage implements Storage {
 
     private static final Logger LOG = LoggerFactory.getLogger(GcsStorage.class);
 
-    public static final String GCS_URI_SCHEME = "gcs://";
-    public static final String URI_SEPARATOR = "/";
     private final com.google.cloud.storage.Storage storage;
 
     /**
@@ -120,17 +117,8 @@ public class GcsStorage implements Storage {
     @VisibleForTesting
     Blob getBlob(final URI uri) throws IOException {
         try {
-            final String path = getBase(uri).relativize(uri).getPath();
-            return storage.get(BlobId.of(uri.getHost(), path));
+            return storage.get(new GCSBlobURI(uri).getBlobId());
         } catch (StorageException e) {
-            throw new IOException(e);
-        }
-    }
-
-    private URI getBase(final URI uri) throws IOException {
-        try {
-            return new URI(uri.getScheme(), uri.getHost(), null, null);
-        } catch (URISyntaxException e) {
             throw new IOException(e);
         }
     }
@@ -178,7 +166,7 @@ public class GcsStorage implements Storage {
 
     public static URI createBlobURI(final String bucketName,
                                     final String name) {
-        return URI.create(GCS_URI_SCHEME + bucketName + URI_SEPARATOR + name);
+        return new GCSBlobURI(bucketName, name).getURI();
     }
 
     private static FileObjectMeta.ContentDigest getContentDigestOrNull(final Blob blob) {
@@ -190,5 +178,57 @@ public class GcsStorage implements Storage {
             return new FileObjectMeta.ContentDigest(md5, "MD5");
 
         return null;
+    }
+
+    static class GCSBlobURI {
+
+        public static final String GCS_URI_SCHEME = "gcs://";
+        public static final String URI_SEPARATOR = "/";
+
+        private final String bucketName;
+        private final String blobName;
+
+        public GCSBlobURI(final String bucket, final String name) {
+            this.bucketName = Objects.requireNonNull(bucket, "'bucket cannot be null'");
+            this.blobName = Objects.requireNonNull(name, "'name cannot be null'");
+        }
+
+        public GCSBlobURI(final URI uri) {
+            if (!GCS_URI_SCHEME.startsWith(uri.getScheme())) {
+                throw new IllegalArgumentException("Invalid URI scheme: " + uri.getScheme());
+            }
+
+            bucketName = uri.getAuthority();
+            if (bucketName == null) {
+                throw new IllegalArgumentException("Invalid GCS URI: no bucket: " + uri);
+            }
+            URI baseURI = URI.create(GCS_URI_SCHEME + bucketName);
+            blobName = baseURI.relativize(uri).getPath();
+        }
+
+        /**
+         * @return the URI of the blob the format: gcs://bucketName/blobName.
+         */
+        public URI getURI() {
+            return URI.create(GCS_URI_SCHEME + bucketName + URI_SEPARATOR + blobName);
+        }
+
+        /**
+         * @return the name of the bucket that contains the blob
+         */
+        public String getBucketName() {
+            return bucketName;
+        }
+
+        /**
+         * @return the name of the blob
+         */
+        public String getBlobName() {
+            return blobName;
+        }
+
+        public BlobId getBlobId() {
+            return BlobId.of(bucketName, blobName);
+        }
     }
 }

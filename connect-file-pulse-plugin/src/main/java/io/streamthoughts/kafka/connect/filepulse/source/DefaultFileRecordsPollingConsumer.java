@@ -98,26 +98,24 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
                     );
                 }
 
-                final DelegateFileInputIterator iterator = new DelegateFileInputIterator(key, uri, reader);
-                iterables.add(iterator);
-
+                iterables.add(new DelegateFileInputIterator(key, uri, reader));
                 if (hasListener()){
                     listener.onScheduled(new FileContext(key, objectMeta));
                 }
-
+            // Else, object-file does NOT exist or is not readable.
             } else {
                 try {
                     // try to compute offset using GenericFileObjectMeta for notifying connector.
                     final GenericFileObjectMeta objectMeta = new GenericFileObjectMeta(uri);
                     final FileObjectKey key = FileObjectKey.of(offsetPolicy.toPartitionJson(objectMeta));
                     if (hasListener()){
-                        LOG.warn("Failed to process object file '{}'. File does not exist or is not readable.", uri);
-                        listener.onScheduled(new FileContext(key, objectMeta));
+                        LOG.warn("Object-file does not exist or is not readable. Skip and continue '{}'", uri);
+                        listener.onInvalid(new FileContext(key, objectMeta));
                     }
                 } catch (Exception e) {
                     throw new ConnectFilePulseException(
                         "Failed to compute object-file key while initializing processing for '" + uri + "'. " +
-                        " Connector must be restated.",
+                        "Connector must be restated.",
                         e
                     );
                 }
@@ -205,26 +203,35 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
 
         if (queue.isEmpty()) return null;
 
-        FileInputIterator<FileRecord<TypedStruct>> ret;
         // Quickly iterate to lookup for a valid iterator
+        FileInputIterator<FileRecord<TypedStruct>> ret = null;
         do {
             final DelegateFileInputIterator candidate = queue.peek();
+            var objectMeta = new GenericFileObjectMeta(candidate.getObjectURI());
+
             if (candidate.isOpen()) {
                 ret = getOrCloseIteratorIfNoMoreRecord(candidate);
             } else {
                 try {
-                    ret = openAndGetIteratorOrNullIfInvalid(candidate);
+                    // Re-check if the object-file still exists before opening a new iterator.
+                    if (!candidate.isValid()) {
+                        LOG.warn(
+                            "Object-file does not exist or is not readable. Skip and continue '{}'",
+                            candidate.getObjectURI());
+                        queue.remove();
+                        listener.onInvalid(new FileContext(candidate.key(), objectMeta));
+                        continue;
+                    }
+                    ret = openAndGetIteratorOrNullIfCompleted(candidate);
                     if (ret == null) {
-                        var objectMeta = new GenericFileObjectMeta(candidate.getObjectURI());
                         // Remove the current iterator and continue
                         deleteFileQueueAndInvokeListener(new FileContext(candidate.key(), objectMeta), null);
                     }
                 } catch (Exception e) {
                     LOG.error(
-                        "Failed to open and initialize new iterator for object: {}.",
+                        "Failed to open and initialize new iterator for object-file: {}.",
                         candidate.getObjectURI()
                     );
-                    final FileObjectMeta objectMeta = new GenericFileObjectMeta(candidate.getObjectURI());
                     deleteFileQueueAndInvokeListener(new FileContext(candidate.key(), objectMeta), e);
                     // Rethrow the exception.
                     throw e;
@@ -281,22 +288,15 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      * Attempt to initialize a new records iterator for the specified iterator.
      * The iterator will automatically seek to the latest committed offset.
      * <p>
-     * This method will return {@code null} if the iterator point
-     * to either an invalid file or to an already been completed file.
-     *
+     * This method will return {@code null} if the iterator point to an object-file
+     * which has already been completed file.
+     *</p>
      * @param iterator the source file iterator
-     * @return a new {@link FileInputIterator} instance or {@code null} if the iterator is invalid.
+     * @return a new {@link FileInputIterator} instance or {@code null} if the iterator is already completed.
      */
-    private FileInputIterator<FileRecord<TypedStruct>> openAndGetIteratorOrNullIfInvalid(
+    private FileInputIterator<FileRecord<TypedStruct>> openAndGetIteratorOrNullIfCompleted(
             final DelegateFileInputIterator iterator
     ) {
-        // Re-check if the file is still valid.
-        if (!iterator.isValid()) {
-            LOG.warn("File does not exist or is not readable. Skip entry and continue '{}'", iterator.getObjectURI());
-            // Return NULL so that the calling method can properly close the iterator.
-            return null;
-        }
-
         FileObjectMeta metadata = null;
         FileObjectOffset committedOffset;
         try {
@@ -322,7 +322,6 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
                 // Rethrow the exception if metadata cannot be loaded.
                 // The exception handling logic will be delegated to the calling method.
                 throw e;
-
             }
         }
 
@@ -330,7 +329,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
         boolean isAlreadyCompleted = committedOffset.position() >= metadata.contentLength();
         if (!ignoreCommittedOffsets && isAlreadyCompleted) {
             LOG.warn(
-                "Detected source file already completed. Skip entry and continue '{}'",
+                "Detected object-file already completed. Skip entry and continue '{}'",
                 iterator.getObjectURI()
             );
             // Return NULL so that the calling method can properly close the iterator.

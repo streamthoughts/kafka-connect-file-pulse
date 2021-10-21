@@ -160,11 +160,11 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     if (scanned.remove(objectId) != null) {
                         changed.set(true);
                     }
-                } else if (status.isOneOf(FileObjectStatus.CLEANED)) {
-                    final FileObjectMeta remove = scheduled.remove(objectId);
-                    if (remove == null) {
+                } else if (status.isOneOf(FileObjectStatus.CLEANED, FileObjectStatus.INVALID)) {
+                    final FileObjectMeta removed = scheduled.remove(objectId);
+                    if (removed == null && status.isOneOf(FileObjectStatus.CLEANED)) {
                         LOG.debug(
-                            "Received cleaned status but no file currently scheduled for: '{}'. " +
+                            "Received cleaned status but no object-file currently scheduled for: '{}'. " +
                             "This warn should only occurred during recovering step",
                             key
                         );

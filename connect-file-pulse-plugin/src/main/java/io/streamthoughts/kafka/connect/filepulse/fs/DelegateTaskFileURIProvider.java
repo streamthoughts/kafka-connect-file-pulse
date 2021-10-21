@@ -103,7 +103,7 @@ public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
                     if (status == FileObjectStatus.COMPLETED)
                         return isFirstCall;
 
-                    // Otherwise, only return true if the is file not already done.DelegateTaskFileURIProvider
+                    // Otherwise, only return true if this object-file is not already done.
                     return !status.isDone();
                 },
                 fileSystemListing.listObjects()

@@ -181,6 +181,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         }
         readStatesToEnd(ON_START_READ_END_LOG_TIMEOUT);
         recoverPreviouslyCompletedSources();
+        // Trigger a cleanup during initialization to ensure that all cleanable
+        // object-files are eventually removed before scheduling any tasks.
+        cleanUpCompletedFiles();
         LOG.info("Initialized FileSystemMonitor");
     }
 

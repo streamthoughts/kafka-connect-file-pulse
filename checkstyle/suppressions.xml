@@ -47,6 +47,7 @@
     <suppress checks="NPathComplexity" files="StructSchema.java"/>
     <suppress checks="NPathComplexity" files="Schema.java"/>
     <suppress checks="NPathComplexity" files="InternalSourceRecordBuilder.java"/>
+    <suppress checks="NPathComplexity" files="LocalFSDirectoryListing.java"/>
     <suppress checks="CyclomaticComplexity" files="Schema.java"/>
     <suppress checks="CyclomaticComplexity" files="FilePulseSourceTask.java"/>
     <suppress checks="LineLength" files="KafkaStateBackingStore.java"/>

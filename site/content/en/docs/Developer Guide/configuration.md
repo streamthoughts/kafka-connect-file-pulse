@@ -78,6 +78,12 @@ The `InMemoryFileObjectStateBackingStore` implement is not fault-tolerant and sh
 | `tasks.file.status.storage.topic.partitions` | The number of partitions to be used for the status storage topic. | int | *-* | LOW |
 | `tasks.file.status.storage.topic.replication.factor` | The replication factor to be used for the status storage topic. | float | *-* | LOW |
 
+In addition, to override the default configuration for the internal consumer and producer clients, 
+you can use one of the following override prefixes :
+
+* `tasks.file.status.storage.consumer.<consumer_property>`
+* `tasks.file.status.storage.producer.<producer_property>`
+
 ## Examples
 
 Some configuration examples are available [here](https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples).

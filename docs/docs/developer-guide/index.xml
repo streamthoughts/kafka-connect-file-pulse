@@ -336,6 +336,12 @@ The &lt;code&gt;InMemoryFileObjectStateBackingStore&lt;/code&gt; implement is no
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;p&gt;In addition, to override the default configuration for the internal consumer and producer clients,
+you can use one of the following override prefixes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;tasks.file.status.storage.consumer.&amp;lt;consumer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tasks.file.status.storage.producer.&amp;lt;producer_property&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;examples&#34;&gt;Examples&lt;/h2&gt;
 &lt;p&gt;Some configuration examples are available &lt;a href=&#34;https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;defining-connect-record-schema&#34;&gt;Defining Connect Record Schema&lt;/h2&gt;

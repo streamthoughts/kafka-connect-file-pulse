@@ -3105,15 +3105,30 @@ Note, that some duplicates maybe written into Kafka.</p>
 <p>However, Connect File Pulse has not to be originally designed to collect dynamic application log files.</p>
 <h2 id="is-filepulse-connector-support-saslssl-authentication-mechanisms-and-can-be-deployed-on-confluent-cloud-">Is FilePulse connector support SASL/SSL authentication mechanisms and can be deployed on Confluent Cloud ?</h2>
 <p>Yes, FilePulse connector can be deployed on any Kafka Cluster. However, the connector currently requires the use of an internal topic
-to synchronize the Connector instance and the Tasks that process files. For doing this, the connector
-will create both a producer and consumer clients that you must configured when running the connector with a secured Kafka Cluster.</p>
+to perform synchronization between the <em>SourceConnector</em> instance and the <em>SourceTasks</em> that process files. To do that, FilePulse
+will create an internal producer and consumer that you need to configure when running against a secured Kafka Cluster.</p>
 <p>To override the default configuration for the internal consumer and producer clients,
 you can use one of the following override prefixes :</p>
 <ul>
-<li><code>internal.kafka.reporter.consumer.&lt;consumer_property&gt;</code></li>
-<li><code>internal.kafka.reporter.producer.&lt;producer_property&gt;</code></li>
+<li><code>tasks.file.status.storage.consumer.&lt;consumer_property&gt;</code></li>
+<li><code>tasks.file.status.storage.producer.&lt;producer_property&gt;</code></li>
 </ul>
-<h2 id="what-are-the-differences-between-filepulse-connector-and-others-kafka-connectors-for-streaming-files-">What are the differences between FilePulse connector and others Kafka connectors for streaming files ?</h2>
+<p>Example:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.bootstrap.servers&#34;</span>                             <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;CCLOUD_BROKER_SERVICE_URI:9092&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.topic&#34;</span>                                         <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;connect-file-pulse-status&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.producer.security.protocol&#34;</span>                    <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;SASL_SSL&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.producer.ssl.endpoint.identification.algorithm&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;https&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.producer.sasl.mechanism&#34;</span>                       <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;PLAIN&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.producer.sasl.jaas.config&#34;</span>                     <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;org.apache.kafka.common.security.plain.PlainLoginModule required username=\&#34;CCLOUD_API_KEY\&#34; password=\&#34;CCLOUD_API_SECRET\&#34;;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.producer.request.timeout.ms&#34;</span>                   <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;20000&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.consumer.security.protocol&#34;</span>                    <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;SASL_SSL&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.consumer.ssl.endpoint.identification.algorithm&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;https&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.consumer.sasl.mechanism&#34;</span>                       <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;PLAIN&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.consumer.sasl.jaas.config&#34;</span>                     <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;org.apache.kafka.common.security.plain.PlainLoginModule required username=\&#34;CCLOUD_API_KEY\&#34; password=\&#34;CCLOUD_API_SECRET\&#34;;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#204a87;font-weight:bold">&#34;tasks.file.status.storage.consumer.request.timeout.ms&#34;</span>                   <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;20000&#34;</span>
+<span style="color:#000;font-weight:bold">}</span>
+</code></pre></div><h2 id="what-are-the-differences-between-filepulse-connector-and-others-kafka-connectors-for-streaming-files-">What are the differences between FilePulse connector and others Kafka connectors for streaming files ?</h2>
 <p>The following table shows a simple comparison between Connect File Pulse and other solutions : <a href="https://github.com/jcustenborder/kafka-connect-spooldir">Connect Spooldir</a> and Connect <a href="https://github.com/apache/kafka/tree/trunk/connect/file">FileStreams</a></p>
 <table>
 <thead>
@@ -3664,7 +3679,7 @@ you can use one of the following override prefixes :</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified May 12, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/213ca93d13d7f7a31808b5673af7c043ddaf01ad">docs(site): fix typo (213ca93)</a>
+	<div class="text-muted mt-5 pt-3 border-top">Last modified December 3, 2021: <a  href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9c6ea7e9254ffcc39fff0b6f09beb764093a5f5e">docs(site): add details about configuring connector with SSL/SASL (9c6ea7e)</a>
 </div>
 </div>
 

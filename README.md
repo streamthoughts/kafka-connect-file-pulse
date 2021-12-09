@@ -5,7 +5,7 @@
 [![Forks](https://img.shields.io/github/forks/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/github/forks/streamthoughts/kafka-connect-file-pulse)
 [![DockerPull](https://img.shields.io/docker/pulls/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/docker/pulls/streamthoughts/kafka-connect-file-pulse)
 [![Issues](https://img.shields.io/github/issues/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/github/issues/streamthoughts/kafka-connect-file-pulse)
-[![CircleCI](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse.svg?style=svg)](https://circleci.com/gh/streamthoughts/kafka-connect-file-pulse)
+![Java CI Build](https://github.com/streamthoughts/kafka-connect-file-pulse/actions/workflows/build.yml/badge.svg)
 
 <p align="center">
   <img width="400" height="400" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/assets/logo.png">

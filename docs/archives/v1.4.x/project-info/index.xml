@@ -1,0 +1,19 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – Project Info</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/project-info/</link><description>Recent content in Project Info on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Sat, 09 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/project-info/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Getting the code</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/project-info/getting_the_code/</link><pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/project-info/getting_the_code/</guid><description>
+&lt;h2 id="prerequisites-for-building-connect-file-pulse">Prerequisites for building Connect File Pulse&lt;/h2>
+&lt;ul>
+&lt;li>Git&lt;/li>
+&lt;li>Maven (we recommend version 3.5.3)&lt;/li>
+&lt;li>Java 11&lt;/li>
+&lt;/ul>
+&lt;h2 id="building-connect-file-pulse">Building Connect File Pulse&lt;/h2>
+&lt;p>The code of Connect File Pulse is kept in GitHub. You can check it out like this:&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">$ git clone https://github.com/streamthoughts/kafka-connect-file-pulse.git
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>The project uses Maven, you can build it like this:&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">$ &lt;span style="color:#204a87">cd&lt;/span> kafka-connect-file-pulse
+$ mvn clean package -DskipTests
+&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Confluent Hub&lt;/h4>
+Connect File Pulse is packaged into an archive
+file compatible with &lt;a href="https://docs.confluent.io/current/connect/managing/confluent-hub/client.html">confluent-hub client&lt;/a>.
+&lt;/div></description></item></channel></rss>

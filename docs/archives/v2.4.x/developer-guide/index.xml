@@ -1,0 +1,2970 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – Developer Guide</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/</link><description>Recent content in Developer Guide on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Wed, 12 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/installation/</link><pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/installation/</guid><description>
+&lt;p>&lt;strong>Connect FilePulse&lt;/strong> can be installed either from &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases">GitHub Releases Page&lt;/a> or from &lt;a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse">Confluent Hub&lt;/a>.&lt;/p>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Caution&lt;/h4>
+You should note that the connector downloaded from Confluent Hub may not reflect the latest available version.
+&lt;/div>
+&lt;p>&lt;strong>Confluent Hub CLI installation&lt;/strong>&lt;/p>
+&lt;p>Use the &lt;a href="https://docs.confluent.io/current/confluent-hub/client.html">Confluent Hub client&lt;/a> to install this connector with:&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">confluent-hub install streamthoughts/kafka-connect-file-pulse:latest
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Download Installation&lt;/strong>&lt;/p>
+&lt;p>Download the distribution ZIP file for the latest available version.&lt;/p>
+&lt;p>&lt;strong>Example :&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">&lt;span style="color:#204a87">export&lt;/span> &lt;span style="color:#000">VERSION&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>1.3.0
+curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v&lt;span style="color:#000">$VERSION&lt;/span>/streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Extract it into one of the directories that is listed on the &lt;code>plugin.path&lt;/code> worker configuration property.&lt;/p>
+&lt;p>You can also use the Confluent Hub CLI for installing it.&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">$ confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
+&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Important&lt;/h4>
+When you run Connect workers in &lt;strong>distributed mode&lt;/strong>, the connector-plugin must be installed &lt;strong>on each of machines&lt;/strong> running Kafka Connect.
+&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/configuration/</link><pubDate>Sun, 05 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/configuration/</guid><description>
+&lt;h2 id="commons-configuration">Commons configuration&lt;/h2>
+&lt;p>Whatever the kind of files you are processing a connector should always be configured with the below properties.
+These configurations are described in detail in subsequent chapters.&lt;/p>
+&lt;p>&lt;strong>Common Kafka Connect properties&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>topic&lt;/code>&lt;/td>
+&lt;td>The default output topic to write&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.max&lt;/code>&lt;/td>
+&lt;td>The maximum number of tasks that should be created for this connector.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for listing and cleaning object files (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/">FileSystemListing&lt;/a>)&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.class&lt;/code>&lt;/td>
+&lt;td>Class which is used to list eligible files from the scanned file system.&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.filters&lt;/code>&lt;/td>
+&lt;td>Filters use to list eligible input files&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.interval.ms&lt;/code>&lt;/td>
+&lt;td>Time interval (in milliseconds) at wish to scan input directory&lt;/td>
+&lt;td>long&lt;/td>
+&lt;td>&lt;em>10000&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.task.delegation.enabled&lt;/code>&lt;/td>
+&lt;td>Boolean indicating whether the file listing process should be delegated to tasks.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.class&lt;/code>&lt;/td>
+&lt;td>The fully qualified name of the class which is used to cleanup files&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.triggered.on&lt;/code>&lt;/td>
+&lt;td>Specify the status when a file get cleanup. Valid values are: &lt;code>COMPLETED&lt;/code>, &lt;code>COMMITTED&lt;/code>&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>COMPLETED&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>max.scheduled.files&lt;/code>&lt;/td>
+&lt;td>Maximum number of files that can be schedules to tasks.&lt;/td>
+&lt;td>long&lt;/td>
+&lt;td>&lt;em>1000&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>allow.tasks.reconfiguration.after.timeout.ms&lt;/code>&lt;/td>
+&lt;td>Specify the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed.&lt;/td>
+&lt;td>long&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>task.partitioner.class&lt;/code>&lt;/td>
+&lt;td>The TaskPartitioner to be used for partitioning files to tasks.&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;code>io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.halt.on.error&lt;/code>&lt;/td>
+&lt;td>Should a task halt when it encounters an error or continue to the next file.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.empty.poll.wait.ms&lt;/code>&lt;/td>
+&lt;td>The amount of time in millisecond a tasks should wait if a poll returns an empty list of records.&lt;/td>
+&lt;td>long&lt;/td>
+&lt;td>&lt;em>500&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ignore.committed.offsets&lt;/code>&lt;/td>
+&lt;td>Should a task ignore committed offsets while scheduling a file.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>value.connect.schema&lt;/code>&lt;/td>
+&lt;td>The schema for the record-value.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for transforming object file record(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/">Filters Chain Definition&lt;/a>)&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>filters&lt;/code>&lt;/td>
+&lt;td>List of filters aliases to apply on each data (order is important)&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for reading object file record(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/">FileReaders&lt;/a>)&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>tasks.reader.class&lt;/code>&lt;/td>
+&lt;td>The fully qualified name of the class which is used by tasks to read input files&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for uniquely identifying object files and records (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/">FileReaders&lt;/a>)&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>offset.policy.class&lt;/code>&lt;/td>
+&lt;td>Class which is used to determine the source partition and offset that uniquely identify a input record&lt;/td>
+&lt;td>&lt;code>class&lt;/code>&lt;/td>
+&lt;td>&lt;em>io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for synchronizing Connector and Tasks&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.class&lt;/code>&lt;/td>
+&lt;td>The FileObjectStateBackingStore class to be used for storing status state of file objects.&lt;/td>
+&lt;td>&lt;code>Class&lt;/code>&lt;/td>
+&lt;td>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Available implementations are :&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.InMemoryFileObjectStateBackingStore&lt;/code>&lt;/li>
+&lt;li>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Limitation&lt;/h4>
+The &lt;code>InMemoryFileObjectStateBackingStore&lt;/code> implement is not fault-tolerant and should be only when using Kafka Connect in standalone mode or a single worker.
+&lt;/div>
+&lt;p>&lt;strong>Properties for configuring the &lt;code>KafkaFileObjectStateBackingStore&lt;/code> class&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.topic&lt;/code>&lt;/td>
+&lt;td>Name of the internal topic used by tasks and connector to report and monitor file progression.&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>connect-file-pulse-status&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.bootstrap.servers&lt;/code>&lt;/td>
+&lt;td>A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.topic.partitions&lt;/code>&lt;/td>
+&lt;td>The number of partitions to be used for the status storage topic.&lt;/td>
+&lt;td>int&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.topic.replication.factor&lt;/code>&lt;/td>
+&lt;td>The replication factor to be used for the status storage topic.&lt;/td>
+&lt;td>float&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="examples">Examples&lt;/h2>
+&lt;p>Some configuration examples are available &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples">here&lt;/a>.&lt;/p>
+&lt;h2 id="defining-connect-record-schema">Defining Connect Record Schema&lt;/h2>
+&lt;p>The optional &lt;code>value.connect.schema&lt;/code> config property can be used to set the connect-record schema that should be used.
+If there is no schema pass through the connector configuration, a schema will be resolved for each record produced.&lt;/p>
+&lt;p>The &lt;code>value.connect.schema&lt;/code> must be passed as a JSON string that respects the following schema (using Avro representation):&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;fields&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The name of this schema&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;enum&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;symbols&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;STRUCT&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;BOOLEAN&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;INT8&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;INT16&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;INT32&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;INT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;FLOAT32&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;FLOAT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;BYTES&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;MAP&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;ARRAY&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The type of this schema&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The documentation for this schema&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;fieldSchemas&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The fields for this Schema. Throws a DataException if this schema is not a struct.&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;valueSchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The value schema for this map or array schema. Throws a DataException if this schema is not a map or array.&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;keySchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The key schema for this map schema. Throws a DataException if this schema is not a map.&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;defaultValue&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;boolean&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;true if this field is optional, false otherwise&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;version&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#4e9a06">&amp;#34;integer&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The optional version of the schema. If a version is included, newer versions *must* be larger than older ones.&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;com.example.User&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRUCT&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldSchemas&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;INT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;first_name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;last_name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;email&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;gender&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;country&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;favorite_colors&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;ARRAY&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;valueSchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/file-system-listing/</link><pubDate>Wed, 16 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/file-system-listing/</guid><description>
+&lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically lists object files that may be streamed into Kafka using the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing&lt;/a>&lt;br>
+configured in the connector&amp;rsquo;s configuration.&lt;/p>
+&lt;h2 id="supported-filesystems">Supported Filesystems&lt;/h2>
+&lt;p>Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>AmazonS3FileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageFileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsFileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalFSDirectoryListing&lt;/code> (default)&lt;/li>
+&lt;/ul>
+&lt;h3 id="local-filesystem-default">Local Filesystem (default)&lt;/h3>
+&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> class can be used for listing files that exist in a local filesystem directory.&lt;/p>
+&lt;h4 id="how-to-use-it-">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.directory.path&lt;/code>&lt;/td>
+&lt;td>The input directory to scan&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.recursive.enabled&lt;/code>&lt;/td>
+&lt;td>Flag indicating whether local directory should be recursively scanned&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>true&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="supported-file-types">Supported File types&lt;/h4>
+&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)
+Supported content-types are:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
+&lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
+&lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h3 id="amazon-s3">Amazon S3&lt;/h3>
+&lt;p>The &lt;code>AmazonS3FileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p>
+&lt;h4 id="how-to-use-it--1">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration-1">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>aws.access.key.id&lt;/code>&lt;/td>
+&lt;td>AWS Access Key ID AWS&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.secret.access.key&lt;/code>&lt;/td>
+&lt;td>AWS Secret Access Key&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.secret.session.token&lt;/code>&lt;/td>
+&lt;td>AWS Secret Session Token&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.region&lt;/code>&lt;/td>
+&lt;td>The AWS S3 Region, e.g. us-east-1&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>Regions.DEFAULT_REGION.getName()&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.service.endpoint&lt;/code>&lt;/td>
+&lt;td>AWS S3 custom service endpoint.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.path.style.access.enabled&lt;/code>&lt;/td>
+&lt;td>Configures the client to use path-style access for all requests.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.bucket.name&lt;/code>&lt;/td>
+&lt;td>The name of the Amazon S3 bucket.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.bucket.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for restricting the listing of the objects in the bucket&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
+&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
+&lt;td>&lt;code>class&lt;/code>&lt;/td>
+&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="google-cloud-storage">Google Cloud Storage&lt;/h3>
+&lt;p>The &lt;code>GcsFileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Google Cloud Storage bucket.&lt;/p>
+&lt;h4 id="how-to-use-it--2">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.GcsFileSystemListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration-2">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>gcs.credentials.path&lt;/code>&lt;/td>
+&lt;td>The path to GCP credentials file. Cannot be set when &lt;code>GCS_CREDENTIALS_JSON_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.credentials.json&lt;/code>&lt;/td>
+&lt;td>The GCP credentials as JSON string. Cannot be set when &lt;code>GCS_CREDENTIALS_PATH_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.bucket.name&lt;/code>&lt;/td>
+&lt;td>The GCS bucket name to download the object files from.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.blobs.filter.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for filtering blobs whose names begin with it.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="azure-blob-storage">Azure Blob Storage&lt;/h3>
+&lt;p>The &lt;code>AzureBlobStorageConfig&lt;/code> class can be used for listing objects that exist in a specific Azure Storage Container.&lt;/p>
+&lt;h4 id="how-to-use-it--3">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageConfig&lt;/code>&lt;/p>
+&lt;h4 id="configuration-3">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.connection.string&lt;/code>&lt;/td>
+&lt;td>Azure storage account connection string.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.account.name&lt;/code>&lt;/td>
+&lt;td>The Azure storage account name.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.account.key&lt;/code>&lt;/td>
+&lt;td>The Azure storage account key.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.container.name&lt;/code>&lt;/td>
+&lt;td>The Azure storage container name.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.blob.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for restricting the listing of the blobs in the container.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="filtering-input-files">Filtering input files&lt;/h2>
+&lt;p>You can configure one or more &lt;code>FileFilter&lt;/code> that will be used to determine if a file should be scheduled for processing or ignored.
+All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
+At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p>
+&lt;p>FilePulse packs with the following built-in filters :&lt;/p>
+&lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
+&lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
+&lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Limitation&lt;/h4>
+This filter is only supported by the &lt;code>LocalFSDirectoryListing&lt;/code>.
+&lt;/div>
+&lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
+&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
+# The last modified time for a file can be accepted (default: 5000)
+file.filter.minimum.age.ms=10000
+&lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
+&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter files that do not match the specified regex.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
+# The regex pattern used to matches input files
+file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
+&lt;/code>&lt;/pre></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/file-readers/</link><pubDate>Thu, 30 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/file-readers/</guid><description>
+&lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
+configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
+&lt;p>Currently, Connect FilePulse provides the following &lt;code>FileInputReader&lt;/code> implementations :&lt;/p>
+&lt;p>&lt;strong>Amazon S3&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>AmazonS3AvroFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AmazonS3BytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AmazonS3RowFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AmazonS3XMLFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AmazonS3MetadataFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Azure Blob Storage&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>AzureBlobStorageAvroFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageBytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageRowFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageXMLFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageMetadataFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Google Cloud Storage&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>GcsAvroFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsBytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsRowFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsXMLFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsMetadataFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Local Filesystem&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>LocalAvroFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalBytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalRowFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalXMLFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalMetadataFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h2 id="rowfileinputreader-default">RowFileInputReader (default)&lt;/h2>
+&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;RowFileInputReader&lt;/code>s can be used to read files line by line.
+This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.&lt;/p>
+&lt;h3 id="configuration">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>file.encoding&lt;/code>&lt;/td>
+&lt;td>The text file encoding to use&lt;/td>
+&lt;td>&lt;code>String&lt;/code>&lt;/td>
+&lt;td>&lt;code>UTF_8&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>buffer.initial.bytes.size&lt;/code>&lt;/td>
+&lt;td>The initial buffer size used to read input files.&lt;/td>
+&lt;td>&lt;code>String&lt;/code>&lt;/td>
+&lt;td>&lt;code>4096&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>min.read.records&lt;/code>&lt;/td>
+&lt;td>The minimum number of records to read from file before returning to task.&lt;/td>
+&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
+&lt;td>&lt;code>1&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>skip.headers&lt;/code>&lt;/td>
+&lt;td>The number of rows to be skipped in the beginning of file.&lt;/td>
+&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
+&lt;td>&lt;code>0&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>skip.footers&lt;/code>&lt;/td>
+&lt;td>The number of rows to be skipped at the end of file.&lt;/td>
+&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
+&lt;td>&lt;code>0&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>read.max.wait.ms&lt;/code>&lt;/td>
+&lt;td>The maximum time to wait in milliseconds for more bytes after hitting end of file.&lt;/td>
+&lt;td>&lt;code>Long&lt;/code>&lt;/td>
+&lt;td>&lt;code>0&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="xxxbytesarrayinputreader">XxxBytesArrayInputReader&lt;/h2>
+&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;BytesArrayInputReader&lt;/code>s create a single byte array record from a source file.&lt;/p>
+&lt;h2 id="xxxavrofileinputreader">XxxAvroFileInputReader&lt;/h2>
+&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;AvroFileInputReader&lt;/code>s can be used to read Avro files.&lt;/p>
+&lt;h2 id="xxxxmlfileinputreader">XxxXMLFileInputReader&lt;/h2>
+&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;XMLFileInputReader&lt;/code>s can be used to read XML files.&lt;/p>
+&lt;h3 id="configuration-1">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Since&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>reader.xpath.expression&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>The XPath expression used extract data from XML input files&lt;/td>
+&lt;td>&lt;code>String&lt;/code>&lt;/td>
+&lt;td>&lt;code>/&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xpath.result.type&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>The expected result type for the XPath expression in [NODESET, STRING]&lt;/td>
+&lt;td>&lt;code>String&lt;/code>&lt;/td>
+&lt;td>&lt;code>NODESET&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.force.array.on.fields&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>The comma-separated list of fields for which an array-type must be forced&lt;/td>
+&lt;td>&lt;code>List&lt;/code>&lt;/td>
+&lt;td>&lt;code>-&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.parser.validating.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the parser will validate documents as they are parsed (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.parser.namespace.aware.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the XML parser will provide support for XML namespaces (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.exclude.empty.elements&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should exclude element having no field (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.exclude.node.attributes&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should exclude all node attributes (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.exclude.node.attributes.in.namespaces&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.data.type.inference.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.3.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should try to infer the type of data nodes (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.attribute.prefix&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: &amp;lsquo;').&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="xxxmetadatafileinputreader">XxxMetadataFileInputReader&lt;/h2>
+&lt;p>The &lt;code>FileInputMetadataReader&lt;/code>s can be used to send a single record per file containing metadata, i.e.: &lt;code>name&lt;/code>, &lt;code>path&lt;/code>, &lt;code>hash&lt;/code>, &lt;code>lastModified&lt;/code>, &lt;code>size&lt;/code>, etc.&lt;/p></description></item><item><title>Docs: Identifying Files</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/offsets/</link><pubDate>Wed, 04 Aug 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/offsets/</guid><description>
+&lt;p>Kafka Connect FilePulse uses a pluggable interface called &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/source/SourceOffsetPolicy.java">&lt;code>SourceOffsetPolicy&lt;/code>&lt;/a> for
+uniquely identifying files. Basically, the implementation passed in the connector&amp;rsquo;s configuration is used for computing a unique identifier which is
+used by Kafka Connect to persist the position of the connector for each file (i.e., the offsets saved in the &lt;code>connect-offsets&lt;/code> topic).&lt;/p>
+&lt;p>By default, Kafka Connect FilePulse use the default implementation &lt;code>DefaultSourceOffsetPolicy&lt;/code> which accepts the following configuration:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>offset.attributes.string&lt;/code>&lt;/td>
+&lt;td>A separated list of attributes, using &amp;lsquo;+&amp;rsquo; character as separator, to be used for uniquely identifying an object file; must be one of [name, path, lastModified, inode, hash, uri] (e.g: name+hash). Note that order doesn&amp;rsquo;t matter.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>uri&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Docs: Filter Chain Definition</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/filters-chain-definition/</link><pubDate>Wed, 30 Sep 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/filters-chain-definition/</guid><description>
+&lt;p>The connector can be configured to apply complex transformations on messages before they are written to Kafka.&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>A &lt;a href="#filters">filter&lt;/a> chain can be specified in the connector configuration.&lt;/p>
+&lt;ul>
+&lt;li>filters - List of aliases for the filter, specifying the order in which the filters will be applied.&lt;/li>
+&lt;li>filters.$alias.type - Fully qualified class name for the filter.&lt;/li>
+&lt;li>filters.$alias.$filterSpecificConfig Configuration properties for the filter&lt;/li>
+&lt;/ul>
+&lt;p>For example, let&amp;rsquo;s parse a standard application logs file written with log4j using the build-in filters :&lt;/p>
+&lt;pre>&lt;code>filters=GroupMultilineException, ExtractFirstLine, ParseLog4jLog
+filters.GroupMultilineException.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
+filters.GroupMultilineException.negate=false
+filters.GroupMultilineException.pattern=&amp;quot;^[\\t]&amp;quot;
+filters.ExtractFirstLine.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.ExtractFirstLine.field=$.logmessage
+filters.ExtractFirstLine.values={{ extract_array($.message, 0) }
+filters.ParseLog4jLog.type=io.streamthoughts.kafka.connect.filepulse.filter.impl.GrokFilter
+filters.ParseLog4jLog.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:thread} %{GREEDYDATA:logmessage}&amp;quot;
+filters.ParseLog4jLog.source=log
+filters.ParseLog4jLog.overwrite=logmessage
+&lt;/code>&lt;/pre>&lt;h2 id="available-filters">Available Filters&lt;/h2>
+&lt;p>These filters are available for use with Kafka Connect File Pulse:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Filter&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Since&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;a href="../filters#appendfilter">AppendFilter&lt;/a>&lt;/td>
+&lt;td>Appends one or more values to an existing or non-existing array field&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#convertfilter">ConvertFilter&lt;/a>&lt;/td>
+&lt;td>Converts a message field&amp;rsquo;s value to a specific type&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#datefilter">DateFilter&lt;/a>&lt;/td>
+&lt;td>Converts a field&amp;rsquo;s value containing a date to a unix epoch time&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#delimitedrowfilter">DelimitedRowFilter&lt;/a>&lt;/td>
+&lt;td>Parses a message field&amp;rsquo;s value containing columns delimited by a separator into a struct&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#dropfilter">DropFilter&lt;/a>&lt;/td>
+&lt;td>Drops messages satisfying a specific condition without throwing exception.&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#excludefilter">ExcludeFilter&lt;/a>&lt;/td>
+&lt;td>Excludes one or more fields from the input record.&lt;/td>
+&lt;td>&lt;code>v1.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#explodefilter">ExplodeFilter&lt;/a>&lt;/td>
+&lt;td>Explodes an array or list field into separate records.&lt;/td>
+&lt;td>&lt;code>v1.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#failfilter">FailFilter&lt;/a>&lt;/td>
+&lt;td>Throws an exception when a message satisfy a specific condition&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#grokfilter">GrokFilter&lt;/a>&lt;/td>
+&lt;td>Parses an unstructured message field&amp;rsquo;s value to a struct by combining Grok patterns&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#grouprowfilter">GroupRowFilter&lt;/a>&lt;/td>
+&lt;td>Regroups multiple following messages into a single message by composing a grouping key&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#joinfilter">JoinFilter&lt;/a>&lt;/td>
+&lt;td>Joins values of an array field with a specified separator&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#jsonfilter">JSONFilter&lt;/a>&lt;/td>
+&lt;td>Unmarshallings a JSON message field&amp;rsquo;s value to a complex struct&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#movefilter">MoveFilter&lt;/a>&lt;/td>
+&lt;td>Moves an existing record field&amp;rsquo;s value to a specific target path&lt;/td>
+&lt;td>&lt;code>v1.5.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#multirowfilter">MultiRowFilter&lt;/a>&lt;/td>
+&lt;td>Combines following message lines into single one by combining patterns&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#nullvaluefilter">NullValueFilter&lt;/a>&lt;/td>
+&lt;td>Combines following message lines into single one by combining patterns&lt;/td>
+&lt;td>&lt;code>v2.3.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#renamefilter">RenameFilter&lt;/a>&lt;/td>
+&lt;td>Renames a message field&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#splitfilter">SplitFilter&lt;/a>&lt;/td>
+&lt;td>Splits a message field&amp;rsquo;s value to array&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#xmltojsonfilter">XmlToJsonFilter&lt;/a>&lt;/td>
+&lt;td>Parses an XML record-field and convert it to a JSON string&lt;/td>
+&lt;td>&lt;code>v2.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="../filters#xmltostructfilter">XmlToStructFilter&lt;/a>&lt;/td>
+&lt;td>Parses an XML record-field into STRUCT&lt;/td>
+&lt;td>&lt;code>v2.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="difference-between-kafka-connect-single-message-transforms-smt-functionality">Difference between Kafka Connect Single Message Transforms (SMT) functionality&lt;/h2>
+&lt;p>Filters can be compared to Kafka Connect built-in &lt;a href="https://kafka.apache.org/documentation/#connect_transforms">Transformers&lt;/a>.
+However, filters allow more complex pipelines to be built for structuring file data.
+For example, they can be used to split one input message to multiple messages or to temporarily buffer consecutive messages in order to regroup them by fields or a pattern.&lt;/p></description></item><item><title>Docs: Accessing Data and Metadata</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/accessing-data-and-metadata/</link><pubDate>Sun, 26 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/accessing-data-and-metadata/</guid><description>
+&lt;p>Some filters (e.g : &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter">AppendFilter&lt;/a>) can be configured using &lt;em>Simple Connect Expression Language&lt;/em>.&lt;/p>
+&lt;p>&lt;em>Simple Connect Expression Language&lt;/em> (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.&lt;/p>
+&lt;p>The syntaxes to define an expression are of the form : &lt;code>&amp;lt;expression string&amp;gt;&lt;/code> or &lt;code>&amp;quot;{{ &amp;lt;expression string&amp;gt; }}&amp;quot;&lt;/code>.&lt;/p>
+&lt;p>ScEL supports the following capabilities :&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Literal expressions&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>Field Selector&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>Nested Navigation&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>String substitution&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>Functions&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;h2 id="literal-expressions">Literal expressions&lt;/h2>
+&lt;ul>
+&lt;li>String : &lt;code>'Hello World'&lt;/code>&lt;/li>
+&lt;li>Number : &lt;code>42&lt;/code>&lt;/li>
+&lt;li>Boolean: &lt;code>True&lt;/code>&lt;/li>
+&lt;li>Nullable: &lt;code>null&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h2 id="field-selector">Field Selector&lt;/h2>
+&lt;p>The expression language can be used to easily select one field from the input record :&lt;/p>
+&lt;p>&lt;code>$.username&lt;/code>&lt;/p>
+&lt;h2 id="nested-navigation">Nested Navigation&lt;/h2>
+&lt;p>To navigate down a struct value, just use a period to indicate a nested field value :&lt;/p>
+&lt;p>&lt;code>$.address.city&lt;/code>&lt;/p>
+&lt;h2 id="string-substitution">String substitution&lt;/h2>
+&lt;p>The expression language can be used to easily build a new string field that concatenate multiple ones :&lt;/p>
+&lt;p>&lt;code>The user {{ $.username }} is living in city {{ $.address.city }}&lt;/code>&lt;/p>
+&lt;h2 id="function">Function&lt;/h2>
+&lt;p>The expression language support function call :&lt;/p>
+&lt;p>&lt;code>The user {{ $.username }} is living in city {{ uppercase($.address.city) }}&lt;/code>&lt;/p>
+&lt;h2 id="dynamic-field-selector">Dynamic Field Selector&lt;/h2>
+&lt;p>String substitution can be used to dynamically select a field :&lt;/p>
+&lt;p>The bellow example shows how to dynamically build a field selector by concatenating &lt;code>$.&lt;/code> and
+the first element present in the array field &lt;code>$.values&lt;/code>.&lt;/p>
+&lt;p>&lt;code>{{ '$.'extract_array($.values, 0) }}&lt;/code>&lt;/p>
+&lt;p>Note the use of double-quotes to define a substitution expressions&lt;/p>
+&lt;h2 id="built-in-functions">Built-in Functions&lt;/h2>
+&lt;p>ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Function&lt;/th>
+&lt;th>Since&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Syntax&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>and&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Checks if all of the given conditional expressions are &lt;code>true&lt;/code>.&lt;/td>
+&lt;td>&lt;code>{{ and(booleanExpression1, booleanExpression2, ...) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>concat&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Concatenate two or more string expressions.&lt;/td>
+&lt;td>&lt;code>{{ concat(expr1, expr2, ...) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>concat_ws&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Concatenate two or more string expressions, using the specified separator between each.&lt;/td>
+&lt;td>&lt;code>{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>contains&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an array field&amp;rsquo;s value contains the specified value&lt;/td>
+&lt;td>&lt;code>{{ contains(array, 'value') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>converts&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Converts a field&amp;rsquo;s value into the specified type&lt;/td>
+&lt;td>&lt;code>{{ converts(field_expr, INTEGER) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ends_with&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if a string field&amp;rsquo;s value end with the specified string suffix&lt;/td>
+&lt;td>&lt;code>{{ ends_with(field_expr, 'suffix') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>equals&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if a string or number fields&amp;rsquo;s value equals the specified value&lt;/td>
+&lt;td>&lt;code>{{ equals(field_expr, value) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>exists&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an object has the specified field&lt;/td>
+&lt;td>&lt;code>{{ exists(obj_expr, field_expr) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>extract_array&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns the element at the specified position of the specified array&lt;/td>
+&lt;td>&lt;code>{{ extract_array(array, 0) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gt&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Executes &amp;ldquo;&lt;em>greater than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is greater than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
+&lt;td>&lt;code>{{ gt(expressionValue1, expressionValue2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>hash&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Hash a given string expression, using murmur2 algorithm&lt;/td>
+&lt;td>&lt;code>{{ hash(field_expr) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>if&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Evaluates the given boolean expression and returns one value if &lt;code>true&lt;/code> and another value if &lt;code>false&lt;/code>.&lt;/td>
+&lt;td>&lt;code>{{ if(booleanExpression, valueIfTrue, valueIfFalse ) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>is_null&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if a field&amp;rsquo;s value is null&lt;/td>
+&lt;td>&lt;code>{{ is_null(field) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>length&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns the number of elements into an array of the length of an string field&lt;/td>
+&lt;td>&lt;code>{{ length(array) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>lt&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Executes &amp;ldquo;&lt;em>less than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is less than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
+&lt;td>&lt;code>{{ lt(expressionValue1, expressionValue2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>lowercase&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Converts all of the characters in a string field&amp;rsquo;s value to lower case&lt;/td>
+&lt;td>&lt;code>{{ lowercase(field) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>matches&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if a field&amp;rsquo;s value match the specified regex&lt;/td>
+&lt;td>&lt;code>{{ matches(field_expr, 'regex') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>md5&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Computes the MD5 hash of string expression&lt;/td>
+&lt;td>&lt;code>{{ md5(field_expr) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>nlv&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Sets a default value if a field&amp;rsquo;s value is null&lt;/td>
+&lt;td>&lt;code>{{ length(array) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>not&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Reverses a boolean value&lt;/td>
+&lt;td>&lt;code>{{ not(booleanExpression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>or&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Checks if at least one of the given conditional expressions is &lt;code>true&lt;/code>..&lt;/td>
+&lt;td>&lt;code>{{ or(booleanExpression1, booleanExpression2, ...) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>replace_all &lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Replaces every subsequence of the field&amp;rsquo;s value that matches the given pattern with the given replacement string.&lt;/td>
+&lt;td>&lt;code>{{ replace_all(field_expr, 'regex', 'replacement') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>split&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Split a string field&amp;rsquo;s value into an array using the specified regex or character&lt;/td>
+&lt;td>&lt;code>{{ split(field_expr, regex) }}&lt;/code> or &lt;code>{{ split(field_expr, regex, limit) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>starts_with&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an a string field&amp;rsquo;s value start with the specified string prefix&lt;/td>
+&lt;td>&lt;code>{{ starts_with(field_expr, 'prefix') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>timestamp_diff&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Calculates the amount of time between two epoch times in seconds or milliseconds. For more information on &lt;code>unit&lt;/code> see &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html">ChronoUnit&lt;/a>.&lt;/td>
+&lt;td>&lt;code>{{ timestamp_diff(unit, epoch_time_expression1, epoch_time_expression2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>to_timestamp&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Parses a given string value and returns the epoch-time in milliseconds.&lt;/td>
+&lt;td>&lt;code>{{ to_timestamp(datetime_expression, pattern [, timezone]) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>trim&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Trims the spaces from the beginning and end of a string.&lt;/td>
+&lt;td>&lt;code>{{ trim(field_expr) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>unix_timestamp&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Returns the current time in milliseconds.&lt;/td>
+&lt;td>&lt;code>{{ unix_timestamp() }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>uppercase&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Converts all of the characters in a string field&amp;rsquo;s value to upper case&lt;/td>
+&lt;td>&lt;code>{{ uppercase(field_expr) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>uuid&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Create a Universally Unique Identifier (UUID)&lt;/td>
+&lt;td>&lt;code>{{ uuid() }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>In addition, ScEL supports nested functions.&lt;/p>
+&lt;p>For example, the following expression can be used to replace all whitespace characters after transforming our field&amp;rsquo;s value into lowercase.&lt;/p>
+&lt;pre>&lt;code>replace_all(lowercase($.field), '\\s', '-')
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Limitation&lt;/h4>
+Currently, FilePulse does not support user-defined functions (UDFs). So you cannot register your own functions to enrich the expression language.
+&lt;/div>
+&lt;h2 id="scopes">Scopes&lt;/h2>
+&lt;p>In the previous section, we have shown how to use the expression language to select a specific field.
+The selected field was part of our the current record being processed.&lt;/p>
+&lt;p>Actually, ScEL allows you to get access to additional fields through the used of scopes.
+Basically, a scope defined the root object on which a selector expression must evaluated.&lt;/p>
+&lt;p>The syntax to define an expression with a scope is of the form : &amp;ldquo;&lt;code>$&amp;lt;scope&amp;gt;.&amp;lt;selector expression string&amp;gt;&lt;/code>&amp;rdquo;.&lt;/p>
+&lt;p>By default, if no scope is defined in the expression, the scope &lt;code>$value&lt;/code> is implicitly used.&lt;/p>
+&lt;p>ScEL supports a number of predefined scopes that can be used for example :&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>To define the topic for the record.&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>To define the key for the record.&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>To get access to metadata about the source file.&lt;/strong>&lt;/li>
+&lt;li>Etc.&lt;/li>
+&lt;/ul>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Scope&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>$headers&lt;/code>&lt;/td>
+&lt;td>The record headers&lt;/td>
+&lt;td>-&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$key&lt;/code>&lt;/td>
+&lt;td>The record key&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata&lt;/code>&lt;/td>
+&lt;td>The file metadata&lt;/td>
+&lt;td>&lt;code>struct&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$offset&lt;/code>&lt;/td>
+&lt;td>The offset information of this record into the source file&lt;/td>
+&lt;td>&lt;code>struct&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$system&lt;/code>&lt;/td>
+&lt;td>The system environment variables and runtime properties&lt;/td>
+&lt;td>&lt;code>struct&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$timestamp&lt;/code>&lt;/td>
+&lt;td>The record timestamp&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$topic&lt;/code>&lt;/td>
+&lt;td>The output topic&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$value&lt;/code>&lt;/td>
+&lt;td>The record value&lt;/td>
+&lt;td>&lt;code>struct&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$variables&lt;/code>&lt;/td>
+&lt;td>The contextual filter-chain variables&lt;/td>
+&lt;td>&lt;code>map[string, object]&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Note, that in case of failures more fields are added to the current filter context (see : &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/handling-failures/">Handling Failures&lt;/a>)&lt;/p>
+&lt;h3 id="record-headers">Record Headers&lt;/h3>
+&lt;p>The scope &lt;code>headers&lt;/code> allows defining the headers of the output record.&lt;/p>
+&lt;h3 id="record-key">Record key&lt;/h3>
+&lt;p>The scope &lt;code>key&lt;/code> allows defining the key of the output record. Only string key is currently supported.&lt;/p>
+&lt;h3 id="source-metadata">Source Metadata&lt;/h3>
+&lt;p>The scope &lt;code>metadata&lt;/code> allows read access to information about the file being processing.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Predefined Fields (ScEL)&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>$metadata.name&lt;/code>&lt;/td>
+&lt;td>The file name&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.path&lt;/code>&lt;/td>
+&lt;td>The file directory path&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.absolutePath&lt;/code>&lt;/td>
+&lt;td>The file absolute path&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.hash&lt;/code>&lt;/td>
+&lt;td>The file CRC32 hash&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.lastModified&lt;/code>&lt;/td>
+&lt;td>The file last modified time.&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.size&lt;/code>&lt;/td>
+&lt;td>The file size&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.inode&lt;/code>&lt;/td>
+&lt;td>The file Unix inode&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="record-offset">Record Offset&lt;/h2>
+&lt;p>The scope &lt;code>offset&lt;/code> allows read access to information about the original position of the record into the source file.
+The available fields depend on the configured FileInputRecord.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Predefined Fields (ScEL)&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>$offset.timestamp&lt;/code>&lt;/td>
+&lt;td>The creation time of the record (millisecond)&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Information only available if &lt;code>RowFilterReader&lt;/code> is configured.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Predefined Fields (ScEL)&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>$offset.startPosition&lt;/code>&lt;/td>
+&lt;td>The start position of the record into the source file&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$offset.endPosition&lt;/code>&lt;/td>
+&lt;td>The end position of the record into the source file&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$offset.size&lt;/code>&lt;/td>
+&lt;td>The size in bytes&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$offset.rows&lt;/code>&lt;/td>
+&lt;td>The number of rows already read from the source file.&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Information only available if &lt;code>BytesArrayInputReader&lt;/code> is configured.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Predefined Fields (ScEL)&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>$offset.startPosition&lt;/code>&lt;/td>
+&lt;td>The start position of the record into the source file (always equals to 0)&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$offset.endPosition&lt;/code>&lt;/td>
+&lt;td>The end position of the record into the source file (equals to the file size)&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Information only available if &lt;code>AvroFilterInputReader&lt;/code> is configured.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Predefined Fields (ScEL)&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>$offset.blockStart&lt;/code>&lt;/td>
+&lt;td>The start position of the current block&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$offset.position&lt;/code>&lt;/td>
+&lt;td>The position into the current block.&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$offset.records&lt;/code>&lt;/td>
+&lt;td>The number of record read into the current block.&lt;/td>
+&lt;td>&lt;code>long&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="system">System&lt;/h2>
+&lt;p>The scope &lt;code>system&lt;/code> allows accessing to the system environment variables and runtime properties.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Predefined Fields (ScEL)&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>$system.env&lt;/code>&lt;/td>
+&lt;td>The system environment variables.&lt;/td>
+&lt;td>&lt;code>map[string, string]&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$system.props&lt;/code>&lt;/td>
+&lt;td>The system environment properties.&lt;/td>
+&lt;td>&lt;code>map[string, string]&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="timestamp">Timestamp&lt;/h2>
+&lt;p>The scope &lt;code>$timestamp&lt;/code> allows defining the timestamp of the output record.&lt;/p>
+&lt;h2 id="topic">Topic&lt;/h2>
+&lt;p>The scope &lt;code>$topic&lt;/code> allows defining the target topic of the output record.&lt;/p>
+&lt;h2 id="value">Value&lt;/h2>
+&lt;p>The scope &lt;code>$value&lt;/code> allows defining the fields of the output record&lt;/p>
+&lt;h2 id="variables">Variables&lt;/h2>
+&lt;p>The scope &lt;code>$variables&lt;/code> allows read/write access to a simple key-value map structure.
+This scope can be used to share user-defined variables between &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/">Processing Filters&lt;/a>.&lt;/p>
+&lt;p>Note : variables are not cached between records.&lt;/p></description></item><item><title>Docs: Conditional Execution</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/conditional-execution/</link><pubDate>Wed, 30 Sep 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/conditional-execution/</guid><description>
+&lt;p>A conditional property &lt;code>if&lt;/code> can be configured on each filter to determine if that filter should be applied or skipped.
+When a filter is skipped, message flow to the next filter without any modification.&lt;/p>
+&lt;p>&lt;code>if&lt;/code> configuration accepts a Simple Connect Expression that must return to &lt;code>true&lt;/code> or &lt;code>false&lt;/code>.
+If the configured expression does not evaluate to a boolean value the filter chain will fail.&lt;/p>
+&lt;p>The&lt;code>if&lt;/code> property supports (&lt;a href="accessing-data-and-metadata">simple expression&lt;/a>)&lt;/p>
+&lt;p>The boolean value returned from the filter condition can be inverted by setting the property &lt;code>invert&lt;/code> to &lt;code>true&lt;/code>.&lt;/p>
+&lt;p>For example, the below filter will only be applied on message having a log message containing &amp;ldquo;BadCredentialsException&amp;rdquo;&lt;/p>
+&lt;pre>&lt;code>filters.TagSecurityException.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.TagSecurityException.if={{ contains(data.logmessage, BadCredentialsException) }}
+filters.TagSecurityException.invert=false
+filters.TagSecurityException.field=tags
+filters.TagSecurityException.values=SecurityAlert
+&lt;/code>&lt;/pre>&lt;p>These conditional functions are available for use with the &lt;code>if&lt;/code> config property :&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Function&lt;/th>
+&lt;th>Since&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Syntax&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>and&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Checks if all of the given conditional expressions are &lt;code>true&lt;/code>.&lt;/td>
+&lt;td>&lt;code>{{ and(booleanExpression1, booleanExpression2, ...) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>contains&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an array field&amp;rsquo;s value contains the specified value&lt;/td>
+&lt;td>&lt;code>{{ contains(field, value) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ends_with&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an a string field&amp;rsquo;s value end with the specified string suffix&lt;/td>
+&lt;td>&lt;code>{{ ends_with(field, suffix) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>equals&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an a string or number fields&amp;rsquo;s value equals the specified value&lt;/td>
+&lt;td>&lt;code>{{ equals(field, value) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>exists&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an the specified field exists&lt;/td>
+&lt;td>&lt;code>{{ exists(struct, field) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gt&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Executes &amp;ldquo;&lt;em>greater than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is greater than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
+&lt;td>&lt;code>{{ gt(expressionValue1, expressionValue2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>is_null&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if a field&amp;rsquo;s value is null&lt;/td>
+&lt;td>&lt;code>{{ is_null(field) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>lt&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Executes &amp;ldquo;&lt;em>less than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is less than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
+&lt;td>&lt;code>{{ lt(expressionValue1, expressionValue2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>matches&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if a field&amp;rsquo;s value match the specified regex&lt;/td>
+&lt;td>&lt;code>{{ matches(field, regex) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>starts_with&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an a string field&amp;rsquo;s value start with the specified string prefix&lt;/td>
+&lt;td>&lt;code>{{ starts_with(field, prefix) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>or&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Checks if at least one of the given conditional expressions is &lt;code>true&lt;/code>..&lt;/td>
+&lt;td>&lt;code>{{ or(booleanExpression1, booleanExpression2, ...) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Limitations&lt;/strong> :&lt;/p>
+&lt;ul>
+&lt;li>conditions cannot be used to easily create pipeline branching.&lt;/li>
+&lt;/ul></description></item><item><title>Docs: Handling Failures</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/handling-failures/</link><pubDate>Tue, 30 Mar 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/handling-failures/</guid><description>
+&lt;p>The connector provides some mechanisms to handle failures while executing filters.&lt;/p>
+&lt;p>By default, the filters chain will immediately failed after an exception is thrown.
+But, you can also configure each filter to either ignore errors or to branch to a sub filters-chain.&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>withOnFailure&lt;/code>&lt;/td>
+&lt;td>List of filters aliases to apply on each data after failure (order is important).&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ignoreFailure&lt;/code>&lt;/td>
+&lt;td>Ignore failure and continue pipeline filters&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="ignoring-failure">Ignoring failure&lt;/h2>
+&lt;p>By setting the property &lt;code>ignoreFailure&lt;/code> to &lt;code>true&lt;/code>, the filter will be ignored if an exception is thrown.&lt;/p>
+&lt;p>In that case, the exception is written to the output logs and current data record is simply forwarded to the next filter in the chain.&lt;/p>
+&lt;p>Using &lt;code>ignoreFailure=true&lt;/code> can be recommended for optional filters.&lt;/p>
+&lt;h3 id="example">Example&lt;/h3>
+&lt;p>In the below example, the filter with alias &lt;code>Log4jGrokFilter&lt;/code> will be skip in case of failure.&lt;/p>
+&lt;pre>&lt;code>filters=Log4jGrokFilter
+filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
+filters.Log4jGrokFilter.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+filters.Log4jGrokFilter.source=message
+filters.Log4jGrokFilter.ignoreFailure=true
+&lt;/code>&lt;/pre>&lt;h2 id="defining-error-filter-chain">Defining error filter chain&lt;/h2>
+&lt;p>A more sophisticated way to handle failures is to define a sub filters-chain on each concern filters.&lt;/p>
+&lt;p>Sub-filter chains can be defined using the property &lt;code>withOnFailure&lt;/code>.&lt;/p>
+&lt;h3 id="accessing-exception-data">Accessing exception data&lt;/h3>
+&lt;p>Within an error filter chain, some additional fields are available to each filter context.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Predefined Fields / ScEL&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>$error.message&lt;/code>&lt;/td>
+&lt;td>The error message&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$error.filter&lt;/code>&lt;/td>
+&lt;td>The failed filter name&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="example-1">Example&lt;/h3>
+&lt;p>In the below example, an &lt;code>errorMessage&lt;/code> field is added to the record value if the filter with alias Log4jGrokFilter fails.&lt;/p>
+&lt;pre>&lt;code>filters=Log4jGrokFilter
+filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
+filters.Log4jGrokFilter.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+filters.Log4jGrokFilter.source=message
+filters.Log4jGrokFilter.overwrite=message
+filters.Log4jGrokFilter.withOnFailure=AppendError
+filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.AppendError.field=$.errorMessage
+filters.AppendError.value={{ $error.message }}
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Processing Filters</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/filters/</link><pubDate>Thu, 30 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/filters/</guid><description>
+&lt;p>These filters are available for use with Kafka Connect File Pulse:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Filter&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Since&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;a href="#appendfilter">AppendFilter&lt;/a>&lt;/td>
+&lt;td>Appends one or more values to an existing or non-existing array field&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#convertfilter">ConvertFilter&lt;/a>&lt;/td>
+&lt;td>Converts a message field&amp;rsquo;s value to a specific type&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#datefilter">DateFilter&lt;/a>&lt;/td>
+&lt;td>Converts a field&amp;rsquo;s value containing a date to a unix epoch time&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#delimitedrowfilter">DelimitedRowFilter&lt;/a>&lt;/td>
+&lt;td>Parses a message field&amp;rsquo;s value containing columns delimited by a separator into a struct&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#dropfilter">DropFilter&lt;/a>&lt;/td>
+&lt;td>Drops messages satisfying a specific condition without throwing exception.&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#excludefilter">ExcludeFilter&lt;/a>&lt;/td>
+&lt;td>Excludes one or more fields from the input record.&lt;/td>
+&lt;td>&lt;code>v1.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#explodefilter">ExplodeFilter&lt;/a>&lt;/td>
+&lt;td>Explodes an array or list field into separate records.&lt;/td>
+&lt;td>&lt;code>v1.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#failfilter">FailFilter&lt;/a>&lt;/td>
+&lt;td>Throws an exception when a message satisfy a specific condition&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#grokfilter">GrokFilter&lt;/a>&lt;/td>
+&lt;td>Parses an unstructured message field&amp;rsquo;s value to a struct by combining Grok patterns&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#grouprowfilter">GroupRowFilter&lt;/a>&lt;/td>
+&lt;td>Regroups multiple following messages into a single message by composing a grouping key&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#joinfilter">JoinFilter&lt;/a>&lt;/td>
+&lt;td>Joins values of an array field with a specified separator&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#jsonfilter">JSONFilter&lt;/a>&lt;/td>
+&lt;td>Unmarshallings a JSON message field&amp;rsquo;s value to a complex struct&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#movefilter">MoveFilter&lt;/a>&lt;/td>
+&lt;td>Moves an existing record field&amp;rsquo;s value to a specific target path&lt;/td>
+&lt;td>&lt;code>v1.5.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#multirowfilter">MultiRowFilter&lt;/a>&lt;/td>
+&lt;td>Combines following message lines into single one by combining patterns&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#nullvaluefilter">NullValueFilter&lt;/a>&lt;/td>
+&lt;td>Combines following message lines into single one by combining patterns&lt;/td>
+&lt;td>&lt;code>v2.3.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#renamefilter">RenameFilter&lt;/a>&lt;/td>
+&lt;td>Renames a message field&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#splitfilter">SplitFilter&lt;/a>&lt;/td>
+&lt;td>Splits a message field&amp;rsquo;s value to array&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#xmltojsonfilter">XmlToJsonFilter&lt;/a>&lt;/td>
+&lt;td>Parses an XML record-field and convert it to a JSON string&lt;/td>
+&lt;td>&lt;code>v2.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#xmltostructfilter">XmlToStructFilter&lt;/a>&lt;/td>
+&lt;td>Parses an XML record-field into STRUCT&lt;/td>
+&lt;td>&lt;code>v2.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="appendfilter">AppendFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter&lt;/code>&lt;/p>
+&lt;p>The &lt;code>AppendFilter&lt;/code> is probably one of the most important processing filters to know.
+It allows you to manipulate a source record by easily adding or replacing a field with a constant
+value or a value extracted from another existing field using &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL&lt;/a>.&lt;/p>
+&lt;h3 id="configuration">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>field&lt;/code>&lt;/td>
+&lt;td>The name of the field to be added&lt;/td>
+&lt;td>string (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported&lt;/a>)&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>value&lt;/code>&lt;/td>
+&lt;td>The value of the field to be added&lt;/td>
+&lt;td>string (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported&lt;/a>)&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>overwrite&lt;/code>&lt;/td>
+&lt;td>Is existing field should be overwrite&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples">Examples&lt;/h3>
+&lt;p>The following examples shows how to use the &lt;code>AppendFilter&lt;/code> to concat two values from the array field named &lt;code>values&lt;/code>
+using a &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#string-substitution">substitution expression&lt;/a>.
+The concat value is then added to the field named &lt;code>result&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=SubstituteFilter
+filters.SubstituteFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.SubstituteFilter.field=&amp;quot;$.result&amp;quot;
+filters.SubstituteFilter.value=&amp;quot;{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}&amp;quot;
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;result&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;Hello-World&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>In the previous example, we used the simple property expression &lt;code>result&lt;/code> to indicate the target field to which our value is added.
+We have actually omitted the &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#scopes">expression scope&lt;/a> &lt;code>$value&lt;/code>.
+By default, if no scope is defined in an expression, the scope &lt;code>$value&lt;/code> is implicitly applied.
+Hence, we could have used the fully expression &lt;code>$value.result&lt;/code> which is similar to the simplified expression &lt;code>result&lt;/code>.&lt;/p>
+&lt;p>But, you can perfectly use another expression scope. For example, you can leverage the &lt;code>AppendFilter&lt;/code> to dynamically
+resolve the record-key or the output topic based on the record data.&lt;/p>
+&lt;p>The following configuration show how to use the &lt;code>$topic&lt;/code> scope :&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&amp;quot;$topic&amp;quot;
+filters.SubstituteFilter.value=&amp;quot;my-topic-{{ lowercase(extract_array($.values,0)) }}&amp;quot;
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;context&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;topic&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;my-topic-hello&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Finally, the &lt;code>AppendFilter&lt;/code> can also accept a substitution expression for the property field.
+This allows to dynamically determine the name of the field to be added.&lt;/p>
+&lt;p>The following examples show how to use a property expression to get the named of the field from a&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&amp;quot;$.target&amp;quot;
+filters.SubstituteFilter.value=&amp;quot;{{ extract_array($.values, 0) }}-{{ extract_array($.values,1) }}&amp;quot;
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;result&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;result&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;result&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;Hello-World&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="convertfilter">ConvertFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ConvertFilter&lt;/code>&lt;/p>
+&lt;p>The &lt;code>ConvertFilter&lt;/code> can be used to convert a field&amp;rsquo;s value into a specific type.&lt;/p>
+&lt;h3 id="configuration-1">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>field&lt;/code>&lt;/td>
+&lt;td>The field to convert (dot notation is supported)&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>to&lt;/code>&lt;/td>
+&lt;td>The type to which the field must be converted&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>,&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>default&lt;/code>&lt;/td>
+&lt;td>The default value to apply if the field cannot be converted&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>,&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ignoreMissing&lt;/code>&lt;/td>
+&lt;td>If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>true&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>Supported types are :&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>SHORT&lt;/code>&lt;/li>
+&lt;li>&lt;code>INTEGER&lt;/code>&lt;/li>
+&lt;li>&lt;code>LONG&lt;/code>&lt;/li>
+&lt;li>&lt;code>FLOAT&lt;/code>&lt;/li>
+&lt;li>&lt;code>DOUBLE&lt;/code>&lt;/li>
+&lt;li>&lt;code>BOOLEAN&lt;/code>&lt;/li>
+&lt;li>&lt;code>STRING&lt;/code>&lt;/li>
+&lt;li>&lt;code>ARRAY&lt;/code>&lt;/li>
+&lt;li>&lt;code>BYTES&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h3 id="examples-1">Examples&lt;/h3>
+&lt;p>The following example shows how to convert a a field&amp;rsquo;s value containing the string &lt;code>yes&lt;/code> into a boolean.&lt;/p>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.BooleanConverter.field=&amp;quot;target&amp;quot;
+filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;yes&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">true&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="datefilter">DateFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.DateFilter&lt;/code>&lt;/p>
+&lt;p>The &lt;code>DateFilter&lt;/code> converts a field&amp;rsquo;s value containing a date to a unix epoch time.&lt;/p>
+&lt;h3 id="configuration-2">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>field&lt;/code>&lt;/td>
+&lt;td>The field to get the date from .&lt;/td>
+&lt;td>string(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported&lt;/a>)&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>The target field.&lt;/td>
+&lt;td>string(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported&lt;/a>)&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>timezone&lt;/code>&lt;/td>
+&lt;td>The timezone to use for parsing date.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>UTC&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>locale&lt;/code>&lt;/td>
+&lt;td>The locale to use for parsing date.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>en_EN&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>formats&lt;/code>&lt;/td>
+&lt;td>List of the expected date formats.&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-2">Examples&lt;/h3>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=ParseISODate
+filters.ParseISODate.type=io.streamthoughts.kafka.connect.filepulse.filter.DateFilter
+filters.ParseISODate.field=&amp;quot;$.date&amp;quot;
+filters.ParseISODate.target=&amp;quot;$.timestamp&amp;quot;
+filters.ParseISODate.formats=&amp;quot;yyyy-MM-dd'T'HH:mm:ss&amp;quot;
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2001-07-04T12:08:56&amp;#34;&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2001-07-04T12:08:56&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;timestamp&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">994248536000&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="delimitedrowfilter">DelimitedRowFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>DelimitedRowFilter&lt;/code> can be used to parse and stream delimited row files (i.e CSV) into Kafka.
+Each row is parsed and published into a configured topic as a single Kafka data.&lt;/p>
+&lt;h3 id="configuration-3">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>separator&lt;/code>&lt;/td>
+&lt;td>The character used as a delimiter/separator between each value&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>;&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>trimColumn&lt;/code>&lt;/td>
+&lt;td>Remove the leading and trailing whitespaces from all columns.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>extractColumnName&lt;/code>&lt;/td>
+&lt;td>Define the field from which the schema should be detected (all columns will be of type &amp;lsquo;string&amp;rsquo;)&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>autoGenerateColumnNames&lt;/code>&lt;/td>
+&lt;td>Define whether column names should autogenerated or not (column names will of the form &amp;lsquo;column1, column2&amp;rsquo;)&lt;/td>
+&lt;td>&lt;em>true&lt;/em>&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>columns&lt;/code>&lt;/td>
+&lt;td>The list of comma-separated column names in order they appear in each row. columns must be in the form of NAME:TYPE&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-3">Examples&lt;/h3>
+&lt;p>The following example shows the use of the &lt;code>DelimitedRowFilter&lt;/code> to split the &lt;code>message&lt;/code> field using &lt;code>|&lt;/code> as a separator character.
+The name of each column is extracted from the fields &lt;code>headers&lt;/code>.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=ParseDelimitedRow
+filters.ParseDelimitedRow.extractColumnNam=&amp;quot;headers&amp;quot;
+filters.ParseDelimitedRow.separator=&amp;quot;\\|&amp;quot;
+filters.ParseDelimitedRow.trimColumn=&amp;quot;true&amp;quot;
+filters.ParseDelimitedRow.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&amp;quot;
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Important&lt;/h4>
+Under the hood, the &lt;code>DelimitedRowFilter&lt;/code> will use the &lt;a href="https://docs.oracle.com/javase/9/docs/api/java/lang/String.html#split-java.lang.String-">&lt;code>String#split&lt;/code>&lt;/a> method to parse the input line. This
+method accepts a regex as argument then any special character must be escaped.
+&lt;/div>
+&lt;h2 id="dropfilter">DropFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.DropFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>DropFilter&lt;/code> can be used to prevent some messages (i.e records) to be written into Kafka.&lt;/p>
+&lt;h3 id="configuration-4">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>if&lt;/code>&lt;/td>
+&lt;td>Condition to apply the filter on the current record.&lt;/td>
+&lt;td>string &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported&lt;/a>)&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>invert&lt;/code>&lt;/td>
+&lt;td>Invert the boolean value return from the filter condition.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>For more information about &lt;code>if&lt;/code> property, see : &lt;a href="conditional-execution">Conditional execution&lt;/a>.&lt;/p>
+&lt;h3 id="examples-4">Examples&lt;/h3>
+&lt;p>The following example shows the usage of &lt;strong>DropFilter&lt;/strong> to only keep records with a field &lt;code>level&lt;/code> containing to &lt;code>ERROR&lt;/code>.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Drop
+filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
+filters.Drop.if={{ equals($.level, 'ERROR') }}
+filters.Drop.invert=true
+&lt;/code>&lt;/pre>&lt;h2 id="excludefilter">ExcludeFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>ExcludeFilter&lt;/code> can be used to exclude one or more fields from the input record.&lt;/p>
+&lt;h3 id="configuration-5">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fields&lt;/code>&lt;/td>
+&lt;td>The comma-separated list of field names to exclude&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>**&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-5">Examples&lt;/h3>
+&lt;p>The following example shows the usage of &lt;strong>ExplodeFilter&lt;/strong>.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Exclude
+filters.Exclude.type=io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFilter
+filters.Exclude.fields=message
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;message&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;{\&amp;#34;name\&amp;#34;:\&amp;#34;pulse\&amp;#34;}&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="explodefilter">ExplodeFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>ExplodeFilter&lt;/code> can be used to explode an array or list field into separate records.&lt;/p>
+&lt;h3 id="configuration-6">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>source&lt;/code>&lt;/td>
+&lt;td>The input field on which to apply the filter&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>message&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-6">Examples&lt;/h3>
+&lt;p>The following example shows the usage of &lt;strong>ExplodeFilter&lt;/strong>.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Explode
+filters.Explode.type=io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter
+filters.Explode.source=measurements
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input (single record)&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#0000cf;font-weight:bold">38&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">40&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">42&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">37&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output (multiple records)&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">38&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">40&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">42&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">37&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="failfilter">FailFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.FailFilter&lt;/code>.&lt;/p>
+&lt;p>The fail filter can be used to throw an exception with a provided error message.
+For example, this can be useful to stop processing a file when a non-conform record is read.&lt;/p>
+&lt;h3 id="configuration-7">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>if&lt;/code>&lt;/td>
+&lt;td>Condition to apply the filter on the current record.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>invert&lt;/code>&lt;/td>
+&lt;td>Invert the boolean value return from the filter condition.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>message&lt;/code>&lt;/td>
+&lt;td>The error message thrown by the filter. (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported&lt;/a>)&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-7">Examples&lt;/h3>
+&lt;p>The following example shows the usage of &lt;strong>FailFilter&lt;/strong> to stop processing a file when a field is equals to &lt;code>null&lt;/code>.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Fail
+filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
+filters.Fail.if={{ is_null($.user_id) }}
+filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
+&lt;/code>&lt;/pre>&lt;h2 id="grokfilter">GrokFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>GrokFilter&lt;/code> allows you to parse unstructured data like applications logs to extract structured and meaningful data fields.&lt;/p>
+&lt;p>The &lt;code>GrokFilter&lt;/code>is based on: &lt;a href="https://github.com/streamthoughts/kafka-connect-transform-grok">https://github.com/streamthoughts/kafka-connect-transform-grok&lt;/a>&lt;/p>
+&lt;h3 id="configuration-8">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>namedCapturesOnly&lt;/code>&lt;/td>
+&lt;td>If true, only store named captures from grok.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>true&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>pattern&lt;/code>&lt;/td>
+&lt;td>The Grok pattern to match.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>overwrite&lt;/code>&lt;/td>
+&lt;td>The fields to overwrite.&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>patternDefinitions&lt;/code>&lt;/td>
+&lt;td>Custom pattern definitions.&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>patternsDir&lt;/code>&lt;/td>
+&lt;td>List of user-defined pattern directories&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>source&lt;/code>&lt;/td>
+&lt;td>The input field on which to apply the filter&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>message&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-8">Examples&lt;/h3>
+&lt;p>The following example shows the usage of &lt;strong>GrokFilter&lt;/strong> to parse and extract fields from application log message.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=ParseLog4jLog
+filters.ParseLog4jLog.pattern=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+filters.ParseLog4jLog.overwrite=&amp;quot;message&amp;quot;
+filters.ParseLog4jLog.source=&amp;quot;message&amp;quot;
+filters.ParseLog4jLog.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&amp;quot;
+filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
+&lt;/code>&lt;/pre>&lt;h2 id="grouprowfilter">GroupRowFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.GroupRowFilter&lt;/code>.&lt;/p>
+&lt;h3 id="configuration-9">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fields&lt;/code>&lt;/td>
+&lt;td>List of fields used to regroup records&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>high&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>max.buffered.records&lt;/code>&lt;/td>
+&lt;td>The maximum number of records to group (default : -1).&lt;/td>
+&lt;td>integer&lt;/td>
+&lt;td>&lt;em>-1&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>The target array field to put the grouped field&lt;/td>
+&lt;td>integer&lt;/td>
+&lt;td>&lt;em>records&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-9">Examples&lt;/h3>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">&lt;/code>&lt;/pre>&lt;h2 id="joinfilter">JoinFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter&lt;/code>.&lt;/p>
+&lt;h3 id="configuration-10">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>field&lt;/code>&lt;/td>
+&lt;td>The field to get the date from&lt;/td>
+&lt;td>string(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported&lt;/a>)&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>The target field&lt;/td>
+&lt;td>string(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/">ScEL supported&lt;/a>)&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>separator&lt;/code>&lt;/td>
+&lt;td>The separator used for joining array values.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>,&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-10">Examples&lt;/h3>
+&lt;h2 id="jsonfilter">JSONFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>JSONFilter&lt;/code> parses an input json field.&lt;/p>
+&lt;h3 id="configuration-11">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>overwrite&lt;/code>&lt;/td>
+&lt;td>The fields to overwrite&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>source&lt;/code>&lt;/td>
+&lt;td>The input field on which to apply the filter&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>message&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>The target field to put the parsed JSON data&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>charset&lt;/code>&lt;/td>
+&lt;td>The charset to be used for reading the source field (if source if of type &lt;code>BYTES&lt;/code>&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>UTF-8&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>explode.array&lt;/code>&lt;/td>
+&lt;td>A boolean that specifies whether to explode arrays into separate records&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>merge&lt;/code>&lt;/td>
+&lt;td>boolean that specifies whether to merge the JSON object into the top level of the input record&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-11">Examples&lt;/h3>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=MyJsonFilter
+filters.MyJsonFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter
+filters.MyJsonFilter.source=message
+filters.MyJsonFilter.target=payload
+&lt;/code>&lt;/pre>&lt;h2 id="multirowfilter">MultiRowFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>MultiRowFilter&lt;/code> joins multiple lines into a single Struct using a regex pattern.&lt;/p>
+&lt;h3 id="configuration-12">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>negate&lt;/code>&lt;/td>
+&lt;td>Negate the regexp pattern (if not matched).&amp;quot;&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>pattern&lt;/code>&lt;/td>
+&lt;td>The pattern to match multiline&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>patternDefinitions&lt;/code>&lt;/td>
+&lt;td>Custom pattern definitions.&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>patternsDir&lt;/code>&lt;/td>
+&lt;td>List of user-defined pattern directories&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>separator&lt;/code>&lt;/td>
+&lt;td>The character to be used to concat multi lines&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&amp;ldquo;\n&amp;rdquo;&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="movefilter">MoveFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>MoveFilter&lt;/code> moves an existing record field&amp;rsquo;s value to a specific target path.&lt;/p>
+&lt;h3 id="configuration-13">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>source&lt;/code>&lt;/td>
+&lt;td>The path of the field to move&amp;quot;&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>The path to move the field&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-12">Examples&lt;/h3>
+&lt;p>The following example shows the usage of the &lt;code>MoveFilter&lt;/code>.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=MyMoveFilter
+filters.MyMoveFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter
+filters.MyMoveFilter.source=field.child
+filters.MyMoveFilter.target=moved
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;field&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;child&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;moved&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="nullvaluefilter">NullValueFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.NullValueFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>NullValueFilter&lt;/code> is used to empty a record-value to null.&lt;/p>
+&lt;h3 id="example">Example&lt;/h3>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=NullValueIfDeleteOp
+filters.NullValueIfDeleteOp.type=io.streamthoughts.kafka.connect.filepulse.filter.NullValueFilter
+filters.NullValueIfDeleteOp.if={{ equals($value.op, 'DELETE') }}
+&lt;/code>&lt;/pre>&lt;h2 id="renamefilter">RenameFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>RenameFilter&lt;/code> is used to rename a specified field.&lt;/p>
+&lt;h3 id="configuration-14">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>field&lt;/code>&lt;/td>
+&lt;td>The field to rename&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>The target name&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ignoreMissing&lt;/code>&lt;/td>
+&lt;td>If true and field does not exist the filter will be apply successfully without modifying the data. If field is null the schema will be modified.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>true&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-13">Examples&lt;/h3>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=RenameInputField
+filters.RenameInputField.type=io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter
+filters.RenameInputField.field=input
+filters.RenameInputField.target=renamed
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;renamed&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="splitfilter">SplitFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>SplitFilter&lt;/code> splits a field&amp;rsquo;s value of type string into an array by using a specific separator.&lt;/p>
+&lt;h3 id="configuration-15">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>split&lt;/code>&lt;/td>
+&lt;td>The comma-separated list of fields to split&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>separator&lt;/code>&lt;/td>
+&lt;td>The separator used for splitting a message field&amp;rsquo;s value to array&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>,&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>The target field to put the parsed JSON data&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="example-1">Example&lt;/h3>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=SplitInputField
+filters.SplitInputField.type=io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter
+filters.SplitInputField.split=input
+filters.SplitInputField.separator=,
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0,val1,val2&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0,val1,val2&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;span style="color:#204a87;font-weight:bold">&amp;#34;output&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val1&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val2&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="xmltojsonfilter">XmlToJsonFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.XmlToJsonFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>XmlToJsonFilter&lt;/code> parses and converts an XML record-field it to a JSON string.
+This is filter is based on the &lt;code>org.json.XML&lt;/code> library.&lt;/p>
+&lt;h3 id="configuration-16">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>source&lt;/code>&lt;/td>
+&lt;td>The input field on which to apply the filter.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>&amp;quot;message&amp;quot;&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>source.charset&lt;/code>&lt;/td>
+&lt;td>The charset to be used for reading the source.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>&amp;quot;UTF-8&amp;quot;&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.parser.keep.strings&lt;/code>&lt;/td>
+&lt;td>When parsing the XML into JSON, specifies if values should be kept as strings (true), or if they should try to be guessed into JSON values (numeric, boolean, string)&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.parser.cDataTagName&lt;/code>&lt;/td>
+&lt;td>The name of the key in a JSON Object that indicates a CDATA section.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>&amp;quot;value&amp;quot;&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="example-2">Example&lt;/h3>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=XmlToJson
+filters.XmlToJson.type=io.streamthoughts.kafka.connect.filepulse.filter.XmlToJsonFilter
+filters.XmlToJson.xml.parser.keep.strings=false
+filters.XmlToJson.xml.parser.cDataTagName=data
+&lt;/code>&lt;/pre>&lt;h2 id="xmltostructfilter">XmlToStructFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>XmlToStructFilter&lt;/code> parses an XML record-field into STRUCT&lt;/p>
+&lt;h3 id="configuration-17">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>source&lt;/code>&lt;/td>
+&lt;td>The input field on which to apply the filter.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>&amp;quot;message&amp;quot;&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.force.array.on.fields&lt;/code>&lt;/td>
+&lt;td>The comma-separated list of fields for which an array-type must be forced&lt;/td>
+&lt;td>&lt;code>List&lt;/code>&lt;/td>
+&lt;td>&lt;code>-&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.parser.validating.enabled&lt;/code>&lt;/td>
+&lt;td>Specifies that the parser will validate documents as they are parsed (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.parser.namespace.aware.enabled&lt;/code>&lt;/td>
+&lt;td>Specifies that the XML parser will provide support for XML namespaces (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.exclude.empty.elements&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should exclude element having no field (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.exclude.node.attributes&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should exclude all node attributes (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.exclude.node.attributes.in.namespaces&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.data.type.inference.enabled&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should try to infer the type of data nodes (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.attribute.prefix&lt;/code>&lt;/td>
+&lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: &amp;lsquo;').&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="example-3">Example&lt;/h3>
+&lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=XmlToStruct
+filters.ParseXmlDocument.type=io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter
+filters.ParseXmlDocument.source=message
+filters.ParseXmlDocument.xml.parser.validating.enabled=true
+filters.ParseXmlDocument.xml.parser.namespace.aware.enabled=true
+filters.ParseXmlDocument.xml.exclude.empty.elements=true
+filters.ParseXmlDocument.xml.data.type.inference.enabled=true
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Tracking File Status</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/tracking-files-status/</link><pubDate>Fri, 11 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/tracking-files-status/</guid><description>
+&lt;p>Connect File Pulse uses an internal topic (&lt;em>default:&lt;code>connect-file-pulse-status&lt;/code>&lt;/em>) to track the current state of files being processed.
+This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.&lt;/p>
+&lt;h2 id="the-message-format">The message format&lt;/h2>
+&lt;p>Status event are publish into JSON with the following schema :&lt;/p>
+&lt;pre>&lt;code>{
+&amp;quot;hostname&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
+&amp;quot;description: &amp;quot;The machine from which the source file is read.&amp;quot;
+},
+&amp;quot;status&amp;quot;:{
+&amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
+&amp;quot;description: &amp;quot;The current status&amp;quot;
+},
+&amp;quot;metadata&amp;quot;:{
+&amp;quot;name&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
+&amp;quot;description: &amp;quot;The file name.&amp;quot;
+},
+&amp;quot;path&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
+&amp;quot;description: &amp;quot;The file absolute path.&amp;quot;
+},
+&amp;quot;size&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;int&amp;quot;,
+&amp;quot;description: &amp;quot;The file size.&amp;quot;
+},
+lastModified&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;long&amp;quot;,
+&amp;quot;description: &amp;quot;The file last-modified property.&amp;quot;
+},
+&amp;quot;inode&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;int&amp;quot;,
+&amp;quot;description: &amp;quot;The file inode&amp;quot;
+},
+&amp;quot;hash&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;int&amp;quot;,
+&amp;quot;description: &amp;quot;CRC32&amp;quot;
+}
+},
+&amp;quot;offset&amp;quot;:{
+&amp;quot;position&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;long&amp;quot;,
+&amp;quot;description: &amp;quot;The current position in the source file (default : -1).&amp;quot;
+},
+&amp;quot;rows&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;long&amp;quot;,
+&amp;quot;description: &amp;quot;The number of rows already read from the source file (default : -1).&amp;quot;
+},
+&amp;quot;timestamp&amp;quot;: {
+&amp;quot;type&amp;quot;: &amp;quot;long&amp;quot;,
+&amp;quot;description: &amp;quot;The offset timestamp&amp;quot;
+}
+}
+&lt;/code>&lt;/pre>&lt;h2 id="list-of-file-status">List of File Status&lt;/h2>
+&lt;p>An object file can be in the following states :&lt;/p>
+&lt;ul>
+&lt;li>[1] &lt;strong>SCHEDULED&lt;/strong> : The file has been scheduled by the connector monitoring thread.&lt;/li>
+&lt;li>[2] &lt;strong>INVALID&lt;/strong> : The file can&amp;rsquo;t be scheduled because it is not readable.&lt;/li>
+&lt;li>[2] &lt;strong>STARTED&lt;/strong> : The file is starting to be read by a task.&lt;/li>
+&lt;li>[3] &lt;strong>READING&lt;/strong> : The task is still processing the file. An event is wrote into Kafka while committing offsets.&lt;/li>
+&lt;li>[4] &lt;strong>FAILED&lt;/strong> : The file processing failed.&lt;/li>
+&lt;li>[4] &lt;strong>COMPLETED&lt;/strong> : The task completes the processing of the file.&lt;/li>
+&lt;li>[4] &lt;strong>COMMITTED&lt;/strong> : The task committed the offsets of the completed file.&lt;/li>
+&lt;li>[5] &lt;strong>CLEANED&lt;/strong> : The file has been successfully clean up by the connector (depends on the configured policy).&lt;/li>
+&lt;/ul></description></item><item><title>Docs: File Cleanup Policies</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/cleaning-completed-files/</link><pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/cleaning-completed-files/</guid><description>
+&lt;p>The connector can be configured with a specific &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/clean/FileCleanupPolicy.java">FileCleanupPolicy&lt;/a> implementation.&lt;/p>
+&lt;p>The cleanup policy can be configured with the below connect property :&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.class&lt;/code>&lt;/td>
+&lt;td>The fully qualified name of the class which is used to cleanup files&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="available-cleanup-policies">Available Cleanup Policies&lt;/h2>
+&lt;h3 id="deletecleanpolicy">&lt;code>DeleteCleanPolicy&lt;/code>&lt;/h3>
+&lt;p>This policy deletes all files regardless of their final status (completed or failed).&lt;/p>
+&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
+&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.DeleteCleanupPolicy
+&lt;/code>&lt;/pre>&lt;h3 id="logcleanpolicy">&lt;code>LogCleanPolicy&lt;/code>&lt;/h3>
+&lt;p>This policy prints to logs some information after files completion.&lt;/p>
+&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
+&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.LogCleanupPolicy
+&lt;/code>&lt;/pre>&lt;h3 id="localmovecleanpolicy">&lt;code>LocalMoveCleanPolicy&lt;/code>&lt;/h3>
+&lt;p>This policy attempts to move atomically files to configurable target directories.&lt;/p>
+&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
+&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanPolicy
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Usage&lt;/h4>
+This policy only works when using the &lt;code>LocalFSDirectoryListing&lt;/code>.
+&lt;/div>
+&lt;h4 id="configuration">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>cleaner.output.failed.path&lt;/code>&lt;/td>
+&lt;td>Target directory for file proceed with failure&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>.failure&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>cleaner.output.succeed.path&lt;/code>&lt;/td>
+&lt;td>Target directory for file proceed successfully&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>.success&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="implementing-your-own-policy">Implementing your own policy&lt;/h2></description></item></channel></rss>

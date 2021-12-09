@@ -1,0 +1,42 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – Overview</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/overview/</link><description>Recent content in Overview on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Sat, 09 May 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/overview/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Contribution Guidelines</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/overview/contribution-guidelines/</link><pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/overview/contribution-guidelines/</guid><description>
+&lt;h2 id="contributing">Contributing&lt;/h2>
+&lt;p>Any feedback, bug reports and PRs are greatly appreciated!&lt;/p>
+&lt;ul>
+&lt;li>Source Code: &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse">https://github.com/streamthoughts/kafka-connect-file-pulse&lt;/a>&lt;/li>
+&lt;li>Issue Tracker: &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues">https://github.com/streamthoughts/kafka-connect-file-pulse/issues&lt;/a>&lt;/li>
+&lt;li>Coding Guidelines: &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/CONTRIBUTING.md">https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/CONTRIBUTING.md&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Docs: What is Connect FilePulse ?</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/overview/filepulse/</link><pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/overview/filepulse/</guid><description>
+&lt;h2 id="what-is-it">What is it?&lt;/h2>
+&lt;p>&lt;strong>Connect FilePulse&lt;/strong> is a polyvalent, scalable and reliable, Apache Kafka Connect plugin that makes it easy to parse, transform and stream any file, in any format, into Apache Kafka™.&lt;/p>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">About Connect&lt;/h4>
+&lt;strong>&lt;a href="https://kafka.apache.org/documentation/#connect">Kafka Connect&lt;/a>&lt;/strong> is a tool for scalably and reliably streaming data between Apache Kafka and other systems. (source: &lt;a href="https://kafka.apache.org/documentation/#connect">Apache documentation&lt;/a>).
+&lt;/div>
+&lt;h3 id="key-features">Key Features&lt;/h3>
+&lt;p>Connect FilePulse provides a set of built-in features for streaming local files into Kafka. This includes, among other things:&lt;/p>
+&lt;ul>
+&lt;li>Support for recursive scanning of local directories.&lt;/li>
+&lt;li>Reading and writing files into Kafka line by line.&lt;/li>
+&lt;li>Support multiple input file formats (e.g: CSV, Avro, XML).&lt;/li>
+&lt;li>Parsing and transforming data using built-in or custom processing filters.&lt;/li>
+&lt;li>Error handler definition&lt;/li>
+&lt;li>Monitoring files while they are being written into Kafka&lt;/li>
+&lt;li>Support pluggable strategies to clean up completed files&lt;/li>
+&lt;li>Etc.&lt;/li>
+&lt;/ul>
+&lt;h2 id="why-do-i-want-it">Why do I want it?&lt;/h2>
+&lt;p>Connect FilePulse helps you stream local files into Apache Kafka.&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>What is it good for?&lt;/strong>: Connect FilePulse lets you define complex pipelines to transform and structure your data before integration into Kafka.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>What is it not good for?&lt;/strong>: Connect FilePulse is maybe not the best solution for collecting application log files.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="where-should-i-go-next">Where should I go next?&lt;/h2>
+&lt;p>Give your users next steps from the Overview. For example:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Getting Started&lt;/strong>: &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/getting-started/">Get started with Connect FilePulse&lt;/a>&lt;/li>
+&lt;li>&lt;strong>Examples&lt;/strong>: &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/examples/">Check out some example code!&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>

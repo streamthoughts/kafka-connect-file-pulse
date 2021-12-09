@@ -1,0 +1,360 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – Connect FilePulse Blog</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/</link><description>Recent content in Connect FilePulse Blog on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/blog/index.xml" rel="self" type="application/rss+xml"/><item><title>Blog: Connect FilePulse 2.4 is Released 🚀</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/10/04/connect-filepulse-2.4-is-released/</link><pubDate>Mon, 04 Oct 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/10/04/connect-filepulse-2.4-is-released/</guid><description>
+&lt;p>I am pleased to announce the release of Connect FilePulse 2.4. This release brings new built-in expression functions, processing filters as well as some minor improvements and bug fixes.&lt;/p>
+&lt;h2 id="simple-connect-expression-language">Simple Connect Expression Language&lt;/h2>
+&lt;p>This release packs with new built-in functions to enrich the powerful expression language provided by connect FilePulse:&lt;/p>
+&lt;p>&lt;strong>Boolean Functions&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Function&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>and&lt;/code>&lt;/td>
+&lt;td>Checks if all of the given conditional expressions are &lt;code>true&lt;/code>.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gt&lt;/code>&lt;/td>
+&lt;td>Executes &amp;ldquo;&lt;em>greater than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is greater than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>if&lt;/code>&lt;/td>
+&lt;td>Evaluates the given boolean expression and returns one value if &lt;code>true&lt;/code> and another value if &lt;code>false&lt;/code>.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>lt&lt;/code>&lt;/td>
+&lt;td>Executes &amp;ldquo;&lt;em>less than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is less than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>not&lt;/code>&lt;/td>
+&lt;td>Reverses a boolean value&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>or&lt;/code>&lt;/td>
+&lt;td>Checks if at least one of the given conditional expressions is &lt;code>true&lt;/code>.&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Date and time Functions&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Function&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>timestamp_diff&lt;/code>&lt;/td>
+&lt;td>Calculates the amount of time between two epoch times in seconds or milliseconds. For more information on &lt;code>unit&lt;/code> see &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html">ChronoUnit&lt;/a>.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>to_timestamp&lt;/code>&lt;/td>
+&lt;td>Parses a given string value and returns the epoch-time in milliseconds.&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>unix_timestamp&lt;/code>&lt;/td>
+&lt;td>Returns the current time in milliseconds.&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>These new functions allows for specifying more complex conditions on configured &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/">&lt;em>Processing Filters&lt;/em>&lt;/a>.
+For example, we can use them to remove all records retrieved from files that are older than 24 hours.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=DropTooLateFiles
+filters.DropTooLateFiles.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
+filters.DropTooLateFiles.if=&amp;quot;{{ gt(timestamp_diff('HOURS', $metadata.lastModified, unix_timestamp()), 24) }}&amp;quot;
+filters.DropTooLateFiles.invert=false
+&lt;/code>&lt;/pre>&lt;h1 id="xml-processing">XML Processing&lt;/h1>
+&lt;p>XML is still widely used in legacy systems. To ease the integration of this data in Kafka,
+this release introduces two new &lt;em>Processing Filters&lt;/em>: &lt;code>XmlToStructFilter&lt;/code> and &lt;code>XmlToJsonFilter&lt;/code> which can be used in addition to the existing &lt;code>XMLFileInputReader&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>XmlToStructFilter&lt;/strong>&lt;/p>
+&lt;p>This &lt;em>processing filter&lt;/em> can be used to parse and convert an XML file that you read, for example, using the &lt;code>LocalBytesArrayInputReader&lt;/code> into a &lt;code>Struct&lt;/code> record.
+This filter should be preferred to the &lt;code>XMLFileInputReader&lt;/code> when you need to deal with invalid XML files.&lt;/p>
+&lt;p>For example, you may want to send invalid XML files into specific &lt;em>Dead Letter Topic&lt;/em>.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=ParseXmlDocument
+filters.ParseXmlDocument.type=io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter
+filters.ParseXmlDocument.source=message
+filters.ParseXmlDocument.xml.parser.validating.enabled=true
+filters.ParseXmlDocument.xml.parser.namespace.aware.enabled=true
+filters.ParseXmlDocument.xml.exclude.empty.elements=true
+filters.ParseXmlDocument.xml.exclude.node.attributes=false
+filters.ParseXmlDocument.xml.data.type.inference.enabled=true
+filters.ParseXmlDocument.withOnFailure=SetToErrorTopic
+filters.SetToErrorTopic.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.SetToErrorTopic.value=xml-parsing-DLQ
+filters.SetToErrorTopic.field=$topic
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>XmlToJsonFilter&lt;/strong>&lt;/p>
+&lt;p>This &lt;em>processing filter&lt;/em> can be used to parse and convert an XML file that you read, for example, using the &lt;code>LocalBytesArrayInputReader&lt;/code> into a JSON string record.&lt;/p>
+&lt;h1 id="exception-context">Exception Context&lt;/h1>
+&lt;p>When an exception occurs in the &lt;em>processing filter chain&lt;/em>, Connect FilePulse allows you to access the context of the exception using the &lt;code>$error&lt;/code> scope from the expression language.
+In previous versions, only the exception message was available (e.g., using &lt;code>$error.message&lt;/code>). Now, you can retrieve the exception stacktrace as well as the exception class name using:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>$error.exceptionMessage&lt;/code>&lt;/li>
+&lt;li>&lt;code>$error.exceptionStacktrace&lt;/code>&lt;/li>
+&lt;li>&lt;code>$error.exceptionClassName&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>The below examples shows how to add the exception information to teh record headers.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">...
+filters.ParseXmlDocument.withOnFailure=SetToErrorTopic,AppendErrorMessageToHeader,AppendErrorStacktraceToHeader,AppendErrorClassNameToHeader
+filters.AppendErrorMessageToHeader.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.AppendErrorMessageToHeader.field=$headers.errors.exception.message
+filters.AppendErrorMessageToHeader.value={{ $error.exceptionMessage }}
+filters.AppendErrorStacktraceToHeader.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.AppendErrorStacktraceToHeader.field=$headers.errors.exception.stacktrace
+filters.AppendErrorStacktraceToHeader.value={{ $error.exceptionStacktrace }}
+filters.AppendErrorClassNameToHeader.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+filters.AppendErrorClassNameToHeader.field=$headers.errors.exception.message
+filters.AppendErrorClassNameToHeader.value={{ $error.exceptionClassName }}
+&lt;/code>&lt;/pre>&lt;h2 id="full-release-notes">Full Release Notes&lt;/h2>
+&lt;p>Connect File Pulse 2.4 can be downloaded from the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.4.0">GitHub Releases Page&lt;/a>.&lt;/p>
+&lt;h3 id="features">Features&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/67683d5">67683d5&lt;/a> feat(expression): add built-in SCeL expression function NOT&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7fea775">7fea775&lt;/a> feat(dataformat): add config to specify a prefix used to prepend XML attributes (&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/176">#176&lt;/a>)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4fc2cb9">4fc2cb9&lt;/a> feat(expression): add expression function TimestampDiff&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9d72e47">9d72e47&lt;/a> feat(expression): add expression function ToTimestamp&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0644cb9">0644cb9&lt;/a> feat(expressions): add built-in function &amp;lsquo;gt&amp;rsquo; and &amp;lsquo;lt&amp;rsquo; to ScEL&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e4375c8">e4375c8&lt;/a> feat(expressions): add built-in function &amp;lsquo;or&amp;rsquo; and &amp;lsquo;and&amp;rsquo; to ScEL&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/28a6126">28a6126&lt;/a> feat(expressions): add built-in function &amp;lsquo;if&amp;rsquo; to ScEL&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4fe77fd">4fe77fd&lt;/a> feat(api): add access to error stacktrace in filter chain&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b9c0a40">b9c0a40&lt;/a> feat(dataformat): add new config prop to exclude node attributes in namespaces (&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/175">#175&lt;/a>)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8f648c8">8f648c8&lt;/a> feat(dataformat): add new config props to exclude all XML attributes (&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/174">#174&lt;/a>)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/355b6e4">355b6e4&lt;/a> feat(expression): add UnixTimestamp expression function&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5a62f03">5a62f03&lt;/a> feat(filters): add new XmlToStructFilter&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9cad2fa">9cad2fa&lt;/a> feat(filters): add new simple XmlToJsonFilter&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0e29ce2">0e29ce2&lt;/a> feat(plugin): add capability to merge schemas deriving from records&lt;/li>
+&lt;/ul>
+&lt;h3 id="improvements--bugfixes">Improvements &amp;amp; Bugfixes&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/165a908">165a908&lt;/a> refactor(expressions): allow functions to not evaluate all expression args&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4e9f84d">4e9f84d&lt;/a> fix(expressions): fix equals SCeL expression should support null argument (&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/187">#187&lt;/a>)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7bdc787">7bdc787&lt;/a> fix(filesystems): fix regression on AmazonS3Client configuration (&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/184">#184&lt;/a>)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d76bac0">d76bac0&lt;/a> fix(plugin): refactor InMemoryFileObjectStateBackingStore to use an LRU cache (&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/183">#183&lt;/a>)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/50200f7">50200f7&lt;/a> fix(plugin): fix resources must not be closed while files are not committed&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/17e9efb">17e9efb&lt;/a> fix(plugin): fix regression cleanup object files should not be rescheduled (&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/178">#178&lt;/a>)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2f74b2">e2f74b2&lt;/a> fix(api): fix schemas should be merged per target topic&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/03bab9a">03bab9a&lt;/a> fix(api): enhance mapping to connect schema to handle duplicate schema&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/760d98b">760d98b&lt;/a> fix(filters): XmlToJson should support bytes input&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/99c374f">99c374f&lt;/a> fix(api): fix schema behavior on array merge&lt;/li>
+&lt;/ul>
+&lt;h2 id="sub-tasks">Sub-Tasks&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e9cd483">e9cd483&lt;/a> fix(build): normalize artefact-ids&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2b8d260">2b8d260&lt;/a> refactor(filters): relocate json packages&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4d13731">4d13731&lt;/a> refactor(filters): cleanup classes&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f3179a7">f3179a7&lt;/a> refactor(expression): refactor expression function api&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bf3fc31">bf3fc31&lt;/a> refactor(expression): reorganize packages for built-in functions&lt;/li>
+&lt;/ul>
+&lt;h3 id="docs">Docs&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/643469f">643469f&lt;/a> site(docs): update documentations&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/be29aae">be29aae&lt;/a> docs(site): add new function descriptions&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2a9a119">2a9a119&lt;/a> docs(site): fix missing config property&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7533d2f">7533d2f&lt;/a> docs(site): improve installation guide&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/71a9ebe">71a9ebe&lt;/a> docs(site): add doc for defining schema&lt;/li>
+&lt;/ul>
+&lt;p>If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p></description></item><item><title>Blog: Connect FilePulse 2.3 is Released 🚀</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/09/05/connect-filepulse-2.3-is-released/</link><pubDate>Sun, 05 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/09/05/connect-filepulse-2.3-is-released/</guid><description>
+&lt;p>&lt;strong>This new release brings new capabilities and several bug fixes and improvements that make ConnectFilePulse still the more powerful Kafka Connect-based solution for processing files.&lt;/strong>&lt;/p>
+&lt;h2 id="full-release-notes">Full Release Notes&lt;/h2>
+&lt;p>Connect File Pulse 2.3 can be downloaded from the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.3.0">GitHub Releases Page&lt;/a>.&lt;/p>
+&lt;h3 id="new-features">New Features&lt;/h3>
+&lt;p>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/3da6a5b">3da6a5b&lt;/a> feat(filesystems): add the capability to configure alternative AWS S3 endpoint (#172)
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/608d1c2">608d1c2&lt;/a> feat(plugin): add new prop to cleanup on offset commit
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f6b443a">f6b443a&lt;/a> feat(api): allow to configure a record-value schema
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/befbc6f">befbc6f&lt;/a> feat(filters): add new NullValueFilter (#169)
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d86804b">d86804b&lt;/a> feat(plugin): add new config tasks.empty.poll.wait.ms
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/39c37d9">39c37d9&lt;/a> feat(plugin): add new prop to configure if task should halt on error (#164)
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7c219b8">7c219b8&lt;/a> feat(filesystems/api): enhance XMLFileInputReader to support data type inference (#163)&lt;/p>
+&lt;h3 id="improvements--bugfixes">Improvements &amp;amp; Bugfixes&lt;/h3>
+&lt;p>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5314e20">5314e20&lt;/a> fix(filters): DelimtedRowFileInputFilter should compute schema for each record (#171)
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/816f48a">816f48a&lt;/a> fix(filters): fix AppendFilter to set record-value to null (#167)
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d2e776b">d2e776b&lt;/a> fix(api): fix connector should accept nullable record-cord (#170)
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2266fc1">2266fc1&lt;/a> fix(expression): fix SCEL expression null&lt;/p>
+&lt;h3 id="docs">Docs&lt;/h3>
+&lt;p>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/20983dd">20983dd&lt;/a> docs(site): fix documentation typos on metadata access (#165)
+&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4eef25f">4eef25f&lt;/a> docs(site): add missing config prop&lt;/p>
+&lt;p>If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p></description></item><item><title>Blog: Connect FilePulse 2.2 is Released 🚀</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/08/10/connect-filepulse-2.2-is-released/</link><pubDate>Tue, 10 Aug 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/08/10/connect-filepulse-2.2-is-released/</guid><description>
+&lt;p>&lt;strong>This new release brings new capabilities and several bug fixes and improvements that make ConnectFilePulse still the more powerful Kafka Connect-based solution for processing files.&lt;/strong>&lt;/p>
+&lt;h2 id="support-for-file-listing-process-delegation">Support for file-listing process delegation&lt;/h2>
+&lt;p>From the very beginning, Connect FilePulse was designed differently from most other Kafka connectors used for file processing.
+For example, we chose to use a single thread called the `FileSystemMonitorThread, managed by the connector instance, to scan the files to be processed and to apply the configured file cleanup policy.
+Then, when new files are detected on the file system, the connector instance triggers a task reconfiguration to distribute the files to be processed among the tasks.&lt;/p>
+&lt;p>Although this design offers many advantages it also brings some limitations that may make the connector less suitable for some scenarios,
+such as processing a very large number of small files that would be created quickly on the file system.&lt;/p>
+&lt;p>This limitation is mainly due to the fact that every time a task reconfiguration is triggered,
+Kafka Connect needs to stop and restart all tasks of our connector using the internal Kafka rebalance protocol.
+Thus, the connector may have some scalability issues if it is necessary to reconfigure tasks every second because new files have been created on the local filesystem.&lt;/p>
+&lt;p>To support such a scenario, Connect FilePulse 2.2.0 brings a new feature to delegate the file listing process to the connector&amp;rsquo;s tasks
+This new feature can be enabled by setting the connector&amp;rsquo;s property &lt;code>fs.listing.task.delegation.enabled&lt;/code> to &lt;code>true&lt;/code>.&lt;/p>
+&lt;p>When enabled, each task will scan the filesystem using the &lt;code>fs.listing.class&lt;/code> passed through the connector&amp;rsquo;s configuration.
+In addition, a dedicated &lt;code>TaskPartitioner&lt;/code> is used to partition each file to a single task using the murmur2 hash algorithm.
+Finally, the cleanup policy passed through the connector&amp;rsquo;s configuration is still executed by the &lt;code>FileSystemMonitorThread&lt;/code>.&lt;/p>
+&lt;h2 id="taskpartitioner">TaskPartitioner&lt;/h2>
+&lt;p>Additionally, Connect FilePulse 2.2.0 introduces a new pluggable interface called &lt;code>TaskPartitioner&lt;/code> used to partition files among the connector&amp;rsquo;s tasks.
+The connector ships with two built-in implementations: the &lt;code>DefaultTaskPartitioner&lt;/code> that spreads files evenly among the tasks and the &lt;code>HashByURITaskPartitioner&lt;/code> that partitions each file based on its URI.&lt;/p>
+&lt;h2 id="improved-support-for-xml">Improved support for XML&lt;/h2>
+&lt;p>Connect FilePulse 2.2.0 adds various improvements for XML support.
+So now, when using Connect FilePulse with the &lt;code>LocalXMLFileInputReader&lt;/code> you can enable the following features:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>reader.xml.parser.validating.enabled=true&lt;/code>: To specify that the XML parser should validate documents as they are parsed.&lt;/li>
+&lt;li>&lt;code>reader.xml.parser.namespace.aware.enabled=true&lt;/code>: To specify that the XML parser should provide support for XML namespaces.&lt;/li>
+&lt;li>&lt;code>reader.xml.exclude.empty.elements&lt;/code>: To specify that the reader should automatically exclude elements having no field.&lt;/li>
+&lt;/ul>
+&lt;p>Furthermore, dynamic schema resolution has been improved when processing complex XML documents and more especially when handling documents with elements containing arrays.&lt;/p>
+&lt;h2 id="improved-lastmodifiedfilelistfilter">Improved LastModifiedFileListFilter&lt;/h2>
+&lt;p>Finally, this new release enhances the &lt;code>LastModifiedFileListFilter&lt;/code> to allow configuring the maximum age in milliseconds of a file to be eligible for processing.
+For this, you can use the new connector&amp;rsquo;s configuration property: &lt;code>file.filter.maximum.age.ms&lt;/code>.&lt;/p>
+&lt;h2 id="full-release-notes">Full Release Notes&lt;/h2>
+&lt;p>Connect File Pulse 2.2 can be downloaded from the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.2.0">GitHub Releases Page&lt;/a>.&lt;/p>
+&lt;h3 id="new-features">New Features&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5bc2024">5bc2024&lt;/a> feat(plugin): allow excluding from processing files based on maximum age in ms (#161)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a3ef5db">a3ef5db&lt;/a> feat(filesystems): improve XMLFileInputIterator to allow excluding empty element (#159)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/b00ef42">b00ef42&lt;/a> feat(scripts): add arg to specify number of connect workers&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ef8fbc3">ef8fbc3&lt;/a> feat(plugin): add support for task file listing delegation&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/137c1a6">137c1a6&lt;/a> feat(filesystems): enhance XMLFileInputIterator with new config props&lt;/li>
+&lt;/ul>
+&lt;h3 id="improvements--bugfixes">Improvements &amp;amp; Bugfixes&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a693b52">a693b52&lt;/a> fix(plugin): fix FilePulseSourceConnector should raise an error when FileSystemMonitorThread crash&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c6f1f13">c6f1f13&lt;/a> fix(api): fix empty document removing in XMLFileInputIterator&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c0cc249">c0cc249&lt;/a> fix(api): improve support for XML by adding capabilities to merge schemas (#160)&lt;/li>
+&lt;/ul>
+&lt;h3 id="docs">Docs&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0c92901">0c92901&lt;/a> docs(site): fix page date and css&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7000b84">7000b84&lt;/a> docs(site): add release note for 2.1.0&lt;/li>
+&lt;/ul>
+&lt;h3 id="sub-tasks">Sub-Tasks&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4f0add2">4f0add2&lt;/a> project(issue): add github stale bot config&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/34ab52a">34ab52a&lt;/a> fix(scripts): update docker-compose for debug&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a2fb4a5">a2fb4a5&lt;/a> sub-task(plugin): add new interface TaskPartitioner&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/bbeebda">bbeebda&lt;/a> subtask(plugin): add new interface FileURIProvider&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e2825c0">e2825c0&lt;/a> build(deps): bump commons-compress from 1.20 to 1.21&lt;/li>
+&lt;/ul>
+&lt;p>If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p></description></item><item><title>Blog: Connect FilePulse 2.1 is Available 🚀</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/08/04/connect-filepulse-2.1-is-available/</link><pubDate>Wed, 04 Aug 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/08/04/connect-filepulse-2.1-is-available/</guid><description>
+&lt;p>&lt;strong>This new release contains a number of bug fixes and improvements that make ConnectFilePulse more stable and resilient in production.&lt;/strong>&lt;/p>
+&lt;h2 id="full-release-notes">Full Release Notes&lt;/h2>
+&lt;p>Connect File Pulse 2.1 can be downloaded from the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.1.0">GitHub Releases Page&lt;/a>.&lt;/p>
+&lt;h3 id="improvements--bugfixes">Improvements &amp;amp; Bugfixes&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/f1c071e">f1c071e&lt;/a> refactor(plugin): change default value of &lt;code>offset.attributes.string&lt;/code> to uri (#154)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d8aac2b">d8aac2b&lt;/a> refactor(plugin): enhance error handling when file do not exist anymore&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/8a17051">8a17051&lt;/a> fix(plugin): fix ClassCastException when offset.attributes.string=inode (#153)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/defee21">defee21&lt;/a> fix(plugin): remove duplicate log when closing file iterator&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7897bcb">7897bcb&lt;/a> fix(plugin): improve DefaultFileSystemMonitor to avoid scheduling files that may be cleanup by remaining tasks (#152)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/28456db">28456db&lt;/a> fix(plugin): fix task must close resources on error while starting&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ddf8b86">ddf8b86&lt;/a> fix(api): fix DeadLock on KafkaStateBackingStore&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/370a1d6">370a1d6&lt;/a> fix(filesystems): fix FileSystemMonitorThread should not fail if file metadata cannot be retrieved (#150)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e9462c8">e9462c8&lt;/a> fix(plugin): fix NPE using version 2.0 with KafkaFileObjectStateBackingStore (#149)&lt;/li>
+&lt;/ul>
+&lt;h3 id="docs">Docs&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1b72a96">1b72a96&lt;/a> docs(site): fix syntax for &amp;lsquo;exists&amp;rsquo; ScEL Built-in Function (#148)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7da7e41">7da7e41&lt;/a> docs(site): fix documentation error for StateBackingStore (#147)&lt;/li>
+&lt;/ul>
+&lt;h3 id="sub-tasks">Sub-Tasks&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ec70611">ec70611&lt;/a> build(deps): bump commons-io from 2.5 to 2.7&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/aa62022">aa62022&lt;/a> fix(script): fix docker-compose for debugging&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/2723516">2723516&lt;/a> refactor(build): add mvn profiles for different storages&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/c1da2f8">c1da2f8&lt;/a> refactor(build): improve makefile and add utility script for debugging&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/54ba1e5">54ba1e5&lt;/a> build(maven): add meta info&lt;/li>
+&lt;/ul>
+&lt;p>If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p></description></item><item><title>Blog: Connect FilePulse 2.0 is Available 🚀</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/06/10/connect-filepulse-2.0-is-available/</link><pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/blog/2021/06/10/connect-filepulse-2.0-is-available/</guid><description>
+&lt;p>&lt;strong>Connect FilePulse 2.0 is finally here! Here is an overview of what is new:&lt;/strong>&lt;/p>
+&lt;h2 id="supported-cloud-storage">Supported Cloud Storage&lt;/h2>
+&lt;p>Previously, Connect FilePulse was designed to provide direct integration between legacy systems and Apache Kafka.
+But, it could be only used to process and integrate data records from the local filesystem on which the connector was deployed.&lt;/p>
+&lt;p>As more and more organizations move from on-premises to cloud infrastructure, we&amp;rsquo;ve seen a growing demand from developers for the connector to support cloud storage.&lt;/p>
+&lt;p>Connect FilePulse 2.0 brings you the capabilities for reading files across different storage systems.
+Using a single Kafka Connect Source Connector you can now read files from the local filesystem, Amazon S3, Azure Blob Storage and Google Cloud Storage.&lt;/p>
+&lt;p>In addition, the connector supports a variety of formats equally for all storage systems, e.g., text files, CSV, XML, JSON, Avro, etc.
+At the same time, you can still benefit from the powerful &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/">processing-filters&lt;/a> mechanism of Connect FilePulse to process data records as they are read by the connector.&lt;/p>
+&lt;p>For example, here is the configuration for reading CSV object files from an Amazon S3 bucket.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">name=connect-file-pulse-amazon-s3-csv
+connector.class=io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector
+topic=connect-filepulse-csv-data-records
+tasks.max=1
+fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing
+fs.listing.interval.ms=10000
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
+file.filter.regex.pattern=.*\\.csv$
+fs.cleanup.policy.class=io.streamthoughts.kafka.connect.filepulse.clean.LogCleanupPolicy
+aws.access.key.id=xxxxxxxxx
+aws.secret.access.key=xxxxxxxxx
+aws.s3.region=eu-west-3
+aws.s3.bucket.name=connect-filepulse
+tasks.reader.class=io.streamthoughts.kafka.connect.filepulse.fs.reader.AmazonS3RowFileInputReader
+skip.headers=1
+offset.attributes.string=uri
+filters=ParseLine
+filters.ParseLine.type=io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter
+filters.ParseLine.extractColumnName=headers
+filters.ParseLine.trimColumn=true
+filters.ParseLine.separator=;
+tasks.file.status.storage.bootstrap.servers=kafka101:9092
+tasks.file.status.storage.topic=connect-file-pulse-status
+tasks.file.status.storage.topic.partitions=10
+tasks.file.status.storage.topic.replication.factor=1
+&lt;/code>&lt;/pre>&lt;h2 id="auto-create-internal-topic">Auto-create Internal Topic&lt;/h2>
+&lt;p>By default, Connect FilePulse uses the internal topic &lt;code>connect-file-pulse-status&lt;/code> to track the current state of each file
+being scheduled and processed by tasks. This allows you to deploy Connect FilePulse is a distributed Kafka Connect cluster with each worker only processing a subset of files.&lt;/p>
+&lt;p>In version 2.0, this topic is will be automatically created by the connector if it doesn&amp;rsquo;t already exist. You can configure the number of partitions, as well as, the replication factor of this topic using the
+new properties &lt;code>tasks.file.status.storage.topic.partitions&lt;/code> and &lt;code>tasks.file.status.storage.topic.replication.factor&lt;/code>.&lt;/p>
+&lt;h2 id="inmemoryfileobjectstatebackingstore">InMemoryFileObjectStateBackingStore&lt;/h2>
+&lt;p>In version 2.0, we provide a new property &lt;code>tasks.file.status.storage.class&lt;/code> that can be used to specify the class implementing the &lt;code>FileObjectStateBackingStore&lt;/code> interface
+to be used for storing the status of each file. By default, Connect FilePulse uses the kafka-based implementation called &lt;code>i.s.k.c.f.state.KafkaFileObjectStateBackingStore&lt;/code>.&lt;/p>
+&lt;p>But, in some context, it may be not necessary to deploy Connect FilePulse in distributed mode and this implementation can lead to additional costs if, for example, you are using a fully-managed Apache Kafka service.
+So now, we also provide the &lt;code>i.s.k.c.f.state.InMemoryFileObjectStateBackingStore&lt;/code> implementation to only keep file status in-memory.&lt;/p>
+&lt;h2 id="improved-scalability">Improved Scalability&lt;/h2>
+&lt;p>Connect FilePulse can be used to integrate a very large number of files in parallel.
+Unfortunately, too many files to process can result in a too-large message to produce in Kafka for configuring tasks (i.e. &lt;code>connect-config&lt;/code>).
+To solve this blocking issue, in version 2.0, we have added the new property &lt;code>max.scheduled.files&lt;/code> to limit the maximum number of files that can be scheduled at the same time (Default is &lt;code>1000&lt;/code>).&lt;/p>
+&lt;h2 id="improved-grok-expression">Improved Grok Expression&lt;/h2>
+&lt;p>In a previous version, Connect FilePulse has brought the support for Grok expressions to parse data.
+Since this mechanism has been migrated to a new dedicated project &lt;a href="https://github.com/streamthoughts/kafka-connect-transform-grok">kafka-connect-transform-grok&lt;/a> in order to be able to use Grok expressions with Kafka Connect&amp;rsquo;s a SMTs.
+Now, Connect FilePulse directly depends on that project to provide the &lt;code>GrokFilter&lt;/code> with a unified configuration.&lt;/p>
+&lt;h2 id="full-release-notes">Full Release Notes&lt;/h2>
+&lt;p>Connect File Pulse 2.0 can be downloaded from the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases/tag/v2.0.0">GitHub Releases Page&lt;/a>.&lt;/p>
+&lt;p>Members of the open-source community who appear in these release notes:&lt;/p>
+&lt;ul>
+&lt;li>@at0dd&lt;/li>
+&lt;li>@qgeffard&lt;/li>
+&lt;/ul>
+&lt;p>Thank you for your valuable contributions!&lt;/p>
+&lt;h3 id="features">Features&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/13eed7b">13eed7b&lt;/a> feat(plugin): add support for auto-creating the internal topic used by ConnectFilePulse (#139)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/5c88877">5c88877&lt;/a> feat(plugin): add InMemoryStateBackingStore for tracking status of file objects (#138)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/52adca9">52adca9&lt;/a> feat(filesystems): add support for Google Cloud Storage (#121)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7b49b81">7b49b81&lt;/a> feat(plugin): add new property max.scheduled.files (#122) (#123)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/390ad82">390ad82&lt;/a> feat(filesystems): add support for AWS S3 (#111)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/92e3341">92e3341&lt;/a> feat(filesystems): add support for Azure Blob Storage (#112)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/685618a">685618a&lt;/a> refactor(filters): migrate GrokFilter to use classes from grok-transformer (#118)&lt;/li>
+&lt;/ul>
+&lt;h3 id="improvements--bugfixes">Improvements &amp;amp; Bugfixes&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/6ef5162">6ef5162&lt;/a> fix(api): fix decimal numbers not being correctly parsed (#142)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/6c779af">6c779af&lt;/a> refactor(filesystems): make cleanup policy storage aware&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/d13c236">d13c236&lt;/a> fix(filesystems): make compression codec more robust to encoding&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7d2ddac">7d2ddac&lt;/a> docs(site): fix DateFilter formats config&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e222414">e222414&lt;/a> fix(api): change digest value to string&lt;/li>
+&lt;/ul>
+&lt;h3 id="subtasks">SubTasks&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1658d35">1658d35&lt;/a> refactor(api/filesystems): move FileInputIterator implementation to commons-fs&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/06385b3">06385b3&lt;/a> refactor(filesystems): add module filepulse-commons-fs&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/57da04c">57da04c&lt;/a> subtask(all): refactor FilePulse API to support remote storages (#100)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/ee4acad">ee4acad&lt;/a> add github workflow&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/a3eb908">a3eb908&lt;/a> build(all): update to java 11&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/98eb51f">98eb51f&lt;/a> build(mvn): add maven-wrapper&lt;/li>
+&lt;/ul>
+&lt;h3 id="braking-changes">Braking changes&lt;/h3>
+&lt;ul>
+&lt;li>Configurations for Connect FilePulse 1.x is not compatible with the version 2.x.&lt;/li>
+&lt;/ul>
+&lt;p>If you enjoyed reading this post, check out Connect FilePulse at GitHub and give us a ⭐!&lt;/p></description></item></channel></rss>

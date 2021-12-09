@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
+import java.util.Iterator;
 import java.util.Map;
 
 public class LazyMapSchema extends MapSchema implements Schema {
@@ -44,8 +45,11 @@ public class LazyMapSchema extends MapSchema implements Schema {
             if (map.isEmpty()) {
                 throw new DataException("Cannot infer value type because MAP is empty");
             }
-            final Object peek = map.values().iterator().next();
-            valueSchema = SchemaSupplier.lazy(peek).get();
+            final Iterator<?> iterator = map.values().iterator();
+            valueSchema = SchemaSupplier.lazy(iterator.next()).get();
+            while (iterator.hasNext()) {
+                valueSchema = valueSchema.merge(SchemaSupplier.lazy(iterator.next()).get());
+            }
         }
         return valueSchema;
     }

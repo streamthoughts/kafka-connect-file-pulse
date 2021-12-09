@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.data;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class LazyArraySchema extends ArraySchema implements Schema {
@@ -47,7 +48,12 @@ public class LazyArraySchema extends ArraySchema implements Schema {
             if (list.isEmpty()) {
                 throw new DataException("Cannot infer value type because LIST is empty");
             }
-            valueSchema = SchemaSupplier.lazy(list.iterator().next()).get();
+
+            final Iterator<?> iterator = list.iterator();
+            valueSchema = SchemaSupplier.lazy(iterator.next()).get();
+            while (iterator.hasNext()) {
+                valueSchema = valueSchema.merge(SchemaSupplier.lazy(iterator.next()).get());
+            }
         }
         return valueSchema;
     }

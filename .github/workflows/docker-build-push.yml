@@ -28,6 +28,9 @@ jobs:
       - name: Set env PROJECT_VERSION
         run: echo "PROJECT_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
 
+      - name: Copy distribution
+        run: cp ./connect-file-pulse-plugin/target/components/packages/streamthoughts-kafka-connect-file-pulse-${{ env.PROJECT_VERSION }}.zip ./docker/ \
+
       - name: Check PROJECT_VERSION
         run: echo "${{ env.PROJECT_VERSION }}"
 
@@ -43,6 +46,9 @@ jobs:
       - name: Check GIT_COMMIT
         run: echo "${{ env.GIT_COMMIT }}"
 
+      - name: Set CREATED
+        run: echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -52,12 +58,13 @@ jobs:
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./docker
+          file: ./docker/Dockerfile
           no-cache: true
           push: true
           tags: streamthoughts/kafka-connect-file-pulse:master
           build-args: |
-            connectFilePulseVersion=${{ env.PROJECT_VERSION }}
-            connectFilePulseCommit=${{ env.GIT_COMMIT }}
-            connectFilePulseBranch=${{ env.GIT_BRANCH }}
+            VERSION=${{ env.PROJECT_VERSION }}
+            COMMIT=${{ env.GIT_COMMIT }}
+            BRANCH=${{ env.GIT_BRANCH }}
+            CREATED=${{ env.CREATED }}

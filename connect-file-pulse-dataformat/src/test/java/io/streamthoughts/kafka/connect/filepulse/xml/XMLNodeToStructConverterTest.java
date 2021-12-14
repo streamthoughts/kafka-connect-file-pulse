@@ -32,6 +32,22 @@ public class XMLNodeToStructConverterTest {
     private final XMLDocumentReader reader = new XMLDocumentReader(true, true);
 
     @Test
+    public void should_convert_given_xml_document_with_comment_type_node() throws IOException, SAXException {
+        final byte[] bytes = "<!-- THIS IS A COMMENT--><root attr=\"text\">test</root>".getBytes();
+        final XMLNodeToStructConverter converter = new XMLNodeToStructConverter();
+        final Document document = reader.parse(new ByteArrayInputStream(bytes));
+        Assert.assertNotNull(converter.apply(document));
+    }
+
+    @Test
+    public void should_convert_given_xml_document_with_document_type_node() throws IOException, SAXException {
+        final byte[] bytes = "<!DOCTYPE DATA><root attr=\"text\">test</root>".getBytes();
+        final XMLNodeToStructConverter converter = new XMLNodeToStructConverter();
+        final Document document = reader.parse(new ByteArrayInputStream(bytes));
+        Assert.assertNotNull(converter.apply(document));
+    }
+
+    @Test
     public void should_prefix_node_attributes() throws IOException, SAXException {
 
         // Given

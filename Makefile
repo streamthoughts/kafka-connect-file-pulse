@@ -23,7 +23,7 @@ clean-containers:
 
 clean-images:
 	echo -e "Cleaning images \n========================================== ";
-	for image in `docker images -qf "org.opencontainers.image.title=streamthoughts-kafka-connect-file-pulse"`; do \
+	for image in `docker images -qf "label=org.opencontainers.image.title=streamthoughts-kafka-connect-file-pulse"`; do \
 	    echo "Removing image $${image} \n==========================================\n " ; \
         docker rmi -f $${image} || exit 1 ; \
     done

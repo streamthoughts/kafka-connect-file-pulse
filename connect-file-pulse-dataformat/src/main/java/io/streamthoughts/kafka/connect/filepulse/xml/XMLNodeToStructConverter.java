@@ -146,7 +146,8 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private Optional<TypedValue> readObjectNodeValue(final Node node,
                                                      final FieldPaths forceArrayFields) {
-        if (isWhitespaceOrNewLineNodeElement(node)) {
+        if (isWhitespaceOrNewLineNodeElement(node) ||
+            isNodeOfType(node, Node.DOCUMENT_TYPE_NODE)) {
             return Optional.empty();
         }
 

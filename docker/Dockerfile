@@ -42,7 +42,7 @@ COPY ./include/docker/connect-log4j.properties.template /etc/confluent/docker/lo
 COPY ./streamthoughts-kafka-connect-file-pulse-$FILE_PULSE_VERSION.zip /tmp/streamthoughts-kafka-connect-file-pulse.zip
 
 RUN confluent-hub install --no-prompt /tmp/streamthoughts-kafka-connect-file-pulse.zip && \
-    rm -rf /tmp/streamthoughts-kafka-connect-file-pulse.zip.zip
+    rm -rf /tmp/streamthoughts-kafka-connect-file-pulse.zip
 
 LABEL org.opencontainers.image.created=$CREATED \
       org.opencontainers.image.version=$VERSION \

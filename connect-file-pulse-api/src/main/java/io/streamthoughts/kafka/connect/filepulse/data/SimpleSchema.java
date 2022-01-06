@@ -101,9 +101,10 @@ public class SimpleSchema implements Schema {
         }
 
         if (!that.type().isPrimitive()) {
-            // Let's try to reverse the merge. e.g., this can handle case where
-            // trying to merge PRIMITIVE with ARRAY.
-            return that.merge(this);
+            // Let's try to reverse the merge:
+            if (that.type() == Type.ARRAY)
+                return that.merge(this);
+            // Else, do throw a DataException.
         }
 
         if (this.type() == Type.STRING || that.type() == Type.STRING)

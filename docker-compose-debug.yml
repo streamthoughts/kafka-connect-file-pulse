@@ -51,6 +51,30 @@ services:
     networks:
       - kafka-connect
 
+  akhq:
+    image: tchiotludo/akhq
+    hostname: akhq
+    container_name: akhq
+    depends_on:
+      - cp-zookeeper
+      - cp-broker
+    ports:
+      - "8087:8080"
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "broker:29092"
+              schema-registry:
+                url: "http://schema-registry:8081"
+              connect:
+                - name: "connect"
+                  url: "http://traefik:8080"
+    networks:
+      - kafka-connect
+
   traefik:
     image: traefik
     container_name: "traefik"

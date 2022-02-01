@@ -28,6 +28,7 @@ import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,8 @@ public class AmazonS3ClientUtils {
         return builder.build();
     }
 
-    protected static AWSCredentialsProvider newCredentialsProvider(final AmazonS3ClientConfig config) {
+    @VisibleForTesting
+    static AWSCredentialsProvider newCredentialsProvider(final AmazonS3ClientConfig config) {
         final String accessKeyId = config.getAwsAccessKeyId().value();
         final String secretKey = config.getAwsSecretAccessKey().value();
         final String sessionToken = config.getAwsSecretSessionToken().value();

@@ -198,7 +198,7 @@ public class AmazonS3ClientConfig extends AbstractConfig {
                 .define(
                         AWS_SECRET_ACCESS_KEY_CONFIG,
                         ConfigDef.Type.PASSWORD,
-                        null,
+                        new Password(null),
                         new NonEmptyPassword(),
                         ConfigDef.Importance.HIGH,
                         AWS_SECRET_ACCESS_KEY_DOC,

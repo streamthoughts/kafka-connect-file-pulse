@@ -68,38 +68,39 @@ Note the use of double-quotes to define a substitution expressions
 
 ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.
 
-| Function         | Since   | Description   | Syntax   |
-| -----------------|---------|---------------|-----------|
-| `and`            | `2.4.0` | Checks if all of the given conditional expressions are `true`.  | `{{ and(booleanExpression1, booleanExpression2, ...) }}` |
-| `concat`         |         | Concatenate two or more string expressions.  | `{{ concat(expr1, expr2, ...) }}` |
-| `concat_ws`      |         | Concatenate two or more string expressions, using the specified separator between each.  | `{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}` |
-| `contains`       |         | Returns `true` if an array field's value contains the specified value  | `{{ contains(array, 'value') }}` |
-| `converts`       |         | Converts a field's value into the specified type | `{{ converts(field_expr, INTEGER) }}` |
-| `ends_with`      |         | Returns `true` if a string field's value end with the specified string suffix | `{{ ends_with(field_expr, 'suffix') }}` |
-| `equals`         |         | Returns `true` if a string or number fields's value equals the specified value | `{{ equals(field_expr, value) }}` |
-| `exists`         |         | Returns `true` if an object has the specified field | `{{ exists(obj_expr, field_expr) }}` |
-| `extract_array`  |         | Returns the element at the specified position of the specified array | `{{ extract_array(array, 0) }}` |
-| `gt`             | `2.4.0` | Executes "*greater than operation*" on two values and returns `true` if the first value is greater than the second value, `false`, otherwise. | `{{ gt(expressionValue1, expressionValue2) }}` |
-| `hash`           |         | Hash a given string expression, using murmur2 algorithm | `{{ hash(field_expr) }}` |
-| `if`             | `2.4.0` | Evaluates the given boolean expression and returns one value if `true` and another value if `false`. | `{{ if(booleanExpression, valueIfTrue, valueIfFalse ) }}` |
-| `is_null`        |         | Returns `true` if a field's value is null | `{{ is_null(field) }}` |
-| `length`         |         | Returns the number of elements into an array of the length of an string field | `{{ length(array) }}` |
-| `lt`             | `2.4.0` | Executes "*less than operation*" on two values and returns `true` if the first value is less than the second value, `false`, otherwise. | `{{ lt(expressionValue1, expressionValue2) }}` |
-| `lowercase`      |         | Converts all of the characters in a string field's value to lower case | `{{ lowercase(field) }}` |
-| `matches`        |         | Returns `true` if a field's value match the specified regex | `{{ matches(field_expr, 'regex') }}` |
-| `md5`            |         | Computes the MD5 hash of string expression  | `{{ md5(field_expr) }}` |
-| `nlv`            |         | Sets a default value if a field's value is null | `{{ length(array) }}` |
-| `not`            | `2.4.0` | Reverses a boolean value | `{{ not(booleanExpression) }}` |
-| `or`             | `2.4.0` | Checks if at least one of the given conditional expressions is `true`..  | `{{ or(booleanExpression1, booleanExpression2, ...) }}` |
-| `replace_all `   |         | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string. | `{{ replace_all(field_expr, 'regex', 'replacement') }}` |
-| `split`          |         | Split a string field's value into an array using the specified regex or character | `{{ split(field_expr, regex) }}` or  `{{ split(field_expr, regex, limit) }}` |
-| `starts_with`    |         | Returns `true` if an a string field's value start with the specified string prefix | `{{ starts_with(field_expr, 'prefix') }}` |
+| Function         | Since   | Description                                                                                                                                                                                                      | Syntax   |
+|------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
+| `and`            | `2.4.0` | Checks if all of the given conditional expressions are `true`.                                                                                                                                                   | `{{ and(booleanExpression1, booleanExpression2, ...) }}` |
+| `concat`         |         | Concatenate two or more string expressions.                                                                                                                                                                      | `{{ concat(expr1, expr2, ...) }}` |
+| `concat_ws`      |         | Concatenate two or more string expressions, using the specified separator between each.                                                                                                                          | `{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}` |
+| `contains`       |         | Returns `true` if an array field's value contains the specified value                                                                                                                                            | `{{ contains(array, 'value') }}` |
+| `converts`       |         | Converts a field's value into the specified type                                                                                                                                                                 | `{{ converts(field_expr, INTEGER) }}` |
+| `ends_with`      |         | Returns `true` if a string field's value end with the specified string suffix                                                                                                                                    | `{{ ends_with(field_expr, 'suffix') }}` |
+| `equals`         |         | Returns `true` if a string or number fields's value equals the specified value                                                                                                                                   | `{{ equals(field_expr, value) }}` |
+| `exists`         |         | Returns `true` if an object has the specified field                                                                                                                                                              | `{{ exists(obj_expr, field_expr) }}` |
+| `extract_array`  |         | Returns the element at the specified position of the specified array                                                                                                                                             | `{{ extract_array(array, 0) }}` |
+| `gt`             | `2.4.0` | Executes "*greater than operation*" on two values and returns `true` if the first value is greater than the second value, `false`, otherwise.                                                                    | `{{ gt(expressionValue1, expressionValue2) }}` |
+| `hash`           |         | Hash a given string expression, using murmur2 algorithm                                                                                                                                                          | `{{ hash(field_expr) }}` |
+| `if`             | `2.4.0` | Evaluates the given boolean expression and returns one value if `true` and another value if `false`.                                                                                                             | `{{ if(booleanExpression, valueIfTrue, valueIfFalse ) }}` |
+| `is_null`        |         | Returns `true` if a field's value is null                                                                                                                                                                        | `{{ is_null(field) }}` |
+| `is_empty`       |         | Returns `true` if an array as no elements or a string field has no characters                                                                                                                                    | `{{ is_null(field) }}` |
+| `length`         |         | Returns the number of elements into an array or the length of a string field                                                                                                                                     | `{{ length(array) }}` |
+| `lt`             | `2.4.0` | Executes "*less than operation*" on two values and returns `true` if the first value is less than the second value, `false`, otherwise.                                                                          | `{{ lt(expressionValue1, expressionValue2) }}` |
+| `lowercase`      |         | Converts all of the characters in a string field's value to lower case                                                                                                                                           | `{{ lowercase(field) }}` |
+| `matches`        |         | Returns `true` if a field's value match the specified regex                                                                                                                                                      | `{{ matches(field_expr, 'regex') }}` |
+| `md5`            |         | Computes the MD5 hash of string expression                                                                                                                                                                       | `{{ md5(field_expr) }}` |
+| `nlv`            |         | Sets a default value if a field's value is null                                                                                                                                                                  | `{{ length(array) }}` |
+| `not`            | `2.4.0` | Reverses a boolean value                                                                                                                                                                                         | `{{ not(booleanExpression) }}` |
+| `or`             | `2.4.0` | Checks if at least one of the given conditional expressions is `true`..                                                                                                                                          | `{{ or(booleanExpression1, booleanExpression2, ...) }}` |
+| `replace_all `   |         | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string.                                                                                                | `{{ replace_all(field_expr, 'regex', 'replacement') }}` |
+| `split`          |         | Split a string field's value into an array using the specified regex or character                                                                                                                                | `{{ split(field_expr, regex) }}` or  `{{ split(field_expr, regex, limit) }}` |
+| `starts_with`    |         | Returns `true` if an a string field's value start with the specified string prefix                                                                                                                               | `{{ starts_with(field_expr, 'prefix') }}` |
 | `timestamp_diff` | `2.4.0` | Calculates the amount of time between two epoch times in seconds or milliseconds. For more information on `unit` see [ChronoUnit](https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html). | `{{ timestamp_diff(unit, epoch_time_expression1, epoch_time_expression2) }}` |
-| `to_timestamp`   | `2.4.0` | Parses a given string value and returns the epoch-time in milliseconds.  | `{{ to_timestamp(datetime_expression, pattern [, timezone]) }}` |
-| `trim`           |         | Trims the spaces from the beginning and end of a string.  | `{{ trim(field_expr) }}` |
-| `unix_timestamp` | `2.4.0` | Returns the current time in milliseconds.    | `{{ unix_timestamp() }}` |
-| `uppercase`      |         | Converts all of the characters in a string field's value to upper case  | `{{ uppercase(field_expr) }}` |
-| `uuid`           |         | Create a Universally Unique Identifier (UUID)  | `{{ uuid() }}` |
+| `to_timestamp`   | `2.4.0` | Parses a given string value and returns the epoch-time in milliseconds.                                                                                                                                          | `{{ to_timestamp(datetime_expression, pattern [, timezone]) }}` |
+| `trim`           |         | Trims the spaces from the beginning and end of a string.                                                                                                                                                         | `{{ trim(field_expr) }}` |
+| `unix_timestamp` | `2.4.0` | Returns the current time in milliseconds.                                                                                                                                                                        | `{{ unix_timestamp() }}` |
+| `uppercase`      |         | Converts all of the characters in a string field's value to upper case                                                                                                                                           | `{{ uppercase(field_expr) }}` |
+| `uuid`           |         | Create a Universally Unique Identifier (UUID)                                                                                                                                                                    | `{{ uuid() }}` |
 
 
 In addition, ScEL supports nested functions. 

@@ -35,10 +35,11 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Con
 import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Exists;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.IsNull;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Nlv;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Concat;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ConcatWs;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Concat;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.EndsWith;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Hash;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.IsEmpty;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Length;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Lowercase;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Matches;
@@ -88,6 +89,7 @@ public class ExpressionFunctionExecutors {
         register(new Exists());
         register(new Equals());
         register(new Trim());
+        register(new IsEmpty());
         register(new ReplaceAll());
         register(new Uuid());
         register(new Concat());

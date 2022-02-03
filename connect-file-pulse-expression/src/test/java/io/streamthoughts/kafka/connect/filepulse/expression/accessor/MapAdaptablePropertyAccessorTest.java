@@ -37,6 +37,13 @@ public class MapAdaptablePropertyAccessorTest {
     }
 
     @Test
+    public void should_read_property_from_map_given_simple_keyeee() {
+        MapAdaptablePropertyAccessor accessor = new MapAdaptablePropertyAccessor();
+        Object value = accessor.read(context, Map.of("key", "value"), "key");
+        Assert.assertEquals("value", value);
+    }
+
+    @Test
     public void should_read_property_from_map_given_dotted_key() {
         MapAdaptablePropertyAccessor accessor = new MapAdaptablePropertyAccessor();
         Object value = accessor.read(context,   Map.of("key1", Map.of("key2", "value")), "key1.key2");

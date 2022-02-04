@@ -1181,9 +1181,15 @@ the first element present in the array field &lt;code>$.values&lt;/code>.&lt;/p>
 &lt;td>&lt;code>{{ is_null(field) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
+&lt;td>&lt;code>is_empty&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>Returns &lt;code>true&lt;/code> if an array as no elements or a string field has no characters&lt;/td>
+&lt;td>&lt;code>{{ is_null(field) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
 &lt;td>&lt;code>length&lt;/code>&lt;/td>
 &lt;td>&lt;/td>
-&lt;td>Returns the number of elements into an array of the length of an string field&lt;/td>
+&lt;td>Returns the number of elements into an array or the length of a string field&lt;/td>
 &lt;td>&lt;code>{{ length(array) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>

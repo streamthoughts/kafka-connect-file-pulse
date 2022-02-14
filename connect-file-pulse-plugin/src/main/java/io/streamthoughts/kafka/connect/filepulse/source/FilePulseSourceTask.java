@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -76,6 +77,8 @@ public class FilePulseSourceTask extends SourceTask {
     private final ConcurrentLinkedQueue<FileContext> completedToCommit = new ConcurrentLinkedQueue<>();
 
     private final Map<String, Schema> valueSchemas = new HashMap<>();
+
+    private final AtomicLong taskThreadId = new AtomicLong(0);
 
     /**
      * {@inheritDoc}
@@ -120,9 +123,10 @@ public class FilePulseSourceTask extends SourceTask {
             fileURIProvider = taskConfig.getFileURIProvider();
 
             running.set(true);
+            taskThreadId.set(Thread.currentThread().getId());
             LOG.info("Started FilePulse source task");
         } catch (final Throwable t) {
-            // This task has failed, so close any resources (may be reopened if needed) before throwing
+            // This task has failed, so close any resources (maybe reopened if needed) before throwing
             closeResources();
             throw t;
         }
@@ -302,9 +306,22 @@ public class FilePulseSourceTask extends SourceTask {
     @Override
     public void stop() {
         LOG.info("Stopping FilePulse source task");
+
+        // In earlier versions of Kafka Connect, 'SourceTask::stop()' was not called from the task thread.
+        // In this case, resources should be closed at the end of 'SourceTask::poll()'
+        // when no longer running or if there is an error.
         running.set(false);
-        synchronized (this) {
-            notify();
+
+        // Since https://issues.apache.org/jira/browse/KAFKA-10792 the SourceTask::stop()
+        // is called from the source task's dedicated thread
+        if (taskThreadId.longValue() == Thread.currentThread().getId()) {
+            closeResources();
+            LOG.info("Stopped FilePulse source task.");
+        } else {
+            // For backward-compatibility with earlier versions of Kafka Connect.
+            synchronized (this) {
+                notify();
+            }
         }
     }
 

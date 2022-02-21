@@ -59,14 +59,14 @@ This reader creates one record per row. It should be used for reading delimited 
 
 ### Configuration
 
-| Configuration |   Description |   Type    |   Default |   Importance  |
-| --------------| --------------|-----------| --------- | ------------- |
-|`file.encoding` | The text file encoding to use | `String` | `UTF_8` | High | 
-|`buffer.initial.bytes.size` | The initial buffer size used to read input files. | `String` | `4096` | Medium | 
-|`min.read.records` | The minimum number of records to read from file before returning to task. | `Integer` | `1` | Medium | 
-|`skip.headers` | The number of rows to be skipped in the beginning of file. | `Integer` | `0` | Medium | 
-|`skip.footers` | The number of rows to be skipped at the end of file. | `Integer` | `0` | Medium | 
-|`read.max.wait.ms` | The maximum time to wait in milliseconds for more bytes after hitting end of file. | `Long` | `0` | Medium | 
+| Configuration               | Description                                                                        | Type      | Default | Importance |
+|-----------------------------|------------------------------------------------------------------------------------|-----------|---------|------------|
+| `file.encoding`             | The text file encoding to use                                                      | `String`  | `UTF_8` | High       | 
+| `buffer.initial.bytes.size` | The initial buffer size used to read input files.                                  | `String`  | `4096`  | Medium     | 
+| `min.read.records`          | The minimum number of records to read from file before returning to task.          | `Integer` | `1`     | Medium     | 
+| `skip.headers`              | The number of rows to be skipped in the beginning of file.                         | `Integer` | `0`     | Medium     | 
+| `skip.footers`              | The number of rows to be skipped at the end of file.                               | `Integer` | `0`     | Medium     | 
+| `read.max.wait.ms`          | The maximum time to wait in milliseconds for more bytes after hitting end of file. | `Long`    | `0`     | Medium     | 
 
 ## XxxBytesArrayInputReader
 
@@ -82,19 +82,20 @@ The `<PREFIX>XMLFileInputReader`s can be used to read XML files.
 
 ### Configuration
 
-| Configuration                                     | Since   | Description |   Type    |   Default     |   Importance  |
-| --------------------------------------------------| --------|-------------| --------- | ------------- |-------------- |
-|`reader.xpath.expression`                          |         | The XPath expression used extract data from XML input files | `String` | `/` | High | 
-|`reader.xpath.result.type`                         |         | The expected result type for the XPath expression in [NODESET, STRING] | `String` | `NODESET` | High | 
-|`reader.xml.force.array.on.fields`                 |         | The comma-separated list of fields for which an array-type must be forced | `List` | `-` | High |                                                
-|`reader.xml.parser.validating.enabled`             | `2.2.0` | Specifies that the parser will validate documents as they are parsed (default: false).";
-|`reader.xml.parser.namespace.aware.enabled`        | `2.2.0` | Specifies that the XML parser will provide support for XML namespaces (default: false).";
-|`reader.xml.exclude.empty.elements`                | `2.2.0` | Specifies that the reader should exclude element having no field (default: false).";
-|`reader.xml.exclude.node.attributes`               | `2.4.0` | Specifies that the reader should exclude all node attributes (default: false).";
-|`reader.xml.exclude.node.attributes.in.namespaces` | `2.4.0` | Specifies that the reader should only exclude node attributes in the defined list of namespaces.";
-|`reader.xml.data.type.inference.enabled`           | `2.3.0` | Specifies that the reader should try to infer the type of data nodes (default: false).";
-|`reader.xml.attribute.prefix`                      | `2.4.0` | If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: '').";
-    
+| Configuration                                      | Since   | Description                                                                                                             | Type      | Default   | Importance |
+|----------------------------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------|-----------|-----------|------------|
+| `reader.xpath.expression`                          |         | The XPath expression used extract data from XML input files                                                             | `String`  | `/`       | High       | 
+| `reader.xpath.result.type`                         |         | The expected result type for the XPath expression in [NODESET, STRING]                                                  | `String`  | `NODESET` | High       | 
+| `reader.xml.force.array.on.fields`                 |         | The comma-separated list of fields for which an array-type must be forced                                               | `List`    | `-`       | High       |                                                
+| `reader.xml.parser.validating.enabled`             | `2.2.0` | Specifies that the parser will validate documents as they are parsed.                                                   | `boolean` | `false`   | Low        |
+| `reader.xml.parser.namespace.aware.enabled`        | `2.2.0` | Specifies that the XML parser will provide support for XML namespaces.                                                  | `boolean` | `false`   | Low        |
+| `reader.xml.exclude.empty.elements`                | `2.2.0` | Specifies that the reader should exclude element having no field.                                                       | `boolean` | `false`   | Low        |
+| `reader.xml.exclude.node.attributes`               | `2.4.0` | Specifies that the reader should exclude all node attributes.                                                           | `boolean` | `false`   | Low        |
+| `reader.xml.exclude.node.attributes.in.namespaces` | `2.4.0` | Specifies that the reader should only exclude node attributes in the defined list of namespaces.                        | `list`    | `false`   | Low        |
+| `reader.xml.data.type.inference.enabled`           | `2.3.0` | Specifies that the reader should try to infer the type of data nodes.                                                   | `boolean` | `false`   | High       |
+| `reader.xml.attribute.prefix`                      | `2.4.0` | If set, the name of attributes will be prepended with the specified prefix when they are added to a record.             | `string`  | `""`      | Low        |
+| `reader.xml.text.node.value.field.name`            | `2.4.4` | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes. | `string`  | `value`   | Low        |
+
 ## XxxMetadataFileInputReader
 
 The `FileInputMetadataReader`s can be used to send a single record per file containing metadata, i.e.: `name`, `path`, `hash`, `lastModified`, `size`, etc.

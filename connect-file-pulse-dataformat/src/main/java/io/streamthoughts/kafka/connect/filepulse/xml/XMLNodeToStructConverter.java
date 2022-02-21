@@ -56,9 +56,9 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLNodeToStructConverter.class);
 
-    private static final String DEFAULT_TEXT_NODE_FIELD_NAME = "value";
     private static final Pattern NAME_INVALID_CHARACTERS = Pattern.compile("[.\\-]");
     private static final String NAME_INVALID_CHARACTER_REPLACEMENT = "_";
+    private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT = "value";
 
     private boolean excludeEmptyElement = false;
 
@@ -66,11 +66,18 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private boolean isTypeInferenceEnabled = false;
 
+    private String textNodeValueFieldName = XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT;
+
     private Set<String> excludeAttributesInNamespaces = Collections.emptySet();
 
     private String attributePrefix = "";
 
     private FieldPaths forceArrayFields = FieldPaths.empty();
+
+    public XMLNodeToStructConverter setTextNodeValueFieldName(String textNodeValueFieldName) {
+        this.textNodeValueFieldName = textNodeValueFieldName;
+        return this;
+    }
 
     public XMLNodeToStructConverter setExcludeEmptyElement(boolean excludeEmptyElement) {
         this.excludeEmptyElement = excludeEmptyElement;
@@ -185,7 +192,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         // Else, create a Struct container
         final TypedStruct container = TypedStruct.create();
         attributes.forEach(container::put);
-        container.put(DEFAULT_TEXT_NODE_FIELD_NAME, data);
+        container.put(textNodeValueFieldName, data);
         return Optional.of(TypedValue.struct(container));
     }
 

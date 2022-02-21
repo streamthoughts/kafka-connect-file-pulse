@@ -55,7 +55,11 @@ public class XMLCommonConfig extends AbstractConfig {
     private static final String XML_DATA_TYPE_INFERENCE_ENABLED_DOC = "Specifies that the reader should try to infer the type of data nodes (default: false).";
 
     public static final String XML_ATTRIBUTE_PREFIX_CONFIG = "xml.attribute.prefix";
-    public static final String XML_ATTRIBUTE_PREFIX_DOC = "If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: '').";
+    private static final String XML_ATTRIBUTE_PREFIX_DOC = "If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: '').";
+
+    public static final String XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG = "xml.text.node.value.field.name";
+    private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT = "value";
+    private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DOC = "Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes. (default: 'value').";
 
     private final String keyPrefix;
 
@@ -97,6 +101,10 @@ public class XMLCommonConfig extends AbstractConfig {
 
     public String getAttributePrefix() {
         return getString(withKeyPrefix(XML_ATTRIBUTE_PREFIX_CONFIG));
+    }
+
+    public String getTextNodeValueFieldName() {
+        return getString(withKeyPrefix(XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG));
     }
 
     public boolean isDataTypeInferenceEnabled() {
@@ -204,6 +212,17 @@ public class XMLCommonConfig extends AbstractConfig {
                         filterGroupCounter++,
                         ConfigDef.Width.NONE,
                         keyPrefix + XML_ATTRIBUTE_PREFIX_CONFIG
+                )
+                .define(
+                        keyPrefix + XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG,
+                        ConfigDef.Type.STRING,
+                        XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT,
+                        ConfigDef.Importance.LOW,
+                        XML_TEXT_NODE_VALUE_FIELD_NAME_DOC,
+                        group,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        keyPrefix + XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG
                 );
 
         for (ConfigDef.ConfigKey configKey : additional) {

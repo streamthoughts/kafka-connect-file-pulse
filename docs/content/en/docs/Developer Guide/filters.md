@@ -4,7 +4,7 @@ title: "Processing Filters"
 linkTitle: "Processing Filters"
 weight: 80
 description: >
-The list of available transformation filters.
+  The list of available transformation filters.
 ---
 
 These filters are available for use with Kafka Connect File Pulse:

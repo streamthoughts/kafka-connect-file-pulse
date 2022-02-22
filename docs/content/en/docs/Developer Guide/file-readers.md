@@ -82,19 +82,21 @@ The `<PREFIX>XMLFileInputReader`s can be used to read XML files.
 
 ### Configuration
 
-| Configuration                                      | Since   | Description                                                                                                             | Type      | Default   | Importance |
-|----------------------------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------|-----------|-----------|------------|
-| `reader.xpath.expression`                          |         | The XPath expression used extract data from XML input files                                                             | `String`  | `/`       | High       | 
-| `reader.xpath.result.type`                         |         | The expected result type for the XPath expression in [NODESET, STRING]                                                  | `String`  | `NODESET` | High       | 
-| `reader.xml.force.array.on.fields`                 |         | The comma-separated list of fields for which an array-type must be forced                                               | `List`    | `-`       | High       |                                                
-| `reader.xml.parser.validating.enabled`             | `2.2.0` | Specifies that the parser will validate documents as they are parsed.                                                   | `boolean` | `false`   | Low        |
-| `reader.xml.parser.namespace.aware.enabled`        | `2.2.0` | Specifies that the XML parser will provide support for XML namespaces.                                                  | `boolean` | `false`   | Low        |
-| `reader.xml.exclude.empty.elements`                | `2.2.0` | Specifies that the reader should exclude element having no field.                                                       | `boolean` | `false`   | Low        |
-| `reader.xml.exclude.node.attributes`               | `2.4.0` | Specifies that the reader should exclude all node attributes.                                                           | `boolean` | `false`   | Low        |
-| `reader.xml.exclude.node.attributes.in.namespaces` | `2.4.0` | Specifies that the reader should only exclude node attributes in the defined list of namespaces.                        | `list`    | `false`   | Low        |
-| `reader.xml.data.type.inference.enabled`           | `2.3.0` | Specifies that the reader should try to infer the type of data nodes.                                                   | `boolean` | `false`   | High       |
-| `reader.xml.attribute.prefix`                      | `2.4.0` | If set, the name of attributes will be prepended with the specified prefix when they are added to a record.             | `string`  | `""`      | Low        |
-| `reader.xml.text.node.value.field.name`            | `2.4.4` | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes. | `string`  | `value`   | Low        |
+| Configuration                                        | Since   | Description                                                                                                                           | Type      | Default   | Importance |
+|------------------------------------------------------|---------|---------------------------------------------------------------------------------------------------------------------------------------|-----------|-----------|------------|
+| `reader.xpath.expression`                            |         | The XPath expression used extract data from XML input files                                                                           | `String`  | `/`       | High       | 
+| `reader.xpath.result.type`                           |         | The expected result type for the XPath expression in [NODESET, STRING]                                                                | `String`  | `NODESET` | High       | 
+| `reader.xml.force.array.on.fields`                   |         | The comma-separated list of fields for which an array-type must be forced                                                             | `List`    | `-`       | High       |                                                
+| `reader.xml.parser.validating.enabled`               | `2.2.0` | Specifies that the parser will validate documents as they are parsed.                                                                 | `boolean` | `false`   | Low        |
+| `reader.xml.parser.namespace.aware.enabled`          | `2.2.0` | Specifies that the XML parser will provide support for XML namespaces.                                                                | `boolean` | `false`   | Low        |
+| `reader.xml.exclude.empty.elements`                  | `2.2.0` | Specifies that the reader should exclude element having no field.                                                                     | `boolean` | `false`   | Low        |
+| `reader.xml.exclude.node.attributes`                 | `2.4.0` | Specifies that the reader should exclude all node attributes.                                                                         | `boolean` | `false`   | Low        |
+| `reader.xml.exclude.node.attributes.in.namespaces`   | `2.4.0` | Specifies that the reader should only exclude node attributes in the defined list of namespaces.                                      | `list`    | `false`   | Low        |
+| `reader.xml.data.type.inference.enabled`             | `2.3.0` | Specifies that the reader should try to infer the type of data nodes.                                                                 | `boolean` | `false`   | High       |
+| `reader.xml.attribute.prefix`                        | `2.4.0` | If set, the name of attributes will be prepended with the specified prefix when they are added to a record.                           | `string`  | `""`      | Low        |
+| `reader.xml.text.node.value.field.name`              | `2.4.4` | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.               | `string`  | `value`   | Low        |
+| `reader.xml.field.name.characters.regex.pattern`     | `2.4.4` | Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct. | `string`  | `value`   | Low        |
+| `reader.xml.field.name.character.string.replacement` | `2.4.4` | Specifies the replacement string to be used when converting a document to a struct.                                                   | `string`  | `value`   | Low        |
 
 ## XxxMetadataFileInputReader
 

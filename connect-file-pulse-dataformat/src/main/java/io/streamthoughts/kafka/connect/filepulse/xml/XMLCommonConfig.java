@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -60,6 +61,12 @@ public class XMLCommonConfig extends AbstractConfig {
     public static final String XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG = "xml.text.node.value.field.name";
     private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT = "value";
     private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DOC = "Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes. (default: 'value').";
+
+    public static final String XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_CONFIG = "xml.field.name.characters.regex.pattern";
+    private static final String XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_DOC = "Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.";
+
+    public static final String XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG = "xml.field.name.character.string.replacement";
+    private static final String XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_DOC = "Specifies the replacement string to be used when converting a document to a struct.";
 
     private final String keyPrefix;
 
@@ -105,6 +112,14 @@ public class XMLCommonConfig extends AbstractConfig {
 
     public String getTextNodeValueFieldName() {
         return getString(withKeyPrefix(XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG));
+    }
+
+    public Pattern getXmlFieldCharactersRegexPattern() {
+        return Pattern.compile(getString(withKeyPrefix(XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_CONFIG)));
+    }
+
+    public String getXmlFieldCharactersStringReplacement() {
+        return getString(withKeyPrefix(XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG));
     }
 
     public boolean isDataTypeInferenceEnabled() {
@@ -223,6 +238,28 @@ public class XMLCommonConfig extends AbstractConfig {
                         filterGroupCounter++,
                         ConfigDef.Width.NONE,
                         keyPrefix + XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG
+                )
+                .define(
+                        keyPrefix + XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_CONFIG,
+                        ConfigDef.Type.STRING,
+                        "[.\\-]",
+                        ConfigDef.Importance.LOW,
+                        XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_DOC,
+                        group,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        keyPrefix + XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_CONFIG
+                )
+                .define(
+                        keyPrefix + XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG,
+                        ConfigDef.Type.STRING,
+                        "_",
+                        ConfigDef.Importance.LOW,
+                        XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_DOC,
+                        group,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        keyPrefix + XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG
                 );
 
         for (ConfigDef.ConfigKey configKey : additional) {

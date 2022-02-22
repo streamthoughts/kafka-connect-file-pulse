@@ -56,8 +56,9 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLNodeToStructConverter.class);
 
-    private static final Pattern NAME_INVALID_CHARACTERS = Pattern.compile("[.\\-]");
-    private static final String NAME_INVALID_CHARACTER_REPLACEMENT = "_";
+    private static final Pattern FIELD_CHARACTERS_REGEX_PATTERN_DEFAULT = Pattern.compile("[.\\-]");
+    private static final String FIELD_CHARACTERS_STRING_REPLACEMENT_DEFAULT = "_";
+
     private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT = "value";
 
     private boolean excludeEmptyElement = false;
@@ -74,6 +75,10 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private FieldPaths forceArrayFields = FieldPaths.empty();
 
+    private Pattern fieldCharactersRegexPattern = FIELD_CHARACTERS_REGEX_PATTERN_DEFAULT;
+
+    private String fieldCharactersStringReplacement = FIELD_CHARACTERS_STRING_REPLACEMENT_DEFAULT;
+
     public XMLNodeToStructConverter setTextNodeValueFieldName(String textNodeValueFieldName) {
         this.textNodeValueFieldName = textNodeValueFieldName;
         return this;
@@ -86,6 +91,17 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     public XMLNodeToStructConverter setExcludeAllAttributes(boolean excludeAllAttributes) {
         this.excludeAllAttributes = excludeAllAttributes;
+        return this;
+    }
+
+
+    public XMLNodeToStructConverter setFieldCharactersRegexPattern(Pattern fieldCharactersRegexPattern) {
+        this.fieldCharactersRegexPattern = fieldCharactersRegexPattern;
+        return this;
+    }
+
+    public XMLNodeToStructConverter setFieldCharactersStringReplacement(String fieldCharactersStringReplacement) {
+        this.fieldCharactersStringReplacement = fieldCharactersStringReplacement;
         return this;
     }
 
@@ -311,14 +327,14 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         return node != null && isTextNode(node) && node.getTextContent().trim().isEmpty();
     }
 
-    private static String determineNodeName(final Node node) {
+    private String determineNodeName(final Node node) {
         final String name = node.getLocalName() != null ? node.getLocalName() : node.getNodeName();
         return sanitizeNodeName(name);
     }
 
-    private static String sanitizeNodeName(final String name) {
-        return NAME_INVALID_CHARACTERS
+    private String sanitizeNodeName(final String name) {
+        return fieldCharactersRegexPattern
                 .matcher(name)
-                .replaceAll(NAME_INVALID_CHARACTER_REPLACEMENT);
+                .replaceAll(fieldCharactersStringReplacement);
     }
 }

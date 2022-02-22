@@ -89,6 +89,8 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                 .setForceArrayFields(FieldPaths.from(config.forceArrayFields()))
                 .setTypeInferenceEnabled(config.isDataTypeInferenceEnabled())
                 .setTextNodeValueFieldName(config.getTextNodeValueFieldName())
+                .setFieldCharactersRegexPattern(config.getXmlFieldCharactersRegexPattern())
+                .setFieldCharactersStringReplacement(config.getXmlFieldCharactersStringReplacement())
                 .setAttributePrefix(config.getAttributePrefix());
 
         final QName qName = new QName("http://www.w3.org/1999/XSL/Transform", config.resultType());

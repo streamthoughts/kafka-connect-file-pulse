@@ -196,7 +196,8 @@ public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter>
                 }
                 struct.getArray(field.name()).add(fieldValue); // it seems to be OK to use type conversion here
             } else {
-                struct = struct.put(field.name(), type, type.convert(fieldValue));
+                Object converted = StringUtils.isNotBlank(fieldValue) ? type.convert(fieldValue) : null;
+                struct = struct.put(field.name(), type, converted);
             }
         }
         return struct;

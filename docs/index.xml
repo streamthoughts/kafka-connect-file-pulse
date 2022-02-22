@@ -4942,58 +4942,82 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;tr>
 &lt;td>&lt;code>reader.xml.parser.validating.enabled&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the parser will validate documents as they are parsed (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
+&lt;td>Specifies that the parser will validate documents as they are parsed.&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.parser.namespace.aware.enabled&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the XML parser will provide support for XML namespaces (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
+&lt;td>Specifies that the XML parser will provide support for XML namespaces.&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.exclude.empty.elements&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should exclude element having no field (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
+&lt;td>Specifies that the reader should exclude element having no field.&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.exclude.node.attributes&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should exclude all node attributes (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
+&lt;td>Specifies that the reader should exclude all node attributes.&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.exclude.node.attributes.in.namespaces&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
+&lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&lt;/td>
+&lt;td>&lt;code>list&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.data.type.inference.enabled&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.3.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should try to infer the type of data nodes (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
+&lt;td>Specifies that the reader should try to infer the type of data nodes.&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.attribute.prefix&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: &amp;lsquo;').&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
+&lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>&amp;quot;&amp;quot;&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.text.node.value.field.name&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>value&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.field.name.characters.regex.pattern&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>value&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.field.name.character.string.replacement&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>Specifies the replacement string to be used when converting a document to a struct.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>value&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>

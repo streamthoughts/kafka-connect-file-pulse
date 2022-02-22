@@ -107,6 +107,7 @@ public class AmazonS3FileSystemListing implements FileSystemListing<AmazonS3Stor
                 String marker = objectListing.getNextMarker();
                 if (marker != null) {
                     LOG.debug("Object listing is truncated, next marker is {}", marker);
+                    request.setMarker(marker);
                 }
 
             } while (objectListing.isTruncated());

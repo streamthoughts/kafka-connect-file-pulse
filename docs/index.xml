@@ -2752,7 +2752,262 @@ Those configuration are described in detail in subsequent chapters.&lt;/p>
 &lt;td>high&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/file-system-listing/</link><pubDate>Wed, 16 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/file-system-listing/</guid><description>
+&lt;/table></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link><pubDate>Wed, 23 Feb 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</guid><description>
+&lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically lists object files that may be streamed into Kafka using the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing&lt;/a>&lt;br>
+configured in the connector&amp;rsquo;s configuration.&lt;/p>
+&lt;h2 id="supported-filesystems">Supported Filesystems&lt;/h2>
+&lt;p>Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>AmazonS3FileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageFileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsFileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalFSDirectoryListing&lt;/code> (default)&lt;/li>
+&lt;/ul>
+&lt;h3 id="local-filesystem-default">Local Filesystem (default)&lt;/h3>
+&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> class can be used for listing files that exist in a local filesystem directory.&lt;/p>
+&lt;h4 id="how-to-use-it-">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.directory.path&lt;/code>&lt;/td>
+&lt;td>The input directory to scan&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.recursive.enabled&lt;/code>&lt;/td>
+&lt;td>Flag indicating whether local directory should be recursively scanned&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>true&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="supported-file-types">Supported File types&lt;/h4>
+&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)
+Supported content-types are:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
+&lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
+&lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h3 id="amazon-s3">Amazon S3&lt;/h3>
+&lt;p>The &lt;code>AmazonS3FileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p>
+&lt;h4 id="how-to-use-it--1">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration-1">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>aws.access.key.id&lt;/code>&lt;/td>
+&lt;td>AWS Access Key ID AWS&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.secret.access.key&lt;/code>&lt;/td>
+&lt;td>AWS Secret Access Key&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.secret.session.token&lt;/code>&lt;/td>
+&lt;td>AWS Secret Session Token&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.region&lt;/code>&lt;/td>
+&lt;td>The AWS S3 Region, e.g. us-east-1&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>Regions.DEFAULT_REGION.getName()&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.service.endpoint&lt;/code>&lt;/td>
+&lt;td>AWS S3 custom service endpoint.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.path.style.access.enabled&lt;/code>&lt;/td>
+&lt;td>Configures the client to use path-style access for all requests.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.bucket.name&lt;/code>&lt;/td>
+&lt;td>The name of the Amazon S3 bucket.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.bucket.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for restricting the listing of the objects in the bucket&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
+&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
+&lt;td>&lt;code>class&lt;/code>&lt;/td>
+&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="google-cloud-storage">Google Cloud Storage&lt;/h3>
+&lt;p>The &lt;code>GcsFileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Google Cloud Storage bucket.&lt;/p>
+&lt;h4 id="how-to-use-it--2">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.GcsFileSystemListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration-2">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>gcs.credentials.path&lt;/code>&lt;/td>
+&lt;td>The path to GCP credentials file. Cannot be set when &lt;code>GCS_CREDENTIALS_JSON_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.credentials.json&lt;/code>&lt;/td>
+&lt;td>The GCP credentials as JSON string. Cannot be set when &lt;code>GCS_CREDENTIALS_PATH_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.bucket.name&lt;/code>&lt;/td>
+&lt;td>The GCS bucket name to download the object files from.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.blobs.filter.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for filtering blobs whose names begin with it.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="azure-blob-storage">Azure Blob Storage&lt;/h3>
+&lt;p>The &lt;code>AzureBlobStorageConfig&lt;/code> class can be used for listing objects that exist in a specific Azure Storage Container.&lt;/p>
+&lt;h4 id="how-to-use-it--3">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageFileSystemListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration-3">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.connection.string&lt;/code>&lt;/td>
+&lt;td>Azure storage account connection string.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.account.name&lt;/code>&lt;/td>
+&lt;td>The Azure storage account name.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.account.key&lt;/code>&lt;/td>
+&lt;td>The Azure storage account key.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.container.name&lt;/code>&lt;/td>
+&lt;td>The Azure storage container name.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.blob.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for restricting the listing of the blobs in the container.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="filtering-input-files">Filtering input files&lt;/h2>
+&lt;p>You can configure one or more &lt;code>FileFilter&lt;/code> that will be used to determine if a file should be scheduled for processing or ignored.
+All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
+At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p>
+&lt;p>FilePulse packs with the following built-in filters :&lt;/p>
+&lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
+&lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
+&lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Limitation&lt;/h4>
+This filter is only supported by the &lt;code>LocalFSDirectoryListing&lt;/code>.
+&lt;/div>
+&lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
+&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
+# The last modified time for a file can be accepted (default: 5000)
+file.filter.minimum.age.ms=10000
+&lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
+&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter files that do not match the specified regex.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
+# The regex pattern used to match input files
+file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
+&lt;/code>&lt;/pre></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/file-system-listing/</link><pubDate>Wed, 16 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.0.x/developer-guide/file-system-listing/</guid><description>
 &lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically lists object files that may be streamed into Kafka using the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing&lt;/a>&lt;br>
 configured in the connector&amp;rsquo;s configuration.&lt;/p>
 &lt;h2 id="supported-filesystems">Supported Filesystems&lt;/h2>
@@ -4006,261 +4261,6 @@ file.filter.minimum.age.ms=10000
 &lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
 # The regex pattern used to matches input files
 file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
-&lt;/code>&lt;/pre></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link><pubDate>Wed, 16 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</guid><description>
-&lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically lists object files that may be streamed into Kafka using the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing&lt;/a>&lt;br>
-configured in the connector&amp;rsquo;s configuration.&lt;/p>
-&lt;h2 id="supported-filesystems">Supported Filesystems&lt;/h2>
-&lt;p>Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>AmazonS3FileSystemListing&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageFileSystemListing&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsFileSystemListing&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalFSDirectoryListing&lt;/code> (default)&lt;/li>
-&lt;/ul>
-&lt;h3 id="local-filesystem-default">Local Filesystem (default)&lt;/h3>
-&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> class can be used for listing files that exist in a local filesystem directory.&lt;/p>
-&lt;h4 id="how-to-use-it-">How to use it ?&lt;/h4>
-&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing&lt;/code>&lt;/p>
-&lt;h4 id="configuration">Configuration&lt;/h4>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>fs.listing.directory.path&lt;/code>&lt;/td>
-&lt;td>The input directory to scan&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.listing.recursive.enabled&lt;/code>&lt;/td>
-&lt;td>Flag indicating whether local directory should be recursively scanned&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>true&lt;/code>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h4 id="supported-file-types">Supported File types&lt;/h4>
-&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)
-Supported content-types are:&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
-&lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
-&lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;h3 id="amazon-s3">Amazon S3&lt;/h3>
-&lt;p>The &lt;code>AmazonS3FileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p>
-&lt;h4 id="how-to-use-it--1">How to use it ?&lt;/h4>
-&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing&lt;/code>&lt;/p>
-&lt;h4 id="configuration-1">Configuration&lt;/h4>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>aws.access.key.id&lt;/code>&lt;/td>
-&lt;td>AWS Access Key ID AWS&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.secret.access.key&lt;/code>&lt;/td>
-&lt;td>AWS Secret Access Key&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.secret.session.token&lt;/code>&lt;/td>
-&lt;td>AWS Secret Session Token&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.region&lt;/code>&lt;/td>
-&lt;td>The AWS S3 Region, e.g. us-east-1&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>Regions.DEFAULT_REGION.getName()&lt;/code>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.service.endpoint&lt;/code>&lt;/td>
-&lt;td>AWS S3 custom service endpoint.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.path.style.access.enabled&lt;/code>&lt;/td>
-&lt;td>Configures the client to use path-style access for all requests.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.bucket.name&lt;/code>&lt;/td>
-&lt;td>The name of the Amazon S3 bucket.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.bucket.prefix&lt;/code>&lt;/td>
-&lt;td>The prefix to be used for restricting the listing of the objects in the bucket&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
-&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
-&lt;td>&lt;code>class&lt;/code>&lt;/td>
-&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h3 id="google-cloud-storage">Google Cloud Storage&lt;/h3>
-&lt;p>The &lt;code>GcsFileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Google Cloud Storage bucket.&lt;/p>
-&lt;h4 id="how-to-use-it--2">How to use it ?&lt;/h4>
-&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.GcsFileSystemListing&lt;/code>&lt;/p>
-&lt;h4 id="configuration-2">Configuration&lt;/h4>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>gcs.credentials.path&lt;/code>&lt;/td>
-&lt;td>The path to GCP credentials file. Cannot be set when &lt;code>GCS_CREDENTIALS_JSON_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>gcs.credentials.json&lt;/code>&lt;/td>
-&lt;td>The GCP credentials as JSON string. Cannot be set when &lt;code>GCS_CREDENTIALS_PATH_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>gcs.bucket.name&lt;/code>&lt;/td>
-&lt;td>The GCS bucket name to download the object files from.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>gcs.blobs.filter.prefix&lt;/code>&lt;/td>
-&lt;td>The prefix to be used for filtering blobs whose names begin with it.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h3 id="azure-blob-storage">Azure Blob Storage&lt;/h3>
-&lt;p>The &lt;code>AzureBlobStorageConfig&lt;/code> class can be used for listing objects that exist in a specific Azure Storage Container.&lt;/p>
-&lt;h4 id="how-to-use-it--3">How to use it ?&lt;/h4>
-&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageConfig&lt;/code>&lt;/p>
-&lt;h4 id="configuration-3">Configuration&lt;/h4>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.connection.string&lt;/code>&lt;/td>
-&lt;td>Azure storage account connection string.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.account.name&lt;/code>&lt;/td>
-&lt;td>The Azure storage account name.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.account.key&lt;/code>&lt;/td>
-&lt;td>The Azure storage account key.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.container.name&lt;/code>&lt;/td>
-&lt;td>The Azure storage container name.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.blob.prefix&lt;/code>&lt;/td>
-&lt;td>The prefix to be used for restricting the listing of the blobs in the container.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="filtering-input-files">Filtering input files&lt;/h2>
-&lt;p>You can configure one or more &lt;code>FileFilter&lt;/code> that will be used to determine if a file should be scheduled for processing or ignored.
-All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
-At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p>
-&lt;p>FilePulse packs with the following built-in filters :&lt;/p>
-&lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
-&lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
-&lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
-&lt;/code>&lt;/pre>
-&lt;div class="alert alert-warning" role="alert">
-&lt;h4 class="alert-heading">Limitation&lt;/h4>
-This filter is only supported by the &lt;code>LocalFSDirectoryListing&lt;/code>.
-&lt;/div>
-&lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
-&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
-# The last modified time for a file can be accepted (default: 5000)
-file.filter.minimum.age.ms=10000
-&lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
-&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter files that do not match the specified regex.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
-# The regex pattern used to matches input files
-file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
 &lt;/code>&lt;/pre></description></item><item><title>Docs: Scanning Files</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.3.x/developer-guide/scanning-files/</link><pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.3.x/developer-guide/scanning-files/</guid><description>
 &lt;p>The connector must be configured with a specific &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java">FSDirectoryWalker&lt;/a>&lt;br>
 that will be responsible for scanning an input directory to find files eligible to be streamed in Kafka.&lt;/p>
@@ -4596,208 +4596,7 @@ file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
 &lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
 &lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
 &lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/file-readers/</link><pubDate>Thu, 30 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/file-readers/</guid><description>
-&lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
-configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
-&lt;p>Currently, Connect FilePulse provides the following &lt;code>FileInputReader&lt;/code> implementations :&lt;/p>
-&lt;p>&lt;strong>Amazon S3&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>AmazonS3AvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3BytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3RowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3XMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3MetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Azure Blob Storage&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>AzureBlobStorageAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Google Cloud Storage&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>GcsAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Local Filesystem&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>LocalAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;h2 id="rowfileinputreader-default">RowFileInputReader (default)&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;RowFileInputReader&lt;/code>s can be used to read files line by line.
-This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.&lt;/p>
-&lt;h3 id="configuration">Configuration&lt;/h3>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>file.encoding&lt;/code>&lt;/td>
-&lt;td>The text file encoding to use&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>UTF_8&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>buffer.initial.bytes.size&lt;/code>&lt;/td>
-&lt;td>The initial buffer size used to read input files.&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>4096&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>min.read.records&lt;/code>&lt;/td>
-&lt;td>The minimum number of records to read from file before returning to task.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>1&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>skip.headers&lt;/code>&lt;/td>
-&lt;td>The number of rows to be skipped in the beginning of file.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>skip.footers&lt;/code>&lt;/td>
-&lt;td>The number of rows to be skipped at the end of file.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>read.max.wait.ms&lt;/code>&lt;/td>
-&lt;td>The maximum time to wait in milliseconds for more bytes after hitting end of file.&lt;/td>
-&lt;td>&lt;code>Long&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="xxxbytesarrayinputreader">XxxBytesArrayInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;BytesArrayInputReader&lt;/code>s create a single byte array record from a source file.&lt;/p>
-&lt;h2 id="xxxavrofileinputreader">XxxAvroFileInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;AvroFileInputReader&lt;/code>s can be used to read Avro files.&lt;/p>
-&lt;h2 id="xxxxmlfileinputreader">XxxXMLFileInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;XMLFileInputReader&lt;/code>s can be used to read XML files.&lt;/p>
-&lt;h3 id="configuration-1">Configuration&lt;/h3>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Since&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>reader.xpath.expression&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The XPath expression used extract data from XML input files&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>/&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xpath.result.type&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The expected result type for the XPath expression in [NODESET, STRING]&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>NODESET&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.force.array.on.fields&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The comma-separated list of fields for which an array-type must be forced&lt;/td>
-&lt;td>&lt;code>List&lt;/code>&lt;/td>
-&lt;td>&lt;code>-&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.parser.validating.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the parser will validate documents as they are parsed (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.parser.namespace.aware.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the XML parser will provide support for XML namespaces (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.empty.elements&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should exclude element having no field (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.node.attributes&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should exclude all node attributes (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.node.attributes.in.namespaces&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.data.type.inference.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.3.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should try to infer the type of data nodes (default: false).&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.attribute.prefix&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: &amp;lsquo;').&amp;quot;;&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="xxxmetadatafileinputreader">XxxMetadataFileInputReader&lt;/h2>
-&lt;p>The &lt;code>FileInputMetadataReader&lt;/code>s can be used to send a single record per file containing metadata, i.e.: &lt;code>name&lt;/code>, &lt;code>path&lt;/code>, &lt;code>hash&lt;/code>, &lt;code>lastModified&lt;/code>, &lt;code>size&lt;/code>, etc.&lt;/p></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link><pubDate>Thu, 30 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid><description>
+&lt;/ul></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link><pubDate>Wed, 23 Feb 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid><description>
 &lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
 configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
 &lt;p>Currently, Connect FilePulse provides the following &lt;code>FileInputReader&lt;/code> implementations :&lt;/p>
@@ -5018,6 +4817,207 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>value&lt;/code>&lt;/td>
 &lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="xxxmetadatafileinputreader">XxxMetadataFileInputReader&lt;/h2>
+&lt;p>The &lt;code>FileInputMetadataReader&lt;/code>s can be used to send a single record per file containing metadata, i.e.: &lt;code>name&lt;/code>, &lt;code>path&lt;/code>, &lt;code>hash&lt;/code>, &lt;code>lastModified&lt;/code>, &lt;code>size&lt;/code>, etc.&lt;/p></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/file-readers/</link><pubDate>Thu, 30 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.4.x/developer-guide/file-readers/</guid><description>
+&lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
+configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
+&lt;p>Currently, Connect FilePulse provides the following &lt;code>FileInputReader&lt;/code> implementations :&lt;/p>
+&lt;p>&lt;strong>Amazon S3&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>AmazonS3AvroFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AmazonS3BytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AmazonS3RowFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AmazonS3XMLFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AmazonS3MetadataFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Azure Blob Storage&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>AzureBlobStorageAvroFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageBytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageRowFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageXMLFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageMetadataFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Google Cloud Storage&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>GcsAvroFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsBytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsRowFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsXMLFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsMetadataFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Local Filesystem&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>LocalAvroFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalBytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalRowFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalXMLFileInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalMetadataFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h2 id="rowfileinputreader-default">RowFileInputReader (default)&lt;/h2>
+&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;RowFileInputReader&lt;/code>s can be used to read files line by line.
+This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.&lt;/p>
+&lt;h3 id="configuration">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>file.encoding&lt;/code>&lt;/td>
+&lt;td>The text file encoding to use&lt;/td>
+&lt;td>&lt;code>String&lt;/code>&lt;/td>
+&lt;td>&lt;code>UTF_8&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>buffer.initial.bytes.size&lt;/code>&lt;/td>
+&lt;td>The initial buffer size used to read input files.&lt;/td>
+&lt;td>&lt;code>String&lt;/code>&lt;/td>
+&lt;td>&lt;code>4096&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>min.read.records&lt;/code>&lt;/td>
+&lt;td>The minimum number of records to read from file before returning to task.&lt;/td>
+&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
+&lt;td>&lt;code>1&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>skip.headers&lt;/code>&lt;/td>
+&lt;td>The number of rows to be skipped in the beginning of file.&lt;/td>
+&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
+&lt;td>&lt;code>0&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>skip.footers&lt;/code>&lt;/td>
+&lt;td>The number of rows to be skipped at the end of file.&lt;/td>
+&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
+&lt;td>&lt;code>0&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>read.max.wait.ms&lt;/code>&lt;/td>
+&lt;td>The maximum time to wait in milliseconds for more bytes after hitting end of file.&lt;/td>
+&lt;td>&lt;code>Long&lt;/code>&lt;/td>
+&lt;td>&lt;code>0&lt;/code>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="xxxbytesarrayinputreader">XxxBytesArrayInputReader&lt;/h2>
+&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;BytesArrayInputReader&lt;/code>s create a single byte array record from a source file.&lt;/p>
+&lt;h2 id="xxxavrofileinputreader">XxxAvroFileInputReader&lt;/h2>
+&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;AvroFileInputReader&lt;/code>s can be used to read Avro files.&lt;/p>
+&lt;h2 id="xxxxmlfileinputreader">XxxXMLFileInputReader&lt;/h2>
+&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;XMLFileInputReader&lt;/code>s can be used to read XML files.&lt;/p>
+&lt;h3 id="configuration-1">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Since&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>reader.xpath.expression&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>The XPath expression used extract data from XML input files&lt;/td>
+&lt;td>&lt;code>String&lt;/code>&lt;/td>
+&lt;td>&lt;code>/&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xpath.result.type&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>The expected result type for the XPath expression in [NODESET, STRING]&lt;/td>
+&lt;td>&lt;code>String&lt;/code>&lt;/td>
+&lt;td>&lt;code>NODESET&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.force.array.on.fields&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>The comma-separated list of fields for which an array-type must be forced&lt;/td>
+&lt;td>&lt;code>List&lt;/code>&lt;/td>
+&lt;td>&lt;code>-&lt;/code>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.parser.validating.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the parser will validate documents as they are parsed (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.parser.namespace.aware.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the XML parser will provide support for XML namespaces (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.exclude.empty.elements&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should exclude element having no field (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.exclude.node.attributes&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should exclude all node attributes (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.exclude.node.attributes.in.namespaces&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.data.type.inference.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.3.0&lt;/code>&lt;/td>
+&lt;td>Specifies that the reader should try to infer the type of data nodes (default: false).&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.attribute.prefix&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
+&lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: &amp;lsquo;').&amp;quot;;&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>

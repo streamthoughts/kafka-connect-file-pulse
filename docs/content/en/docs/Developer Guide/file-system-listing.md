@@ -1,5 +1,5 @@
 ---
-date: 2021-06-16
+date: 2022-02-23
 title: "FileSystem Listing"
 linkTitle: "FileSystem Listing"
 weight: 30
@@ -29,10 +29,10 @@ The `LocalFSDirectoryListing` class can be used for listing files that exist in 
 
 #### Configuration
 
-| Configuration                           |   Description               |   Type    |  Default  |   Importance  |
-| ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
-| `fs.listing.directory.path`             | The input directory to scan | `string`  |     -     |    HIGH       |
-| `fs.listing.recursive.enabled`          | Flag indicating whether local directory should be recursively scanned | `boolean` | `true` | MEDIUM |
+| Configuration                  | Description                                                           | Type      | Default | Importance |
+|--------------------------------|-----------------------------------------------------------------------|-----------|---------|------------|
+| `fs.listing.directory.path`    | The input directory to scan                                           | `string`  | -       | HIGH       |
+| `fs.listing.recursive.enabled` | Flag indicating whether local directory should be recursively scanned | `boolean` | `true`  | MEDIUM     |
 
 #### Supported File types
 
@@ -53,17 +53,17 @@ The `AmazonS3FileSystemListing` class can be used for listing objects that exist
 
 #### Configuration
 
-| Configuration                           |   Description               |   Type    |   Default |   Importance  |
-| ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
-| `aws.access.key.id` | AWS Access Key ID AWS | `string` | - | HIGH |
-| `aws.secret.access.key` | AWS Secret Access Key | `string` | - | HIGH |
-| `aws.secret.session.token` | AWS Secret Session Token | `string` | - | HIGH |
-| `aws.s3.region` | The AWS S3 Region, e.g. us-east-1 | `string` | `Regions.DEFAULT_REGION.getName()` | MEDIUM |
-| `aws.s3.service.endpoint` | AWS S3 custom service endpoint. | `string` | - | MEDIUM |
-| `aws.s3.path.style.access.enabled` | Configures the client to use path-style access for all requests. | `string` | - | MEDIUM |
-| `aws.s3.bucket.name` | The name of the Amazon S3 bucket.| `string` | - | HIGH |
-| `aws.s3.bucket.prefix` | The prefix to be used for restricting the listing of the objects in the bucket| `string` | - | MEDIUM |
-| `aws.credentials.provider.class` | The AWSCredentialsProvider to use if no access key id and secret access key is configured. | `class` | `com.amazonaws.auth.EnvironmentVariableCredentialsProvider` | LOW |
+| Configuration                      | Description                                                                                | Type     | Default                                                     | Importance |
+|------------------------------------|--------------------------------------------------------------------------------------------|----------|-------------------------------------------------------------|------------|
+| `aws.access.key.id`                | AWS Access Key ID AWS                                                                      | `string` | -                                                           | HIGH       |
+| `aws.secret.access.key`            | AWS Secret Access Key                                                                      | `string` | -                                                           | HIGH       |
+| `aws.secret.session.token`         | AWS Secret Session Token                                                                   | `string` | -                                                           | HIGH       |
+| `aws.s3.region`                    | The AWS S3 Region, e.g. us-east-1                                                          | `string` | `Regions.DEFAULT_REGION.getName()`                          | MEDIUM     |
+| `aws.s3.service.endpoint`          | AWS S3 custom service endpoint.                                                            | `string` | -                                                           | MEDIUM     |
+| `aws.s3.path.style.access.enabled` | Configures the client to use path-style access for all requests.                           | `string` | -                                                           | MEDIUM     |
+| `aws.s3.bucket.name`               | The name of the Amazon S3 bucket.                                                          | `string` | -                                                           | HIGH       |
+| `aws.s3.bucket.prefix`             | The prefix to be used for restricting the listing of the objects in the bucket             | `string` | -                                                           | MEDIUM     |
+| `aws.credentials.provider.class`   | The AWSCredentialsProvider to use if no access key id and secret access key is configured. | `class`  | `com.amazonaws.auth.EnvironmentVariableCredentialsProvider` | LOW        |
     
 ### Google Cloud Storage
 
@@ -75,12 +75,12 @@ The `GcsFileSystemListing` class can be used for listing objects that exist in a
 
 #### Configuration
 
-| Configuration                           |   Description               |   Type    |   Default |   Importance  |
-| ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
-|`gcs.credentials.path` | The path to GCP credentials file. Cannot be set when `GCS_CREDENTIALS_JSON_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | - | HIGH
-|`gcs.credentials.json` | The GCP credentials as JSON string. Cannot be set when `GCS_CREDENTIALS_PATH_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | - | HIGH
-|`gcs.bucket.name`      | The GCS bucket name to download the object files from. | `string` | - | HIGH
-|`gcs.blobs.filter.prefix` | The prefix to be used for filtering blobs  whose names begin with it. | `string` | - | MEDIUM
+| Configuration             | Description                                                                                                                                                                                                                                  | Type     | Default | Importance |
+|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------|------------|
+| `gcs.credentials.path`    | The path to GCP credentials file. Cannot be set when `GCS_CREDENTIALS_JSON_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`.   | `string` | -       | HIGH       |
+| `gcs.credentials.json`    | The GCP credentials as JSON string. Cannot be set when `GCS_CREDENTIALS_PATH_CONFIG` is provided. If no credentials is specified the client library will look for credentials via the environment variable `GOOGLE_APPLICATION_CREDENTIALS`. | `string` | -       | HIGH       |
+| `gcs.bucket.name`         | The GCS bucket name to download the object files from.                                                                                                                                                                                       | `string` | -       | HIGH       |
+| `gcs.blobs.filter.prefix` | The prefix to be used for filtering blobs  whose names begin with it.                                                                                                                                                                        | `string` | -       | MEDIUM     |
 
 ### Azure Blob Storage
 
@@ -88,18 +88,18 @@ The `AzureBlobStorageConfig` class can be used for listing objects that exist in
 
 #### How to use it ?
 
-`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageConfig`
+`fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageFileSystemListing`
 
 #### Configuration
 
-| Configuration                           |   Description               |   Type    |   Default |   Importance  |
-| ----------------------------------------|-----------------------------|-----------| --------- | ------------- |
-|`azure.storage.connection.string` | Azure storage account connection string. | `string` | - | HIGH
-|`azure.storage.account.name` | The Azure storage account name. | `string` | - | HIGH
-|`azure.storage.account.key`  | The Azure storage account key. | `string` | - | HIGH
-|`azure.storage.container.name` | The Azure storage container name. | `string` | - | MEDIUM
-|`azure.storage.blob.prefix` | The prefix to be used for restricting the listing of the blobs in the container. | `string` | - | MEDIUM
-    
+| Configuration                     | Description                                                                      | Type     | Default | Importance |
+|-----------------------------------|----------------------------------------------------------------------------------|----------|---------|------------|
+| `azure.storage.connection.string` | Azure storage account connection string.                                         | `string` | -       | HIGH       |
+| `azure.storage.account.name`      | The Azure storage account name.                                                  | `string` | -       | HIGH       |
+| `azure.storage.account.key`       | The Azure storage account key.                                                   | `string` | -       | HIGH       |
+| `azure.storage.container.name`    | The Azure storage container name.                                                | `string` | -       | MEDIUM     |
+| `azure.storage.blob.prefix`       | The prefix to be used for restricting the listing of the blobs in the container. | `string` | -       | MEDIUM     |
+
 ## Filtering input files
 
 You can configure one or more `FileFilter` that will be used to determine if a file should be scheduled for processing or ignored. 
@@ -138,6 +138,6 @@ The `RegexFileFilter` can be used to filter files that do not match the specifie
 
 ```properties
 fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
-# The regex pattern used to matches input files
+# The regex pattern used to match input files
 file.filter.regex.pattern="\\.log$"
 ```

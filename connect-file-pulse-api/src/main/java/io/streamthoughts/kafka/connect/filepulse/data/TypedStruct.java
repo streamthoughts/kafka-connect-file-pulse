@@ -114,7 +114,7 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
      */
     @Override
     public TypedStruct put(final String field, final Double value) {
-        return put(field, Schema.float32(), value);
+        return put(field, Schema.float64(), value);
     }
 
     /**

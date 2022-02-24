@@ -63,10 +63,10 @@ public class XMLCommonConfig extends AbstractConfig {
     private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DOC = "Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes. (default: 'value').";
 
     public static final String XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_CONFIG = "xml.field.name.characters.regex.pattern";
-    private static final String XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_DOC = "Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.";
+    private static final String XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_DOC = "Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct (default: '[.\\-]').";
 
-    public static final String XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG = "xml.field.name.character.string.replacement";
-    private static final String XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_DOC = "Specifies the replacement string to be used when converting a document to a struct.";
+    public static final String XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG = "xml.field.name.characters.string.replacement";
+    private static final String XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_DOC = "Specifies the replacement string to be used when converting a document to a struct (default: '').";
 
     private final String keyPrefix;
 

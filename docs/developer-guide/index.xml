@@ -835,7 +835,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;td>&lt;/td>
 &lt;td>The comma-separated list of fields for which an array-type must be forced&lt;/td>
 &lt;td>&lt;code>List&lt;/code>&lt;/td>
-&lt;td>&lt;code>-&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
 &lt;td>High&lt;/td>
 &lt;/tr>
 &lt;tr>
@@ -895,7 +895,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>reader.xml.text.node.value.field.name&lt;/code>&lt;/td>
+&lt;td>&lt;code>reader.xml.content.field.name&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
 &lt;td>Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
@@ -907,15 +907,23 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
 &lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>value&lt;/code>&lt;/td>
+&lt;td>&lt;code>[.\-]'&lt;/code>&lt;/td>
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>reader.xml.field.name.character.string.replacement&lt;/code>&lt;/td>
+&lt;td>&lt;code>reader.xml.field.name.characters.string.replacement&lt;/code>&lt;/td>
 &lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
 &lt;td>Specifies the replacement string to be used when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>value&lt;/code>&lt;/td>
+&lt;td>&lt;code>_&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>reader.xml.force.content.field.for.paths&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>The comma-separated list of field for which a content-field must be forced.&lt;/td>
+&lt;td>&lt;code>List&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;/tbody>
@@ -2969,7 +2977,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>xml.text.node.value.field.name&lt;/code>&lt;/td>
+&lt;td>&lt;code>xml.content.field.name&lt;/code>&lt;/td>
 &lt;td>Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>value&lt;/code>&lt;/td>
@@ -2979,14 +2987,21 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;td>&lt;code>xml.field.name.characters.regex.pattern&lt;/code>&lt;/td>
 &lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>value&lt;/code>&lt;/td>
+&lt;td>`[.-]'&lt;/td>
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.field.name.character.string.replacement&lt;/code>&lt;/td>
 &lt;td>Specifies the replacement string to be used when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>value&lt;/code>&lt;/td>
+&lt;td>&lt;code>_&lt;/code>&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>xml.force.content.field.for.paths&lt;/code>&lt;/td>
+&lt;td>The comma-separated list of field for which a content-field must be forced.&lt;/td>
+&lt;td>&lt;code>List&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;/tbody>

@@ -87,8 +87,9 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                 .setExcludeAllAttributes(config.isNodeAttributesExcluded())
                 .setExcludeAttributesInNamespaces(config.getExcludeNodeAttributesInNamespaces())
                 .setForceArrayFields(FieldPaths.from(config.forceArrayFields()))
+                .setForceContentFields(FieldPaths.from(config.getForceContentFields()))
                 .setTypeInferenceEnabled(config.isDataTypeInferenceEnabled())
-                .setTextNodeValueFieldName(config.getTextNodeValueFieldName())
+                .setContentFieldName(config.getTextNodeValueFieldName())
                 .setFieldCharactersRegexPattern(config.getXmlFieldCharactersRegexPattern())
                 .setFieldCharactersStringReplacement(config.getXmlFieldCharactersStringReplacement())
                 .setAttributePrefix(config.getAttributePrefix());
@@ -108,26 +109,26 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                     @Override
                     public void warning(final SAXParseException e) {
                         LOG.warn(
-                            "Handled XML parser warning on file {}. Error: {}",
-                            objectMeta.uri(),
-                            e.getLocalizedMessage()
+                                "Handled XML parser warning on file {}. Error: {}",
+                                objectMeta.uri(),
+                                e.getLocalizedMessage()
                         );
                     }
 
                     @Override
                     public void error(final SAXParseException e) {
                         LOG.warn(
-                            "Handled XML parser error on file {}. Error: {}",
-                            objectMeta.uri(),
-                            e.getLocalizedMessage()
+                                "Handled XML parser error on file {}. Error: {}",
+                                objectMeta.uri(),
+                                e.getLocalizedMessage()
                         );
                     }
 
                     @Override
                     public void fatalError(final SAXParseException e) {
                         throw new ReaderException(
-                            "Handled XML parser fatal error on file '" + objectMeta.uri() + "'",
-                            e
+                                "Handled XML parser fatal error on file '" + objectMeta.uri() + "'",
+                                e
                         );
                     }
                 });

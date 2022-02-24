@@ -63,6 +63,6 @@
     <suppress checks="LineLength" files="KafkaBasedLog.java"/>
     <suppress checks="NPathComplexity" files="KafkaBasedLog.java"/>
     <!-- Classes used for configuration -->
-    <suppress checks="(LineLength|CyclomaticComplexity|NPathComplexity|JavaNCSS)" files=".*Config.java"/>
+    <suppress checks="(MethodLength|LineLength|CyclomaticComplexity|NPathComplexity|JavaNCSS)" files=".*Config.java"/>
     <suppress checks="(LineLength|CyclomaticComplexity|NPathComplexity|JavaNCSS)" files="SchemaMerger.java"/>
 </suppressions>

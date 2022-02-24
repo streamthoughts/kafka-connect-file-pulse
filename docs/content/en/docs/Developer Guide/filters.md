@@ -791,10 +791,10 @@ The `XmlToStructFilter` parses an XML record-field into STRUCT
 | `xml.exclude.node.attributes.in.namespaces`   | Specifies that the reader should only exclude node attributes in the defined list of namespaces.                                      | `list`    | `false`     | Low        |
 | `xml.data.type.inference.enabled`             | Specifies that the reader should try to infer the type of data nodes.                                                                 | `boolean` | `false`     | High       |
 | `xml.attribute.prefix`                        | If set, the name of attributes will be prepended with the specified prefix when they are added to a record.                           | `string`  | `""`        | Low        |
-| `xml.text.node.value.field.name`              | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.               | `string`  | `value`     | Low        |
+| `xml.content.field.name`                      | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.               | `string`  | `value`     | Low        |
 | `xml.field.name.characters.regex.pattern`     | Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct. | `string`  | `[.\-]'     | Low        |
 | `xml.field.name.character.string.replacement` | Specifies the replacement string to be used when converting a document to a struct.                                                   | `string`  | `_`         | Low        |
-
+| `xml.force.content.field.for.paths`           | The comma-separated list of field for which a content-field must be forced.                                                           | `List`    | -           | Low        |
 ### Example
 
 **Configuration**

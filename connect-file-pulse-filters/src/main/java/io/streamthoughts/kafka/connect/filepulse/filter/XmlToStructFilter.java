@@ -71,19 +71,20 @@ public class XmlToStructFilter extends AbstractRecordFilter<XmlToStructFilter> {
 
         var filterConfig = new XmlToStructFilterConfig(configs);
         this.converter = new XMLNodeToStructConverter()
-            .setExcludeEmptyElement(filterConfig.isEmptyElementExcluded())
-            .setExcludeAllAttributes(filterConfig.isNodeAttributesExcluded())
-            .setExcludeAttributesInNamespaces(filterConfig.getExcludeNodeAttributesInNamespaces())
-            .setForceArrayFields(FieldPaths.from(filterConfig.forceArrayFields()))
-            .setTypeInferenceEnabled(filterConfig.isDataTypeInferenceEnabled())
-            .setTextNodeValueFieldName(filterConfig.getTextNodeValueFieldName())
-            .setFieldCharactersRegexPattern(filterConfig.getXmlFieldCharactersRegexPattern())
-            .setFieldCharactersStringReplacement(filterConfig.getXmlFieldCharactersStringReplacement())
-            .setAttributePrefix(filterConfig.getAttributePrefix());
+                .setExcludeEmptyElement(filterConfig.isEmptyElementExcluded())
+                .setExcludeAllAttributes(filterConfig.isNodeAttributesExcluded())
+                .setExcludeAttributesInNamespaces(filterConfig.getExcludeNodeAttributesInNamespaces())
+                .setForceArrayFields(FieldPaths.from(filterConfig.forceArrayFields()))
+                .setForceContentFields(FieldPaths.from(filterConfig.getForceContentFields()))
+                .setTypeInferenceEnabled(filterConfig.isDataTypeInferenceEnabled())
+                .setContentFieldName(filterConfig.getTextNodeValueFieldName())
+                .setFieldCharactersRegexPattern(filterConfig.getXmlFieldCharactersRegexPattern())
+                .setFieldCharactersStringReplacement(filterConfig.getXmlFieldCharactersStringReplacement())
+                .setAttributePrefix(filterConfig.getAttributePrefix());
 
         this.reader = new XMLDocumentReader(
-            filterConfig.isNamespaceAwareEnabled(),
-            filterConfig.isValidatingEnabled()
+                filterConfig.isNamespaceAwareEnabled(),
+                filterConfig.isValidatingEnabled()
         );
 
         this.source = filterConfig.getSource();
@@ -113,13 +114,13 @@ public class XmlToStructFilter extends AbstractRecordFilter<XmlToStructFilter> {
             default:
                 throw new FilterException(
                         "Invalid field '" + source + "' was passed through the " +
-                        "connector's configuration'. " +
-                        "Cannot parse field of type '" + value.type() + "' to XML."
+                                "connector's configuration'. " +
+                                "Cannot parse field of type '" + value.type() + "' to XML."
                 );
         }
     }
 
-    public RecordsIterable<TypedStruct> parseDocument(final byte[] bytes, final FilterContext context){
+    public RecordsIterable<TypedStruct> parseDocument(final byte[] bytes, final FilterContext context) {
         try {
             final Document document = reader.parse(new ByteArrayInputStream(bytes), new ErrorHandler() {
                 @Override
@@ -158,7 +159,7 @@ public class XmlToStructFilter extends AbstractRecordFilter<XmlToStructFilter> {
         if (value.isNull()) {
             throw new FilterException(
                     "Invalid field '" + source + "' was passed through the " +
-                    "connector's configuration'. Cannot parse null or empty value to XML."
+                            "connector's configuration'. Cannot parse null or empty value to XML."
             );
         }
         return value;

@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class XMLCommonConfig extends AbstractConfig {
 
     public static final String XML_FORCE_ARRAY_ON_FIELDS_CONFIG = "xml.force.array.on.fields";
-    private static final String XML_FORCE_ARRAY_ON_FIELDS_FORCE_DOC = "The comma-separated list of fields for which an array-type must be forced";
+    private static final String XML_FORCE_ARRAY_ON_FIELDS_FORCE_DOC = "The comma-separated list of fields for which an array-type must be forced.";
 
     public static final String XML_PARSER_VALIDATING_ENABLED_CONFIG = "xml.parser.validating.enabled";
     private static final String XML_PARSER_VALIDATING_ENABLED_DOC = " Specifies that the parser will validate documents as they are parsed (default: false).";
@@ -58,15 +58,18 @@ public class XMLCommonConfig extends AbstractConfig {
     public static final String XML_ATTRIBUTE_PREFIX_CONFIG = "xml.attribute.prefix";
     private static final String XML_ATTRIBUTE_PREFIX_DOC = "If set, the name of attributes will be prepended with the specified prefix when they are added to a record (default: '').";
 
-    public static final String XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG = "xml.text.node.value.field.name";
-    private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT = "value";
-    private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DOC = "Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes. (default: 'value').";
+    public static final String XML_CONTENT_FIELD_NAME_CONFIG = "xml.content.field.name";
+    private static final String XML_CONTENT_FIELD_NAME_CONFIG_DEFAULT = "value";
+    private static final String XML_CONTENT_FIELD_NAME_CONFIG_DOC = "Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes. (default: 'value').";
 
     public static final String XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_CONFIG = "xml.field.name.characters.regex.pattern";
     private static final String XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_DOC = "Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct (default: '[.\\-]').";
 
     public static final String XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG = "xml.field.name.characters.string.replacement";
     private static final String XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_DOC = "Specifies the replacement string to be used when converting a document to a struct (default: '').";
+
+    public static final String XML_FORCE_CONTENT_FIELD_FOR_PATHS_CONFIG = "xml.force.content.field.for.paths";
+    private static final String XML_FORCE_CONTENT_FIELD_FOR_PATHS_DOC = "The comma-separated list of field for which a content-field must be forced.";
 
     private final String keyPrefix;
 
@@ -111,7 +114,7 @@ public class XMLCommonConfig extends AbstractConfig {
     }
 
     public String getTextNodeValueFieldName() {
-        return getString(withKeyPrefix(XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG));
+        return getString(withKeyPrefix(XML_CONTENT_FIELD_NAME_CONFIG));
     }
 
     public Pattern getXmlFieldCharactersRegexPattern() {
@@ -120,6 +123,10 @@ public class XMLCommonConfig extends AbstractConfig {
 
     public String getXmlFieldCharactersStringReplacement() {
         return getString(withKeyPrefix(XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG));
+    }
+
+    public List<String> getForceContentFields() {
+        return getList(withKeyPrefix(XML_CONTENT_FIELD_NAME_CONFIG));
     }
 
     public boolean isDataTypeInferenceEnabled() {
@@ -229,15 +236,15 @@ public class XMLCommonConfig extends AbstractConfig {
                         keyPrefix + XML_ATTRIBUTE_PREFIX_CONFIG
                 )
                 .define(
-                        keyPrefix + XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG,
+                        keyPrefix + XML_CONTENT_FIELD_NAME_CONFIG,
                         ConfigDef.Type.STRING,
-                        XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT,
+                        XML_CONTENT_FIELD_NAME_CONFIG_DEFAULT,
                         ConfigDef.Importance.LOW,
-                        XML_TEXT_NODE_VALUE_FIELD_NAME_DOC,
+                        XML_CONTENT_FIELD_NAME_CONFIG_DOC,
                         group,
                         filterGroupCounter++,
                         ConfigDef.Width.NONE,
-                        keyPrefix + XML_TEXT_NODE_VALUE_FIELD_NAME_CONFIG
+                        keyPrefix + XML_CONTENT_FIELD_NAME_CONFIG
                 )
                 .define(
                         keyPrefix + XML_FIELD_NAME_CHARACTERS_REGEX_PATTERN_CONFIG,
@@ -260,6 +267,17 @@ public class XMLCommonConfig extends AbstractConfig {
                         filterGroupCounter++,
                         ConfigDef.Width.NONE,
                         keyPrefix + XML_FIELD_NAME_CHARACTER_STRING_REPLACEMENT_CONFIG
+                )
+                .define(
+                        keyPrefix + XML_FORCE_CONTENT_FIELD_FOR_PATHS_CONFIG,
+                        ConfigDef.Type.LIST,
+                        Collections.emptyList(),
+                        ConfigDef.Importance.LOW,
+                        XML_FORCE_CONTENT_FIELD_FOR_PATHS_DOC,
+                        group,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        keyPrefix + XML_FORCE_CONTENT_FIELD_FOR_PATHS_CONFIG
                 );
 
         for (ConfigDef.ConfigKey configKey : additional) {

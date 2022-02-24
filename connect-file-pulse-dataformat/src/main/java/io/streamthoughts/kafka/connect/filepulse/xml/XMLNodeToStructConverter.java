@@ -60,6 +60,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
     private static final String FIELD_CHARACTERS_STRING_REPLACEMENT_DEFAULT = "_";
 
     private static final String XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT = "value";
+    public static final String DOCUMENT_NODE_NAME = "#document";
 
     private boolean excludeEmptyElement = false;
 
@@ -67,7 +68,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private boolean isTypeInferenceEnabled = false;
 
-    private String textNodeValueFieldName = XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT;
+    private String contentFieldName = XML_TEXT_NODE_VALUE_FIELD_NAME_DEFAULT;
 
     private Set<String> excludeAttributesInNamespaces = Collections.emptySet();
 
@@ -75,12 +76,14 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
     private FieldPaths forceArrayFields = FieldPaths.empty();
 
+    private FieldPaths forceContentFields = FieldPaths.empty();
+
     private Pattern fieldCharactersRegexPattern = FIELD_CHARACTERS_REGEX_PATTERN_DEFAULT;
 
     private String fieldCharactersStringReplacement = FIELD_CHARACTERS_STRING_REPLACEMENT_DEFAULT;
 
-    public XMLNodeToStructConverter setTextNodeValueFieldName(String textNodeValueFieldName) {
-        this.textNodeValueFieldName = textNodeValueFieldName;
+    public XMLNodeToStructConverter setContentFieldName(String textNodeValueFieldName) {
+        this.contentFieldName = textNodeValueFieldName;
         return this;
     }
 
@@ -93,7 +96,6 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         this.excludeAllAttributes = excludeAllAttributes;
         return this;
     }
-
 
     public XMLNodeToStructConverter setFieldCharactersRegexPattern(Pattern fieldCharactersRegexPattern) {
         this.fieldCharactersRegexPattern = fieldCharactersRegexPattern;
@@ -120,6 +122,11 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         return this;
     }
 
+    public XMLNodeToStructConverter setForceContentFields(final FieldPaths forceContentFields) {
+        this.forceContentFields = forceContentFields;
+        return this;
+    }
+
     public XMLNodeToStructConverter setTypeInferenceEnabled(final boolean isTypeInferenceEnabled) {
         this.isTypeInferenceEnabled = isTypeInferenceEnabled;
         return this;
@@ -133,17 +140,22 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
      */
     @Override
     public TypedStruct apply(final Node node) {
-        return convertObjectTree(node, forceArrayFields).getStruct();
+        return convertObjectTree(node, forceArrayFields, forceContentFields).getStruct();
     }
 
     private TypedValue convertObjectTree(final Node node,
-                                         final FieldPaths forceArrayFields) {
+                                         final FieldPaths forceArrayFields,
+                                         final FieldPaths forceContentFields) {
         Objects.requireNonNull(node, "'node' cannot be null");
 
         final String nodeName = determineNodeName(node);
-        final FieldPaths currentForceArrayFields = nodeName.equals("#document")
+        final FieldPaths currentForceArrayFields = nodeName.equals(DOCUMENT_NODE_NAME)
                 ? forceArrayFields :
                 forceArrayFields.next(sanitizeNodeName(nodeName));
+
+        final FieldPaths currentForceContentFields = nodeName.equals(DOCUMENT_NODE_NAME)
+                ? forceContentFields :
+                forceContentFields.next(sanitizeNodeName(nodeName));
 
         // Create a new Struct container object for holding all node elements, i.e., child nodes and attributes.
         TypedStruct container = TypedStruct.create();
@@ -151,7 +163,11 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
             // Text nodes always return #text" as the node name, so it's best to use the parent node name instead.
             final String childNodeName = isTextNode(child) ? nodeName : determineNodeName(child);
-            Optional<TypedValue> optional = readObjectNodeValue(child, currentForceArrayFields);
+            Optional<TypedValue> optional = readObjectNodeValue(
+                    child,
+                    currentForceArrayFields,
+                    currentForceContentFields
+            );
             if (optional.isPresent()) {
                 final TypedValue nodeValue = optional.get();
                 if (excludeEmptyElement &&
@@ -168,16 +184,20 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
     }
 
     private Optional<TypedValue> readObjectNodeValue(final Node node,
-                                                     final FieldPaths forceArrayFields) {
+                                                     final FieldPaths forceArrayFields,
+                                                     final FieldPaths forceContentFields) {
         if (isWhitespaceOrNewLineNodeElement(node) ||
             isNodeOfType(node, Node.DOCUMENT_TYPE_NODE)) {
             return Optional.empty();
         }
 
+        final boolean forceContentField = forceContentFields.anyMatches(determineNodeName(node));
+
         if (isTextNode(node)) {
             final String text = node.getNodeValue();
             final TypedValue data = toTypedValue(text);
-            return readTextNodeValue(node, data);
+
+            return readTextNodeValue(node, data, forceContentField);
         }
 
         if (isElementNode(node)) {
@@ -186,9 +206,9 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
             if (childTextContent.isPresent()) {
                 final String text = childTextContent.get();
                 final TypedValue data = toTypedValue(text);
-                return readTextNodeValue(node, data);
+                return readTextNodeValue(node, data, forceContentField);
             }
-            return Optional.of(convertObjectTree(node, forceArrayFields));
+            return Optional.of(convertObjectTree(node, forceArrayFields, forceContentFields));
         }
 
         throw new ReaderException("Unsupported node type '" + node.getNodeType() + "'");
@@ -198,17 +218,19 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         return isTypeInferenceEnabled ? TypedValue.parse(text) : TypedValue.string(text);
     }
 
-    private Optional<TypedValue> readTextNodeValue(final Node node, final TypedValue data) {
+    private Optional<TypedValue> readTextNodeValue(final Node node,
+                                                   final TypedValue data,
+                                                   boolean forceContentField) {
         // Check if TextNode as no attribute
         final Map<String, String> attributes = getNotExcludedNodeAttributes(node);
-        if (attributes.isEmpty()) {
+        if (attributes.isEmpty() && !forceContentField) {
             return Optional.of(data);
         }
 
         // Else, create a Struct container
         final TypedStruct container = TypedStruct.create();
         attributes.forEach(container::put);
-        container.put(textNodeValueFieldName, data);
+        container.put(contentFieldName, data);
         return Optional.of(TypedValue.struct(container));
     }
 

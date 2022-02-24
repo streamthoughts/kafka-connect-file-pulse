@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.xml;
 
+import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class XMLNodeToStructConverterTest {
 
@@ -77,5 +79,57 @@ public class XMLNodeToStructConverterTest {
         final String path = "root.attr";
         Assert.assertTrue(result.exists(path));
         Assert.assertEquals("text", result.find(path).getString());
+    }
+
+    @Test
+    public void should_convert_given_single_text_node_element_without_attr() throws Exception {
+        // Given
+        final byte[] bytes = "<root>test</root>".getBytes();
+        final XMLNodeToStructConverter converter = new XMLNodeToStructConverter()
+                .setContentFieldName("text");
+
+        // When
+        final Document document = reader.parse(new ByteArrayInputStream(bytes));
+        TypedStruct struct = converter.apply(document);
+
+        // Then
+        Assert.assertNotNull(struct);
+        Assert.assertEquals("test", struct.getString("root"));
+    }
+
+    @Test
+    public void should_convert_given_single_text_node_element_without_attr_and_force_content() throws Exception {
+        // Given
+        final byte[] bytes = "<root>test</root>".getBytes();
+        final XMLNodeToStructConverter converter = new XMLNodeToStructConverter()
+                .setContentFieldName("text")
+                .setForceContentFields(FieldPaths.from(List.of("root")));
+
+        // When
+        final Document document = reader.parse(new ByteArrayInputStream(bytes));
+        TypedStruct struct = converter.apply(document);
+
+        // Then
+        Assert.assertNotNull(struct);
+        TypedStruct root = struct.getStruct("root");
+        Assert.assertEquals("test", root.getString("text"));
+    }
+
+    @Test
+    public void should_convert_given_single_text_node_element_with_attrs() throws Exception {
+        // Given
+        final byte[] bytes = "<root attr=\"attr\">test</root>".getBytes();
+        final XMLNodeToStructConverter converter = new XMLNodeToStructConverter()
+                .setContentFieldName("text");
+
+        // When
+        final Document document = reader.parse(new ByteArrayInputStream(bytes));
+        TypedStruct struct = converter.apply(document);
+
+        // Then
+        Assert.assertNotNull(struct);
+        TypedStruct root = struct.getStruct("root");
+        Assert.assertEquals("test", root.getString("text"));
+        Assert.assertEquals("attr", root.getString("attr"));
     }
 }

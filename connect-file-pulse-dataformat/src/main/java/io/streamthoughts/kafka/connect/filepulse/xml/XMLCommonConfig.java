@@ -113,7 +113,7 @@ public class XMLCommonConfig extends AbstractConfig {
         return getString(withKeyPrefix(XML_ATTRIBUTE_PREFIX_CONFIG));
     }
 
-    public String getTextNodeValueFieldName() {
+    public String getContentFieldName() {
         return getString(withKeyPrefix(XML_CONTENT_FIELD_NAME_CONFIG));
     }
 
@@ -126,7 +126,7 @@ public class XMLCommonConfig extends AbstractConfig {
     }
 
     public List<String> getForceContentFields() {
-        return getList(withKeyPrefix(XML_CONTENT_FIELD_NAME_CONFIG));
+        return getList(withKeyPrefix(XML_FORCE_CONTENT_FIELD_FOR_PATHS_CONFIG));
     }
 
     public boolean isDataTypeInferenceEnabled() {

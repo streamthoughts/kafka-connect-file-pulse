@@ -165,6 +165,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
             final String childNodeName = isTextNode(child) ? nodeName : determineNodeName(child);
             Optional<TypedValue> optional = readObjectNodeValue(
                     child,
+                    childNodeName,
                     currentForceArrayFields,
                     currentForceContentFields
             );
@@ -184,6 +185,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
     }
 
     private Optional<TypedValue> readObjectNodeValue(final Node node,
+                                                     final String nodeName,
                                                      final FieldPaths forceArrayFields,
                                                      final FieldPaths forceContentFields) {
         if (isWhitespaceOrNewLineNodeElement(node) ||
@@ -191,13 +193,11 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
             return Optional.empty();
         }
 
-        final boolean forceContentField = forceContentFields.anyMatches(determineNodeName(node));
-
         if (isTextNode(node)) {
             final String text = node.getNodeValue();
             final TypedValue data = toTypedValue(text);
 
-            return readTextNodeValue(node, data, forceContentField);
+            return readTextNodeValue(node, data, forceContentFields.anyMatches(nodeName));
         }
 
         if (isElementNode(node)) {
@@ -206,7 +206,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
             if (childTextContent.isPresent()) {
                 final String text = childTextContent.get();
                 final TypedValue data = toTypedValue(text);
-                return readTextNodeValue(node, data, forceContentField);
+                return readTextNodeValue(node, data, forceContentFields.anyMatches(nodeName));
             }
             return Optional.of(convertObjectTree(node, forceArrayFields, forceContentFields));
         }
@@ -243,7 +243,8 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         final Map<String, String> attributes = new HashMap<>();
         for (int i = 0; i < nodeMap.getLength(); i++) {
             Attr attr = (Attr) nodeMap.item(i);
-            if (!excludeAttributesInNamespaces.contains(attr.getNamespaceURI())) {
+            String namespaceURI = attr.getNamespaceURI();
+            if (namespaceURI == null || !excludeAttributesInNamespaces.contains(namespaceURI)) {
                 String attrName = determineNodeName(attr);
                 if (isNotXmlNamespace(attr)) {
                     attributes.put(attributePrefix + attrName, attr.getNodeValue());

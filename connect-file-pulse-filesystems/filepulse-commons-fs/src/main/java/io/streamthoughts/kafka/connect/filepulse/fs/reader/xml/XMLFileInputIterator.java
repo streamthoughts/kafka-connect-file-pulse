@@ -89,7 +89,7 @@ public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> 
                 .setForceArrayFields(FieldPaths.from(config.forceArrayFields()))
                 .setForceContentFields(FieldPaths.from(config.getForceContentFields()))
                 .setTypeInferenceEnabled(config.isDataTypeInferenceEnabled())
-                .setContentFieldName(config.getTextNodeValueFieldName())
+                .setContentFieldName(config.getContentFieldName())
                 .setFieldCharactersRegexPattern(config.getXmlFieldCharactersRegexPattern())
                 .setFieldCharactersStringReplacement(config.getXmlFieldCharactersStringReplacement())
                 .setAttributePrefix(config.getAttributePrefix());

@@ -77,7 +77,7 @@ public class XmlToStructFilter extends AbstractRecordFilter<XmlToStructFilter> {
                 .setForceArrayFields(FieldPaths.from(filterConfig.forceArrayFields()))
                 .setForceContentFields(FieldPaths.from(filterConfig.getForceContentFields()))
                 .setTypeInferenceEnabled(filterConfig.isDataTypeInferenceEnabled())
-                .setContentFieldName(filterConfig.getTextNodeValueFieldName())
+                .setContentFieldName(filterConfig.getContentFieldName())
                 .setFieldCharactersRegexPattern(filterConfig.getXmlFieldCharactersRegexPattern())
                 .setFieldCharactersStringReplacement(filterConfig.getXmlFieldCharactersStringReplacement())
                 .setAttributePrefix(filterConfig.getAttributePrefix());

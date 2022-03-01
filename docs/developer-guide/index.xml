@@ -19,7 +19,7 @@ curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/do
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Important&lt;/h4>
 When you run Connect workers in &lt;strong>distributed mode&lt;/strong>, the connector-plugin must be installed &lt;strong>on each of machines&lt;/strong> running Kafka Connect.
-&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</link><pubDate>Sun, 05 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</guid><description>
+&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</link><pubDate>Tue, 01 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</guid><description>
 &lt;h2 id="commons-configuration">Commons configuration&lt;/h2>
 &lt;p>Whatever the kind of files you are processing a connector should always be configured with the below properties.
 These configurations are described in detail in subsequent chapters.&lt;/p>
@@ -132,6 +132,13 @@ These configurations are described in detail in subsequent chapters.&lt;/p>
 &lt;td>boolean&lt;/td>
 &lt;td>&lt;em>false&lt;/em>&lt;/td>
 &lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.processing.order.by&lt;/code>&lt;/td>
+&lt;td>The strategy to be used for sorting files for processing. Valid values are: &lt;code>LAST_MODIFIED&lt;/code>, &lt;code>URI&lt;/code>, &lt;code>CONTENT_LENGTH&lt;/code>, &lt;code>CONTENT_LENGTH_DESC&lt;/code>.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>LAST_MODIFIED&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>tasks.empty.poll.wait.ms&lt;/code>&lt;/td>

@@ -54,6 +54,8 @@ public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
 
     private StateBackingStoreAccess sharedStore;
 
+    private TaskFileOrder taskFileOrder;
+
     private StateSnapshot<FileObject> fileState;
 
     private boolean isFirstCall = true;
@@ -80,6 +82,7 @@ public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
         fileSystemListing = config.getFileSystemListing();
         sourceOffsetPolicy = config.getSourceOffsetPolicy();
         fileSystemListing.setFilter(new CompositeFileListFilter(config.getFileSystemListingFilter()));
+        taskFileOrder = config.getTaskFilerOrder();
     }
 
     /**
@@ -110,7 +113,9 @@ public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
         ).values();
 
         isFirstCall = false;
-        return partitioner.partitionForTask(filtered, config.getTaskCount(), config.getTaskId());
+
+        List<FileObjectMeta> sorted = taskFileOrder.sort(filtered);
+        return partitioner.partitionForTask(sorted, config.getTaskCount(), config.getTaskId());
     }
 
     private void refreshState() {

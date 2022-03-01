@@ -255,7 +255,8 @@ public class DefaultFileSystemMonitorTest {
                 cleaner,
                 status -> List.of(FileObjectStatus.FAILED, FileObjectStatus.COMPLETED).contains(status),
                 OFFSET_MANAGER,
-                store
+                store,
+                TaskFileOrder.BuiltIn.LAST_MODIFIED.get()
         );
     }
 

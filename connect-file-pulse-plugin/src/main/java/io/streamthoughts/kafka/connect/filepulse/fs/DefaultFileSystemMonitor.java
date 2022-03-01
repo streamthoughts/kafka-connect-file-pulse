@@ -40,7 +40,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,7 +51,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * A default {@link FileSystemMonitor} that can be used to trigger file
@@ -67,9 +65,6 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
     private static final Duration ON_START_READ_END_LOG_TIMEOUT = Duration.ofSeconds(30);
     private static final Duration DEFAULT_READ_END_LOG_TIMEOUT = Duration.ofSeconds(5);
     private static final int MAX_SCHEDULE_ATTEMPTS = 3;
-
-    private final static Comparator<FileObjectMeta> BY_LAST_MODIFIED =
-            Comparator.comparingLong(FileObjectMeta::lastModified);
 
     private final FileSystemListing<?> fsListing;
 
@@ -104,6 +99,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
     private final Predicate<FileObjectStatus> cleanablePredicate;
 
+    private final TaskFileOrder taskFileOrder;
+
     /**
      * Creates a new {@link DefaultFileSystemMonitor} instance.
      *
@@ -118,16 +115,19 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                                     final GenericFileCleanupPolicy cleanPolicy,
                                     final Predicate<FileObjectStatus> cleanablePredicate,
                                     final SourceOffsetPolicy offsetPolicy,
-                                    final StateBackingStore<FileObject> store) {
+                                    final StateBackingStore<FileObject> store,
+                                    final TaskFileOrder taskFileOrder) {
         Objects.requireNonNull(fsListening, "'fsListening' should not be null");
         Objects.requireNonNull(cleanPolicy, "'cleanPolicy' should not be null");
         Objects.requireNonNull(offsetPolicy, "'offsetPolicy' should not be null");
         Objects.requireNonNull(store, "'store' should not null");
         Objects.requireNonNull(cleanablePredicate, "'cleanablePredicate' should not null");
+        Objects.requireNonNull(taskFileOrder, "'taskFileOrder' should not null");
 
         this.fsListing = fsListening;
         this.allowTasksReconfigurationAfterTimeoutMs = allowTasksReconfigurationAfterTimeoutMs;
         this.cleanablePredicate = cleanablePredicate;
+        this.taskFileOrder = taskFileOrder;
 
         if (cleanPolicy instanceof FileCleanupPolicy) {
             this.cleaner = new DelegateBatchFileCleanupPolicy((FileCleanupPolicy) cleanPolicy);
@@ -420,12 +420,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     "or no object file was detected after starting the connector."
                 );
             }
-
-            // Sort all object files by the last-modified date before returning
-            return partitions
-                    .stream()
-                    .sorted(BY_LAST_MODIFIED)
-                    .collect(Collectors.toList());
+            return taskFileOrder.sort(partitions);
         } finally {
             scanned.clear();
             taskReconfigurationRequested.set(false);

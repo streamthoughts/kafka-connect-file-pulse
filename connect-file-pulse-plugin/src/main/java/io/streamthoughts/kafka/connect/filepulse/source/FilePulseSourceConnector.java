@@ -121,7 +121,8 @@ public class FilePulseSourceConnector extends SourceConnector {
                     connectorConfig.getFsCleanupPolicy(),
                     connectorConfig.getFsCleanupPolicyPredicate(),
                     connectorConfig.getSourceOffsetPolicy(),
-                    sharedStore.get().getResource()
+                    sharedStore.get().getResource(),
+                    connectorConfig.getTaskFilerOrder()
             );
 
             monitor.setFileSystemListingEnabled(!connectorConfig.isFileListingTaskDelegationEnabled());

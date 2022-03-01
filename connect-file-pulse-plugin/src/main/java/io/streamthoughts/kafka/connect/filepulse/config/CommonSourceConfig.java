@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import com.jsoniter.JsonIterator;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
+import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileOrder;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner;
@@ -58,6 +59,9 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public static final String TASKS_FILE_READER_CLASS_CONFIG = "tasks.reader.class";
     private static final String TASKS_FILE_READER_CLASS_DOC   = "Class which is used by tasks to read an input file.";
+
+    public static final String TASKS_FILE_PROCESSING_ORDER_BY_CONFIG = "tasks.file.processing.order.by";
+    private static final String TASKS_FILE_PROCESSING_ORDER_BY_DOC = "The strategy to be used for sorting files for processing. Valid values are: LAST_MODIFIED, URI, CONTENT_LENGTH, CONTENT_LENGTH_DESC.";
 
     public static final String TASKS_HALT_ON_ERROR_CONFIG     = "tasks.halt.on.error";
     private static final String TASKS_HALT_ON_ERROR_DOC       = "Should a task halt when it encounters an error or continue to the next file.";
@@ -204,7 +208,7 @@ public class CommonSourceConfig extends AbstractConfig {
                         ConfigDef.Importance.HIGH,
                         FILTER_DOC,
                         FILTERS_GROUP,
-                        -1,
+                        groupCounter++,
                         ConfigDef.Width.NONE,
                         FILTER_CONFIG
                 )
@@ -214,10 +218,21 @@ public class CommonSourceConfig extends AbstractConfig {
                         DefaultTaskPartitioner.class,
                         ConfigDef.Importance.HIGH,
                         FILTER_DOC,
-                        FILTERS_GROUP,
-                        -1,
+                        TASK_PARTITIONER_CLASS_DOC,
+                        groupCounter++,
                         ConfigDef.Width.NONE,
-                        TASK_PARTITIONER_CLASS_DOC
+                        TASK_PARTITIONER_CLASS_CONFIG
+                )
+                .define(
+                        TASKS_FILE_PROCESSING_ORDER_BY_CONFIG,
+                        ConfigDef.Type.STRING,
+                        TaskFileOrder.BuiltIn.LAST_MODIFIED.name(),
+                        ConfigDef.Importance.MEDIUM,
+                        TASKS_FILE_PROCESSING_ORDER_BY_DOC,
+                        FILTERS_GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_FILE_PROCESSING_ORDER_BY_CONFIG
                 );
     }
 
@@ -231,6 +246,10 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public TaskPartitioner getTaskPartitioner() {
         return this.getConfiguredInstance(TASK_PARTITIONER_CLASS_CONFIG, TaskPartitioner.class);
+    }
+
+    public TaskFileOrder getTaskFilerOrder() {
+        return TaskFileOrder.findBuiltInByName(this.getString(TASKS_FILE_PROCESSING_ORDER_BY_CONFIG));
     }
 
     public boolean isTaskHaltOnError() {

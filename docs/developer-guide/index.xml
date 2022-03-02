@@ -726,7 +726,7 @@ file.filter.minimum.age.ms=10000
 &lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
 # The regex pattern used to match input files
 file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
-&lt;/code>&lt;/pre></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link><pubDate>Wed, 23 Feb 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid><description>
 &lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
 configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
 &lt;p>Currently, Connect FilePulse provides the following &lt;code>FileInputReader&lt;/code> implementations :&lt;/p>
@@ -926,7 +926,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.content.field.name&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
 &lt;td>Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>value&lt;/code>&lt;/td>
@@ -934,7 +934,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.field.name.characters.regex.pattern&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
 &lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>[.\-]'&lt;/code>&lt;/td>
@@ -942,7 +942,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.field.name.characters.string.replacement&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
 &lt;td>Specifies the replacement string to be used when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>_&lt;/code>&lt;/td>
@@ -950,7 +950,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.force.content.field.for.paths&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
 &lt;td>The comma-separated list of field for which a content-field must be forced.&lt;/td>
 &lt;td>&lt;code>List&lt;/code>&lt;/td>
 &lt;td>-&lt;/td>
@@ -959,7 +959,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tbody>
 &lt;/table>
 &lt;h2 id="xxxmetadatafileinputreader">XxxMetadataFileInputReader&lt;/h2>
-&lt;p>The &lt;code>FileInputMetadataReader&lt;/code>s can be used to send a single record per file containing metadata, i.e.: &lt;code>name&lt;/code>, &lt;code>path&lt;/code>, &lt;code>hash&lt;/code>, &lt;code>lastModified&lt;/code>, &lt;code>size&lt;/code>, etc.&lt;/p></description></item><item><title>Docs: Identifying Files</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</link><pubDate>Wed, 04 Aug 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</guid><description>
+&lt;p>The &lt;code>FileInputMetadataReader&lt;/code>s can be used to send a single record per file containing metadata, i.e.: &lt;code>name&lt;/code>, &lt;code>path&lt;/code>, &lt;code>hash&lt;/code>, &lt;code>lastModified&lt;/code>, &lt;code>size&lt;/code>, etc.&lt;/p></description></item><item><title>Docs: Identifying Files</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/offsets/</guid><description>
 &lt;p>Kafka Connect FilePulse uses a pluggable interface called &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/source/SourceOffsetPolicy.java">&lt;code>SourceOffsetPolicy&lt;/code>&lt;/a> for
 uniquely identifying files. Basically, the implementation passed in the connector&amp;rsquo;s configuration is used for computing a unique identifier which is
 used by Kafka Connect to persist the position of the connector for each file (i.e., the offsets saved in the &lt;code>connect-offsets&lt;/code> topic).&lt;/p>
@@ -1115,7 +1115,7 @@ filters.ParseLog4jLog.overwrite=logmessage
 &lt;h2 id="difference-between-kafka-connect-single-message-transforms-smt-functionality">Difference between Kafka Connect Single Message Transforms (SMT) functionality&lt;/h2>
 &lt;p>Filters can be compared to Kafka Connect built-in &lt;a href="https://kafka.apache.org/documentation/#connect_transforms">Transformers&lt;/a>.
 However, filters allow more complex pipelines to be built for structuring file data.
-For example, they can be used to split one input message to multiple messages or to temporarily buffer consecutive messages in order to regroup them by fields or a pattern.&lt;/p></description></item><item><title>Docs: Accessing Data and Metadata</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</link><pubDate>Sun, 26 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</guid><description>
+For example, they can be used to split one input message to multiple messages or to temporarily buffer consecutive messages in order to regroup them by fields or a pattern.&lt;/p></description></item><item><title>Docs: Accessing Data and Metadata</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</guid><description>
 &lt;p>Some filters (e.g : &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter">AppendFilter&lt;/a>) can be configured using &lt;em>Simple Connect Expression Language&lt;/em>.&lt;/p>
 &lt;p>&lt;em>Simple Connect Expression Language&lt;/em> (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.&lt;/p>
 &lt;p>The syntaxes to define an expression are of the form : &lt;code>&amp;lt;expression string&amp;gt;&lt;/code> or &lt;code>&amp;quot;{{ &amp;lt;expression string&amp;gt; }}&amp;quot;&lt;/code>.&lt;/p>
@@ -1615,7 +1615,7 @@ The available fields depend on the configured FileInputRecord.&lt;/p>
 &lt;h2 id="variables">Variables&lt;/h2>
 &lt;p>The scope &lt;code>$variables&lt;/code> allows read/write access to a simple key-value map structure.
 This scope can be used to share user-defined variables between &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/">Processing Filters&lt;/a>.&lt;/p>
-&lt;p>Note : variables are not cached between records.&lt;/p></description></item><item><title>Docs: Conditional Execution</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</link><pubDate>Wed, 30 Sep 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</guid><description>
+&lt;p>Note : variables are not cached between records.&lt;/p></description></item><item><title>Docs: Conditional Execution</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</guid><description>
 &lt;p>A conditional property &lt;code>if&lt;/code> can be configured on each filter to determine if that filter should be applied or skipped.
 When a filter is skipped, message flow to the next filter without any modification.&lt;/p>
 &lt;p>&lt;code>if&lt;/code> configuration accepts a Simple Connect Expression that must return to &lt;code>true&lt;/code> or &lt;code>false&lt;/code>.
@@ -1710,9 +1710,9 @@ filters.TagSecurityException.values=SecurityAlert
 &lt;p>&lt;strong>Limitations&lt;/strong> :&lt;/p>
 &lt;ul>
 &lt;li>conditions cannot be used to easily create pipeline branching.&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Handling Failures</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</link><pubDate>Tue, 30 Mar 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</guid><description>
+&lt;/ul></description></item><item><title>Docs: Handling Failures</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</guid><description>
 &lt;p>The connector provides some mechanisms to handle failures while executing filters.&lt;/p>
-&lt;p>By default, the filters chain will immediately failed after an exception is thrown.
+&lt;p>By default, the filters chain will immediately fail after an exception is thrown.
 But, you can also configure each filter to either ignore errors or to branch to a sub filters-chain.&lt;/p>
 &lt;h2 id="configuration">Configuration&lt;/h2>
 &lt;table>
@@ -1800,7 +1800,7 @@ filters.Log4jGrokFilter.withOnFailure=AppendError
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendError.field=$.exceptionMessage
 filters.AppendError.value={{ $error.message }}
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Processing Filters</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Processing Filters</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</guid><description>
 &lt;p>These filters are available for use with Kafka Connect File Pulse:&lt;/p>
 &lt;table>
 &lt;thead>
@@ -2936,6 +2936,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;thead>
 &lt;tr>
 &lt;th>Configuration&lt;/th>
+&lt;th>Since&lt;/th>
 &lt;th>Description&lt;/th>
 &lt;th>Type&lt;/th>
 &lt;th>Default&lt;/th>
@@ -2945,20 +2946,23 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;tbody>
 &lt;tr>
 &lt;td>&lt;code>source&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>The input field on which to apply the filter.&lt;/td>
 &lt;td>string&lt;/td>
 &lt;td>&lt;code>&amp;quot;message&amp;quot;&lt;/code>&lt;/td>
-&lt;td>high&lt;/td>
+&lt;td>High&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.force.array.on.fields&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>The comma-separated list of fields for which an array-type must be forced&lt;/td>
 &lt;td>&lt;code>List&lt;/code>&lt;/td>
-&lt;td>&lt;code>-&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>High&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.parser.validating.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>Specifies that the parser will validate documents as they are parsed.&lt;/td>
 &lt;td>&lt;code>boolean&lt;/code>&lt;/td>
 &lt;td>&lt;code>false&lt;/code>&lt;/td>
@@ -2966,6 +2970,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.parser.namespace.aware.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>Specifies that the XML parser will provide support for XML namespaces.&lt;/td>
 &lt;td>&lt;code>boolean&lt;/code>&lt;/td>
 &lt;td>&lt;code>false&lt;/code>&lt;/td>
@@ -2973,6 +2978,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.exclude.empty.elements&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>Specifies that the reader should exclude element having no field.&lt;/td>
 &lt;td>&lt;code>boolean&lt;/code>&lt;/td>
 &lt;td>&lt;code>false&lt;/code>&lt;/td>
@@ -2980,6 +2986,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.exclude.node.attributes&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>Specifies that the reader should exclude all node attributes.&lt;/td>
 &lt;td>&lt;code>boolean&lt;/code>&lt;/td>
 &lt;td>&lt;code>false&lt;/code>&lt;/td>
@@ -2987,13 +2994,15 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.exclude.node.attributes.in.namespaces&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&lt;/td>
-&lt;td>&lt;code>list&lt;/code>&lt;/td>
+&lt;td>&lt;code>List&lt;/code>&lt;/td>
 &lt;td>&lt;code>false&lt;/code>&lt;/td>
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.data.type.inference.enabled&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>Specifies that the reader should try to infer the type of data nodes.&lt;/td>
 &lt;td>&lt;code>boolean&lt;/code>&lt;/td>
 &lt;td>&lt;code>false&lt;/code>&lt;/td>
@@ -3001,6 +3010,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.attribute.prefix&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>&amp;quot;&amp;quot;&lt;/code>&lt;/td>
@@ -3008,6 +3018,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.content.field.name&lt;/code>&lt;/td>
+&lt;td>2.5.0&lt;/td>
 &lt;td>Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>value&lt;/code>&lt;/td>
@@ -3015,6 +3026,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.field.name.characters.regex.pattern&lt;/code>&lt;/td>
+&lt;td>2.5.0&lt;/td>
 &lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>`[.-]'&lt;/td>
@@ -3022,6 +3034,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.field.name.character.string.replacement&lt;/code>&lt;/td>
+&lt;td>2.5.0&lt;/td>
 &lt;td>Specifies the replacement string to be used when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>_&lt;/code>&lt;/td>
@@ -3029,9 +3042,10 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>xml.force.content.field.for.paths&lt;/code>&lt;/td>
+&lt;td>2.5.0&lt;/td>
 &lt;td>The comma-separated list of field for which a content-field must be forced.&lt;/td>
 &lt;td>&lt;code>List&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;/tbody>
@@ -3045,11 +3059,11 @@ filters.ParseXmlDocument.xml.parser.validating.enabled=true
 filters.ParseXmlDocument.xml.parser.namespace.aware.enabled=true
 filters.ParseXmlDocument.xml.exclude.empty.elements=true
 filters.ParseXmlDocument.xml.data.type.inference.enabled=true
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Tracking File Status</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</link><pubDate>Fri, 11 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Tracking File Status</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</guid><description>
 &lt;p>Connect File Pulse uses an internal topic (&lt;em>default:&lt;code>connect-file-pulse-status&lt;/code>&lt;/em>) to track the current state of files being processed.
-This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.&lt;/p>
+This topic is used internally by Tasks to communicate to the SourceConnector instance, but you can easily use it to monitor files progression.&lt;/p>
 &lt;h2 id="the-message-format">The message format&lt;/h2>
-&lt;p>Status event are publish into JSON with the following schema :&lt;/p>
+&lt;p>Status event are published into JSON with the following schema :&lt;/p>
 &lt;pre>&lt;code>{
 &amp;quot;hostname&amp;quot;: {
 &amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
@@ -3110,7 +3124,7 @@ lastModified&amp;quot;: {
 &lt;li>[4] &lt;strong>COMPLETED&lt;/strong> : The task completes the processing of the file.&lt;/li>
 &lt;li>[4] &lt;strong>COMMITTED&lt;/strong> : The task committed the offsets of the completed file.&lt;/li>
 &lt;li>[5] &lt;strong>CLEANED&lt;/strong> : The file has been successfully clean up by the connector (depends on the configured policy).&lt;/li>
-&lt;/ul></description></item><item><title>Docs: File Cleanup Policies</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</link><pubDate>Thu, 10 Jun 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</guid><description>
+&lt;/ul></description></item><item><title>Docs: File Cleanup Policies</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</guid><description>
 &lt;p>The connector can be configured with a specific &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/clean/FileCleanupPolicy.java">FileCleanupPolicy&lt;/a> implementation.&lt;/p>
 &lt;p>The cleanup policy can be configured with the below connect property :&lt;/p>
 &lt;table>
@@ -3136,16 +3150,16 @@ lastModified&amp;quot;: {
 &lt;h2 id="available-cleanup-policies">Available Cleanup Policies&lt;/h2>
 &lt;h3 id="deletecleanpolicy">&lt;code>DeleteCleanPolicy&lt;/code>&lt;/h3>
 &lt;p>This policy deletes all files regardless of their final status (completed or failed).&lt;/p>
-&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
+&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must be configured to :&lt;/p>
 &lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.DeleteCleanupPolicy
 &lt;/code>&lt;/pre>&lt;h3 id="logcleanpolicy">&lt;code>LogCleanPolicy&lt;/code>&lt;/h3>
-&lt;p>This policy prints to logs some information after files completion.&lt;/p>
-&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
+&lt;p>This policy prints into logs some information after files completion.&lt;/p>
+&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must be configured to :&lt;/p>
 &lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.LogCleanupPolicy
-&lt;/code>&lt;/pre>&lt;h3 id="localmovecleanpolicy">&lt;code>LocalMoveCleanPolicy&lt;/code>&lt;/h3>
+&lt;/code>&lt;/pre>&lt;h3 id="localmovecleanuppolicy">&lt;code>LocalMoveCleanupPolicy&lt;/code>&lt;/h3>
 &lt;p>This policy attempts to move atomically files to configurable target directories.&lt;/p>
-&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
-&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanPolicy
+&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must be configured to :&lt;/p>
+&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanupPolicy
 &lt;/code>&lt;/pre>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Usage&lt;/h4>

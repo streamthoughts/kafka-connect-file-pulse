@@ -4626,7 +4626,7 @@ file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
 &lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
 &lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
 &lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link><pubDate>Wed, 23 Feb 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid><description>
+&lt;/ul></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid><description>
 &lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
 configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
 &lt;p>Currently, Connect FilePulse provides the following &lt;code>FileInputReader&lt;/code> implementations :&lt;/p>
@@ -4826,7 +4826,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.content.field.name&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
 &lt;td>Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>value&lt;/code>&lt;/td>
@@ -4834,7 +4834,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.field.name.characters.regex.pattern&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
 &lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>[.\-]'&lt;/code>&lt;/td>
@@ -4842,7 +4842,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.field.name.characters.string.replacement&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
 &lt;td>Specifies the replacement string to be used when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;td>&lt;code>_&lt;/code>&lt;/td>
@@ -4850,7 +4850,7 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>reader.xml.force.content.field.for.paths&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.4&lt;/code>&lt;/td>
+&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
 &lt;td>The comma-separated list of field for which a content-field must be forced.&lt;/td>
 &lt;td>&lt;code>List&lt;/code>&lt;/td>
 &lt;td>-&lt;/td>

@@ -1,5 +1,5 @@
 ---
-date: 2022-21-02
+date: 2022-03-02
 title: "Processing Filters"
 linkTitle: "Processing Filters"
 weight: 80
@@ -780,21 +780,21 @@ The `XmlToStructFilter` parses an XML record-field into STRUCT
 
 ### Configuration
 
-| Configuration                                 | Description                                                                                                                           | Type      | Default     | Importance |
-|-----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------|-------------|------------|
-| `source`                                      | The input field on which to apply the filter.                                                                                         | string    | `"message"` | high       |
-| `xml.force.array.on.fields`                   | The comma-separated list of fields for which an array-type must be forced                                                             | `List`    | `-`         | High       |                                                
-| `xml.parser.validating.enabled`               | Specifies that the parser will validate documents as they are parsed.                                                                 | `boolean` | `false`     | Low        |
-| `xml.parser.namespace.aware.enabled`          | Specifies that the XML parser will provide support for XML namespaces.                                                                | `boolean` | `false`     | Low        |
-| `xml.exclude.empty.elements`                  | Specifies that the reader should exclude element having no field.                                                                     | `boolean` | `false`     | Low        |
-| `xml.exclude.node.attributes`                 | Specifies that the reader should exclude all node attributes.                                                                         | `boolean` | `false`     | Low        |
-| `xml.exclude.node.attributes.in.namespaces`   | Specifies that the reader should only exclude node attributes in the defined list of namespaces.                                      | `list`    | `false`     | Low        |
-| `xml.data.type.inference.enabled`             | Specifies that the reader should try to infer the type of data nodes.                                                                 | `boolean` | `false`     | High       |
-| `xml.attribute.prefix`                        | If set, the name of attributes will be prepended with the specified prefix when they are added to a record.                           | `string`  | `""`        | Low        |
-| `xml.content.field.name`                      | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.               | `string`  | `value`     | Low        |
-| `xml.field.name.characters.regex.pattern`     | Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct. | `string`  | `[.\-]'     | Low        |
-| `xml.field.name.character.string.replacement` | Specifies the replacement string to be used when converting a document to a struct.                                                   | `string`  | `_`         | Low        |
-| `xml.force.content.field.for.paths`           | The comma-separated list of field for which a content-field must be forced.                                                           | `List`    | -           | Low        |
+| Configuration                                 | Since | Description                                                                                                                           | Type      | Default     | Importance |
+|-----------------------------------------------|-------|---------------------------------------------------------------------------------------------------------------------------------------|-----------|-------------|------------|
+| `source`                                      |       | The input field on which to apply the filter.                                                                                         | string    | `"message"` | High       |
+| `xml.force.array.on.fields`                   |       | The comma-separated list of fields for which an array-type must be forced                                                             | `List`    |             | High       |                                                
+| `xml.parser.validating.enabled`               |       | Specifies that the parser will validate documents as they are parsed.                                                                 | `boolean` | `false`     | Low        |
+| `xml.parser.namespace.aware.enabled`          |       | Specifies that the XML parser will provide support for XML namespaces.                                                                | `boolean` | `false`     | Low        |
+| `xml.exclude.empty.elements`                  |       | Specifies that the reader should exclude element having no field.                                                                     | `boolean` | `false`     | Low        |
+| `xml.exclude.node.attributes`                 |       | Specifies that the reader should exclude all node attributes.                                                                         | `boolean` | `false`     | Low        |
+| `xml.exclude.node.attributes.in.namespaces`   |       | Specifies that the reader should only exclude node attributes in the defined list of namespaces.                                      | `List`    | `false`     | Low        |
+| `xml.data.type.inference.enabled`             |       | Specifies that the reader should try to infer the type of data nodes.                                                                 | `boolean` | `false`     | High       |
+| `xml.attribute.prefix`                        |       | If set, the name of attributes will be prepended with the specified prefix when they are added to a record.                           | `string`  | `""`        | Low        |
+| `xml.content.field.name`                      | 2.5.0 | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.               | `string`  | `value`     | Low        |
+| `xml.field.name.characters.regex.pattern`     | 2.5.0 | Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct. | `string`  | `[.\-]'     | Low        |
+| `xml.field.name.character.string.replacement` | 2.5.0 | Specifies the replacement string to be used when converting a document to a struct.                                                   | `string`  | `_`         | Low        |
+| `xml.force.content.field.for.paths`           | 2.5.0 | The comma-separated list of field for which a content-field must be forced.                                                           | `List`    |             | Low        |
 ### Example
 
 **Configuration**

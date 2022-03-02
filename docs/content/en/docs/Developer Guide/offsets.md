@@ -1,5 +1,5 @@
 ---
-date: 2021-08-04
+date: 2022-03-02
 title: "Identifying Files"
 linkTitle: "Identifying Files"
 weight: 45
@@ -13,6 +13,6 @@ used by Kafka Connect to persist the position of the connector for each file (i.
 
 By default, Kafka Connect FilePulse use the default implementation `DefaultSourceOffsetPolicy` which accepts the following configuration: 
 
-| Configuration |   Description |   Type    |   Default |   Importance  |
-| --------------| --------------|-----------| --------- | ------------- |
-| `offset.attributes.string` | A separated list of attributes, using '+' character as separator, to be used for uniquely identifying an object file; must be one of [name, path, lastModified, inode, hash, uri] (e.g: name+hash). Note that order doesn't matter. | `string` | `uri` | HIGH |
+| Configuration              | Description                                                                                                                                                                                                                         | Type     | Default | Importance |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------|------------|
+| `offset.attributes.string` | A separated list of attributes, using '+' character as separator, to be used for uniquely identifying an object file; must be one of [name, path, lastModified, inode, hash, uri] (e.g: name+hash). Note that order doesn't matter. | `string` | `uri`   | HIGH       |

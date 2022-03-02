@@ -1,5 +1,5 @@
 ---
-date: 2021-03-30
+date: 2022-03-02
 title: "Handling Failures"
 linkTitle: "Handling Failures"
 weight: 70
@@ -9,7 +9,7 @@ description: >
 
 The connector provides some mechanisms to handle failures while executing filters.
 
-By default, the filters chain will immediately failed after an exception is thrown.
+By default, the filters chain will immediately fail after an exception is thrown.
 But, you can also configure each filter to either ignore errors or to branch to a sub filters-chain.
 
 ## Configuration

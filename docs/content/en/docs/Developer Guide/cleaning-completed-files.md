@@ -1,5 +1,5 @@
 ---
-date: 2021-06-10
+date: 2022-03-02
 title: "File Cleanup Policies"
 linkTitle: "File Cleanup Policies"
 weight: 100
@@ -11,9 +11,9 @@ The connector can be configured with a specific [FileCleanupPolicy](https://gith
 
 The cleanup policy can be configured with the below connect property :
 
-| Configuration |   Description |   Type    |   Default |   Importance  |
-| --------------| --------------|-----------| --------- | ------------- |
-|`fs.cleanup.policy.class` | The fully qualified name of the class which is used to cleanup files | class | *-* | high |
+| Configuration             | Description                                                          | Type  | Default | Importance |
+|---------------------------|----------------------------------------------------------------------|-------|---------|------------|
+| `fs.cleanup.policy.class` | The fully qualified name of the class which is used to cleanup files | class | *-*     | high       |
 
 
 ## Available Cleanup Policies
@@ -22,7 +22,7 @@ The cleanup policy can be configured with the below connect property :
 
 This policy deletes all files regardless of their final status (completed or failed).
 
-To enable this policy, the property `fs.cleanup.policy.class` must configured to : 
+To enable this policy, the property `fs.cleanup.policy.class` must be configured to : 
 
 ```
 io.streamthoughts.kafka.connect.filepulse.fs.clean.DeleteCleanupPolicy
@@ -30,22 +30,22 @@ io.streamthoughts.kafka.connect.filepulse.fs.clean.DeleteCleanupPolicy
 
 ### `LogCleanPolicy`
 
-This policy prints to logs some information after files completion.
+This policy prints into logs some information after files completion.
 
-To enable this policy, the property `fs.cleanup.policy.class` must configured to : 
+To enable this policy, the property `fs.cleanup.policy.class` must be configured to : 
 
 ```
 io.streamthoughts.kafka.connect.filepulse.fs.clean.LogCleanupPolicy 
 ```
 
-### `LocalMoveCleanPolicy`
+### `LocalMoveCleanupPolicy`
 
 This policy attempts to move atomically files to configurable target directories.
 
-To enable this policy, the property `fs.cleanup.policy.class` must configured to : 
+To enable this policy, the property `fs.cleanup.policy.class` must be configured to : 
 
 ```
-io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanPolicy
+io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanupPolicy
 ```
 
 {{% alert title="Usage" color="warning" %}}
@@ -54,9 +54,9 @@ This policy only works when using the `LocalFSDirectoryListing`.
 
 #### Configuration
 
-| Configuration |   Description |   Type    |   Default |   Importance  |
-| --------------| --------------|-----------| --------- | ------------- |
-|`cleaner.output.failed.path` | Target directory for file proceed with failure | string | *.failure* | high |
-|`cleaner.output.succeed.path` | Target directory for file proceed successfully | string | *.success* | high |
+| Configuration                 | Description                                    | Type   | Default    | Importance |
+|-------------------------------|------------------------------------------------|--------|------------|------------|
+| `cleaner.output.failed.path`  | Target directory for file proceed with failure | string | *.failure* | high       |
+| `cleaner.output.succeed.path` | Target directory for file proceed successfully | string | *.success* | high       |
 
 ## Implementing your own policy

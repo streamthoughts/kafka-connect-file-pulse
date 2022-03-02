@@ -1,5 +1,5 @@
 ---
-date: 2021-09-26
+date: 2022-03-02
 title: "Accessing Data and Metadata"
 linkTitle: "Accessing Data and Metadata"
 weight: 60
@@ -68,39 +68,39 @@ Note the use of double-quotes to define a substitution expressions
 
 ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.
 
-| Function         | Since   | Description                                                                                                                                                                                                      | Syntax   |
-|------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
-| `and`            | `2.4.0` | Checks if all of the given conditional expressions are `true`.                                                                                                                                                   | `{{ and(booleanExpression1, booleanExpression2, ...) }}` |
-| `concat`         |         | Concatenate two or more string expressions.                                                                                                                                                                      | `{{ concat(expr1, expr2, ...) }}` |
-| `concat_ws`      |         | Concatenate two or more string expressions, using the specified separator between each.                                                                                                                          | `{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}` |
-| `contains`       |         | Returns `true` if an array field's value contains the specified value                                                                                                                                            | `{{ contains(array, 'value') }}` |
-| `converts`       |         | Converts a field's value into the specified type                                                                                                                                                                 | `{{ converts(field_expr, INTEGER) }}` |
-| `ends_with`      |         | Returns `true` if a string field's value end with the specified string suffix                                                                                                                                    | `{{ ends_with(field_expr, 'suffix') }}` |
-| `equals`         |         | Returns `true` if a string or number fields's value equals the specified value                                                                                                                                   | `{{ equals(field_expr, value) }}` |
-| `exists`         |         | Returns `true` if an object has the specified field                                                                                                                                                              | `{{ exists(obj_expr, field_expr) }}` |
-| `extract_array`  |         | Returns the element at the specified position of the specified array                                                                                                                                             | `{{ extract_array(array, 0) }}` |
-| `gt`             | `2.4.0` | Executes "*greater than operation*" on two values and returns `true` if the first value is greater than the second value, `false`, otherwise.                                                                    | `{{ gt(expressionValue1, expressionValue2) }}` |
-| `hash`           |         | Hash a given string expression, using murmur2 algorithm                                                                                                                                                          | `{{ hash(field_expr) }}` |
-| `if`             | `2.4.0` | Evaluates the given boolean expression and returns one value if `true` and another value if `false`.                                                                                                             | `{{ if(booleanExpression, valueIfTrue, valueIfFalse ) }}` |
-| `is_null`        |         | Returns `true` if a field's value is null                                                                                                                                                                        | `{{ is_null(field) }}` |
-| `is_empty`       |         | Returns `true` if an array as no elements or a string field has no characters                                                                                                                                    | `{{ is_null(field) }}` |
-| `length`         |         | Returns the number of elements into an array or the length of a string field                                                                                                                                     | `{{ length(array) }}` |
-| `lt`             | `2.4.0` | Executes "*less than operation*" on two values and returns `true` if the first value is less than the second value, `false`, otherwise.                                                                          | `{{ lt(expressionValue1, expressionValue2) }}` |
-| `lowercase`      |         | Converts all of the characters in a string field's value to lower case                                                                                                                                           | `{{ lowercase(field) }}` |
-| `matches`        |         | Returns `true` if a field's value match the specified regex                                                                                                                                                      | `{{ matches(field_expr, 'regex') }}` |
-| `md5`            |         | Computes the MD5 hash of string expression                                                                                                                                                                       | `{{ md5(field_expr) }}` |
-| `nlv`            |         | Sets a default value if a field's value is null                                                                                                                                                                  | `{{ length(array) }}` |
-| `not`            | `2.4.0` | Reverses a boolean value                                                                                                                                                                                         | `{{ not(booleanExpression) }}` |
-| `or`             | `2.4.0` | Checks if at least one of the given conditional expressions is `true`..                                                                                                                                          | `{{ or(booleanExpression1, booleanExpression2, ...) }}` |
-| `replace_all `   |         | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string.                                                                                                | `{{ replace_all(field_expr, 'regex', 'replacement') }}` |
+| Function         | Since   | Description                                                                                                                                                                                                      | Syntax                                                                       |
+|------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| `and`            | `2.4.0` | Checks if all of the given conditional expressions are `true`.                                                                                                                                                   | `{{ and(booleanExpression1, booleanExpression2, ...) }}`                     |
+| `concat`         |         | Concatenate two or more string expressions.                                                                                                                                                                      | `{{ concat(expr1, expr2, ...) }}`                                            |
+| `concat_ws`      |         | Concatenate two or more string expressions, using the specified separator between each.                                                                                                                          | `{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}`              |
+| `contains`       |         | Returns `true` if an array field's value contains the specified value                                                                                                                                            | `{{ contains(array, 'value') }}`                                             |
+| `converts`       |         | Converts a field's value into the specified type                                                                                                                                                                 | `{{ converts(field_expr, INTEGER) }}`                                        |
+| `ends_with`      |         | Returns `true` if a string field's value end with the specified string suffix                                                                                                                                    | `{{ ends_with(field_expr, 'suffix') }}`                                      |
+| `equals`         |         | Returns `true` if a string or number fields's value equals the specified value                                                                                                                                   | `{{ equals(field_expr, value) }}`                                            |
+| `exists`         |         | Returns `true` if an object has the specified field                                                                                                                                                              | `{{ exists(obj_expr, field_expr) }}`                                         |
+| `extract_array`  |         | Returns the element at the specified position of the specified array                                                                                                                                             | `{{ extract_array(array, 0) }}`                                              |
+| `gt`             | `2.4.0` | Executes "*greater than operation*" on two values and returns `true` if the first value is greater than the second value, `false`, otherwise.                                                                    | `{{ gt(expressionValue1, expressionValue2) }}`                               |
+| `hash`           |         | Hash a given string expression, using murmur2 algorithm                                                                                                                                                          | `{{ hash(field_expr) }}`                                                     |
+| `if`             | `2.4.0` | Evaluates the given boolean expression and returns one value if `true` and another value if `false`.                                                                                                             | `{{ if(booleanExpression, valueIfTrue, valueIfFalse ) }}`                    |
+| `is_null`        |         | Returns `true` if a field's value is null                                                                                                                                                                        | `{{ is_null(field) }}`                                                       |
+| `is_empty`       |         | Returns `true` if an array as no elements or a string field has no characters                                                                                                                                    | `{{ is_null(field) }}`                                                       |
+| `length`         |         | Returns the number of elements into an array or the length of a string field                                                                                                                                     | `{{ length(array) }}`                                                        |
+| `lt`             | `2.4.0` | Executes "*less than operation*" on two values and returns `true` if the first value is less than the second value, `false`, otherwise.                                                                          | `{{ lt(expressionValue1, expressionValue2) }}`                               |
+| `lowercase`      |         | Converts all of the characters in a string field's value to lower case                                                                                                                                           | `{{ lowercase(field) }}`                                                     |
+| `matches`        |         | Returns `true` if a field's value match the specified regex                                                                                                                                                      | `{{ matches(field_expr, 'regex') }}`                                         |
+| `md5`            |         | Computes the MD5 hash of string expression                                                                                                                                                                       | `{{ md5(field_expr) }}`                                                      |
+| `nlv`            |         | Sets a default value if a field's value is null                                                                                                                                                                  | `{{ length(array) }}`                                                        |
+| `not`            | `2.4.0` | Reverses a boolean value                                                                                                                                                                                         | `{{ not(booleanExpression) }}`                                               |
+| `or`             | `2.4.0` | Checks if at least one of the given conditional expressions is `true`..                                                                                                                                          | `{{ or(booleanExpression1, booleanExpression2, ...) }}`                      |
+| `replace_all `   |         | Replaces every subsequence of the field's value that matches the given pattern with the given replacement string.                                                                                                | `{{ replace_all(field_expr, 'regex', 'replacement') }}`                      |
 | `split`          |         | Split a string field's value into an array using the specified regex or character                                                                                                                                | `{{ split(field_expr, regex) }}` or  `{{ split(field_expr, regex, limit) }}` |
-| `starts_with`    |         | Returns `true` if an a string field's value start with the specified string prefix                                                                                                                               | `{{ starts_with(field_expr, 'prefix') }}` |
+| `starts_with`    |         | Returns `true` if an a string field's value start with the specified string prefix                                                                                                                               | `{{ starts_with(field_expr, 'prefix') }}`                                    |
 | `timestamp_diff` | `2.4.0` | Calculates the amount of time between two epoch times in seconds or milliseconds. For more information on `unit` see [ChronoUnit](https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html). | `{{ timestamp_diff(unit, epoch_time_expression1, epoch_time_expression2) }}` |
-| `to_timestamp`   | `2.4.0` | Parses a given string value and returns the epoch-time in milliseconds.                                                                                                                                          | `{{ to_timestamp(datetime_expression, pattern [, timezone]) }}` |
-| `trim`           |         | Trims the spaces from the beginning and end of a string.                                                                                                                                                         | `{{ trim(field_expr) }}` |
-| `unix_timestamp` | `2.4.0` | Returns the current time in milliseconds.                                                                                                                                                                        | `{{ unix_timestamp() }}` |
-| `uppercase`      |         | Converts all of the characters in a string field's value to upper case                                                                                                                                           | `{{ uppercase(field_expr) }}` |
-| `uuid`           |         | Create a Universally Unique Identifier (UUID)                                                                                                                                                                    | `{{ uuid() }}` |
+| `to_timestamp`   | `2.4.0` | Parses a given string value and returns the epoch-time in milliseconds.                                                                                                                                          | `{{ to_timestamp(datetime_expression, pattern [, timezone]) }}`              |
+| `trim`           |         | Trims the spaces from the beginning and end of a string.                                                                                                                                                         | `{{ trim(field_expr) }}`                                                     |
+| `unix_timestamp` | `2.4.0` | Returns the current time in milliseconds.                                                                                                                                                                        | `{{ unix_timestamp() }}`                                                     |
+| `uppercase`      |         | Converts all of the characters in a string field's value to upper case                                                                                                                                           | `{{ uppercase(field_expr) }}`                                                |
+| `uuid`           |         | Create a Universally Unique Identifier (UUID)                                                                                                                                                                    | `{{ uuid() }}`                                                               |
 
 
 In addition, ScEL supports nested functions. 
@@ -135,17 +135,17 @@ ScEL supports a number of predefined scopes that can be used for example :
  - **To get access to metadata about the source file.**
  - Etc.
 
-| Scope | Description | Type |
-|--- | --- |--- |
-| `$headers` | The record headers  | - |
-| `$key` | The record key | `string` |
-| `$metadata` | The file metadata  | `struct` |
-| `$offset` | The offset information of this record into the source file  | `struct` |
-| `$system` | The system environment variables and runtime properties | `struct` |
-| `$timestamp` | The record timestamp  | `long` |
-| `$topic` | The output topic | `string` |
-| `$value` | The record value| `struct` |
-| `$variables` | The contextual filter-chain variables| `map[string, object]` |
+| Scope        | Description                                                | Type                  |
+|--------------|------------------------------------------------------------|-----------------------|
+| `$headers`   | The record headers                                         | -                     |
+| `$key`       | The record key                                             | `string`              |
+| `$metadata`  | The file metadata                                          | `struct`              |
+| `$offset`    | The offset information of this record into the source file | `struct`              |
+| `$system`    | The system environment variables and runtime properties    | `struct`              |
+| `$timestamp` | The record timestamp                                       | `long`                |
+| `$topic`     | The output topic                                           | `string`              |
+| `$value`     | The record value                                           | `struct`              |
+| `$variables` | The contextual filter-chain variables                      | `map[string, object]` |
 
 Note, that in case of failures more fields are added to the current filter context (see : [Handling Failures](/kafka-connect-file-pulse/docs/developer-guide/handling-failures/))
 
@@ -161,57 +161,57 @@ The scope `key` allows defining the key of the output record. Only string key is
 
 The scope `metadata` allows read access to information about the file being processing.
 
-| Predefined Fields (ScEL) | Description | Type |
-|--- | --- |--- |
-| `$metadata.name` | The file name  | `string` |
-| `$metadata.path` | The file directory path | `string` |
-| `$metadata.absolutePath` | The file absolute path | `string` |
-| `$metadata.hash` | The file CRC32 hash | `int` |
-| `$metadata.lastModified` | The file last modified time.  | `long` |
-| `$metadata.size` | The file size  | `long` |
-| `$metadata.inode` | The file Unix inode  | `long` |
+| Predefined Fields (ScEL) | Description                  | Type     |
+|--------------------------|------------------------------|----------|
+| `$metadata.name`         | The file name                | `string` |
+| `$metadata.path`         | The file directory path      | `string` |
+| `$metadata.absolutePath` | The file absolute path       | `string` |
+| `$metadata.hash`         | The file CRC32 hash          | `int`    |
+| `$metadata.lastModified` | The file last modified time. | `long`   |
+| `$metadata.size`         | The file size                | `long`   |
+| `$metadata.inode`        | The file Unix inode          | `long`   |
 
 ## Record Offset
 
 The scope `offset` allows read access to information about the original position of the record into the source file.
 The available fields depend on the configured FileInputRecord.
 
-| Predefined Fields (ScEL) | Description | Type |
-|--- | --- |--- |
-| `$offset.timestamp` | The creation time of the record (millisecond)  | `long` |
+| Predefined Fields (ScEL) | Description                                   | Type   |
+|--------------------------|-----------------------------------------------|--------|
+| `$offset.timestamp`      | The creation time of the record (millisecond) | `long` |
 
 Information only available if `RowFilterReader` is configured.
 
-| Predefined Fields (ScEL) | Description | Type |
-|--- | --- |--- |
-| `$offset.startPosition` | The start position of the record into the source file  | `long` |
-| `$offset.endPosition` | The end position of the record into the source file  | `long` |
-| `$offset.size` | The size in bytes  | `long` |
-| `$offset.rows` | The number of rows already read from the source file.| `long` |
+| Predefined Fields (ScEL) | Description                                           | Type   |
+|--------------------------|-------------------------------------------------------|--------|
+| `$offset.startPosition`  | The start position of the record into the source file | `long` |
+| `$offset.endPosition`    | The end position of the record into the source file   | `long` |
+| `$offset.size`           | The size in bytes                                     | `long` |
+| `$offset.rows`           | The number of rows already read from the source file. | `long` |
 
 Information only available if `BytesArrayInputReader` is configured.
 
-| Predefined Fields (ScEL) | Description | Type |
-|--- | --- |--- |
-| `$offset.startPosition` | The start position of the record into the source file (always equals to 0)  | `long` |
-| `$offset.endPosition` | The end position of the record into the source file (equals to the file size)  | `long` |
+| Predefined Fields (ScEL) | Description                                                                   | Type   |
+|--------------------------|-------------------------------------------------------------------------------|--------|
+| `$offset.startPosition`  | The start position of the record into the source file (always equals to 0)    | `long` |
+| `$offset.endPosition`    | The end position of the record into the source file (equals to the file size) | `long` |
 
 Information only available if `AvroFilterInputReader` is configured.
 
-| Predefined Fields (ScEL) | Description | Type |
-|--- | --- |--- |
-| `$offset.blockStart` | The start position of the current block  | `long` |
-| `$offset.position` | The position into the current block.  | `long` |
-| `$offset.records` | The number of record read into the current block.  | `long` |
+| Predefined Fields (ScEL) | Description                                       | Type   |
+|--------------------------|---------------------------------------------------|--------|
+| `$offset.blockStart`     | The start position of the current block           | `long` |
+| `$offset.position`       | The position into the current block.              | `long` |
+| `$offset.records`        | The number of record read into the current block. | `long` |
 
 ## System
 
 The scope `system` allows accessing to the system environment variables and runtime properties.
 
-| Predefined Fields (ScEL) | Description | Type |
-|--- | --- |--- |
-| `$system.env` | The system environment variables.  | `map[string, string]` |
-| `$system.props` | The system environment properties. | `map[string, string]` |
+| Predefined Fields (ScEL) | Description                        | Type                  |
+|--------------------------|------------------------------------|-----------------------|
+| `$system.env`            | The system environment variables.  | `map[string, string]` |
+| `$system.props`          | The system environment properties. | `map[string, string]` |
 
 ## Timestamp
 

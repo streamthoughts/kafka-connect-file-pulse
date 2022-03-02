@@ -1,5 +1,5 @@
 ---
-date: 2021-06-11
+date: 2022-03-02
 title: "Tracking File Status"
 linkTitle: "Tracking File Status"
 weight: 90
@@ -8,10 +8,10 @@ description: >
 ---
 
 Connect File Pulse uses an internal topic (*default:`connect-file-pulse-status`*) to track the current state of files being processed.
-This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.
+This topic is used internally by Tasks to communicate to the SourceConnector instance, but you can easily use it to monitor files progression.
 
 ## The message format
-Status event are publish into JSON with the following schema :
+Status event are published into JSON with the following schema :
 
 ```
 {

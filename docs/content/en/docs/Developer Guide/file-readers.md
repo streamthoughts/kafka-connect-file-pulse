@@ -1,5 +1,5 @@
 ---
-date: 2022-02-23
+date: 2022-03-02
 title: "File Readers"
 linkTitle: "File Readers"
 weight: 40
@@ -94,10 +94,10 @@ The `<PREFIX>XMLFileInputReader`s can be used to read XML files.
 | `reader.xml.exclude.node.attributes.in.namespaces`    | `2.4.0` | Specifies that the reader should only exclude node attributes in the defined list of namespaces.                                      | `list`    | `false`   | Low        |
 | `reader.xml.data.type.inference.enabled`              | `2.3.0` | Specifies that the reader should try to infer the type of data nodes.                                                                 | `boolean` | `false`   | High       |
 | `reader.xml.attribute.prefix`                         | `2.4.0` | If set, the name of attributes will be prepended with the specified prefix when they are added to a record.                           | `string`  | `""`      | Low        |
-| `reader.xml.content.field.name`                       | `2.4.4` | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.               | `string`  | `value`   | Low        |
-| `reader.xml.field.name.characters.regex.pattern`      | `2.4.4` | Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct. | `string`  | `[.\-]'`  | Low        |
-| `reader.xml.field.name.characters.string.replacement` | `2.4.4` | Specifies the replacement string to be used when converting a document to a struct.                                                   | `string`  | `_`       | Low        |
-| `reader.xml.force.content.field.for.paths`            | `2.4.4` | The comma-separated list of field for which a content-field must be forced.                                                           | `List`    | -         | Low        |
+| `reader.xml.content.field.name`                       | `2.5.4` | Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.               | `string`  | `value`   | Low        |
+| `reader.xml.field.name.characters.regex.pattern`      | `2.5.4` | Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct. | `string`  | `[.\-]'`  | Low        |
+| `reader.xml.field.name.characters.string.replacement` | `2.5.4` | Specifies the replacement string to be used when converting a document to a struct.                                                   | `string`  | `_`       | Low        |
+| `reader.xml.force.content.field.for.paths`            | `2.5.4` | The comma-separated list of field for which a content-field must be forced.                                                           | `List`    | -         | Low        |
 
 ## XxxMetadataFileInputReader
 

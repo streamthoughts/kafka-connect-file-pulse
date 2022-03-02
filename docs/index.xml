@@ -396,7 +396,7 @@ $ mvn clean package -DskipTests
 &lt;h4 class="alert-heading">Confluent Hub&lt;/h4>
 Connect File Pulse is packaged into an archive
 file compatible with &lt;a href="https://docs.confluent.io/current/connect/managing/confluent-hub/client.html">confluent-hub client&lt;/a>.
-&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</link><pubDate>Tue, 01 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</guid><description>
+&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/configuration/</guid><description>
 &lt;h2 id="commons-configuration">Commons configuration&lt;/h2>
 &lt;p>Whatever the kind of files you are processing a connector should always be configured with the below properties.
 These configurations are described in detail in subsequent chapters.&lt;/p>
@@ -672,6 +672,29 @@ The &lt;code>InMemoryFileObjectStateBackingStore&lt;/code> implement is not faul
 &lt;td>float&lt;/td>
 &lt;td>&lt;em>-&lt;/em>&lt;/td>
 &lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for configuring the &lt;code>InMemoryFileObjectStateBackingStore&lt;/code> class&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;th>Since&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.cache.max.size.capacity&lt;/code>&lt;/td>
+&lt;td>Specifies the max size capacity of the LRU in-memory cache.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;em>10000&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;td>v2.5.0&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>

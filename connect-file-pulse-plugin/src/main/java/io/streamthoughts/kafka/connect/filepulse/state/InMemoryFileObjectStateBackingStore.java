@@ -22,6 +22,8 @@ import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
+import org.apache.kafka.common.config.AbstractConfig;
+import org.apache.kafka.common.config.ConfigDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 /**
  * An in-memory {@link StateBackingStore} implementation that uses an LRU cache based on HashMap.
@@ -40,20 +43,43 @@ public class InMemoryFileObjectStateBackingStore implements FileObjectStateBacki
 
     private static final int DEFAULT_MAX_SIZE_CAPACITY = 10_000;
 
-    private final Map<String, FileObject> objects;
+    private volatile Map<String, FileObject> objects;
 
     private StateBackingStore.UpdateListener<FileObject> listener;
 
     private final AtomicBoolean started = new AtomicBoolean(false);
 
-    public InMemoryFileObjectStateBackingStore() {
-        this.objects = Collections.synchronizedMap(createLRUCache(DEFAULT_MAX_SIZE_CAPACITY));
-    }
+    /**
+     * Creates a new {@link InMemoryFileObjectStateBackingStore} instance.
+     */
+    public InMemoryFileObjectStateBackingStore() { }
 
     @VisibleForTesting
     public InMemoryFileObjectStateBackingStore(final Map<String, FileObject> objects) {
-        this();
+        configure(Collections.emptyMap());
         this.objects.putAll(objects);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configure(final Map<String, ?> configs) {
+        FileObjectStateBackingStore.super.configure(configs);
+        int cacheMaxCapacity = new Config(configs).getCacheMaxCapacity();
+        this.objects = Collections.synchronizedMap(createLRUCache(cacheMaxCapacity, objectEntry -> {
+            if (!objectEntry.getValue().status().isDone()) {
+                LOG.warn(
+                "Evicting a file-object state '{}' from in-memory state with a non terminal"
+                + " status (i.e. 'CLEANED'). This may happen if you are processing more files than the"
+                + " max-capacity of the InMemoryFileObjectStateBackingStore before committing offsets"
+                + " for tasks successfully. Please consider increasing the value of"
+                + " 'tasks.file.status.storage.cache.max.size.capacity' through"
+                + " the connector's configuration.",
+                objectEntry.getValue().metadata().stringURI()
+                );
+            }
+        }));
     }
 
     /**
@@ -156,12 +182,56 @@ public class InMemoryFileObjectStateBackingStore implements FileObjectStateBacki
         return listener;
     }
 
-    private static <K, V> Map<K, V> createLRUCache(final int maxCacheSize) {
+    private static <K, V> Map<K, V> createLRUCache(final int maxCacheSize,
+                                                   final Consumer<Map.Entry<K, V>> callbackOnRemoveEldest) {
         return new LinkedHashMap<>(maxCacheSize + 1, 1.01f, true) {
             @Override
             protected boolean removeEldestEntry(final Map.Entry<K, V> eldest) {
-                return size() > maxCacheSize;
+                boolean remove = size() > maxCacheSize;
+                if (remove) {
+                    callbackOnRemoveEldest.accept(eldest);
+                }
+                return remove;
             }
         };
+    }
+
+    private static final class Config extends AbstractConfig {
+
+        private static final String GROUP = "InMemoryFileObjectStateBackingStore";
+
+        public static final String TASKS_FILE_STATUS_STORAGE_CACHE_MAX_SIZE_CAPACITY_CONFIG
+                = "tasks.file.status.storage.cache.max.size.capacity";
+        private static final String TASKS_FILE_STATUS_STORAGE_CACHE_MAX_SIZE_CAPACITY_DOC
+                = "The max size capacity of the LRU in-memory cache (default: 10_000).";
+
+        /**
+         * Creates a new {@link Config} instance.
+         *
+         * @param originals the configuration properties.
+         */
+        public Config(final Map<?, ?> originals) {
+            super(configDef(), originals, false);
+        }
+
+        public int getCacheMaxCapacity() {
+            return this.getInt(TASKS_FILE_STATUS_STORAGE_CACHE_MAX_SIZE_CAPACITY_CONFIG);
+        }
+
+        private static ConfigDef configDef() {
+            int groupCounter = 0;
+            return new ConfigDef()
+                    .define(
+                            TASKS_FILE_STATUS_STORAGE_CACHE_MAX_SIZE_CAPACITY_CONFIG,
+                            ConfigDef.Type.INT,
+                            DEFAULT_MAX_SIZE_CAPACITY,
+                            ConfigDef.Importance.LOW,
+                            TASKS_FILE_STATUS_STORAGE_CACHE_MAX_SIZE_CAPACITY_DOC,
+                            GROUP,
+                            groupCounter++,
+                            ConfigDef.Width.NONE,
+                            TASKS_FILE_STATUS_STORAGE_CACHE_MAX_SIZE_CAPACITY_CONFIG
+                    );
+        }
     }
 }

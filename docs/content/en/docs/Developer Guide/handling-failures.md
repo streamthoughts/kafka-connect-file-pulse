@@ -14,10 +14,10 @@ But, you can also configure each filter to either ignore errors or to branch to 
 
 ## Configuration
 
-| Configuration |   Description |   Type    |   Default |   Importance  |
-| --------------| --------------|-----------| --------- | ------------- |
-| `withOnFailure` | List of filters aliases to apply on each data after failure (order is important). | list | *-* | medium |
-| `ignoreFailure` | Ignore failure and continue pipeline filters    | boolean | *false* | medium |
+| Configuration   | Description                                                                       | Type    | Default | Importance |
+|-----------------|-----------------------------------------------------------------------------------|---------|---------|------------|
+| `withOnFailure` | List of filters aliases to apply on each data after failure (order is important). | list    | *-*     | medium     |
+| `ignoreFailure` | Ignore failure and continue pipeline filters                                      | boolean | *false* | medium     |
 
 
 ## Ignoring failure
@@ -51,12 +51,12 @@ Sub-filter chains can be defined using the property `withOnFailure`.
 
 Within an error filter chain, some additional fields are available to each filter context.
 
-| Predefined Fields / ScEL | Description | Type |
-|--- | --- |--- |
-| `$error.exceptionMessage` | The exception message  | `string` |
-| `$error.exceptionStacktrace` | The exception stack-trace  | `string` |
-| `$error.exceptionClassName` | The exception class name  | `string` |
-| `$error.filter`  | The name of the filter that threw the exception  | `string` |
+| Predefined Fields / ScEL     | Description                                     | Type     |
+|------------------------------|-------------------------------------------------|----------|
+| `$error.exceptionMessage`    | The exception message                           | `string` |
+| `$error.exceptionStacktrace` | The exception stack-trace                       | `string` |
+| `$error.exceptionClassName`  | The exception class name                        | `string` |
+| `$error.filter`              | The name of the filter that threw the exception | `string` |
 
 ### Example
 

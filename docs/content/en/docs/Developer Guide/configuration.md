@@ -1,5 +1,5 @@
 ---
-date: 2022-03-01
+date: 2022-03-02
 title: "Configuration"
 linkTitle: "Configuration"
 weight: 20
@@ -78,6 +78,13 @@ The `InMemoryFileObjectStateBackingStore` implement is not fault-tolerant and sh
 | `tasks.file.status.storage.bootstrap.servers`        | A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster. | string | *-*                         | HIGH       |
 | `tasks.file.status.storage.topic.partitions`         | The number of partitions to be used for the status storage topic.                                            | int    | *-*                         | LOW        |
 | `tasks.file.status.storage.topic.replication.factor` | The replication factor to be used for the status storage topic.                                              | float  | *-*                         | LOW        |
+
+
+**Properties for configuring the `InMemoryFileObjectStateBackingStore` class**
+
+| Configuration                                       | Description                                                 | Type  | Default | Importance | Since  |
+|-----------------------------------------------------|-------------------------------------------------------------|-------|---------|------------|--------|
+| `tasks.file.status.storage.cache.max.size.capacity` | Specifies the max size capacity of the LRU in-memory cache. | `int` | *10000* | LOW        | v2.5.0 |
 
 In addition, to override the default configuration for the internal consumer and producer clients, 
 you can use one of the following override prefixes :

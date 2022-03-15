@@ -45,7 +45,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 
   connect-file-pulse:
-    image: streamthoughts/kafka-connect-file-pulse:2.0.0
+    image: streamthoughts/kafka-connect-file-pulse:2.5.0
     container_name: connect
     depends_on:
     - cp-broker

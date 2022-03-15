@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source.internal;
 
+import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import io.streamthoughts.kafka.connect.filepulse.data.MapSchema;
@@ -55,12 +56,30 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
 
     private final SchemaContext context = new SchemaContext();
 
-    static String normalizeSchemaName(final String name) {
-        return Arrays
-                .stream(REGEX.split(name))
+    private boolean keepLeadingUnderscoreCharacters = false;
+
+    @VisibleForTesting
+    String normalizeSchemaName(final String name) {
+        String toNormalize = name;
+        StringBuilder prefix = new StringBuilder();
+        if (keepLeadingUnderscoreCharacters) {
+            StringBuilder sb = new StringBuilder(name);
+            while (sb.length() > 0 && sb.charAt(0) == '_') {
+                prefix.append("_");
+                sb.deleteCharAt(0);
+            }
+            toNormalize = sb.toString();
+
+        }
+        return prefix + Arrays
+                .stream(REGEX.split(toNormalize))
                 .filter(s -> !s.isEmpty())
                 .map(it -> it.substring(0, 1).toUpperCase() + it.substring(1))
                 .collect(Collectors.joining());
+    }
+
+    public void setKeepLeadingUnderscoreCharacters(final boolean keepLeadingUnderscoreCharacters) {
+        this.keepLeadingUnderscoreCharacters = keepLeadingUnderscoreCharacters;
     }
 
     /**
@@ -118,6 +137,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
         }
         return context.buildSchemaWithCyclicSchemaWrapper(sb.build());
     }
+
     private void mayUpdateSchemaWithName(final io.streamthoughts.kafka.connect.filepulse.data.Schema schema,
                                          final String schemaName) {
         if (schema.type() == Type.ARRAY) {
@@ -206,7 +226,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                 if (!isOptional) {
                     throw new DataException(
                             "Failed to convert record to connect data. " +
-                                    "Missing required connectField '" + fieldName + "' for record '" + recordName + "'"
+                            "Missing required connectField '" + fieldName + "' for record '" + recordName + "'"
                     );
                 }
                 continue;
@@ -235,18 +255,18 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                     final boolean isNumber = typed.type().isNumber();
                     if (schemaType == Schema.Type.STRING) {
                         typed = typed.as(Type.STRING);
-                    // handle INTEGER/LONG -> DOUBLE
+                        // handle INTEGER/LONG -> DOUBLE
                     } else if (schemaType == Schema.Type.FLOAT64 && isNumber) {
                         typed = typed.as(Type.DOUBLE);
-                    // handle INTEGER -> LONG
+                        // handle INTEGER -> LONG
                     } else if (schemaType == Schema.Type.INT64 && typed.type() == Type.INTEGER) {
                         typed = typed.as(Type.LONG);
                     }
                 } else {
                     throw new DataException(
                             "Failed to convert record connectField '" +
-                            recordName + "." + fieldName + "' to connect data. " +
-                            "Types do not match " + schemaType + "<>" + dataSchemaType
+                                    recordName + "." + fieldName + "' to connect data. " +
+                                    "Types do not match " + schemaType + "<>" + dataSchemaType
                     );
                 }
             }
@@ -276,8 +296,8 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
             return typed.getMap().entrySet()
                     .stream()
                     .collect(Collectors.toMap(
-                            e -> toConnectObject(connectKeySchema, TypedValue.of(e.getKey(), keySchema)),
-                            e -> toConnectObject(connectValueSchema, TypedValue.of(e.getValue(), valueSchema))
+                                    e -> toConnectObject(connectKeySchema, TypedValue.of(e.getKey(), keySchema)),
+                                    e -> toConnectObject(connectValueSchema, TypedValue.of(e.getValue(), valueSchema))
                             )
                     );
         }

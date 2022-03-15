@@ -61,14 +61,14 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                                        final String defaultTopic,
                                        final Integer defaultPartition,
                                        final Function<String, Schema> connectSchemaSupplier,
-                                       final boolean connectSchemaMergeEnabled) {
-
+                                       final ConnectSchemaMapperOptions options) {
+        mapper.setKeepLeadingUnderscoreCharacters(options.isKeepSchemaLeadingUnderscore());
         final TypedStruct value = value();
         final Schema valueSchema;
         final Schema connectSchema = connectSchemaSupplier.apply(
             isNotBlank(internalSourceRecordBuilder.topic()) ? internalSourceRecordBuilder.topic() : defaultTopic
         );
-        if (connectSchemaMergeEnabled && value != null) {
+        if (options.isConnectSchemaMergeEnabled() && value != null) {
             Schema recordValueSchema = value.schema().map(mapper, false);
             if (connectSchema != null) {
                 valueSchema = SchemaMerger.merge(connectSchema, recordValueSchema);

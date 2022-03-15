@@ -162,11 +162,19 @@ public class ConnectSchemaMapperTest {
     }
 
     @Test
-    public void test_normalize_schema_name() {
-        Assert.assertEquals("Foo", ConnectSchemaMapper.normalizeSchemaName("foo"));
-        Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("foo_bar"));
-        Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("foo.bar"));
-        Assert.assertEquals("FooBar", ConnectSchemaMapper.normalizeSchemaName("_foo_bar"));
+    public void test_normalize_schema_name_given_leading_underscore_false() {
+        var mapper = new ConnectSchemaMapper();
+        Assert.assertEquals("Foo", mapper.normalizeSchemaName("foo"));
+        Assert.assertEquals("FooBar", mapper.normalizeSchemaName("foo_bar"));
+        Assert.assertEquals("FooBar", mapper.normalizeSchemaName("foo.bar"));
+        Assert.assertEquals("FooBar", mapper.normalizeSchemaName("__foo_bar"));
+    }
+
+    @Test
+    public void test_normalize_schema_name_given_leading_underscore_true() {
+        var mapper = new ConnectSchemaMapper();
+        mapper.setKeepLeadingUnderscoreCharacters(true);
+        Assert.assertEquals("__FooBar", mapper.normalizeSchemaName("__foo_bar"));
     }
 
     @Test

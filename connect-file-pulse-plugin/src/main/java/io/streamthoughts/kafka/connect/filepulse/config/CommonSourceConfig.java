@@ -81,15 +81,18 @@ public class CommonSourceConfig extends AbstractConfig {
     private static final String TASKS_FILE_STATUS_STORAGE_CLASS_DOC = "The FileObjectStateBackingStore class to be used for storing status state of file objects.";
 
     public static final String TASK_PARTITIONER_CLASS_CONFIG = "task.partitioner.class";
-    private static final String TASK_PARTITIONER_CLASS_DOC    = "The TaskPartitioner to be used for partitioning files to tasks";
+    private static final String TASK_PARTITIONER_CLASS_DOC = "The TaskPartitioner to be used for partitioning files to tasks";
 
     public static final String RECORD_VALUE_SCHEMA_CONFIG = "value.connect.schema";
-    public static final String RECORD_VALUE_SCHEMA_DOC = "The schema for the record-value";
+    private static final String RECORD_VALUE_SCHEMA_DOC = "The schema for the record-value";
 
     public static final String RECORD_VALUE_SCHEMA_MERGE_ENABLE_CONFIG = "merge.value.connect.schemas";
-    public static final String RECORD_VALUE_SCHEMA_MERGE_ENABLE_DOC = "Specify if schemas deriving from record-values should be recursively merged. " +
+    private static final String RECORD_VALUE_SCHEMA_MERGE_ENABLE_DOC = "Specify if schemas deriving from record-values should be recursively merged. " +
             "If set to true, then schemas deriving from a record will be merged with the schema of the last produced record. " +
             "If `value.connect.schema` is set, then the provided schema will be merged with the schema deriving from the first generated record.";
+
+    private static final String CONNECT_SCHEMA_KEEP_LEADING_UNDERSCORES_ON_FIELD_NAME_CONFIG = "connect.schema.keep.leading.underscores.on.record.name";
+    private static final String CONNECT_SCHEMA_KEEP_LEADING_UNDERSCORES_ON_FIELD_NAME_DOC = "Specify if leading underscores should be kept when generating schema record name.";
 
     /**
      * Creates a new {@link CommonSourceConfig} instance.
@@ -107,7 +110,6 @@ public class CommonSourceConfig extends AbstractConfig {
                         ConfigDef.Importance.HIGH,
                         FS_LISTING_CLASS_DOC
                 )
-
                 .define(
                         FS_LISTING_FILTERS_CONFIG,
                         ConfigDef.Type.LIST,
@@ -233,6 +235,17 @@ public class CommonSourceConfig extends AbstractConfig {
                         groupCounter++,
                         ConfigDef.Width.NONE,
                         TASKS_FILE_PROCESSING_ORDER_BY_CONFIG
+                )
+                .define(
+                        CONNECT_SCHEMA_KEEP_LEADING_UNDERSCORES_ON_FIELD_NAME_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.LOW,
+                        CONNECT_SCHEMA_KEEP_LEADING_UNDERSCORES_ON_FIELD_NAME_DOC,
+                        FILTERS_GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        CONNECT_SCHEMA_KEEP_LEADING_UNDERSCORES_ON_FIELD_NAME_CONFIG
                 );
     }
 
@@ -277,6 +290,10 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public boolean isValueConnectSchemaMergeEnabled() {
         return getBoolean(RECORD_VALUE_SCHEMA_MERGE_ENABLE_CONFIG);
+    }
+
+    public boolean isSchemaKeepLeadingUnderscoreOnFieldName() {
+        return getBoolean(CONNECT_SCHEMA_KEEP_LEADING_UNDERSCORES_ON_FIELD_NAME_CONFIG);
     }
 
     private Schema readSchema(final String key) {

@@ -64,5 +64,27 @@ public interface FileRecord<T> {
             final String defaultTopic,
             final Integer defaultPartition,
             final Function<String, Schema> connectSchemaSupplier,
-            final boolean connectSchemaMergeEnabled);
+            final ConnectSchemaMapperOptions options
+           );
+
+
+    class ConnectSchemaMapperOptions {
+
+        private final boolean connectSchemaMergeEnabled;
+        private final boolean keepSchemaLeadingUnderscore;
+
+        public ConnectSchemaMapperOptions(final boolean connectSchemaMergeEnabled,
+                                          final boolean keepSchemaLeadingUnderscore) {
+            this.connectSchemaMergeEnabled = connectSchemaMergeEnabled;
+            this.keepSchemaLeadingUnderscore = keepSchemaLeadingUnderscore;
+        }
+
+        public boolean isConnectSchemaMergeEnabled() {
+            return connectSchemaMergeEnabled;
+        }
+
+        public boolean isKeepSchemaLeadingUnderscore() {
+            return keepSchemaLeadingUnderscore;
+        }
+    }
 }

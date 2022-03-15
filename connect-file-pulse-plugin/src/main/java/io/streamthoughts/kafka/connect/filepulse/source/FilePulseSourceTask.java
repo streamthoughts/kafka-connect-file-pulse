@@ -165,7 +165,7 @@ public class FilePulseSourceTask extends SourceTask {
                         // if no file is immediately available. In this case, this method should
                         // be blocked before returning.
                         if (!consumer.hasNext() &&
-                             consecutiveWaits.checkAndDecrement()) {
+                                consecutiveWaits.checkAndDecrement()) {
                             // Check if the SourceTask is still running to
                             // return immediately instead of waiting
                             if (running.get()) busyWait();
@@ -173,8 +173,8 @@ public class FilePulseSourceTask extends SourceTask {
                         }
                     } else {
                         LOG.info(
-                            "Completed all object files. FilePulse source task is transitioning to " +
-                            "IDLE state while waiting for new reconfiguration request from source connector."
+                                "Completed all object files. FilePulse source task is transitioning to " +
+                                "IDLE state while waiting for new reconfiguration request from source connector."
                         );
                         running.set(false);
 
@@ -283,7 +283,10 @@ public class FilePulseSourceTask extends SourceTask {
                     defaultTopic,
                     null,
                     valueSchemas::get,
-                    taskConfig.isValueConnectSchemaMergeEnabled()
+                    new FileRecord.ConnectSchemaMapperOptions(
+                            taskConfig.isValueConnectSchemaMergeEnabled(),
+                            taskConfig.isSchemaKeepLeadingUnderscoreOnFieldName()
+                    )
             );
 
             if (taskConfig.isValueConnectSchemaMergeEnabled()) {
@@ -294,8 +297,8 @@ public class FilePulseSourceTask extends SourceTask {
 
         } catch (final Throwable t) {
             throw new ConnectFilePulseException(
-                "Failed to convert data into connect record: '" + context.metadata().uri() + "'",
-                t
+                    "Failed to convert data into connect record: '" + context.metadata().uri() + "'",
+                    t
             );
         }
     }
@@ -332,7 +335,7 @@ public class FilePulseSourceTask extends SourceTask {
                 if (consumer != null) {
                     try {
                         consumer.close();
-                    }  catch (final Throwable t) {
+                    } catch (final Throwable t) {
                         LOG.warn("Failed to close FileRecordsPollingConsumer. Error: {}", t.getMessage());
                     }
                 }

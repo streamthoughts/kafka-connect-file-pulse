@@ -132,4 +132,61 @@ public class XMLNodeToStructConverterTest {
         Assert.assertEquals("test", root.getString("text"));
         Assert.assertEquals("attr", root.getString("attr"));
     }
+
+    @Test
+    public void should_ignore_element_given_xml_tag_with_whitespaces() throws Exception {
+        // Given
+        final byte[] bytes = "<root><empty>            </empty><data>text</data></root>".getBytes();
+        final XMLNodeToStructConverter converter = new XMLNodeToStructConverter()
+                .setContentFieldName("text")
+                .setExcludeEmptyElement(true);
+
+        // When
+        final Document document = reader.parse(new ByteArrayInputStream(bytes));
+        TypedStruct struct = converter.apply(document);
+
+        // Then
+        Assert.assertNotNull(struct);
+        TypedStruct root = struct.getStruct("root");
+        Assert.assertNotNull(root);
+        Assert.assertFalse(root.has("empty"));
+    }
+
+    @Test
+    public void should_ignore_empty_element_given_self_closing_xml_tag() throws Exception {
+        // Given
+        final byte[] bytes = "<root><empty/><data>text</data></root>".getBytes();
+        final XMLNodeToStructConverter converter = new XMLNodeToStructConverter()
+                .setContentFieldName("text")
+                .setExcludeEmptyElement(true);
+
+        // When
+        final Document document = reader.parse(new ByteArrayInputStream(bytes));
+        TypedStruct struct = converter.apply(document);
+
+        // Then
+        Assert.assertNotNull(struct);
+        TypedStruct root = struct.getStruct("root");
+        Assert.assertNotNull(root);
+        Assert.assertFalse(root.has("empty"));
+    }
+
+    @Test
+    public void should_ignore_empty_element_given_open_and_close_xml_tags() throws Exception {
+        // Given
+        final byte[] bytes = "<root><empty></empty><data>text</data></root>".getBytes();
+        final XMLNodeToStructConverter converter = new XMLNodeToStructConverter()
+                .setContentFieldName("text")
+                .setExcludeEmptyElement(true);
+
+        // When
+        final Document document = reader.parse(new ByteArrayInputStream(bytes));
+        TypedStruct struct = converter.apply(document);
+
+        // Then
+        Assert.assertNotNull(struct);
+        TypedStruct root = struct.getStruct("root");
+        Assert.assertNotNull(root);
+        Assert.assertFalse(root.has("empty"));
+    }
 }

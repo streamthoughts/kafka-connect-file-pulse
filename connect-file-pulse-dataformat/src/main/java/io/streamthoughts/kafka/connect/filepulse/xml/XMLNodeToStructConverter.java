@@ -25,6 +25,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +162,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
         TypedStruct container = TypedStruct.create();
         getNotExcludedNodeAttributes(node).forEach(container::put);
         for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-            // Text nodes always return #text" as the node name, so it's best to use the parent node name instead.
+            // Text nodes always return #text as the node name, so it's best to use the parent node name instead.
             final String childNodeName = isTextNode(child) ? nodeName : determineNodeName(child);
             Optional<TypedValue> optional = readObjectNodeValue(
                     child,
@@ -309,10 +310,10 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
 
         if (nonNewLineNodes.size() == 1) {
             final Node child = nonNewLineNodes.get(0);
-            if (isTextNode(child)) {
-                // Text content can be an empty string.
+            if (isWhitespaceOrNewLineNodeElement(child))
+                return Optional.empty();
+            if (isTextNode(child))
                 return Optional.of(child.getTextContent());
-            }
         }
 
         return Optional.empty();
@@ -347,7 +348,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
     }
 
     private static boolean isWhitespaceOrNewLineNodeElement(final Node node) {
-        return node != null && isTextNode(node) && node.getTextContent().trim().isEmpty();
+        return node != null && isTextNode(node) && StringUtils.isBlank(node.getTextContent());
     }
 
     private String determineNodeName(final Node node) {

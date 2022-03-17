@@ -77,7 +77,8 @@ public class SchemaMerger implements BiFunction<Schema, Schema, Schema> {
             return left;
         }
 
-        if (left.type() == Type.STRING || right.type() == Type.STRING)
+        if ( (left.type() == Type.STRING && right.type().isPrimitive()) ||
+             (right.type() == Type.STRING && left.type().isPrimitive()) )
             return mergeMetadata(left, right, SchemaBuilder.string());
 
         if ( (left.type() == Type.INT64 && right.type() == Type.INT32) ||

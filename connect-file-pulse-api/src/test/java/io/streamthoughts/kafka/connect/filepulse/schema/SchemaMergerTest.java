@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.schema;
 
+import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.junit.Assert;
@@ -167,5 +168,16 @@ public class SchemaMergerTest {
                 schema.field(DEFAULT_FIELD_B).schema(),
                 schema.field(DEFAULT_FIELD_C).schema().field("field3").schema()
         );
+    }
+
+    @Test(expected = DataException.class)
+    public void should_throw_error_when_merging_struct_given_string() {
+        // Given
+        Schema schemaLeft = SchemaBuilder.struct()
+                .field(DEFAULT_FIELD_A, SchemaBuilder.array(SchemaBuilder.string()))
+                .build();
+
+        // When
+        SchemaMerger.merge(schemaLeft, SchemaBuilder.string());
     }
 }

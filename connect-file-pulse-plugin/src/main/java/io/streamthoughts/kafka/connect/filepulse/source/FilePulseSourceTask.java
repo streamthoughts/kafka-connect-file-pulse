@@ -100,9 +100,8 @@ public class FilePulseSourceTask extends SourceTask {
         taskConfig = new SourceTaskConfig(configProperties);
         connectorGroupName = props.get(CONNECT_NAME_CONFIG);
         offsetPolicy = taskConfig.getSourceOffsetPolicy();
-        valueSchemas.put(taskConfig.topic(), taskConfig.getValueConnectSchema());
         defaultTopic = taskConfig.topic();
-
+        valueSchemas.put(defaultTopic, taskConfig.getValueConnectSchema());
         try {
             sharedStore = new StateBackingStoreAccess(
                     connectorGroupName,

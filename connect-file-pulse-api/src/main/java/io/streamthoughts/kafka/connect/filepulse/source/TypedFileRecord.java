@@ -28,6 +28,7 @@ import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.source.SourceRecord;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
@@ -64,15 +65,25 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                                        final ConnectSchemaMapperOptions options) {
         mapper.setKeepLeadingUnderscoreCharacters(options.isKeepSchemaLeadingUnderscore());
         final TypedStruct value = value();
+
+        final String targetTopic = isNotBlank(internalSourceRecordBuilder.topic()) ?
+                internalSourceRecordBuilder.topic() :
+                defaultTopic;
+
+        final Schema connectSchema = Optional
+                .ofNullable(connectSchemaSupplier.apply(targetTopic))
+                .orElse(connectSchemaSupplier.apply(defaultTopic));
+
         final Schema valueSchema;
-        final Schema connectSchema = connectSchemaSupplier.apply(
-            isNotBlank(internalSourceRecordBuilder.topic()) ? internalSourceRecordBuilder.topic() : defaultTopic
-        );
         if (options.isConnectSchemaMergeEnabled() && value != null) {
+            // Convert dynamic StrutSchema to static Connect Schema
             Schema recordValueSchema = value.schema().map(mapper, false);
             if (connectSchema != null) {
+                // Merge Record Connect Schema with either the previous one or the one
+                // passed through the connector's config.
                 valueSchema = SchemaMerger.merge(connectSchema, recordValueSchema);
             } else {
+                // Use the Record Connect Schema
                 valueSchema = recordValueSchema;
             }
         } else {

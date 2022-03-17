@@ -226,7 +226,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                 if (!isOptional) {
                     throw new DataException(
                             "Failed to convert record to connect data. " +
-                            "Missing required connectField '" + fieldName + "' for record '" + recordName + "'"
+                            "Missing required field '" + fieldName + "' for record '" + recordName + "'"
                     );
                 }
                 continue;
@@ -243,7 +243,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                     Schema.Type arrayValueType = connectFieldSchema.valueSchema().type();
                     if (!arrayValueType.equals(dataSchemaType)) {
                         throw new DataException(
-                                "Failed to convert record connectField '" +
+                                "Failed to convert record field '" +
                                 recordName + "." + fieldName + "' to connect data. " +
                                 "Types do not match Array[" + arrayValueType + "]<>Array[" + dataSchemaType + "]"
                         );
@@ -264,9 +264,9 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                     }
                 } else {
                     throw new DataException(
-                            "Failed to convert record connectField '" +
-                                    recordName + "." + fieldName + "' to connect data. " +
-                                    "Types do not match " + schemaType + "<>" + dataSchemaType
+                            "Failed to convert record field '" +
+                            recordName + "." + fieldName + "' to connect data. " +
+                            "Types do not match " + schemaType + "<>" + dataSchemaType
                     );
                 }
             }

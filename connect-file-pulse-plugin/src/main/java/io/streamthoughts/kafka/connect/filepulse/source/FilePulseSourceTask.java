@@ -295,10 +295,15 @@ public class FilePulseSourceTask extends SourceTask {
             return result;
 
         } catch (final Throwable t) {
-            throw new ConnectFilePulseException(
-                    "Failed to convert data into connect record: '" + context.metadata().uri() + "'",
+            var exception = new ConnectFilePulseException(String.format(
+                    "Failed to convert data into Kafka Connect record at offset %s from object-file: %s'",
+                    context.offset(),
+                    context.metadata()),
                     t
             );
+            // Close internal iterator for the current object-file so that it will be marked as failed
+            consumer.closeCurrentIterator(exception);
+            throw exception;
         }
     }
 

@@ -182,7 +182,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
                 latestPolledRecord = filtered.last();
             }
 
-            // Return record to the connect SourceTask
+            // Return record to SourceTask
             return filtered;
         } catch (final ConnectFilePulseException e) {
             exception = e;
@@ -325,7 +325,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             }
         }
 
-        // Quickly check if we can considered this file completed based on the content-length.
+        // Quickly check if we can consider this file completed based on the content-length.
         boolean isAlreadyCompleted = committedOffset.position() >= metadata.contentLength();
         if (!ignoreCommittedOffsets && isAlreadyCompleted) {
             LOG.warn(
@@ -356,6 +356,10 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             return iterable;
         }
         return null;
+    }
+
+    public void closeCurrentIterator(final Exception cause) {
+        closeIterator(currentIterator, cause);
     }
 
     private void closeIterator(final FileInputIterator<FileRecord<TypedStruct>> iterator,

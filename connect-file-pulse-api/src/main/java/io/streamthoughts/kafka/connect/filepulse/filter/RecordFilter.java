@@ -73,7 +73,7 @@ public interface RecordFilter extends Configurable {
 
     /**
      * Clears all internal states (i.s buffered records)
-     * This method is invoke each time records from a new file is starting to be filtered.
+     * This method is invoked each time records from a new file is starting to be filtered.
      */
     default void clear() {
 

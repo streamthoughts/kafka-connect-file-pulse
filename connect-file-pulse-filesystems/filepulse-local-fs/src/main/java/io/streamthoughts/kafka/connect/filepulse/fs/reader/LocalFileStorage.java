@@ -28,11 +28,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import static io.streamthoughts.kafka.connect.filepulse.internal.IOUtils.createParentIfNotExists;
 
@@ -97,8 +100,18 @@ public class LocalFileStorage implements Storage {
                 );
             } catch (IOException inner) {
                 inner.addSuppressed(outer);
-                LOG.error("Error while moving file {}", source, inner);
-                return false;
+                try {
+                    doSimpleMove(sourcePath, destPath);
+                    LOG.debug("Simple move as copy+delete of {} to {} succeeded after move failed due to {}",
+                            source,
+                            dest,
+                            inner.getMessage()
+                    );
+                } catch (IOException e) {
+                    e.addSuppressed(inner);
+                    LOG.error("Error while moving file {}", source, inner);
+                    return false;
+                }
             }
         }
         return true;
@@ -110,6 +123,38 @@ public class LocalFileStorage implements Storage {
     @Override
     public FileInputStream getInputStream(final URI uri) throws FileNotFoundException {
         return new FileInputStream(new File(uri));
+    }
+
+    /**
+     * Simple move implements as copy+delete.
+     *
+     * @param source    the source path.
+     * @param target    the target path.
+     */
+    static void doSimpleMove(final Path source, final Path target) throws IOException{
+        // attributes of source file
+        BasicFileAttributes attrs = Files.readAttributes(source, BasicFileAttributes.class);
+
+        if (attrs.isSymbolicLink())
+            throw new IOException("Copying of symbolic links not supported");
+
+        // delete target if it exists
+        Files.deleteIfExists(target);
+
+        // copy file
+        try (InputStream in = Files.newInputStream(source)) {
+            Files.copy(in, target);
+        }
+
+        // try to copy basic attributes to target
+        BasicFileAttributeView view = Files.getFileAttributeView(target, BasicFileAttributeView.class);
+        try {
+            view.setTimes(attrs.lastModifiedTime(), attrs.lastAccessTime(), attrs.creationTime());
+        } catch (Throwable x) {
+            LOG.debug("Failed to copy basic attributes while moving file {} to {}", source, target);
+        }
+        // finally delete source file
+        Files.delete(source);
     }
 
 }

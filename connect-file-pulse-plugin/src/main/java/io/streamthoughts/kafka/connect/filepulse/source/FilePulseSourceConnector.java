@@ -158,7 +158,7 @@ public class FilePulseSourceConnector extends SourceConnector {
             final List<Map<String, String>> taskConfigs = new ArrayList<>(maxTasks);
             IntStream.range(0, maxTasks)
                     .forEachOrdered(i -> taskConfigs
-                            .add(createTaskConfig(i, maxTasks, null))
+                            .add(createTaskConfig(i, maxTasks, 0, null))
                     );
             return taskConfigs;
         }
@@ -176,12 +176,12 @@ public class FilePulseSourceConnector extends SourceConnector {
             LOG.info("No object file was found - resetting all tasks with an empty config.");
             IntStream.range(0, maxTasks)
                     .forEachOrdered(i -> taskConfigs
-                            .add(createTaskConfig(i, maxTasks, Collections.emptyList()))
+                            .add(createTaskConfig(i, maxTasks, taskConfigsGen, Collections.emptyList()))
                     );
         } else {
             IntStream.range(0, partitioned.size())
                     .forEachOrdered(i -> taskConfigs
-                            .add(createTaskConfig(i, partitioned.size(), partitioned.get(i)))
+                            .add(createTaskConfig(i, partitioned.size(), taskConfigsGen, partitioned.get(i)))
                     );
         }
 
@@ -204,8 +204,10 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private Map<String, String> createTaskConfig(final int taskId,
                                                  final int taskCount,
+                                                 final long taskConfigGen,
                                                  final List<String> URIs) {
         final Map<String, String> taskConfig = new HashMap<>(configProperties);
+        taskConfig.put(SourceTaskConfig.TASK_GENERATION_ID, String.valueOf(taskConfigGen));
         if (connectorConfig.isFileListingTaskDelegationEnabled()) {
             taskConfig.put(SourceTaskConfig.FILE_URIS_PROVIDER_CONFIG, DelegateTaskFileURIProvider.class.getName());
             taskConfig.put(SourceTaskConfig.TASK_PARTITIONER_CLASS_CONFIG, HashByURITaskPartitioner.class.getName());

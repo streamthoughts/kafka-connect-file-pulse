@@ -47,6 +47,9 @@ public class SourceTaskConfig extends CommonSourceConfig {
     private static final String OMIT_READ_COMMITTED_FILE_CONFIG = "ignore.committed.offsets";
     private static final String OMIT_READ_COMMITTED_FILE_DOC = "Should a task ignore committed offsets while scheduling a file (default : false).";
 
+    public static final String TASK_GENERATION_ID = "task.generation.id";
+    private static final String TASK_GENERATION_DOC = "The task configuration generation id.";
+
     private final EnrichedConnectorConfig enrichedConfig;
 
     static ConfigDef getConf() {
@@ -64,6 +67,13 @@ public class SourceTaskConfig extends CommonSourceConfig {
                         false,
                         ConfigDef.Importance.LOW,
                         OMIT_READ_COMMITTED_FILE_DOC
+                )
+                .define(
+                        TASK_GENERATION_ID,
+                        ConfigDef.Type.INT,
+                        0,
+                        ConfigDef.Importance.LOW,
+                        TASK_GENERATION_DOC
                 );
     }
 
@@ -176,6 +186,10 @@ public class SourceTaskConfig extends CommonSourceConfig {
 
     public FileInputReader reader() {
         return getConfiguredInstance(CommonSourceConfig.TASKS_FILE_READER_CLASS_CONFIG, FileInputReader.class);
+    }
+
+    public int getTaskGenerationId() {
+        return this.getInt(TASK_GENERATION_ID);
     }
 
     public List<RecordFilter> filters() {

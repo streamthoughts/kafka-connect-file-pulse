@@ -83,10 +83,10 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+      - "--entrypoints.kafka-connect.address=:8083"
     ports:
       - "8080:8080"
-      - "80:80"
+      - "8083:8083"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
@@ -133,7 +133,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.connect.loadbalancer.server.port=8083"
       - "traefik.http.routers.connect.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.connect.entrypoints=web"
+      - "traefik.http.routers.connect.entrypoints=kafka-connect"
     networks:
       - kafka-connect
 

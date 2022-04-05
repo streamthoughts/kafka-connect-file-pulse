@@ -123,17 +123,16 @@ public enum Type {
     static {
         for (Type type : Type.values()) {
             if (!type.isInternal()) {
-                Collection<Class<?>> typeClasses = type.classes;
-                for (Class<?> typeClass : typeClasses) {
+                for (Class<?> typeClass : type.classes) {
                     JAVA_CLASS_TYPES.put(typeClass, type);
                 }
             }
         }
     }
 
-    private Schema.Type schemaType;
+    private final Schema.Type schemaType;
 
-    private Collection<Class<?>> classes;
+    private final Collection<Class<?>> classes;
 
     /**
      * Creates a new {@link Type} instance.

@@ -47,6 +47,9 @@ public class TypedValue implements GettableByType {
             if (trimmed.length() <= 19 && TypeConverter.isInLongRange(trimmed)) {
                 return TypedValue.int64(Long.parseLong(trimmed));
             }
+            // return directly the string type because a text containing only numbers
+            // could be interpreted as Double, which could result in a loss of precision
+            return TypedValue.string(text);
         }
         if (TypeConverter.isDoubleNumber(trimmed)) {
             return TypedValue.float64(Double.parseDouble(trimmed));

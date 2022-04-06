@@ -72,7 +72,7 @@ copyright = "The Kafka Connect File Pulse Authors"
 # This menu appears only if you have at least one [params.versions] set.
 version_menu = "Releases"
 archived_version = false
-version = "v2.5.x"
+version = "v2.6.x"
 
 # Repository configuration (URLs for in-page links to opening issues and suggesting changes)
 github_repo = "https://github.com/streamthoughts/kafka-connect-file-pulse"
@@ -166,3 +166,6 @@ no = 'Sorry to hear that. Please <a href="https://github.com/streamthoughts/kafk
 [[params.versions]]
   version = "v2.5.x"
   url = "/kafka-connect-file-pulse/v2-5/docs"
+[[params.versions]]
+  version = "v2.6.x"
+  url = "/kafka-connect-file-pulse/v2-6/docs"

@@ -89,7 +89,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${basedir}</checkstyle.config.location>
-        <com.fasterxml.jackson.core.version>2.12.2</com.fasterxml.jackson.core.version>
+        <com.fasterxml.jackson.core.version>2.12.6.1</com.fasterxml.jackson.core.version>
         <slf4j.version>1.7.32</slf4j.version>
     </properties>
 

@@ -1,3 +1,6 @@
 [[params.versions]]
   version = "v2.5.x"
   url = "/kafka-connect-file-pulse/v2-5/docs"
+[[params.versions]]
+  version = "v2.6.x"
+  url = "/kafka-connect-file-pulse/v2-6/docs"

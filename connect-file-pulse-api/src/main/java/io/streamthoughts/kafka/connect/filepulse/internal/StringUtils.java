@@ -22,6 +22,9 @@ import java.util.Objects;
 
 public class StringUtils {
 
+    public static final int INDEX_NOT_FOUND = -1;
+    public static final String EMPTY = "";
+
     /**
      * @see String#split(String).
      */
@@ -44,5 +47,26 @@ public class StringUtils {
 
     public static boolean isBlank(final String string) {
         return Objects.isNull(string) || string.isBlank();
+    }
+
+    public static String substringAfterLast(final String str, final int separator) {
+        if (isBlank(str)) {
+            return str;
+        }
+        final int pos = str.lastIndexOf(separator);
+        if (pos == INDEX_NOT_FOUND || pos == str.length() - 1) {
+            return EMPTY;
+        }
+        return str.substring(pos + 1);
+    }
+
+    public static String removeEnd(final String str, final String remove) {
+        if (isBlank(str) || isBlank(remove)) {
+            return str;
+        }
+        if (str.endsWith(remove)) {
+            return str.substring(0, str.length() - remove.length());
+        }
+        return str;
     }
 }

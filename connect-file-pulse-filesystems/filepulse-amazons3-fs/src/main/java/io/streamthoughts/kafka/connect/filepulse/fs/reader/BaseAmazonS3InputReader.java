@@ -52,6 +52,7 @@ public abstract class BaseAmazonS3InputReader
             final AmazonS3ClientConfig clientConfig = new AmazonS3ClientConfig(configs);
             s3Client = AmazonS3ClientUtils.createS3Client(clientConfig);
             storage = new AmazonS3Storage(s3Client);
+            storage.setDefaultStorageClass(clientConfig.getAwsS3DefaultStorageClass());
         }
     }
 

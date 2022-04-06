@@ -19,9 +19,12 @@
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import com.amazonaws.services.s3.AmazonS3URI;
+import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 
 import java.net.URI;
 import java.util.Objects;
+
+import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.substringAfterLast;
 
 /**
  * This class represents an object stored in Amazon S3. This object contains
@@ -29,6 +32,7 @@ import java.util.Objects;
  */
 public class S3BucketKey {
 
+    public static final String S3_FOLDER_SEPARATOR = "/";
     private final String bucketName;
     private final String key;
 
@@ -44,6 +48,12 @@ public class S3BucketKey {
             amazonS3URI.getBucket(),
             amazonS3URI.getKey()
         );
+    }
+
+    public S3BucketKey(final String bucketName,
+                       final String keyPrefix,
+                       final String keyName) {
+        this(bucketName, StringUtils.removeEnd(keyPrefix, S3_FOLDER_SEPARATOR) + S3_FOLDER_SEPARATOR + keyName);
     }
 
     /**
@@ -71,11 +81,14 @@ public class S3BucketKey {
         return key;
     }
 
+    public String objectName() {
+        return substringAfterLast(key, S3_FOLDER_SEPARATOR.charAt(0));
+    }
     /**
      * @return the {@link URI} for this Amazon S3 object.
      */
     public URI toURI() {
-        return URI.create("s3://" + bucketName + "/" + key);
+        return URI.create("s3://" + bucketName + S3_FOLDER_SEPARATOR + key);
     }
 
     /**

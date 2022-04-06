@@ -5,7 +5,7 @@
 set -e
 
 BASEDIR=$(dirname "$(readlink -f $0)")
-DOC_BASEDIR="$BASEDIR/site/content/en/docs"
+DOC_BASEDIR="$BASEDIR/docs/content/en/docs"
 GIT_COMMITTER_NAME="Release"
 GIT_COMMITTER_EMAIL="release@release"
 
@@ -47,14 +47,14 @@ url: "/v$RELEASE_DOC_LINK/docs"
 This section is where the user documentation for Connect File Pulse lives - all the information that users need to understand and successfully use Connect File Pulse.
 EOF
 
-echo "Updating $BASEDIR/site/config.toml"
-cat >> "$BASEDIR/site/config.toml" <<EOF
+echo "Updating $BASEDIR/docs/config.toml"
+cat >> "$BASEDIR/docs/config.toml" <<EOF
 [[params.versions]]
   version = "v$RELEASE_DOC_VERSION"
   url = "/kafka-connect-file-pulse/v$RELEASE_DOC_LINK/docs"
 EOF
 
-git add "$BASEDIR/site/*" "pom.xml" "*/pom.xml" "*/*/pom.xml"
+git add "$BASEDIR/docs/*" "pom.xml" "*/pom.xml" "*/*/pom.xml"
 git commit -m "release version $RELEASE_VERSION" --author="$GIT_COMMITTER_NAME <$GIT_COMMITTER_EMAIL>"
 git tag -a "v$RELEASE_VERSION" -m"release v$RELEASE_VERSION"
 

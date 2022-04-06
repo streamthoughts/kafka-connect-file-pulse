@@ -22,6 +22,7 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.retry.PredefinedRetryPolicies;
+import com.amazonaws.services.s3.model.StorageClass;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
@@ -29,8 +30,10 @@ import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.common.config.types.Password;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -87,6 +90,9 @@ public class AmazonS3ClientConfig extends AbstractConfig {
 
     public static final int AWS_S3_RETRY_BACKOFF_MAX_RETRIES_DEFAULT = PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY;
 
+    public static final String AWS_S3_OBJECT_STORAGE_CLASS_CONFIG =  "aws.default.object.storage.class";
+    public static final String AWS_S3_OBJECT_STORAGE_CLASS_DOC =  "The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation).";
+
     /**
      * Creates a new {@link AmazonS3ClientConfig} instance.
      *
@@ -142,6 +148,13 @@ public class AmazonS3ClientConfig extends AbstractConfig {
 
     public int getAwsS3RetryBackoffMaxRetries() {
         return getInt(AWS_S3_RETRY_BACKOFF_MAX_RETRIES_CONFIG);
+    }
+
+    public StorageClass getAwsS3DefaultStorageClass() {
+        return Optional.ofNullable(getString(AWS_S3_OBJECT_STORAGE_CLASS_CONFIG))
+                .map(String::toUpperCase)
+                .map(StorageClass::fromValue)
+                .orElse(null);
     }
 
     /**
@@ -298,6 +311,18 @@ public class AmazonS3ClientConfig extends AbstractConfig {
                         awsGroupCounter++,
                         ConfigDef.Width.NONE,
                         AWS_S3_RETRY_BACKOFF_MAX_RETRIES_CONFIG
+                )
+                .define(
+                        AWS_S3_OBJECT_STORAGE_CLASS_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        new AwsStorageClassValidator(),
+                        ConfigDef.Importance.LOW,
+                        AWS_S3_OBJECT_STORAGE_CLASS_DOC,
+                        GROUP_AWS,
+                        awsGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        AWS_S3_OBJECT_STORAGE_CLASS_CONFIG
                 );
     }
 
@@ -337,5 +362,26 @@ public class AmazonS3ClientConfig extends AbstractConfig {
         }
     }
 
+
+    public static class AwsStorageClassValidator implements ConfigDef.Validator {
+        private static final String SUPPORTED_AWS_STORAGE_CLASS =
+                Arrays.stream(StorageClass.values())
+                        .map(StorageClass::name)
+                        .collect(Collectors.joining(", "));
+
+        @Override
+        public void ensureValid(final String name, final Object value) {
+            if (Objects.nonNull(value)) {
+                final String valueStr = (String) value;
+                try {
+                    StorageClass.fromValue(valueStr.toUpperCase(Locale.ROOT));
+                } catch (final IllegalArgumentException e) {
+                    throw new ConfigException(
+                            name, valueStr,
+                            "supported values are: " + SUPPORTED_AWS_STORAGE_CLASS);
+                }
+            }
+        }
+    }
 
 }

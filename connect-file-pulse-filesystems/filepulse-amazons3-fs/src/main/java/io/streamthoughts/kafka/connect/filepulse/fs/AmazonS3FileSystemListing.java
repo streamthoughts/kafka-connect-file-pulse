@@ -63,6 +63,7 @@ public class AmazonS3FileSystemListing implements FileSystemListing<AmazonS3Stor
         this.config = config;
         this.client = AmazonS3ClientUtils.createS3Client(config, url);
         this.s3Storage = new AmazonS3Storage(client);
+        this.s3Storage.setDefaultStorageClass(config.getAwsS3DefaultStorageClass());
         if (!s3Storage.doesS3BucketExist(config.getAwsS3BucketName())) {
             throw new ConfigException(
                     "Invalid S3 bucket name. "

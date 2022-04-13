@@ -471,7 +471,7 @@ If there is no schema pass through the connector configuration, a schema will be
 &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link><pubDate>Wed, 23 Feb 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</guid><description>
+&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link><pubDate>Wed, 13 Apr 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</guid><description>
 &lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically lists object files that may be streamed into Kafka using the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing&lt;/a>&lt;br>
 configured in the connector&amp;rsquo;s configuration.&lt;/p>
 &lt;h2 id="supported-filesystems">Supported Filesystems&lt;/h2>
@@ -710,22 +710,27 @@ At the next scan, previously filtered files will be evaluated again to determine
 &lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
 &lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
 &lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.IgnoreHiddenFileListFilter
 &lt;/code>&lt;/pre>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Limitation&lt;/h4>
 This filter is only supported by the &lt;code>LocalFSDirectoryListing&lt;/code>.
 &lt;/div>
 &lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
-&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
+&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter all files that have been modified to recently based on their last modified date property.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.LastModifiedFileFilter
 # The last modified time for a file can be accepted (default: 5000)
 file.filter.minimum.age.ms=10000
 &lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
-&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter files that do not match the specified regex.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
+&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter all files that do not match the specified regex.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
 # The regex pattern used to match input files
 file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
+&lt;/code>&lt;/pre>&lt;h3 id="sizefilelistfilter">SizeFileListFilter&lt;/h3>
+&lt;p>The &lt;code>SizeFileListFilter&lt;/code> can be used to filter all files that are smaller or larger than a specific byte size.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
+file.filter.minimum.size.bytes=0
+file.filter.maximum.size.bytes=9223372036854775807
 &lt;/code>&lt;/pre></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid><description>
 &lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
 configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>

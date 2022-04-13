@@ -29,7 +29,7 @@
     <version>2.6.0</version>
 
     <name>Kafka Connect Source File Pulse Reactor</name>
-    <description>Connect File Pulse is a multi-purpose source connector for streaming files from a local filesystem to Kafka.</description>
+    <description>Connect File Pulse is a multipurpose source connector for streaming files from a local filesystem to Kafka.</description>
 
     <modules>
         <module>connect-file-pulse-api</module>
@@ -89,7 +89,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${basedir}</checkstyle.config.location>
-        <com.fasterxml.jackson.core.version>2.12.6.1</com.fasterxml.jackson.core.version>
+        <com.fasterxml.jackson.databind.version>2.12.6.1</com.fasterxml.jackson.databind.version>
+        <com.fasterxml.jackson.core.version>2.13.2</com.fasterxml.jackson.core.version>
+        <com.fasterxml.jackson.annotations.version>2.13.2</com.fasterxml.jackson.annotations.version>
         <slf4j.version>1.7.32</slf4j.version>
     </properties>
 
@@ -249,13 +251,13 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${com.fasterxml.jackson.core.version}</version>
+                <version>${com.fasterxml.jackson.annotations.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${com.fasterxml.jackson.core.version}</version>
+                <version>${com.fasterxml.jackson.databind.version}</version>
             </dependency>
 
             <dependency>

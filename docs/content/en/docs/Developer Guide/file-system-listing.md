@@ -1,5 +1,5 @@
 ---
-date: 2022-02-23
+date: 2022-04-13
 title: "FileSystem Listing"
 linkTitle: "FileSystem Listing"
 weight: 30
@@ -115,7 +115,7 @@ The `IgnoreHiddenFileFilter` can be used to filter hidden files from being read.
 **Configuration example**
 
 ```properties
-fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.IgnoreHiddenFileListFilter
 ```
 
 {{% alert title="Limitation" color="warning" %}}
@@ -124,20 +124,30 @@ This filter is only supported by the `LocalFSDirectoryListing`.
 
 ### LastModifiedFileFilter
 
-The `LastModifiedFileFilter` can be used to filter files that have been modified to recently based on their last modified date property.
+The `LastModifiedFileFilter` can be used to filter all files that have been modified to recently based on their last modified date property.
 
 ```properties
-fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.LastModifiedFileFilter
 # The last modified time for a file can be accepted (default: 5000)
 file.filter.minimum.age.ms=10000
 ```
 
 ### RegexFileFilter
 
-The `RegexFileFilter` can be used to filter files that do not match the specified regex.
+The `RegexFileFilter` can be used to filter all files that do not match the specified regex.
 
 ```properties
-fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
 # The regex pattern used to match input files
 file.filter.regex.pattern="\\.log$"
+```
+
+### SizeFileListFilter
+
+The `SizeFileListFilter` can be used to filter all files that are smaller or larger than a specific byte size.
+
+```properties
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
+file.filter.minimum.size.bytes=0
+file.filter.maximum.size.bytes=9223372036854775807
 ```

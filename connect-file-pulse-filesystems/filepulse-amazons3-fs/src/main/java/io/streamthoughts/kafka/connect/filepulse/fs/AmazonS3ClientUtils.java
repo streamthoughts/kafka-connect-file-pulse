@@ -26,6 +26,9 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.retry.PredefinedBackoffStrategies;
+import com.amazonaws.retry.PredefinedRetryPolicies;
+import com.amazonaws.retry.RetryPolicy;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
@@ -63,7 +66,16 @@ public class AmazonS3ClientUtils {
      */
     public static AmazonS3 createS3Client(final AmazonS3ClientConfig config,
                                           final String url) {
-        final ClientConfiguration clientConfiguration = PredefinedClientConfigurations.defaultConfig();
+        final ClientConfiguration clientConfiguration = PredefinedClientConfigurations.defaultConfig()
+                .withRetryPolicy(new RetryPolicy(
+                        PredefinedRetryPolicies.DEFAULT_RETRY_CONDITION,
+                        new PredefinedBackoffStrategies.FullJitterBackoffStrategy(
+                                config.getAwsS3RetryBackoffDelayMs(),
+                                config.getAwsS3RetryBackoffMaxDelayMs()
+                        ),
+                        config.getAwsS3RetryBackoffMaxRetries(),
+                        false)
+                );
 
         AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
                 .withPathStyleAccessEnabled(config.isAwsS3PathStyleAccessEnabled())

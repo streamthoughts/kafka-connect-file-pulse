@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.fs;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.retry.PredefinedRetryPolicies;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
@@ -68,6 +69,24 @@ public class AmazonS3ClientConfig extends AbstractConfig {
     private static final String AWS_CREDENTIALS_PROVIDER_DOC = "The AWSCredentialsProvider to use if no access key id and secret access key is configured";
     public static final String AWS_CREDENTIALS_PROVIDER_DEFAULT = EnvironmentVariableCredentialsProvider.class.getName();
 
+    public static final String AWS_S3_RETRY_BACKOFF_DELAY_MS_CONFIG = "aws.s3.backoff.delay.ms";
+    public static final String AWS_S3_RETRY_BACKOFF_DELAY_MS_DOC = "The base back-off time (milliseconds) before retrying a request.";
+    // Default values from AWS SDK (see: PredefinedBackoffStrategies)
+    public static final int AWS_S3_RETRY_BACKOFF_DELAY_MS_DEFAULT = 100;
+    public static final String AWS_S3_RETRY_BACKOFF_MAX_DELAY_MS_CONFIG = "aws.s3.backoff.max.delay.ms";
+    public static final String AWS_S3_RETRY_BACKOFF_MAX_DELAY_MS_DOC = "The maximum back-off time (in milliseconds) before retrying a request.";
+    // Default values from AWS SDK (see: PredefinedBackoffStrategies)
+    public static final int AWS_S3_RETRY_BACKOFF_MAX_DELAY_MS_DEFAULT = 20_000;
+    public static final String AWS_S3_RETRY_BACKOFF_MAX_RETRIES_CONFIG = "aws.s3.backoff.max.retries";
+    public static final String AWS_S3_RETRY_BACKOFF_MAX_RETRIES_DOC = "The maximum number of retry attempts for failed retryable requests.";
+    // Default values from AWS SDK (see: PredefinedBackoffStrategies)
+
+    // Maximum retry limit. Avoids integer overflow issues.
+    // NOTE: If the value is greater than 30, there can be integer overflow issues during delay calculation.
+    public static final int AWS_S3_RETRY_BACKOFF_MAX_RETRIES_MAX_VALUE = 30;
+
+    public static final int AWS_S3_RETRY_BACKOFF_MAX_RETRIES_DEFAULT = PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY;
+
     /**
      * Creates a new {@link AmazonS3ClientConfig} instance.
      *
@@ -111,6 +130,18 @@ public class AmazonS3ClientConfig extends AbstractConfig {
 
     public AWSCredentialsProvider getAwsCredentialsProvider() {
         return getConfiguredInstance(AWS_CREDENTIALS_PROVIDER_CLASS, AWSCredentialsProvider.class);
+    }
+
+    public int getAwsS3RetryBackoffDelayMs() {
+        return getInt(AWS_S3_RETRY_BACKOFF_DELAY_MS_CONFIG);
+    }
+
+    public int getAwsS3RetryBackoffMaxDelayMs() {
+        return getInt(AWS_S3_RETRY_BACKOFF_MAX_DELAY_MS_CONFIG);
+    }
+
+    public int getAwsS3RetryBackoffMaxRetries() {
+        return getInt(AWS_S3_RETRY_BACKOFF_MAX_RETRIES_CONFIG);
     }
 
     /**
@@ -225,12 +256,48 @@ public class AmazonS3ClientConfig extends AbstractConfig {
                         AWS_CREDENTIALS_PROVIDER_CLASS,
                         ConfigDef.Type.CLASS,
                         AWS_CREDENTIALS_PROVIDER_DEFAULT,
-                        ConfigDef.Importance.HIGH,
+                        ConfigDef.Importance.MEDIUM,
                         AWS_CREDENTIALS_PROVIDER_DOC,
                         GROUP_AWS,
                         awsGroupCounter++,
                         ConfigDef.Width.NONE,
                         AWS_CREDENTIALS_PROVIDER_CLASS
+                )
+                .define(
+                        AWS_S3_RETRY_BACKOFF_DELAY_MS_CONFIG,
+                        ConfigDef.Type.INT,
+                        AWS_S3_RETRY_BACKOFF_DELAY_MS_DEFAULT,
+                        ConfigDef.Range.atLeast(1),
+                        ConfigDef.Importance.MEDIUM,
+                        AWS_S3_RETRY_BACKOFF_DELAY_MS_DOC,
+                        GROUP_AWS,
+                        awsGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        AWS_S3_RETRY_BACKOFF_DELAY_MS_CONFIG
+                )
+                .define(
+                        AWS_S3_RETRY_BACKOFF_MAX_DELAY_MS_CONFIG,
+                        ConfigDef.Type.INT,
+                        AWS_S3_RETRY_BACKOFF_MAX_DELAY_MS_DEFAULT,
+                        ConfigDef.Range.atLeast(1),
+                        ConfigDef.Importance.MEDIUM,
+                        AWS_S3_RETRY_BACKOFF_MAX_DELAY_MS_DOC,
+                        GROUP_AWS,
+                        awsGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        AWS_S3_RETRY_BACKOFF_MAX_DELAY_MS_CONFIG
+                )
+                .define(
+                        AWS_S3_RETRY_BACKOFF_MAX_RETRIES_CONFIG,
+                        ConfigDef.Type.INT,
+                        AWS_S3_RETRY_BACKOFF_MAX_RETRIES_DEFAULT,
+                        ConfigDef.Range.between(1, AWS_S3_RETRY_BACKOFF_MAX_RETRIES_MAX_VALUE),
+                        ConfigDef.Importance.MEDIUM,
+                        AWS_S3_RETRY_BACKOFF_MAX_RETRIES_DOC,
+                        GROUP_AWS,
+                        awsGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        AWS_S3_RETRY_BACKOFF_MAX_RETRIES_CONFIG
                 );
     }
 

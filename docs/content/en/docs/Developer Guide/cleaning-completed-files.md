@@ -16,7 +16,7 @@ The cleanup policy can be configured with the below connect property :
 | `fs.cleanup.policy.class` | The fully qualified name of the class which is used to cleanup files | class | *-*     | high       |
 
 
-## Available Cleanup Policies
+## Generic Cleanup Policies
 
 ### `DeleteCleanPolicy`
 
@@ -38,6 +38,8 @@ To enable this policy, the property `fs.cleanup.policy.class` must be configured
 io.streamthoughts.kafka.connect.filepulse.fs.clean.LogCleanupPolicy 
 ```
 
+## Cleanup Policies: Local Filesystem
+
 ### `LocalMoveCleanupPolicy`
 
 This policy attempts to move atomically files to configurable target directories.
@@ -58,5 +60,26 @@ This policy only works when using the `LocalFSDirectoryListing`.
 |-------------------------------|------------------------------------------------|--------|------------|------------|
 | `cleaner.output.failed.path`  | Target directory for file proceed with failure | string | *.failure* | high       |
 | `cleaner.output.succeed.path` | Target directory for file proceed successfully | string | *.success* | high       |
+
+## Cleanup Policies: Amazon
+
+### `AmazonMoveCleanupPolicy`
+
+This policy moves S3 objects atomically files to configurable target directories.
+
+To enable this policy, the property `fs.cleanup.policy.class` must be configured to :
+
+```
+io.streamthoughts.kafka.connect.filepulse.fs.clean.AmazonS3MoveCleanupPolicy
+```
+
+
+| Configuration                                    | Description                                                                                                                                                                                                                                                | Type     | Default                               | Importance |
+|--------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------------------------------|------------|
+| `fs.cleanup.policy.move.success.aws.bucket.name` | The name of the destination S3 bucket for success objects (optional)                                                                                                                                                                                       | `string` | *Bucket name of the source S3 Object* | HIGH       |
+| `fs.cleanup.policy.move.success.aws.prefix.path` | The prefix to be used for defining the key of an S3 object to move into the destination bucket.                                                                                                                                                            | `string` |                                       | HIGH       |
+| `fs.cleanup.policy.move.failure.aws.bucket.name` | The name of the destination S3 bucket for failure objects (optional)                                                                                                                                                                                       | `string` | *Bucket name of the source S3 Object* | HIGH       |
+| `fs.cleanup.policy.move.failure.aws.prefix.path` | The prefix to be used for defining the key of an S3 object to move into the destination bucket.                                                                                                                                                            | `string` |                                       | HIGH       |
+| `aws.s3.default.object.storage.class`            | The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation). Accepted values are: `STANDARD`, `GLACIER`, `REDUCED_REDUNDANCY`, `STANDARD_IA`,`ONEZONE_IA`,`INTELLIGENT_TIERING`,`DEEP_ARCHIVE` | `string` |                                       | LOW        |
 
 ## Implementing your own policy

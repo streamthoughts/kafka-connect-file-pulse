@@ -90,7 +90,7 @@ public class AmazonS3ClientConfig extends AbstractConfig {
 
     public static final int AWS_S3_RETRY_BACKOFF_MAX_RETRIES_DEFAULT = PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY;
 
-    public static final String AWS_S3_OBJECT_STORAGE_CLASS_CONFIG =  "aws.default.object.storage.class";
+    public static final String AWS_S3_OBJECT_STORAGE_CLASS_CONFIG =  "aws.s3.default.object.storage.class";
     public static final String AWS_S3_OBJECT_STORAGE_CLASS_DOC =  "The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation).";
 
     /**

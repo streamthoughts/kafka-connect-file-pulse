@@ -560,6 +560,13 @@ Supported content-types are:&lt;/p>
 &lt;td>HIGH&lt;/td>
 &lt;/tr>
 &lt;tr>
+&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
+&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
+&lt;td>&lt;code>class&lt;/code>&lt;/td>
+&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
 &lt;td>&lt;code>aws.s3.region&lt;/code>&lt;/td>
 &lt;td>The AWS S3 Region, e.g. us-east-1&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
@@ -595,11 +602,32 @@ Supported content-types are:&lt;/p>
 &lt;td>MEDIUM&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
-&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
-&lt;td>&lt;code>class&lt;/code>&lt;/td>
-&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
+&lt;td>&lt;code>aws.s3.default.object.storage.class&lt;/code>&lt;/td>
+&lt;td>The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation). Accepted values are: &lt;code>STANDARD&lt;/code>, &lt;code>GLACIER&lt;/code>, &lt;code>REDUCED_REDUNDANCY&lt;/code>, &lt;code>STANDARD_IA&lt;/code>,&lt;code>ONEZONE_IA&lt;/code>,&lt;code>INTELLIGENT_TIERING&lt;/code>,&lt;code>DEEP_ARCHIVE&lt;/code>&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.delay.ms&lt;/code>&lt;/td>
+&lt;td>The base back-off time (milliseconds) before retrying a request.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>100&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.max.delay.ms&lt;/code>&lt;/td>
+&lt;td>The maximum back-off time (in milliseconds) before retrying a request.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>20_000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.max.retries&lt;/code>&lt;/td>
+&lt;td>The maximum number of retry attempts for failed retryable requests.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>3&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -3152,7 +3180,7 @@ lastModified&amp;quot;: {
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h2 id="available-cleanup-policies">Available Cleanup Policies&lt;/h2>
+&lt;h2 id="generic-cleanup-policies">Generic Cleanup Policies&lt;/h2>
 &lt;h3 id="deletecleanpolicy">&lt;code>DeleteCleanPolicy&lt;/code>&lt;/h3>
 &lt;p>This policy deletes all files regardless of their final status (completed or failed).&lt;/p>
 &lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must be configured to :&lt;/p>
@@ -3161,7 +3189,8 @@ lastModified&amp;quot;: {
 &lt;p>This policy prints into logs some information after files completion.&lt;/p>
 &lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must be configured to :&lt;/p>
 &lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.LogCleanupPolicy
-&lt;/code>&lt;/pre>&lt;h3 id="localmovecleanuppolicy">&lt;code>LocalMoveCleanupPolicy&lt;/code>&lt;/h3>
+&lt;/code>&lt;/pre>&lt;h2 id="cleanup-policies-local-filesystem">Cleanup Policies: Local Filesystem&lt;/h2>
+&lt;h3 id="localmovecleanuppolicy">&lt;code>LocalMoveCleanupPolicy&lt;/code>&lt;/h3>
 &lt;p>This policy attempts to move atomically files to configurable target directories.&lt;/p>
 &lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must be configured to :&lt;/p>
 &lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanupPolicy
@@ -3195,6 +3224,59 @@ This policy only works when using the &lt;code>LocalFSDirectoryListing&lt;/code>
 &lt;td>string&lt;/td>
 &lt;td>&lt;em>.success&lt;/em>&lt;/td>
 &lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="cleanup-policies-amazon">Cleanup Policies: Amazon&lt;/h2>
+&lt;h3 id="amazonmovecleanuppolicy">&lt;code>AmazonMoveCleanupPolicy&lt;/code>&lt;/h3>
+&lt;p>This policy moves S3 objects atomically files to configurable target directories.&lt;/p>
+&lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must be configured to :&lt;/p>
+&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.fs.clean.AmazonS3MoveCleanupPolicy
+&lt;/code>&lt;/pre>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.move.success.aws.bucket.name&lt;/code>&lt;/td>
+&lt;td>The name of the destination S3 bucket for success objects (optional)&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;em>Bucket name of the source S3 Object&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.move.success.aws.prefix.path&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for defining the key of an S3 object to move into the destination bucket.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.move.failure.aws.bucket.name&lt;/code>&lt;/td>
+&lt;td>The name of the destination S3 bucket for failure objects (optional)&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;em>Bucket name of the source S3 Object&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.move.failure.aws.prefix.path&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for defining the key of an S3 object to move into the destination bucket.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.default.object.storage.class&lt;/code>&lt;/td>
+&lt;td>The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation). Accepted values are: &lt;code>STANDARD&lt;/code>, &lt;code>GLACIER&lt;/code>, &lt;code>REDUCED_REDUNDANCY&lt;/code>, &lt;code>STANDARD_IA&lt;/code>,&lt;code>ONEZONE_IA&lt;/code>,&lt;code>INTELLIGENT_TIERING&lt;/code>,&lt;code>DEEP_ARCHIVE&lt;/code>&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>LOW&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>

@@ -3853,6 +3853,13 @@ Supported content-types are:&lt;/p>
 &lt;td>HIGH&lt;/td>
 &lt;/tr>
 &lt;tr>
+&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
+&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
+&lt;td>&lt;code>class&lt;/code>&lt;/td>
+&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
 &lt;td>&lt;code>aws.s3.region&lt;/code>&lt;/td>
 &lt;td>The AWS S3 Region, e.g. us-east-1&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
@@ -3888,11 +3895,32 @@ Supported content-types are:&lt;/p>
 &lt;td>MEDIUM&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
-&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
-&lt;td>&lt;code>class&lt;/code>&lt;/td>
-&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
+&lt;td>&lt;code>aws.s3.default.object.storage.class&lt;/code>&lt;/td>
+&lt;td>The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation). Accepted values are: &lt;code>STANDARD&lt;/code>, &lt;code>GLACIER&lt;/code>, &lt;code>REDUCED_REDUNDANCY&lt;/code>, &lt;code>STANDARD_IA&lt;/code>,&lt;code>ONEZONE_IA&lt;/code>,&lt;code>INTELLIGENT_TIERING&lt;/code>,&lt;code>DEEP_ARCHIVE&lt;/code>&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
 &lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.delay.ms&lt;/code>&lt;/td>
+&lt;td>The base back-off time (milliseconds) before retrying a request.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>100&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.max.delay.ms&lt;/code>&lt;/td>
+&lt;td>The maximum back-off time (in milliseconds) before retrying a request.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>20_000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.max.retries&lt;/code>&lt;/td>
+&lt;td>The maximum number of retry attempts for failed retryable requests.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>3&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>

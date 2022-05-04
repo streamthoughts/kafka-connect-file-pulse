@@ -33,7 +33,7 @@
 
     <properties>
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
-        <aws-java-sdk.version>1.11.952</aws-java-sdk.version>
+        <aws-java-sdk.version>1.12.210</aws-java-sdk.version>
     </properties>
 
     <dependencies>
@@ -53,6 +53,11 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-java-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sts</artifactId>
             <version>${aws-java-sdk.version}</version>
         </dependency>
         <dependency>

@@ -83,6 +83,14 @@ public class ArraySchema implements Schema {
 
         if (o instanceof ArraySchema) {
             final ArraySchema that = (ArraySchema)o;
+            if (!this.isResolvable()) {
+                return that;
+            }
+
+            if (!that.isResolvable()) {
+                return this;
+            }
+
             return Schema.array(this.valueSchema().merge(that.valueSchema()));
         }
 

@@ -40,4 +40,24 @@ public class LazyArraySchemaTest {
         Assert.assertNotNull(structSchema.field("f1"));
         Assert.assertNotNull(structSchema.field("f2"));
     }
+
+    @Test
+    public void should_merge_schemas_given_empty_left_array() {
+        LazyArraySchema s1 = new LazyArraySchema(List.of("foo"));
+        LazyArraySchema s2 = new LazyArraySchema(List.of());
+        Schema merged = s2.merge(s1);
+
+        Assert.assertEquals(Type.ARRAY, merged.type());
+        Assert.assertEquals(Type.STRING, ((ArraySchema)merged).valueSchema().type());
+    }
+
+    @Test
+    public void should_merge_schemas_given_empty_right_array() {
+        LazyArraySchema s1 = new LazyArraySchema(List.of("foo"));
+        LazyArraySchema s2 = new LazyArraySchema(List.of());
+        Schema merged = s1.merge(s2);
+
+        Assert.assertEquals(Type.ARRAY, merged.type());
+        Assert.assertEquals(Type.STRING, ((ArraySchema)merged).valueSchema().type());
+    }
 }

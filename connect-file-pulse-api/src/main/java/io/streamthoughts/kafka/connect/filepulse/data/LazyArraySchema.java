@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.data;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class LazyArraySchema extends ArraySchema implements Schema {
 
@@ -64,5 +65,33 @@ public class LazyArraySchema extends ArraySchema implements Schema {
     @Override
     public boolean isResolvable() {
         return valueSchema != null || !list.isEmpty();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        LazyArraySchema that = (LazyArraySchema) o;
+        return Objects.equals(list, that.list) && Objects.equals(valueSchema, that.valueSchema);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(type(), valueSchema);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "LazyArraySchema{" +
+                "list=" + list +
+                ", valueSchema=" + valueSchema +
+                '}';
     }
 }

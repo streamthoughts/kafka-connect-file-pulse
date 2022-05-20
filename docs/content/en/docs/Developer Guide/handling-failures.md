@@ -73,5 +73,5 @@ filters.Log4jGrokFilter.withOnFailure=AppendError
 
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendError.field=$.exceptionMessage
-filters.AppendError.value={{ $error.message }}
+filters.AppendError.value={{ $error.exceptionMessage }}
 ```

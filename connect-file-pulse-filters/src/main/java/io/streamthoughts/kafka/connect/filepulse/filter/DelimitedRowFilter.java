@@ -18,188 +18,75 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.data.Schema;
-import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
-import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
+import org.apache.kafka.common.utils.ConfigUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
-import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_COLUMNS_CONFIG;
+public class DelimitedRowFilter extends AbstractDelimitedRowFilter<DelimitedRowFilter> {
 
-public class DelimitedRowFilter extends AbstractRecordFilter<DelimitedRowFilter> {
-
-    private static final String DEFAULT_SOURCE_FIELD = "message";
-
-    private static final Schema DEFAULT_COLUMN_TYPE = Schema.string();
-
-    private static final String AUTO_GENERATED_COLUMN_NAME_PREFIX = "column";
-
-    private DelimitedRowFilterConfig configs;
-
-    private StructSchema schema;
-
-    private final Map<Integer, TypedField> columnsTypesByIndex = new HashMap<>();
+    public static final String READER_FIELD_SEPARATOR_CONFIG = "regex";
+    public static final String READER_FIELD_SEPARATOR_CONFIG_ALIAS = "separator";
+    public static final String READER_FIELD_SEPARATOR_DEFAULT = ";";
+    private static final String READER_FIELD_SEPARATOR_DOC =
+            "The character delimiter or regex used to split each column value (default: ';').";
+    private static final String CONFIG_GROUP = "Delimited Row Filter";
 
     private Pattern pattern = null;
+
+    private String delimiter;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        super.configure(configs);
-        this.configs = new DelimitedRowFilterConfig(configs);
+        super.configure(ConfigUtils.translateDeprecatedConfigs(configs, new String[][]{
+                {READER_FIELD_SEPARATOR_CONFIG, READER_FIELD_SEPARATOR_CONFIG_ALIAS}
+        }));
 
-        if (isMandatoryConfigsMissing()) {
-            StringJoiner joiner = new StringJoiner(",", "[", "]");
-            final String mandatory = joiner
-                    .add(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG)
-                    .add(READER_EXTRACT_COLUMN_NAME_CONFIG)
-                    .add(READER_FIELD_COLUMNS_CONFIG).toString();
-            throw new ConfigException("At least one of those parameters should be configured " + mandatory);
+        delimiter = filterConfig().getString(READER_FIELD_SEPARATOR_CONFIG);
+
+        if (!StringUtils.isFastSplit(delimiter)) {
+            pattern = Pattern.compile(delimiter);
         }
-
-        if (!StringUtils.isFastSplit(this.configs.delimiter())) pattern = Pattern.compile(this.configs.delimiter());
-
-        this.schema = this.configs.schema();
-        if (schema != null) {
-            final List<TypedField> fields = schema.fields();
-            IntStream.range(0, fields.size()).forEach(i -> columnsTypesByIndex.put(i, fields.get(i)));
-        }
-    }
-
-    private boolean isMandatoryConfigsMissing() {
-        return configs.schema() == null &&
-               configs.extractColumnName() == null &&
-               !configs.isAutoGenerateColumnNames();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
+    protected String[] parseColumnsValues(final String line) {
+        return pattern != null ? pattern.split(line) : line.split(delimiter);
+    }
+
     @Override
     public ConfigDef configDef() {
-        return DelimitedRowFilterConfig.configDef();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public RecordsIterable<TypedStruct> apply(final FilterContext context,
-                                              final TypedStruct record,
-                                              final boolean hasNext) throws FilterException {
-
-        final String source = record.first(DEFAULT_SOURCE_FIELD).getString();
-
-        String[] columnValues = splitColumnValues(source);
-
-        if (schema == null || isSchemaDynamic()) {
-            inferSchemaFromRecord(record, columnValues.length);
-        }
-        final TypedStruct struct = buildStructForFields(columnValues);
-        return RecordsIterable.of(struct);
-    }
-
-    public boolean isSchemaDynamic() {
-        // Schema SHOULD be inferred for each record when columns name are auto generate.
-        // This rule is used to handle cases where records may have different number of columns.
-        return configs.extractColumnName() == null &&
-               configs.schema() == null &&
-               configs.isAutoGenerateColumnNames();
-    }
-
-    private void inferSchemaFromRecord(final TypedStruct record, int numColumns) {
-        schema = Schema.struct();
-
-        if (configs.extractColumnName() != null) {
-            final String fieldName = configs.extractColumnName();
-            String field = record.first(fieldName).getString();
-            if (field == null) {
-                throw new FilterException(
-                    "Cannot find field for name '" + fieldName + "' to determine columns names"
+        int filterGroupCounter = 0;
+        return super.configDef()
+                .define(
+                        READER_FIELD_SEPARATOR_CONFIG,
+                        ConfigDef.Type.STRING,
+                        READER_FIELD_SEPARATOR_DEFAULT,
+                        ConfigDef.Importance.HIGH,
+                        READER_FIELD_SEPARATOR_DOC,
+                        CONFIG_GROUP,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        READER_FIELD_SEPARATOR_CONFIG
+                )
+                .define(
+                        READER_FIELD_SEPARATOR_CONFIG_ALIAS,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.HIGH,
+                        "Deprecated. Use " + READER_FIELD_SEPARATOR_CONFIG + " instead.",
+                        CONFIG_GROUP,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        READER_FIELD_SEPARATOR_CONFIG_ALIAS
                 );
-            }
-            final List<String> columns = Arrays
-                    .stream(splitColumnValues(field))
-                    .map(String::trim)
-                    .collect(Collectors.toList());
-
-            if (configs.isDuplicateColumnsAsArray()) {
-                columns.stream()
-                    .collect(Collectors.groupingBy(Function.identity(), Collectors.<String>counting()))
-                    .entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> {
-                        return e.getValue() > 1 ? Schema.array(DEFAULT_COLUMN_TYPE) : DEFAULT_COLUMN_TYPE;
-                    }))
-                    .forEach(schema::field);
-            } else {
-                columns.forEach(columnName -> schema.field(columnName, DEFAULT_COLUMN_TYPE));
-            }
-            IntStream.range(0, columns.size()).forEach(i -> columnsTypesByIndex.put(i, schema.field(columns.get(i))));
-            return;
-        }
-
-        if (configs.isAutoGenerateColumnNames()) {
-            for (int i = 0; i < numColumns; i++) {
-                final String fieldName = AUTO_GENERATED_COLUMN_NAME_PREFIX + (i + 1);
-                schema.field(fieldName, DEFAULT_COLUMN_TYPE);
-                columnsTypesByIndex.put(i, schema.field(fieldName));
-            }
-            return;
-        }
-
-        throw new FilterException("Can't found valid configuration to determine schema for input value");
-    }
-
-    private String[] splitColumnValues(final String value) {
-        return pattern != null ? pattern.split(value) : value.split(configs.delimiter());
-    }
-
-    private TypedStruct buildStructForFields(final String[] fieldValues) {
-        if (fieldValues.length > columnsTypesByIndex.size()) {
-            throw new FilterException(
-                "Error while reading delimited input row. Too large number of fields (" + fieldValues.length + ")"
-            );
-        }
-
-        TypedStruct struct = TypedStruct.create();
-        for (int i = 0; i < fieldValues.length; i++) {
-            String fieldValue = fieldValues[i];
-            if (configs.isTrimColumn()) {
-                fieldValue = fieldValue.trim();
-            }
-            TypedField field = columnsTypesByIndex.get(i);
-            final Type type = field.type();
-            if (type == Type.ARRAY) {
-                if (!struct.exists(field.name())) {
-                    struct.put(field.name(), new ArrayList<>());
-                }
-                struct.getArray(field.name()).add(fieldValue); // it seems to be OK to use type conversion here
-            } else {
-                Object converted = StringUtils.isNotBlank(fieldValue) ? type.convert(fieldValue) : null;
-                struct = struct.put(field.name(), type, converted);
-            }
-        }
-        return struct;
     }
 }

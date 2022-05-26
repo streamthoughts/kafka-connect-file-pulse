@@ -37,7 +37,7 @@ import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilte
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG;
 
 
-public class DelimitedRowFileInputFilterTest {
+public class DelimitedRowFilterTest {
 
     private Map<String, String> configs;
 

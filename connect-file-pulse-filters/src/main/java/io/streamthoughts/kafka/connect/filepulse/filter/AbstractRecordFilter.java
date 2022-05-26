@@ -36,7 +36,7 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter<T>> im
 
     private boolean ignoreFailure;
 
-    protected CommonFilterConfig config;
+    private CommonFilterConfig filterConfig;
 
     /**
      * {@inheritDoc}
@@ -57,12 +57,12 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter<T>> im
      */
     @Override
     public void configure(final Map<String, ?> props, final RecordFilterProvider provider) {
-        config = new CommonFilterConfig(props);
-        withOnCondition(config.condition());
-        withIgnoreFailure(config.ignoreFailure());
-        if (!config.onFailure().isEmpty()) {
+        filterConfig = new CommonFilterConfig(props);
+        withOnCondition(filterConfig.condition());
+        withIgnoreFailure(filterConfig.ignoreFailure());
+        if (!filterConfig.onFailure().isEmpty()) {
             withOnFailure(
-                new DefaultRecordFilterPipeline(config.onFailure().stream()
+                new DefaultRecordFilterPipeline(filterConfig.onFailure().stream()
                     .map(provider::getRecordForAlias)
                     .collect(Collectors.toList())
                 )

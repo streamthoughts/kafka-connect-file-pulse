@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
+import io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,14 +28,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.*;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_DEFAULT;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_COLUMNS_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_TRIM_COLUMN_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_TRIM_COLUMN_DEFAULT;
+import static io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter.READER_FIELD_SEPARATOR_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter.READER_FIELD_SEPARATOR_DEFAULT;
 
-public class DelimitedRowFileInputFilterConfigTest {
+public class DelimitedRowFilterConfigTest {
+
+    private final DelimitedRowFilter filter = new DelimitedRowFilter();
 
     @Test
     public void shouldCreateConfigWithDefaultValues() {
-        DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(new HashMap<>());
-        Assert.assertEquals(READER_FIELD_SEPARATOR_DEFAULT, config.delimiter());
+        DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(filter.configDef(), new HashMap<>());
+        Assert.assertEquals(READER_FIELD_SEPARATOR_DEFAULT, config.getString(READER_FIELD_SEPARATOR_CONFIG));
         Assert.assertNull(config.extractColumnName());
         Assert.assertEquals(READER_FIELD_TRIM_COLUMN_DEFAULT, config.isTrimColumn());
         Assert.assertEquals(READER_AUTO_GENERATE_COLUMN_NAME_DEFAULT, config.isAutoGenerateColumnNames());
@@ -44,15 +53,15 @@ public class DelimitedRowFileInputFilterConfigTest {
     @Test
     public void shouldCreateConfigGivenOverrideValues() {
 
-        Map<String, String> props = new HashMap<String, String>() {{
+        Map<String, String> props = new HashMap<>() {{
             put(READER_FIELD_SEPARATOR_CONFIG, "|");
             put(READER_EXTRACT_COLUMN_NAME_CONFIG, "header");
             put(READER_FIELD_TRIM_COLUMN_CONFIG, "true");
         }};
 
-        DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(props);
+        DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(filter.configDef(), props);
 
-        Assert.assertEquals("|", config.delimiter());
+        Assert.assertEquals("|", config.getString(READER_FIELD_SEPARATOR_CONFIG));
         Assert.assertEquals("header", config.extractColumnName());
         Assert.assertTrue(config.isTrimColumn());
         Assert.assertNull(config.schema());
@@ -61,11 +70,11 @@ public class DelimitedRowFileInputFilterConfigTest {
     @Test
     public void shouldCreateConfigGivenSchema() {
 
-        Map<String, String> props = new HashMap<String, String>() {{
+        Map<String, String> props = new HashMap<>() {{
             put(READER_FIELD_COLUMNS_CONFIG, "field1:BOOLEAN;field2:INT32;field3:STRING");
         }};
 
-        DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(props);
+        DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(filter.configDef(), props);
 
         StructSchema schema = config.schema();
         Assert.assertNotNull(schema);

@@ -59,7 +59,8 @@ public class DelimitedRowFilter extends AbstractDelimitedRowFilter<DelimitedRowF
      */
     @Override
     protected String[] parseColumnsValues(final String line) {
-        return pattern != null ? pattern.split(line) : line.split(delimiter);
+        // set limit to -1 so that trailing empty strings will NOT be discarded.
+        return pattern != null ? pattern.split(line, -1) : line.split(delimiter, -1);
     }
 
     @Override

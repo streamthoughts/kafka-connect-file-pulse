@@ -21,6 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.junit.Assert;
 import org.junit.Before;
@@ -182,5 +183,38 @@ public class DelimitedRowFilterTest {
         Assert.assertEquals("value1", record.getString("c1"));
         Assert.assertNull(record.getInt("c2"));
         Assert.assertTrue(record.getBoolean("c3"));
+    }
+
+    @Test
+    public void should_success_parse_given_line_ending_with_empty_values() {
+        // Given
+        configs.put(READER_FIELD_COLUMNS_CONFIG, "c1:STRING;c2:STRING;c3:STRING;c4:STRING");
+        filter.configure(configs, alias -> null);
+
+
+        final TypedStruct input = TypedStruct.create()
+                .put("message", "v1;v2;;");
+
+        // When
+        RecordsIterable<TypedStruct> result = filter.apply(null, input, false);
+        TypedStruct struct = result.last();
+
+        // Then
+        Map<String, String> expected = new HashMap<>() {{
+            put("c1", "v1");
+            put("c2", "v2");
+            put("c3", null);
+            put("c4", null);
+        }};
+
+        expected.forEach((key, actual) -> {
+            TypedValue typedValue = struct.get(key);
+            Assert.assertEquals(Type.STRING, typedValue.type());
+            if (actual == null) {
+                Assert.assertNull(typedValue.value());
+            } else {
+                Assert.assertEquals(actual, typedValue.value());
+            }
+        });
     }
 }

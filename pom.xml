@@ -85,7 +85,7 @@
         <io.confluent.version>6.2.1</io.confluent.version>
         <org.apache.kafka.version>2.8.0</org.apache.kafka.version>
         <junit.version>4.13.1</junit.version>
-        <kafka.connect.maven.plugin.version>0.11.3</kafka.connect.maven.plugin.version>
+        <kafka.connect.maven.plugin.version>0.12.0</kafka.connect.maven.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${basedir}</checkstyle.config.location>

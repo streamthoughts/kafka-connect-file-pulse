@@ -30,7 +30,7 @@ jobs:
           extended: true
 
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: "12.x"
       - run: (cd ./docs; npm install)

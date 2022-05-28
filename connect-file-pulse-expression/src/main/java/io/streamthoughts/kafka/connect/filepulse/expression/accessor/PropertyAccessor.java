@@ -69,7 +69,6 @@ public interface PropertyAccessor {
      * @param name      the variable name.
      * @param newValue  the new value to write.
      *
-     *
      * @throws AccessException if an error occurred while evaluating the variable.
      */
     void write(final EvaluationContext context,

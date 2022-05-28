@@ -70,7 +70,14 @@ public class TypedValue implements GettableByType {
     }
 
     public static TypedValue any(final Object value) {
-        return new TypedValue(value);
+        Object supportedValue = value;
+        if (value != null) {
+            Type supportedType = Type.forClass(supportedValue.getClass());
+            if (supportedType == null) {
+                supportedValue = TypeConverter.getString(value);
+            }
+        }
+        return new TypedValue(supportedValue);
     }
 
     /**

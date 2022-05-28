@@ -3,6 +3,8 @@ package io.streamthoughts.kafka.connect.filepulse.data;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.net.URI;
+
 public class TypedValueTest {
 
     @Test
@@ -26,4 +28,10 @@ public class TypedValueTest {
         Assert.assertEquals("12345678901234567890",  parsed.value());
     }
 
+    @Test
+    public void should_default_any_as_string_given_non_standard_type() {
+        TypedValue any = TypedValue.any(URI.create("file:/tmp/test.tx"));
+        Assert.assertEquals(Type.STRING, any.type());
+        Assert.assertEquals("file:/tmp/test.tx", any.value());
+    }
 }

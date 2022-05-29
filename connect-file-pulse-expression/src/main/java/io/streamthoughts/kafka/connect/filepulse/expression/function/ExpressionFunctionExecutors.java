@@ -35,8 +35,8 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Con
 import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Exists;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.IsNull;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Nlv;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ConcatWs;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Concat;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ConcatWs;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.EndsWith;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Hash;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.IsEmpty;
@@ -44,6 +44,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Len
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Lowercase;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Matches;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Md5;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ParseUrl;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ReplaceAll;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Split;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.StartsWith;
@@ -106,6 +107,7 @@ public class ExpressionFunctionExecutors {
         register(new GreaterThan());
         register(new LessThan());
         register(new Not());
+        register(new ParseUrl());
     }
 
     private ExpressionFunctionExecutor make(final String functionName, final Expression[] arguments) {

@@ -82,7 +82,7 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
      */
     @Override
     public TypedStruct put(final String field, final Short value) {
-        return put(field, Schema.int16(), field);
+        return put(field, Schema.int16(), value);
     }
 
     /**
@@ -98,7 +98,7 @@ public class TypedStruct implements GettableByName, SettableByName<TypedStruct>,
      */
     @Override
     public TypedStruct put(final String field, final Integer value) {
-        return put(field, Schema.int32(), field);
+        return put(field, Schema.int32(), value);
     }
 
     /**

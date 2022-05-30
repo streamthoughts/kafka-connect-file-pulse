@@ -81,7 +81,7 @@
 
     <properties>
         <apache.avro.version>1.8.2</apache.avro.version>
-        <confluent.maven.repo>http://packages.confluent.io/maven/</confluent.maven.repo>
+        <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
         <io.confluent.version>6.2.1</io.confluent.version>
         <org.apache.kafka.version>3.2.0</org.apache.kafka.version>
         <junit.version>4.13.1</junit.version>

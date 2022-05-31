@@ -49,7 +49,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
-        <antlr4.version>4.7.1</antlr4.version>
+        <antlr4.version>4.10.1</antlr4.version>
     </properties>
 
     <build>

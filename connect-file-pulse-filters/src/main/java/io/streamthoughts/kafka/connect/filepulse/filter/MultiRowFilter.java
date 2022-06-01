@@ -32,6 +32,7 @@ import org.joni.Matcher;
 import org.joni.Option;
 import org.joni.Regex;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -138,7 +139,7 @@ public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
      */
     private boolean isInputContainsPattern(final String message) {
         final Regex regex = matcher.regex();
-        byte[] bytes = message.getBytes();
+        byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
         Matcher matcher = regex.matcher(bytes);
         return -1 != matcher.search(0, bytes.length, Option.DEFAULT);
     }

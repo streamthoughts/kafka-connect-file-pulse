@@ -32,7 +32,7 @@ import java.util.Optional;
 public final class FileObject implements Serializable {
 
     @JsonIgnore
-    private final FileObjectKey key;
+    private final transient FileObjectKey key;
     private final FileObjectMeta metadata;
     private final FileObjectOffset offset;
     private final FileObjectStatus status;

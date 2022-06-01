@@ -76,7 +76,7 @@ public class TypedField {
         if (this == o) return true;
         if (!(o instanceof TypedField)) return false;
         TypedField that = (TypedField) o;
-        return index == that.index &&
+        return  Objects.equals(index, that.index) &&
                 Objects.equals(schema, that.schema) &&
                 Objects.equals(name, that.name);
     }

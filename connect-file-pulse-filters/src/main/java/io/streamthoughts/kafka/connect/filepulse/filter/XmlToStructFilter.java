@@ -38,6 +38,7 @@ import org.xml.sax.SAXParseException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -104,7 +105,7 @@ public class XmlToStructFilter extends AbstractRecordFilter<XmlToStructFilter> {
                 if (StringUtils.isBlank(value.getString())) {
                     return RecordsIterable.empty();
                 }
-                return parseDocument(xml.getBytes(), context);
+                return parseDocument(xml.getBytes(StandardCharsets.UTF_8), context);
             case BYTES:
                 byte[] bytes = value.getBytes();
                 if (bytes.length == 0) {

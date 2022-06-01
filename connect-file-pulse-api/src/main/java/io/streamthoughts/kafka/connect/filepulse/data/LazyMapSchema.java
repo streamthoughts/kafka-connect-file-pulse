@@ -61,4 +61,20 @@ public class LazyMapSchema extends MapSchema implements Schema {
     public boolean isResolvable() {
         return valueSchema!= null || !map.isEmpty();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

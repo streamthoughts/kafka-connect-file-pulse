@@ -1,0 +1,68 @@
+<FindBugsFilter>
+    <Match>
+        <Package name="io.streamthoughts.kafka.connect.filepulse.expression.parser.antlr4*"/>
+    </Match>
+
+    <!-- Ignore returning references to internal representations of objects -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+
+    <!-- Ignoring when internal representation stores reference to external representation -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "CRLF_INJECTION_LOGS"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "SE_NO_SERIALVERSIONID"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "RI_REDUNDANT_INTERFACES"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "PATH_TRAVERSAL_IN"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "UPM_UNCALLED_PRIVATE_METHOD"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "INFORMATION_EXPOSURE_THROUGH_AN_ERROR_MESSAGE"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "SE_BAD_FIELD"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "REDOS"/>
+    </Match>
+
+    <Match>
+        <Bug pattern = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="WEAK_MESSAGE_DIGEST_MD5" />
+    </Match>
+
+    <!-- TODO investigate on those bugs -->
+    <Match>
+        <Bug pattern="IS2_INCONSISTENT_SYNC" />
+    </Match>
+</FindBugsFilter>

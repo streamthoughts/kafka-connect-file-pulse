@@ -1,0 +1,5 @@
+<FindBugsFilter>
+    <Match>
+        <Package name="~io.streamthoughts.*" />
+    </Match>
+</FindBugsFilter>

@@ -41,14 +41,19 @@ public class LessThan implements ExpressionFunction {
      */
     @Override
     public Instance get() {
-        return new AbstractExpressionFunctionInstance() {
-            @Override
-            public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
-                final BigDecimal value1 = new BigDecimal(context.get(0).getString());
-                final BigDecimal value2 = new BigDecimal(context.get(1).getString());
-                final int i = value1.compareTo(value2);
-                return TypedValue.bool(i < 0);
-            }
-        };
+        return new FunctionInstance();
+    }
+
+    private static final class FunctionInstance extends AbstractExpressionFunctionInstance {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public TypedValue invoke(final EvaluatedExecutionContext context) throws ExpressionException {
+            final BigDecimal value1 = new BigDecimal(context.get(0).getString());
+            final BigDecimal value2 = new BigDecimal(context.get(1).getString());
+            final int i = value1.compareTo(value2);
+            return TypedValue.bool(i < 0);
+        }
     }
 }

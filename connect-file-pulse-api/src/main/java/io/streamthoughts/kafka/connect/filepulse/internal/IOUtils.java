@@ -43,9 +43,10 @@ public class IOUtils {
     }
 
     public static void createParentIfNotExists(final Path targetPath) throws IOException {
-        Objects.requireNonNull(targetPath, "file cannot be null");
-        if (!Files.exists(targetPath.getParent())) {
-            Files.createDirectories(targetPath.getParent());
+        Objects.requireNonNull(targetPath, "'targetPath' cannot be null");
+        Path parent = targetPath.getParent();
+        if (!Files.exists(parent)) {
+            Files.createDirectories(parent);
         }
     }
 

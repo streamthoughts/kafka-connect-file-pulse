@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -74,7 +75,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
         return prefix + Arrays
                 .stream(REGEX.split(toNormalize))
                 .filter(s -> !s.isEmpty())
-                .map(it -> it.substring(0, 1).toUpperCase() + it.substring(1))
+                .map(it -> it.substring(0, 1).toUpperCase(Locale.getDefault()) + it.substring(1))
                 .collect(Collectors.joining());
     }
 

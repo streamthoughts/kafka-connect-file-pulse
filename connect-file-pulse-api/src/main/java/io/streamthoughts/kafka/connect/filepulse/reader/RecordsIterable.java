@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -67,8 +68,7 @@ public class RecordsIterable<T> implements Iterable<T> {
      * @param records   the records.
      */
     public RecordsIterable(final List<T> records) {
-        Objects.requireNonNull(records, "records cannot be null");
-        this.records = records;
+        this.records = new ArrayList<>(Objects.requireNonNull(records, "records cannot be null"));
     }
 
     /**

@@ -32,6 +32,7 @@ import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +85,7 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
 
         if (value == null) return null;
 
-        final byte[] bytes = value.getBytes();
+        final byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
 
         List<SchemaAndNamedCaptured> allNamedCaptured = new ArrayList<>(matchPatterns.size());
 

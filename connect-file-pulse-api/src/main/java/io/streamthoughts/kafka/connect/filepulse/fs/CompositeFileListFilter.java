@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class CompositeFileListFilter implements FileListFilter, Closeable {
      * @param filters the list of filters to compose.
      */
     public CompositeFileListFilter(final Collection<FileListFilter> filters) {
-        this.filters = filters;
+        this.filters = new ArrayList<>(filters);
     }
 
     /**

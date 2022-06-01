@@ -21,6 +21,8 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractTransformExpressionFunction;
 
+import java.util.Locale;
+
 /**
  * Simple function to lowercase a string field.
  */
@@ -31,6 +33,6 @@ public class Lowercase extends AbstractTransformExpressionFunction {
      */
     @Override
     public TypedValue transform(final TypedValue value) {
-        return TypedValue.string(value.getString().toLowerCase());
+        return TypedValue.string(value.getString().toLowerCase(Locale.getDefault()));
     }
 }

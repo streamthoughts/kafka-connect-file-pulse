@@ -25,8 +25,11 @@ import org.apache.kafka.connect.header.ConnectHeaders;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * An object regrouping metadata about an input file manipulate by the connector.
@@ -108,8 +111,9 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
         @JsonCreator
         public ContentDigest(@JsonProperty("digest") final String digest,
                              @JsonProperty("algorithm") final String algorithm) {
-            this.digest = Objects.requireNonNull(digest, "digest should not be null");;
-            this.algorithm = Objects.requireNonNull(algorithm, "algorithm should not be null").toUpperCase();
+            this.digest = requireNonNull(digest, "'digest' should not be null");;
+            this.algorithm = requireNonNull(algorithm, "'algorithm' should not be null")
+                    .toUpperCase(Locale.getDefault());
         }
 
         @JsonProperty("digest")

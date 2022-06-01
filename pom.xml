@@ -80,14 +80,17 @@
     </licenses>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
+        <maven.failsafe.plugin.version>3.0.0-M6</maven.failsafe.plugin.version>
         <apache.avro.version>1.8.2</apache.avro.version>
         <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
         <io.confluent.version>6.2.1</io.confluent.version>
         <org.apache.kafka.version>3.2.0</org.apache.kafka.version>
-        <junit.version>4.13.1</junit.version>
+        <junit.version>5.8.2</junit.version>
+        <testcontainer.version>1.17.2</testcontainer.version>
         <kafka.connect.maven.plugin.version>0.12.0</kafka.connect.maven.plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${basedir}</checkstyle.config.location>
         <com.fasterxml.jackson.databind.version>2.13.3</com.fasterxml.jackson.databind.version>
         <com.fasterxml.jackson.core.version>2.13.2</com.fasterxml.jackson.core.version>
@@ -276,6 +279,28 @@
         </profile>
     </profiles>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -283,76 +308,64 @@
                 <artifactId>jackson-core</artifactId>
                 <version>${com.fasterxml.jackson.core.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>${com.fasterxml.jackson.annotations.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${com.fasterxml.jackson.databind.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
                 <version>${org.apache.kafka.version}</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>connect-api</artifactId>
                 <version>${org.apache.kafka.version}</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-connect-avro-converter</artifactId>
                 <version>${io.confluent.version}</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.7</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>1.21</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
                 <version>1.11.0</version>
             </dependency>
-
             <dependency>
                 <groupId>com.jsoniter</groupId>
                 <artifactId>jsoniter</artifactId>
                 <version>0.9.23</version>
             </dependency>
-
             <dependency>
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
                 <version>11.3</version>
             </dependency>
-
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-
             <!-- START test dependencies-->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -360,42 +373,57 @@
                 <version>${slf4j.version}</version>
                 <scope>test</scope>
             </dependency>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-
             <dependency>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-schema-registry-client</artifactId>
                 <version>${io.confluent.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>2.21.0</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
-                <version>1.17.2</version>
+                <version>${testcontainer.version}</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${testcontainer.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
                 <version>3.3.0</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>json-path</artifactId>
@@ -403,7 +431,6 @@
                 <scope>test</scope>
             </dependency>
             <!-- END test dependencies-->
-
         </dependencies>
     </dependencyManagement>
 

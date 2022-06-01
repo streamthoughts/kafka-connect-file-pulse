@@ -52,61 +52,45 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>connect-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>5.6</version>
         </dependency>
-
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-filepulse-api</artifactId>
             <version>${version}</version>
         </dependency>
-
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-filepulse-expression</artifactId>
             <version>${version}</version>
         </dependency>
-
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-transform-grok</artifactId>
             <version>1.1.0</version>
         </dependency>
-
         <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-filepulse-dataformat</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20220320</version>
         </dependency>
-
         <!-- START test dependencies-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>

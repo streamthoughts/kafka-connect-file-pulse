@@ -22,17 +22,21 @@ import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
 import io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.*;
+import static io.restassured.RestAssured.defaultParser;
+import static io.restassured.RestAssured.given;
+
 import java.util.List;
 import java.util.Map;
 
-public class FilePulseIT extends AbstractKafkaConnectTest {
+@Tag("integration")
+public class FilePulseConnectorPluginsIT extends AbstractKafkaConnectTest {
 
     @Test
-    public void testConnectorPluginsIsLoaded() {
+    public void should_load_connector_plugin() {
 
         List<Map<String, String>> plugins;
         final Response response = doGetRequest("http://" + getConnectWorker() + "/connector-plugins");
@@ -41,12 +45,12 @@ public class FilePulseIT extends AbstractKafkaConnectTest {
         for (final Map<String, String> plugin : plugins) {
             String connectorClass = plugin.get("class");
             if (connectorClass.equals(FilePulseSourceConnector.class.getCanonicalName())) {
-                Assert.assertEquals(Version.getVersion(), plugin.get("version"));
-                Assert.assertEquals("source", plugin.get("type"));
+                Assertions.assertEquals(Version.getVersion(), plugin.get("version"));
+                Assertions.assertEquals("source", plugin.get("type"));
                 return;
             }
         }
-        Assert.fail("Connector plugins not loaded : " + FilePulseSourceConnector.class.getCanonicalName());
+        Assertions.fail("Connector plugins not loaded : " + FilePulseSourceConnector.class.getCanonicalName());
     }
 
     public static Response doGetRequest(final String endpoint) {

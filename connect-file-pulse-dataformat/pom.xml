@@ -31,12 +31,6 @@
             <artifactId>connect-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.jsoniter</groupId>
             <artifactId>jsoniter</artifactId>
         </dependency>

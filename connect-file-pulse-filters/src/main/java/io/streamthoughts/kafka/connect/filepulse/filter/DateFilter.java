@@ -23,13 +23,13 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
+import io.streamthoughts.kafka.connect.filepulse.internal.DateTimeParser;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.errors.ConnectException;
 
-import java.time.Instant;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -43,7 +43,9 @@ public class DateFilter extends AbstractRecordFilter<DateFilter> {
 
     private Expression targetExpression;
 
-    private List<DateTimeFormatter> dtf;
+    private  ZoneId zoneId;
+
+    private List<DateTimeParser> dtp;
 
     /**
      * {@inheritDoc}
@@ -61,15 +63,13 @@ public class DateFilter extends AbstractRecordFilter<DateFilter> {
             throw new ConnectException("Invalid configuration, at least one date format must be provided");
         }
 
+
+        zoneId = config.timezone();
+        dtp = new ArrayList<>(config.formats().size());
         final Locale locale = config.locale();
-        final ZoneId timezone = config.timezone();
-        dtf = new ArrayList<>(config.formats().size());
         for (String format : config.formats()) {
             try {
-                final DateTimeFormatter formatter = DateTimeFormatter
-                        .ofPattern(format, locale)
-                        .withZone(timezone);
-                dtf.add(formatter);
+                dtp.add(new DateTimeParser(format, locale));
             } catch (IllegalArgumentException e) {
                 throw new ConnectException("Invalid configuration, cannot parse date format : " + format);
             }
@@ -100,19 +100,20 @@ public class DateFilter extends AbstractRecordFilter<DateFilter> {
         );
 
         final Expression field = mayEvaluateFieldExpression(evaluationContext);
-        final String date = field.readValue(evaluationContext, String.class);
+        final String datetime = field.readValue(evaluationContext, String.class);
 
-        if (date == null) {
+        if (datetime == null) {
             throw new FilterException("Invalid field name '" + config.field() + "'");
         }
 
         Exception lastException = null;
 
         final Expression target = mayEvaluateTargetExpression(evaluationContext);
-        for (DateTimeFormatter formatter : dtf) {
+        for (DateTimeParser parser : dtp) {
             long epochMilli = -1;
             try {
-                epochMilli = Instant.from(formatter.parse(date)).toEpochMilli();
+                final ZonedDateTime zdt = parser.parse(datetime, zoneId);
+                epochMilli = zdt.toInstant().toEpochMilli();
             } catch (Exception e) {
                 lastException = e;
                 continue;
@@ -122,7 +123,7 @@ public class DateFilter extends AbstractRecordFilter<DateFilter> {
         }
 
         throw new FilterException(
-            String.format("Failed to parse date from field '%s' with value '%s'", config.field() , date),
+            String.format("Failed to parse date from field '%s' with value '%s'", config.field() , datetime),
             lastException
         );
     }

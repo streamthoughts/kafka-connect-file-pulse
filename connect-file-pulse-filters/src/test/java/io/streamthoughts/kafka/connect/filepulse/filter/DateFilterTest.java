@@ -22,9 +22,9 @@ import io.streamthoughts.kafka.connect.filepulse.config.DateFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class DateFilterTest {
     private FilterContext context;
     private Map<String, Object> configs;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         filter = new DateFilter();
         configs = new HashMap<>();
@@ -45,6 +45,21 @@ public class DateFilterTest {
                 .withMetadata(new GenericFileObjectMeta(null, "", 0L, 0L, null, null))
                 .withOffset(FileRecordOffset.invalid())
                 .build();
+    }
+
+    @Test
+    public void shouldConvertToEpochTimeGivenDate() {
+        configs.put(DateFilterConfig.DATE_FIELD_CONFIG, "$.date");
+        configs.put(DateFilterConfig.DATE_TARGET_CONFIG, "$.timestamp");
+        configs.put(DateFilterConfig.DATE_FORMATS_CONFIG, Collections.singletonList("yyyy-MM-dd"));
+
+        filter.configure(configs, alias -> null);
+        TypedStruct struct = TypedStruct.create().put("date", "2001-07-04");
+        List<TypedStruct> results = filter.apply(context, struct, false).collect();
+
+        TypedStruct record = results.get(0);
+
+        Assertions.assertEquals(994204800000L, record.getLong("timestamp").longValue());
     }
 
     @Test
@@ -59,7 +74,7 @@ public class DateFilterTest {
 
         TypedStruct record = results.get(0);
 
-        Assert.assertEquals(994248536000L, record.getLong("timestamp").longValue());
+        Assertions.assertEquals(994248536000L, record.getLong("timestamp").longValue());
     }
 
     @Test
@@ -75,7 +90,7 @@ public class DateFilterTest {
 
         TypedStruct record = results.get(0);
 
-        Assert.assertEquals(994248536000L, record.getLong("timestamp").longValue());
+        Assertions.assertEquals(994248536000L, record.getLong("timestamp").longValue());
     }
 
     @Test
@@ -91,7 +106,7 @@ public class DateFilterTest {
 
         TypedStruct record = results.get(0);
 
-        Assert.assertEquals(994248536000L, record.getLong("timestamp").longValue());
+        Assertions.assertEquals(994248536000L, record.getLong("timestamp").longValue());
     }
 
 }

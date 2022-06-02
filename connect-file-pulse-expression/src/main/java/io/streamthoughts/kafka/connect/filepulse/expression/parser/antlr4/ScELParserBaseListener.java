@@ -1,8 +1,8 @@
-// Generated from io/streamthoughts/kafka/connect/filepulse/expression/parser/antlr4/ScELParser.g4 by ANTLR 4.7.1
+// Generated from io/streamthoughts/kafka/connect/filepulse/expression/parser/antlr4/ScELParser.g4 by ANTLR 4.10.1
 package io.streamthoughts.kafka.connect.filepulse.expression.parser.antlr4;
 
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with

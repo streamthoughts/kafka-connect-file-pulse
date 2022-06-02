@@ -4,7 +4,7 @@ options { tokenVocab = ScELLexer; }
 
 @header {
 /*
- * Copyright 2019-2020 StreamThoughts.
+ * Copyright 2022 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with

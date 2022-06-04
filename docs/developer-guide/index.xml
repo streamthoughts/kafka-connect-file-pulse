@@ -1059,6 +1059,11 @@ filters.ParseLog4jLog.overwrite=logmessage
 &lt;td>&lt;/td>
 &lt;/tr>
 &lt;tr>
+&lt;td>&lt;a href="./filters#csvfilter">CSVFilter&lt;/a>&lt;/td>
+&lt;td>Parses a message field&amp;rsquo;s value containing columns delimited by a character into a struct&lt;/td>
+&lt;td>&lt;code>v2.6.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
 &lt;td>&lt;a href="../filters#datefilter">DateFilter&lt;/a>&lt;/td>
 &lt;td>Converts a field&amp;rsquo;s value containing a date to a unix epoch time&lt;/td>
 &lt;td>&lt;/td>
@@ -1148,10 +1153,11 @@ filters.ParseLog4jLog.overwrite=logmessage
 &lt;h2 id="difference-between-kafka-connect-single-message-transforms-smt-functionality">Difference between Kafka Connect Single Message Transforms (SMT) functionality&lt;/h2>
 &lt;p>Filters can be compared to Kafka Connect built-in &lt;a href="https://kafka.apache.org/documentation/#connect_transforms">Transformers&lt;/a>.
 However, filters allow more complex pipelines to be built for structuring file data.
-For example, they can be used to split one input message to multiple messages or to temporarily buffer consecutive messages in order to regroup them by fields or a pattern.&lt;/p></description></item><item><title>Docs: Accessing Data and Metadata</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</guid><description>
-&lt;p>Some filters (e.g : &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter">AppendFilter&lt;/a>) can be configured using &lt;em>Simple Connect Expression Language&lt;/em>.&lt;/p>
-&lt;p>&lt;em>Simple Connect Expression Language&lt;/em> (ScEL for short) is an expression language based on regex that allows quick access and manipulating record fields and metadata.&lt;/p>
+For example, they can be used to split one input message to multiple messages or to temporarily buffer consecutive messages in order to regroup them by fields or a pattern.&lt;/p></description></item><item><title>Docs: Accessing Data and Metadata</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</link><pubDate>Fri, 03 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/</guid><description>
+&lt;p>Some filters (e.g : &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/#appendfilter">AppendFilter&lt;/a>) can be configured using the &lt;em>Simple Connect Expression Language&lt;/em>.&lt;/p>
+&lt;p>&lt;em>Simple Connect Expression Language&lt;/em> (ScEL for short) is an expression language that allows accessing and manipulating record fields and metadata.&lt;/p>
 &lt;p>The syntaxes to define an expression are of the form : &lt;code>&amp;lt;expression string&amp;gt;&lt;/code> or &lt;code>&amp;quot;{{ &amp;lt;expression string&amp;gt; }}&amp;quot;&lt;/code>.&lt;/p>
+&lt;h2 id="expressions">Expressions&lt;/h2>
 &lt;p>ScEL supports the following capabilities :&lt;/p>
 &lt;ul>
 &lt;li>&lt;strong>Literal expressions&lt;/strong>&lt;/li>
@@ -1160,251 +1166,50 @@ For example, they can be used to split one input message to multiple messages or
 &lt;li>&lt;strong>String substitution&lt;/strong>&lt;/li>
 &lt;li>&lt;strong>Functions&lt;/strong>&lt;/li>
 &lt;/ul>
-&lt;h2 id="literal-expressions">Literal expressions&lt;/h2>
+&lt;h3 id="literal-expressions">Literal expressions&lt;/h3>
 &lt;ul>
 &lt;li>String : &lt;code>'Hello World'&lt;/code>&lt;/li>
 &lt;li>Number : &lt;code>42&lt;/code>&lt;/li>
 &lt;li>Boolean: &lt;code>True&lt;/code>&lt;/li>
 &lt;li>Nullable: &lt;code>null&lt;/code>&lt;/li>
 &lt;/ul>
-&lt;h2 id="field-selector">Field Selector&lt;/h2>
+&lt;h3 id="field-selector">Field Selector&lt;/h3>
 &lt;p>The expression language can be used to easily select one field from the input record :&lt;/p>
 &lt;p>&lt;code>$.username&lt;/code>&lt;/p>
-&lt;h2 id="nested-navigation">Nested Navigation&lt;/h2>
+&lt;h3 id="nested-navigation">Nested Navigation&lt;/h3>
 &lt;p>To navigate down a struct value, just use a period to indicate a nested field value :&lt;/p>
 &lt;p>&lt;code>$.address.city&lt;/code>&lt;/p>
-&lt;h2 id="string-substitution">String substitution&lt;/h2>
+&lt;h3 id="string-substitution">String substitution&lt;/h3>
 &lt;p>The expression language can be used to easily build a new string field that concatenate multiple ones :&lt;/p>
 &lt;p>&lt;code>The user {{ $.username }} is living in city {{ $.address.city }}&lt;/code>&lt;/p>
-&lt;h2 id="function">Function&lt;/h2>
+&lt;h3 id="function">Function&lt;/h3>
 &lt;p>The expression language support function call :&lt;/p>
 &lt;p>&lt;code>The user {{ $.username }} is living in city {{ uppercase($.address.city) }}&lt;/code>&lt;/p>
-&lt;h2 id="dynamic-field-selector">Dynamic Field Selector&lt;/h2>
-&lt;p>String substitution can be used to dynamically select a field :&lt;/p>
-&lt;p>The bellow example shows how to dynamically build a field selector by concatenating &lt;code>$.&lt;/code> and
-the first element present in the array field &lt;code>$.values&lt;/code>.&lt;/p>
-&lt;p>&lt;code>{{ '$.'extract_array($.values, 0) }}&lt;/code>&lt;/p>
-&lt;p>Note the use of double-quotes to define a substitution expressions&lt;/p>
-&lt;h2 id="built-in-functions">Built-in Functions&lt;/h2>
-&lt;p>ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Function&lt;/th>
-&lt;th>Since&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Syntax&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>and&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Checks if all of the given conditional expressions are &lt;code>true&lt;/code>.&lt;/td>
-&lt;td>&lt;code>{{ and(booleanExpression1, booleanExpression2, ...) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>concat&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Concatenate two or more string expressions.&lt;/td>
-&lt;td>&lt;code>{{ concat(expr1, expr2, ...) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>concat_ws&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Concatenate two or more string expressions, using the specified separator between each.&lt;/td>
-&lt;td>&lt;code>{{ concat_ws(separator, prefix, suffix, expr1, expr2, ...) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>contains&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an array field&amp;rsquo;s value contains the specified value&lt;/td>
-&lt;td>&lt;code>{{ contains(array, 'value') }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>converts&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Converts a field&amp;rsquo;s value into the specified type&lt;/td>
-&lt;td>&lt;code>{{ converts(field_expr, INTEGER) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>ends_with&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if a string field&amp;rsquo;s value end with the specified string suffix&lt;/td>
-&lt;td>&lt;code>{{ ends_with(field_expr, 'suffix') }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>equals&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if a string or number fields&amp;rsquo;s value equals the specified value&lt;/td>
-&lt;td>&lt;code>{{ equals(field_expr, value) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>exists&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an object has the specified field&lt;/td>
-&lt;td>&lt;code>{{ exists(obj_expr, field_expr) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>extract_array&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns the element at the specified position of the specified array&lt;/td>
-&lt;td>&lt;code>{{ extract_array(array, 0) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>gt&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Executes &amp;ldquo;&lt;em>greater than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is greater than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
-&lt;td>&lt;code>{{ gt(expressionValue1, expressionValue2) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>hash&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Hash a given string expression, using murmur2 algorithm&lt;/td>
-&lt;td>&lt;code>{{ hash(field_expr) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>if&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Evaluates the given boolean expression and returns one value if &lt;code>true&lt;/code> and another value if &lt;code>false&lt;/code>.&lt;/td>
-&lt;td>&lt;code>{{ if(booleanExpression, valueIfTrue, valueIfFalse ) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>is_null&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if a field&amp;rsquo;s value is null&lt;/td>
-&lt;td>&lt;code>{{ is_null(field) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>is_empty&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an array as no elements or a string field has no characters&lt;/td>
-&lt;td>&lt;code>{{ is_null(field) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>length&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns the number of elements into an array or the length of a string field&lt;/td>
-&lt;td>&lt;code>{{ length(array) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>lt&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Executes &amp;ldquo;&lt;em>less than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is less than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
-&lt;td>&lt;code>{{ lt(expressionValue1, expressionValue2) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>lowercase&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Converts all of the characters in a string field&amp;rsquo;s value to lower case&lt;/td>
-&lt;td>&lt;code>{{ lowercase(field) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>matches&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if a field&amp;rsquo;s value match the specified regex&lt;/td>
-&lt;td>&lt;code>{{ matches(field_expr, 'regex') }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>md5&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Computes the MD5 hash of string expression&lt;/td>
-&lt;td>&lt;code>{{ md5(field_expr) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>nlv&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Sets a default value if a field&amp;rsquo;s value is null&lt;/td>
-&lt;td>&lt;code>{{ length(array) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>not&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Reverses a boolean value&lt;/td>
-&lt;td>&lt;code>{{ not(booleanExpression) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>or&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Checks if at least one of the given conditional expressions is &lt;code>true&lt;/code>..&lt;/td>
-&lt;td>&lt;code>{{ or(booleanExpression1, booleanExpression2, ...) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>replace_all &lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Replaces every subsequence of the field&amp;rsquo;s value that matches the given pattern with the given replacement string.&lt;/td>
-&lt;td>&lt;code>{{ replace_all(field_expr, 'regex', 'replacement') }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>split&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Split a string field&amp;rsquo;s value into an array using the specified regex or character&lt;/td>
-&lt;td>&lt;code>{{ split(field_expr, regex) }}&lt;/code> or &lt;code>{{ split(field_expr, regex, limit) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>starts_with&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an a string field&amp;rsquo;s value start with the specified string prefix&lt;/td>
-&lt;td>&lt;code>{{ starts_with(field_expr, 'prefix') }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>timestamp_diff&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Calculates the amount of time between two epoch times in seconds or milliseconds. For more information on &lt;code>unit&lt;/code> see &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html">ChronoUnit&lt;/a>.&lt;/td>
-&lt;td>&lt;code>{{ timestamp_diff(unit, epoch_time_expression1, epoch_time_expression2) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>to_timestamp&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Parses a given string value and returns the epoch-time in milliseconds.&lt;/td>
-&lt;td>&lt;code>{{ to_timestamp(datetime_expression, pattern [, timezone]) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>trim&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Trims the spaces from the beginning and end of a string.&lt;/td>
-&lt;td>&lt;code>{{ trim(field_expr) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>unix_timestamp&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Returns the current time in milliseconds.&lt;/td>
-&lt;td>&lt;code>{{ unix_timestamp() }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>uppercase&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Converts all of the characters in a string field&amp;rsquo;s value to upper case&lt;/td>
-&lt;td>&lt;code>{{ uppercase(field_expr) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>uuid&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Create a Universally Unique Identifier (UUID)&lt;/td>
-&lt;td>&lt;code>{{ uuid() }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
 &lt;p>In addition, ScEL supports nested functions.&lt;/p>
 &lt;p>For example, the following expression can be used to replace all whitespace characters after transforming our field&amp;rsquo;s value into lowercase.&lt;/p>
 &lt;pre>&lt;code>replace_all(lowercase($.field), '\\s', '-')
 &lt;/code>&lt;/pre>
 &lt;div class="alert alert-warning" role="alert">
-&lt;h4 class="alert-heading">Limitation&lt;/h4>
+&lt;h4 class="alert-heading">Limitations&lt;/h4>
 Currently, FilePulse does not support user-defined functions (UDFs). So you cannot register your own functions to enrich the expression language.
 &lt;/div>
+&lt;h3 id="dynamic-field-selector">Dynamic Field Selector&lt;/h3>
+&lt;p>String substitution can be used to dynamically select a field :&lt;/p>
+&lt;p>The bellow example shows how to dynamically build a field selector by concatenating &lt;code>$.&lt;/code> and
+the first element present in the array field &lt;code>$.values&lt;/code>.&lt;/p>
+&lt;p>&lt;code>{{ '$.'extract_array($.values, 0) }}&lt;/code>&lt;/p>
+&lt;p>Note the use of double-quotes to define a substitution expressions&lt;/p>
 &lt;h2 id="scopes">Scopes&lt;/h2>
-&lt;p>In the previous section, we have shown how to use the expression language to select a specific field.
-The selected field was part of our the current record being processed.&lt;/p>
-&lt;p>Actually, ScEL allows you to get access to additional fields through the used of scopes.
-Basically, a scope defined the root object on which a selector expression must evaluated.&lt;/p>
-&lt;p>The syntax to define an expression with a scope is of the form : &amp;ldquo;&lt;code>$&amp;lt;scope&amp;gt;.&amp;lt;selector expression string&amp;gt;&lt;/code>&amp;rdquo;.&lt;/p>
-&lt;p>By default, if no scope is defined in the expression, the scope &lt;code>$value&lt;/code> is implicitly used.&lt;/p>
-&lt;p>ScEL supports a number of predefined scopes that can be used for example :&lt;/p>
+&lt;p>In the previous section, we saw how to use the expression language to select a specific field was part of the record being processed.&lt;/p>
+&lt;p>In addition to that, &lt;em>ScEL&lt;/em> allows you to access additional fields through the use of &lt;em>Scopes&lt;/em>.
+Basically, a &lt;em>scope&lt;/em> defined the &lt;em>root object&lt;/em> on which a selector expression will be evaluated.&lt;/p>
+&lt;p>The syntax to define an expression with a &lt;em>scope&lt;/em> is of the form : &amp;ldquo;&lt;code>$[&amp;lt;scope&amp;gt;].&amp;lt;selector expression string&amp;gt;&lt;/code>&amp;rdquo;.&lt;/p>
+&lt;p>By default, if no &lt;em>scope&lt;/em> is defined in the expression, the scope &lt;code>$value&lt;/code> is implicitly used.&lt;/p>
+&lt;p>ScEL supports a number of predefined &lt;em>scopes&lt;/em> that can be used for example :&lt;/p>
 &lt;ul>
-&lt;li>&lt;strong>To define the topic for the record.&lt;/strong>&lt;/li>
-&lt;li>&lt;strong>To define the key for the record.&lt;/strong>&lt;/li>
-&lt;li>&lt;strong>To get access to metadata about the source file.&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>To define the &lt;em>topic&lt;/em>, the &lt;em>key&lt;/em>, the &lt;em>headers&lt;/em>, or the &lt;em>timestamp&lt;/em> for the record.&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>To access to the metadata of the source file.&lt;/strong>&lt;/li>
+&lt;li>&lt;strong>To keep transient and contextual data between filters&lt;/strong>.&lt;/li>
 &lt;li>Etc.&lt;/li>
 &lt;/ul>
 &lt;table>
@@ -1419,7 +1224,7 @@ Basically, a scope defined the root object on which a selector expression must e
 &lt;tr>
 &lt;td>&lt;code>$headers&lt;/code>&lt;/td>
 &lt;td>The record headers&lt;/td>
-&lt;td>-&lt;/td>
+&lt;td>&lt;code>map[string, object]&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>$key&lt;/code>&lt;/td>
@@ -1463,13 +1268,17 @@ Basically, a scope defined the root object on which a selector expression must e
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;p>Note, that in case of failures more fields are added to the current filter context (see : &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/handling-failures/">Handling Failures&lt;/a>)&lt;/p>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Access error&lt;/h4>
+In case of failures an additional &lt;code>$error&lt;/code> scope will be added to the current filter context (see : &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/handling-failures/">Handling Failures&lt;/a>)
+&lt;/div>
 &lt;h3 id="record-headers">Record Headers&lt;/h3>
 &lt;p>The scope &lt;code>headers&lt;/code> allows defining the headers of the output record.&lt;/p>
 &lt;h3 id="record-key">Record key&lt;/h3>
 &lt;p>The scope &lt;code>key&lt;/code> allows defining the key of the output record. Only string key is currently supported.&lt;/p>
 &lt;h3 id="source-metadata">Source Metadata&lt;/h3>
 &lt;p>The scope &lt;code>metadata&lt;/code> allows read access to information about the file being processing.&lt;/p>
+&lt;h4 id="commons-metadata">Commons Metadata&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1481,42 +1290,93 @@ Basically, a scope defined the root object on which a selector expression must e
 &lt;tbody>
 &lt;tr>
 &lt;td>&lt;code>$metadata.name&lt;/code>&lt;/td>
-&lt;td>The file name&lt;/td>
+&lt;td>The URI of the source object.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>$metadata.path&lt;/code>&lt;/td>
-&lt;td>The file directory path&lt;/td>
+&lt;td>&lt;code>$metadata.uri&lt;/code>&lt;/td>
+&lt;td>The name of the source object.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.contentLength&lt;/code>&lt;/td>
+&lt;td>The content-length of the source object.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.lastModified&lt;/code>&lt;/td>
+&lt;td>The creation date or the last modified date, whichever is the latest.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.contentDigest&lt;/code>&lt;/td>
+&lt;td>The digest of the source object content.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.userDefinedMetadata&lt;/code>&lt;/td>
+&lt;td>The user-defined metadata.&lt;/td>
+&lt;td>&lt;code>Map[string, object]&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>The &lt;code>userDefinedMetadata&lt;/code> object may contain additional information about the source object.&lt;/p>
+&lt;p>&lt;strong>Azure&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>azure.blob.storage.account&lt;/code>&lt;/li>
+&lt;li>&lt;code>azure.blob.storage.blobUrl&lt;/code>&lt;/li>
+&lt;li>&lt;code>azure.blob.storage.creationTime&lt;/code>&lt;/li>
+&lt;li>&lt;code>azure.blob.storage.contentEncoding&lt;/code>&lt;/li>
+&lt;li>&lt;code>azure.blob.storage.contentType&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>AWS&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>s3.object.summary.bucketName&lt;/code>&lt;/li>
+&lt;li>&lt;code>s3.object.summary.key&lt;/code>&lt;/li>
+&lt;li>&lt;code>s3.object.summary.etag&lt;/code>&lt;/li>
+&lt;li>&lt;code>s3.object.summary.storageClass&lt;/code>&lt;/li>
+&lt;li>&lt;code>s3.object.user.metadata.&amp;lt;METADATA&amp;gt;&lt;/code> (optional)&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>GCP&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>gcs.blob.bucket&lt;/code>&lt;/li>
+&lt;li>&lt;code>gcs.blob.name&lt;/code>&lt;/li>
+&lt;li>&lt;code>gcs.blob.storageClass&lt;/code> (optional)&lt;/li>
+&lt;li>&lt;code>gcs.blob.contentEncodinge&lt;/code> (optional)&lt;/li>
+&lt;li>&lt;code>gcs.blob.contentType&lt;/code> (optional)&lt;/li>
+&lt;li>&lt;code>gcs.blob.createTime&lt;/code> (optional)&lt;/li>
+&lt;li>&lt;code>gcs.blob.ownerType&lt;/code> (optional)&lt;/li>
+&lt;li>&lt;code>gcs.blob.user.metadata.&amp;lt;METADATA&amp;gt;&lt;/code> (optional)&lt;/li>
+&lt;/ul>
+&lt;h4 id="local-file-object">Local File Object&lt;/h4>
+&lt;p>For files read from the local file system, the following additional metadata will be available.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Predefined Fields (ScEL)&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
 &lt;tr>
 &lt;td>&lt;code>$metadata.absolutePath&lt;/code>&lt;/td>
 &lt;td>The file absolute path&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>$metadata.hash&lt;/code>&lt;/td>
-&lt;td>The file CRC32 hash&lt;/td>
-&lt;td>&lt;code>int&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>$metadata.lastModified&lt;/code>&lt;/td>
-&lt;td>The file last modified time.&lt;/td>
-&lt;td>&lt;code>long&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>$metadata.size&lt;/code>&lt;/td>
-&lt;td>The file size&lt;/td>
-&lt;td>&lt;code>long&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
 &lt;td>&lt;code>$metadata.inode&lt;/code>&lt;/td>
 &lt;td>The file Unix inode&lt;/td>
 &lt;td>&lt;code>long&lt;/code>&lt;/td>
 &lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>$metadata.path&lt;/code>&lt;/td>
+&lt;td>The file directory path&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h2 id="record-offset">Record Offset&lt;/h2>
+&lt;h3 id="record-offset">Record Offset&lt;/h3>
 &lt;p>The scope &lt;code>offset&lt;/code> allows read access to information about the original position of the record into the source file.
 The available fields depend on the configured FileInputRecord.&lt;/p>
 &lt;table>
@@ -1616,7 +1476,7 @@ The available fields depend on the configured FileInputRecord.&lt;/p>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h2 id="system">System&lt;/h2>
+&lt;h3 id="system">System&lt;/h3>
 &lt;p>The scope &lt;code>system&lt;/code> allows accessing to the system environment variables and runtime properties.&lt;/p>
 &lt;table>
 &lt;thead>
@@ -1639,16 +1499,765 @@ The available fields depend on the configured FileInputRecord.&lt;/p>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h2 id="timestamp">Timestamp&lt;/h2>
+&lt;h3 id="timestamp">Timestamp&lt;/h3>
 &lt;p>The scope &lt;code>$timestamp&lt;/code> allows defining the timestamp of the output record.&lt;/p>
-&lt;h2 id="topic">Topic&lt;/h2>
+&lt;h3 id="topic">Topic&lt;/h3>
 &lt;p>The scope &lt;code>$topic&lt;/code> allows defining the target topic of the output record.&lt;/p>
-&lt;h2 id="value">Value&lt;/h2>
+&lt;h3 id="value">Value&lt;/h3>
 &lt;p>The scope &lt;code>$value&lt;/code> allows defining the fields of the output record&lt;/p>
-&lt;h2 id="variables">Variables&lt;/h2>
+&lt;h3 id="variables">Variables&lt;/h3>
 &lt;p>The scope &lt;code>$variables&lt;/code> allows read/write access to a simple key-value map structure.
 This scope can be used to share user-defined variables between &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters/">Processing Filters&lt;/a>.&lt;/p>
-&lt;p>Note : variables are not cached between records.&lt;/p></description></item><item><title>Docs: Conditional Execution</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</guid><description>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Warning&lt;/h4>
+Variables are not cached between records.
+&lt;/div>
+&lt;h2 id="built-in-functions">Built-in Functions&lt;/h2>
+&lt;p>ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.&lt;/p>
+&lt;h3 id="numeric-functions">Numeric functions&lt;/h3>
+&lt;p>ScEL numeric functions are used primarily for numeric manipulation and/or mathematical calculations.&lt;/p>
+&lt;h4 id="converts">CONVERTS&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ converts(field_expression, type) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>ANY&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Converts one type to another. The following casts are supported:&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="gt">GT&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ gt(field_expression1, field_expression2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Executes &amp;ldquo;&lt;em>less than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>TRUE&lt;/code> if the first value is less than the second value, &lt;code>FALSE&lt;/code>, otherwise.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="lt">LT&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ lt(field_expression1, field_expression2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Executes &amp;ldquo;&lt;em>greater than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>TRUE&lt;/code> if the first value is greater than the second value, &lt;code>FALSE&lt;/code>, otherwise.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="binary-functions">Binary Functions&lt;/h3>
+&lt;h4 id="and">AND&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ and(boolean_expression1, boolean_expression2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Checks if all of the given conditional expressions are &lt;code>TRUE&lt;/code>.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="if">IF&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ and(boolean_expression1, boolean_expression2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Evaluates the given boolean expression and returns one value if &lt;code>TRUE&lt;/code> and another value if &lt;code>FALSE&lt;/code>.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="not">NOT&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ not(boolean_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Reverses a boolean value.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="or">OR&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ not(boolean_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Checks if at least one of the given conditional expressions is &lt;code>TRUE&lt;/code>.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="collection">Collection&lt;/h3>
+&lt;h4 id="exctract_array">EXCTRACT_ARRAY&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ extract_array(array_expression, index) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>ANY&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns the element at the specified position of the specified array.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="length">LENGTH&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ length(array_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>INTEGER&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns the number of elements into an array or the length of a string field&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="contains">CONTAINS&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ contains(array_expression, value_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns &lt;code>TRUE&lt;/code> if an array contains a given value.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="date-and-time">Date and time&lt;/h3>
+&lt;h4 id="timestamp_diff">TIMESTAMP_DIFF&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ timestamp_diff(unit, epoch_time_expression1, epoch_time_expression2) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>LONG&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Calculates the amount of time between two epoch times in seconds or milliseconds. For more information on &lt;code>unit&lt;/code> see &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html">ChronoUnit&lt;/a>.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="to_timestamp">TO_TIMESTAMP&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ to_timestamp(datetime_expression, pattern [, timezone]) }} }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>LONG&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Parses a given string value and returns the epoch-time in milliseconds.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="unix_timestamp">UNIX_TIMESTAMP&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ unix_timestamp() }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>LONG&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns the current time in milliseconds.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="nulls">Nulls&lt;/h3>
+&lt;h4 id="is_empty">IS_EMPTY&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ is_empty(array_expression1) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns &lt;code>TRUE&lt;/code> if an array as no elements or a string field has no characters&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="is_null">IS_NULL&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.4.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ is_null(field_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns &lt;code>TRUE&lt;/code> if a field&amp;rsquo;s value is &lt;code>NULL&lt;/code>.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="nlv">NLV&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ nlv(field_expression, default_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>Any&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Sets a default value if a field&amp;rsquo;s value is &lt;code>NULL&lt;/code>&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="strings--objects">Strings &amp;amp; Objects&lt;/h3>
+&lt;h4 id="concat">CONCAT&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ concat(field_expression01, field_expression02, ...) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns a &lt;code>STRING&lt;/code> value consisting of the concatenation of two or more string expressions.&lt;/p>
+&lt;/blockquote>
+&lt;h5 id="examples">Examples&lt;/h5>
+&lt;p>&lt;strong>Concatenate two fields&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ concat(world'hello','') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output (type = &lt;code>STRING&lt;/code>)&lt;/em>:&lt;/p>
+&lt;p>&lt;code>helloworld&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="concat_ws">CONCAT_WS&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ concat_ws(separator, prefix, suffix, field_expression01, field_expression02, ...) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns a &lt;code>STRING&lt;/code> value consisting of the concatenation of two or more string expressions, using the specified separator between each.
+Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffixed.&lt;/p>
+&lt;/blockquote>
+&lt;h5 id="examples-1">Examples&lt;/h5>
+&lt;p>&lt;strong>Concatenate two fields&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ concat(' ', '', '!', 'hello','world') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output (type = &lt;code>STRING&lt;/code>)&lt;/em>:&lt;/p>
+&lt;p>&lt;code>hello world!&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h5 id="hash">HASH&lt;/h5>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ hash(field_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns the hashed of a given &lt;code>STRING&lt;/code> expression, using murmur2 algorithm.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="equals">EQUALS&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ equals(field_expression, value_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns &lt;code>TRUE&lt;/code> if a &lt;code>STRING&lt;/code> or number fields&amp;rsquo;s value equals the specified value.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="ends_with">ENDS_WITH&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ ends_with(field_expression, suffix) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns &lt;code>TRUE&lt;/code> if a string field&amp;rsquo;s value end with the specified string suffix.&lt;/p>
+&lt;/blockquote>
+&lt;h5 id="examples-2">Examples&lt;/h5>
+&lt;p>&lt;strong>Check whether a field ends with a given suffix&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ ends_with('thumbnail.png', '.png') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output (type = &lt;code>BOOLEAN&lt;/code>)&lt;/em>:&lt;/p>
+&lt;p>&lt;code>true&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="exists">EXISTS&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ exists(struct_expression, 'field') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns &lt;code>TRUE&lt;/code> if a &lt;code>STRUCT&lt;/code> has the specified field.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="lowercase">LOWERCASE&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ lowercase(field_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Converts all of the characters in a &lt;code>STRING&lt;/code> value to lower case.&lt;/p>
+&lt;/blockquote>
+&lt;h5 id="examples-3">Examples&lt;/h5>
+&lt;p>&lt;strong>Converts a field to lowercase&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ lowercase('Apache Kafka') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output (type = &lt;code>STRING&lt;/code>)&lt;/em>&lt;/p>
+&lt;p>&lt;code>apache kafka&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="matches">MATCHES&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ matches(field_expression, 'regex') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns &lt;code>TRUE&lt;/code> if a field&amp;rsquo;s value match the specified regex.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="md5">MD5&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ md5(field_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns the MD5 digest of &lt;code>STRING&lt;/code> value.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="replace_all">REPLACE_ALL&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ replace_all(field_expression, 'regex', 'replacement') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Replaces every subsequence of a &lt;code>STRING&lt;/code> that matches the given pattern with the given replacement string.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="split">SPLIT&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ split(field_expr, regex [,limit]) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>ARRAY&amp;lt;STRING&amp;gt;&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Splits a &lt;code>STRING&lt;/code> value using the specified regex or character and returns the resulting array.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="starts_with">STARTS_WITH&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ starts_with(field_expression, suffix) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns &lt;code>STRING&lt;/code> if a string field&amp;rsquo;s value start with the specified string prefix.&lt;/p>
+&lt;/blockquote>
+&lt;h5 id="examples-4">Examples&lt;/h5>
+&lt;p>&lt;strong>Check whether a field starts with a given prefix&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ starts_with('fr_FR', 'fr') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output (type = &lt;code>BOOLEAN&lt;/code>)&lt;/em>:&lt;/p>
+&lt;p>&lt;code>true&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="trim">TRIM&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ trim(field_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Trims the spaces from the beginning and end of a string.&lt;/p>
+&lt;/blockquote>
+&lt;h5 id="examples-5">Examples&lt;/h5>
+&lt;p>&lt;strong>Remove leading and tailing blank spaces from strings&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ trim(' FilePulse ') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output (type = &lt;code>STRING&lt;/code>):&lt;/em>&lt;/p>
+&lt;p>&lt;code>FilePulse&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="uppercase">UPPERCASE&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ uppercase(field_expression) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Converts all of the characters in a &lt;code>STRING&lt;/code> value to upper case.&lt;/p>
+&lt;/blockquote>
+&lt;h5 id="examples-6">Examples&lt;/h5>
+&lt;p>&lt;strong>Convert a field to uppercase&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ uppercase('Apache Kafka') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output&lt;/em> (type = &lt;code>STRING&lt;/code>):&lt;/p>
+&lt;p>&lt;code>APACHE KAFKA&lt;/code>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="uuid">UUID&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ uuid() }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Returns a Universally Unique Identifier (UUID)&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="urls">URLs&lt;/h3>
+&lt;h4 id="parse_url">PARSE_URL&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.6.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ parse_url(field_expression[,permissive]) }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Parses a valid field-value URL/URI and return a struct consisting of all the components (fragment, host, path, port, query, scheme, userInfo).&lt;/p>
+&lt;/blockquote>
+&lt;h5 id="examples-7">Examples&lt;/h5>
+&lt;p>&lt;strong>Parse a simple URL:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ parse_url('https://www.example.com') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output&lt;/em> (type=&lt;code>STRUCT&lt;/code>):&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;host&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;www.example.com&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;path&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;port&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;scheme&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;https&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fragment&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;query&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;userInfo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Parse a complex URL that includes a path, a port number, and user information:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ parse_url('http://user:password@example.com:1234/index.html?user=1') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output&lt;/em> (type=&lt;code>STRUCT&lt;/code>):&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;host&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;www.example.com&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;path&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;/index.html&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;port&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#0000cf;font-weight:bold">1234&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;scheme&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;http&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fragment&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;query&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;?user=1&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;userInfo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;user:password&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Parse an email URL:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ parse_url('mailto:abc@xyz.com') }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output&lt;/em> (type=&lt;code>STRUCT&lt;/code>):&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;host&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;abc@xyz.com&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;path&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;port&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;scheme&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;mailto&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fragment&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;query&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;userInfo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Parse an invalid URL that is missing the scheme. missing &lt;em>scheme&lt;/em>.&lt;/strong>&lt;/p>
+&lt;p>Set the &lt;code>permissive&amp;lt;&amp;gt;&lt;/code> parameter set to &lt;code>true&lt;/code> to indicate that the function should return an object that contains the error message.&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>Expression&lt;/em>:&lt;/p>
+&lt;p>&lt;code>{{ parse_url('example.com', true) }}&lt;/code>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>Output&lt;/em> (type=&lt;code>STRUCT&lt;/code>):&lt;/p>
+&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;error&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Could not parse URL: scheme not specified&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ul></description></item><item><title>Docs: Conditional Execution</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</guid><description>
 &lt;p>A conditional property &lt;code>if&lt;/code> can be configured on each filter to determine if that filter should be applied or skipped.
 When a filter is skipped, message flow to the next filter without any modification.&lt;/p>
 &lt;p>&lt;code>if&lt;/code> configuration accepts a Simple Connect Expression that must return to &lt;code>true&lt;/code> or &lt;code>false&lt;/code>.
@@ -1833,7 +2442,7 @@ filters.Log4jGrokFilter.withOnFailure=AppendError
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendError.field=$.exceptionMessage
 filters.AppendError.value={{ $error.exceptionMessage }}
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Processing Filters</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Processing Filters</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link><pubDate>Fri, 03 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</guid><description>
 &lt;p>These filters are available for use with Kafka Connect File Pulse:&lt;/p>
 &lt;table>
 &lt;thead>
@@ -1855,13 +2464,18 @@ filters.AppendError.value={{ $error.exceptionMessage }}
 &lt;td>&lt;/td>
 &lt;/tr>
 &lt;tr>
+&lt;td>&lt;a href="#csvfilter">CSVFilter&lt;/a>&lt;/td>
+&lt;td>Parses a message field&amp;rsquo;s value containing columns delimited by a character into a struct&lt;/td>
+&lt;td>&lt;code>v2.6.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
 &lt;td>&lt;a href="#datefilter">DateFilter&lt;/a>&lt;/td>
 &lt;td>Converts a field&amp;rsquo;s value containing a date to a unix epoch time&lt;/td>
 &lt;td>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;a href="#delimitedrowfilter">DelimitedRowFilter&lt;/a>&lt;/td>
-&lt;td>Parses a message field&amp;rsquo;s value containing columns delimited by a separator into a struct&lt;/td>
+&lt;td>Parses a message field&amp;rsquo;s value containing columns delimited by a regex into a struct&lt;/td>
 &lt;td>&lt;/td>
 &lt;/tr>
 &lt;tr>
@@ -2144,10 +2758,112 @@ filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
 &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
 &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="datefilter">DateFilter&lt;/h2>
+&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="csvfilter">CsvFilter&lt;/h2>
+&lt;p>The following provides usage information for: &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.CSVFilter&lt;/code>&lt;/p>
+&lt;p>The &lt;code>CsvFilter&lt;/code> can be used to parse a message field&amp;rsquo;s value containing columns delimited by a character into a struct&lt;/p>
+&lt;h3 id="configuration-2">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>separator&lt;/code>&lt;/td>
+&lt;td>Sets the delimiter to use for separating entries.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>,&lt;/em>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ignore.quotations&lt;/code>&lt;/td>
+&lt;td>Sets the ignore quotations mode - if true, quotations are ignored.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>escape.char&lt;/code>&lt;/td>
+&lt;td>Sets the character to use for escaping a separator or quote.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>\&lt;/em>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ignore.leading.whitespace&lt;/code>&lt;/td>
+&lt;td>Sets the ignore leading whitespace setting - if true, white space in front of a quote in a field is ignored.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>true&lt;/em>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>quote.char&lt;/code>&lt;/td>
+&lt;td>Sets the character to use for quoted elements.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>&amp;quot;&lt;/em>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>strict.quotes&lt;/code>&lt;/td>
+&lt;td>Sets the strict quotes setting - if true, characters outside the quotes are ignored.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>Medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>trim.column&lt;/code>&lt;/td>
+&lt;td>Remove the leading and trailing whitespaces from all columns.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>Low&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>duplicate.columns.as.array&lt;/code>&lt;/td>
+&lt;td>Treat duplicate columns as an array. If false and a record contains duplicate columns an exception will be thrown.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>extract.column.name&lt;/code>&lt;/td>
+&lt;td>Define the field from which the schema should be detected (all columns will be of type &amp;lsquo;string&amp;rsquo;)&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>auto.generate.column.names&lt;/code>&lt;/td>
+&lt;td>Define whether column names should autogenerated or not (column names will of the form &amp;lsquo;column1, column2&amp;rsquo;)&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>columns&lt;/code>&lt;/td>
+&lt;td>The list of comma-separated column names in order they appear in each row. Columns must be in the form of: COL1_NAME:COL1_TYPE;COL2_NAME:COL2_TYPE&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>High&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-2">Examples&lt;/h3>
+&lt;p>The following example shows the use of the &lt;code>CSVFilter&lt;/code> to split the &lt;code>message&lt;/code> field using a comma (&lt;code>,&lt;/code>) as a separator character.
+The name of each column is extracted from the fields &lt;code>headers&lt;/code>.&lt;/p>
+&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=ParseCSVLine
+filters.ParseCSVLine.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.filter.CSVFilter&amp;quot;
+filters.ParseCSVLine.extract.column.name=&amp;quot;headers&amp;quot;
+filters.ParseCSVLine.separator=&amp;quot;,&amp;quot;
+filters.ParseCSVLine.trim.column=&amp;quot;true&amp;quot;
+&lt;/code>&lt;/pre>&lt;h2 id="datefilter">DateFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.DateFilter&lt;/code>&lt;/p>
 &lt;p>The &lt;code>DateFilter&lt;/code> converts a field&amp;rsquo;s value containing a date to a unix epoch time.&lt;/p>
-&lt;h3 id="configuration-2">Configuration&lt;/h3>
+&lt;h3 id="configuration-3">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2196,7 +2912,7 @@ filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-2">Examples&lt;/h3>
+&lt;h3 id="examples-3">Examples&lt;/h3>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=ParseISODate
 filters.ParseISODate.type=io.streamthoughts.kafka.connect.filepulse.filter.DateFilter
 filters.ParseISODate.field=&amp;quot;$.date&amp;quot;
@@ -2219,7 +2935,7 @@ filters.ParseISODate.formats=&amp;quot;yyyy-MM-dd'T'HH:mm:ss&amp;quot;
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>DelimitedRowFilter&lt;/code> can be used to parse and stream delimited row files (i.e CSV) into Kafka.
 Each row is parsed and published into a configured topic as a single Kafka data.&lt;/p>
-&lt;h3 id="configuration-3">Configuration&lt;/h3>
+&lt;h3 id="configuration-4">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2261,7 +2977,7 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-3">Examples&lt;/h3>
+&lt;h3 id="examples-4">Examples&lt;/h3>
 &lt;p>The following example shows the use of the &lt;code>DelimitedRowFilter&lt;/code> to split the &lt;code>message&lt;/code> field using &lt;code>|&lt;/code> as a separator
 character.
 The name of each column is extracted from the fields &lt;code>headers&lt;/code>.&lt;/p>
@@ -2281,7 +2997,7 @@ method accepts a regex as argument then any special character must be escaped.
 &lt;h2 id="dropfilter">DropFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.DropFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>DropFilter&lt;/code> can be used to prevent some messages (i.e records) to be written into Kafka.&lt;/p>
-&lt;h3 id="configuration-4">Configuration&lt;/h3>
+&lt;h3 id="configuration-5">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2310,7 +3026,7 @@ method accepts a regex as argument then any special character must be escaped.
 &lt;/tbody>
 &lt;/table>
 &lt;p>For more information about &lt;code>if&lt;/code> property, see : &lt;a href="conditional-execution">Conditional execution&lt;/a>.&lt;/p>
-&lt;h3 id="examples-4">Examples&lt;/h3>
+&lt;h3 id="examples-5">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>DropFilter&lt;/strong> to only keep records with a field &lt;code>level&lt;/code> containing to &lt;code>ERROR&lt;/code>.&lt;/p>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Drop
 filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
@@ -2319,7 +3035,7 @@ filters.Drop.invert=true
 &lt;/code>&lt;/pre>&lt;h2 id="excludefilter">ExcludeFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>ExcludeFilter&lt;/code> can be used to exclude one or more fields from the input record.&lt;/p>
-&lt;h3 id="configuration-5">Configuration&lt;/h3>
+&lt;h3 id="configuration-6">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2340,7 +3056,7 @@ filters.Drop.invert=true
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-5">Examples&lt;/h3>
+&lt;h3 id="examples-6">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>ExplodeFilter&lt;/strong>.&lt;/p>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Exclude
 filters.Exclude.type=io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFilter
@@ -2361,7 +3077,7 @@ filters.Exclude.fields=message
 &lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="explodefilter">ExplodeFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>ExplodeFilter&lt;/code> can be used to explode an array or list field into separate records.&lt;/p>
-&lt;h3 id="configuration-6">Configuration&lt;/h3>
+&lt;h3 id="configuration-7">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2382,7 +3098,7 @@ filters.Exclude.fields=message
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-6">Examples&lt;/h3>
+&lt;h3 id="examples-7">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>ExplodeFilter&lt;/strong>.&lt;/p>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Explode
 filters.Explode.type=io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter
@@ -2433,7 +3149,7 @@ filters.Explode.source=measurements
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.FailFilter&lt;/code>.&lt;/p>
 &lt;p>The fail filter can be used to throw an exception with a provided error message.
 For example, this can be useful to stop processing a file when a non-conform record is read.&lt;/p>
-&lt;h3 id="configuration-7">Configuration&lt;/h3>
+&lt;h3 id="configuration-8">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2468,7 +3184,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-7">Examples&lt;/h3>
+&lt;h3 id="examples-8">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>FailFilter&lt;/strong> to stop processing a file when a field is equals to &lt;code>null&lt;/code>.&lt;/p>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Fail
 filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
@@ -2479,7 +3195,7 @@ filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 &lt;p>The &lt;code>GrokFilter&lt;/code> allows you to parse unstructured data like applications logs to extract structured and meaningful data
 fields.&lt;/p>
 &lt;p>The &lt;code>GrokFilter&lt;/code>is based on: &lt;a href="https://github.com/streamthoughts/kafka-connect-transform-grok">https://github.com/streamthoughts/kafka-connect-transform-grok&lt;/a>&lt;/p>
-&lt;h3 id="configuration-8">Configuration&lt;/h3>
+&lt;h3 id="configuration-9">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2535,7 +3251,7 @@ fields.&lt;/p>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-8">Examples&lt;/h3>
+&lt;h3 id="examples-9">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>GrokFilter&lt;/strong> to parse and extract fields from application log message.&lt;/p>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=ParseLog4jLog
 filters.ParseLog4jLog.pattern=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
@@ -2545,7 +3261,7 @@ filters.ParseLog4jLog.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.f
 filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
 &lt;/code>&lt;/pre>&lt;h2 id="grouprowfilter">GroupRowFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.GroupRowFilter&lt;/code>.&lt;/p>
-&lt;h3 id="configuration-9">Configuration&lt;/h3>
+&lt;h3 id="configuration-10">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2580,10 +3296,10 @@ filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-9">Examples&lt;/h3>
+&lt;h3 id="examples-10">Examples&lt;/h3>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">&lt;/code>&lt;/pre>&lt;h2 id="joinfilter">JoinFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter&lt;/code>.&lt;/p>
-&lt;h3 id="configuration-10">Configuration&lt;/h3>
+&lt;h3 id="configuration-11">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2618,11 +3334,11 @@ filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-10">Examples&lt;/h3>
+&lt;h3 id="examples-11">Examples&lt;/h3>
 &lt;h2 id="jsonfilter">JSONFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>JSONFilter&lt;/code> parses an input json field.&lt;/p>
-&lt;h3 id="configuration-11">Configuration&lt;/h3>
+&lt;h3 id="configuration-12">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2678,7 +3394,7 @@ filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-11">Examples&lt;/h3>
+&lt;h3 id="examples-12">Examples&lt;/h3>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=MyJsonFilter
 filters.MyJsonFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter
 filters.MyJsonFilter.source=message
@@ -2686,7 +3402,7 @@ filters.MyJsonFilter.target=payload
 &lt;/code>&lt;/pre>&lt;h2 id="multirowfilter">MultiRowFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>MultiRowFilter&lt;/code> joins multiple lines into a single Struct using a regex pattern.&lt;/p>
-&lt;h3 id="configuration-12">Configuration&lt;/h3>
+&lt;h3 id="configuration-13">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2738,7 +3454,7 @@ filters.MyJsonFilter.target=payload
 &lt;h2 id="movefilter">MoveFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>MoveFilter&lt;/code> moves an existing record field&amp;rsquo;s value to a specific target path.&lt;/p>
-&lt;h3 id="configuration-13">Configuration&lt;/h3>
+&lt;h3 id="configuration-14">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2766,7 +3482,7 @@ filters.MyJsonFilter.target=payload
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-12">Examples&lt;/h3>
+&lt;h3 id="examples-13">Examples&lt;/h3>
 &lt;p>The following example shows the usage of the &lt;code>MoveFilter&lt;/code>.&lt;/p>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=MyMoveFilter
 filters.MyMoveFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter
@@ -2796,7 +3512,7 @@ filters.NullValueIfDeleteOp.if={{ equals($value.op, 'DELETE') }}
 &lt;/code>&lt;/pre>&lt;h2 id="renamefilter">RenameFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>RenameFilter&lt;/code> is used to rename a specified field.&lt;/p>
-&lt;h3 id="configuration-14">Configuration&lt;/h3>
+&lt;h3 id="configuration-15">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2831,7 +3547,7 @@ filters.NullValueIfDeleteOp.if={{ equals($value.op, 'DELETE') }}
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-13">Examples&lt;/h3>
+&lt;h3 id="examples-14">Examples&lt;/h3>
 &lt;pre>&lt;code class="language-properties" data-lang="properties">filters=RenameInputField
 filters.RenameInputField.type=io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter
 filters.RenameInputField.field=input
@@ -2851,7 +3567,7 @@ filters.RenameInputField.target=renamed
 &lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="splitfilter">SplitFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>SplitFilter&lt;/code> splits a field&amp;rsquo;s value of type string into an array by using a specific separator.&lt;/p>
-&lt;h3 id="configuration-15">Configuration&lt;/h3>
+&lt;h3 id="configuration-16">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2913,7 +3629,7 @@ filters.SplitInputField.separator=,
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.XmlToJsonFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>XmlToJsonFilter&lt;/code> parses and converts an XML record-field it to a JSON string.
 This is filter is based on the &lt;code>org.json.XML&lt;/code> library.&lt;/p>
-&lt;h3 id="configuration-16">Configuration&lt;/h3>
+&lt;h3 id="configuration-17">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2964,7 +3680,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/code>&lt;/pre>&lt;h2 id="xmltostructfilter">XmlToStructFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>XmlToStructFilter&lt;/code> parses an XML record-field into STRUCT&lt;/p>
-&lt;h3 id="configuration-17">Configuration&lt;/h3>
+&lt;h3 id="configuration-18">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>

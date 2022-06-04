@@ -47,7 +47,7 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
     public static final String READER_EXTRACT_COLUMN_NAME_CONFIG = "extract.column.name";
     /* for backward-compatibility */
     public static final String READER_EXTRACT_COLUMN_NAME_CONFIG_ALIAS = "extractColumnName";
-    public static final String READER_EXTRACT_COLUMN_NAME_DOC = "Define the field from which the schema should be detected (all columns will be of type 'withMessage')";
+    public static final String READER_EXTRACT_COLUMN_NAME_DOC = "Define the field from which the schema should be detected (all columns will be of type 'string')";
 
     public static final String READER_AUTO_GENERATE_COLUMN_NAME_CONFIG = "auto.generate.column.names";
     /* for backward-compatibility */
@@ -175,7 +175,7 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
                 )
                 .define(
                         READER_AUTO_GENERATE_COLUMN_NAME_CONFIG_ALIAS,
-                        ConfigDef.Type.STRING,
+                        ConfigDef.Type.BOOLEAN,
                         null,
                         ConfigDef.Importance.HIGH,
                         "Deprecated. Use " + READER_AUTO_GENERATE_COLUMN_NAME_CONFIG + " instead.",

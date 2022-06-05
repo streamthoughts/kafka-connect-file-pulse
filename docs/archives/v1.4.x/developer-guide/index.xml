@@ -6,16 +6,16 @@ You should note that the connector downloaded from Confluent Hub may not reflect
 &lt;/div>
 &lt;p>&lt;strong>Confluent Hub CLI installation&lt;/strong>&lt;/p>
 &lt;p>Use the &lt;a href="https://docs.confluent.io/current/confluent-hub/client.html">Confluent Hub client&lt;/a> to install this connector with:&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">confluent-hub install streamthoughts/kafka-connect-file-pulse:latest
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Download Installation&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>confluent-hub install streamthoughts/kafka-connect-file-pulse:latest
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Download Installation&lt;/strong>&lt;/p>
 &lt;p>Download the distribution ZIP file for the latest available version.&lt;/p>
 &lt;p>&lt;strong>Example :&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">&lt;span style="color:#204a87">export&lt;/span> &lt;span style="color:#000">VERSION&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>1.3.0
-curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v&lt;span style="color:#000">$VERSION&lt;/span>/streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>Extract it into one of the directories that is listed on the &lt;code>plugin.path&lt;/code> worker configuration property.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">export&lt;/span> &lt;span style="color:#000">VERSION&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>1.3.0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v&lt;span style="color:#000">$VERSION&lt;/span>/streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Extract it into one of the directories that is listed on the &lt;code>plugin.path&lt;/code> worker configuration property.&lt;/p>
 &lt;p>You can also use the Confluent Hub CLI for installing it.&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-bash" data-lang="bash">$ confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
-&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Important&lt;/h4>
 When you run Connect workers in &lt;strong>distributed mode&lt;/strong>, the connector-plugin must be installed &lt;strong>on each of machines&lt;/strong> running Kafka Connect.
@@ -197,17 +197,17 @@ At the next scan, previously filtered files will be evaluated again to determine
 &lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
 &lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
 &lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
 &lt;/code>&lt;/pre>&lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
 &lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
 # The last modified time for a file can be accepted (default: 5000)
 file.filter.minimum.age.ms=10000
 &lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
 &lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter files that do not match the specified regex.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
 # The regex pattern used to matches input files
-file.filter.regex.pattern=&amp;quot;\\.log$&amp;quot;
+file.filter.regex.pattern=&amp;#34;\\.log$&amp;#34;
 &lt;/code>&lt;/pre>&lt;h2 id="supported-file-types">Supported File types&lt;/h2>
 &lt;p>&lt;code>LocalFSDirectoryWalker&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)&lt;/p>
 &lt;p>The connector supports the following content types :&lt;/p>
@@ -243,15 +243,15 @@ This reader creates one record per row. It should be used for reading delimited 
 &lt;li>filters.$alias.$filterSpecificConfig Configuration properties for the filter&lt;/li>
 &lt;/ul>
 &lt;p>For example, let&amp;rsquo;s parse a standard application logs file written with log4j using the build-in filters :&lt;/p>
-&lt;pre>&lt;code>filters=GroupMultilineException, ExtractFirstLine, ParseLog4jLog
+&lt;pre tabindex="0">&lt;code>filters=GroupMultilineException, ExtractFirstLine, ParseLog4jLog
 filters.GroupMultilineException.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
 filters.GroupMultilineException.negate=false
-filters.GroupMultilineException.pattern=&amp;quot;^[\\t]&amp;quot;
+filters.GroupMultilineException.pattern=&amp;#34;^[\\t]&amp;#34;
 filters.ExtractFirstLine.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.ExtractFirstLine.field=$.logmessage
 filters.ExtractFirstLine.values={{ extract_array($.message, 0) }
 filters.ParseLog4jLog.type=io.streamthoughts.kafka.connect.filepulse.filter.impl.GrokFilter
-filters.ParseLog4jLog.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:thread} %{GREEDYDATA:logmessage}&amp;quot;
+filters.ParseLog4jLog.match=&amp;#34;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:thread} %{GREEDYDATA:logmessage}&amp;#34;
 filters.ParseLog4jLog.source=log
 filters.ParseLog4jLog.overwrite=logmessage
 &lt;/code>&lt;/pre>&lt;h2 id="available-filters">Available Filters&lt;/h2>
@@ -472,7 +472,7 @@ the first element present in the array field &lt;code>$.values&lt;/code>.&lt;/p>
 &lt;/table>
 &lt;p>In addition, ScEL supports nested functions.&lt;/p>
 &lt;p>For example, the following expression is used to replace all whitespace characters after transforming our field&amp;rsquo;s value into lowercase.&lt;/p>
-&lt;pre>&lt;code>replace_all(lowercase($.field), '\\s', '-')
+&lt;pre tabindex="0">&lt;code>replace_all(lowercase($.field), &amp;#39;\\s&amp;#39;, &amp;#39;-&amp;#39;)
 &lt;/code>&lt;/pre>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Limitation&lt;/h4>
@@ -741,7 +741,7 @@ If the configured expression does not evaluate to a boolean value the filter cha
 &lt;p>The&lt;code>if&lt;/code> property supports (&lt;a href="accessing-data-and-metadata">simple expression&lt;/a>)&lt;/p>
 &lt;p>The boolean value returned from the filter condition can be inverted by setting the property &lt;code>invert&lt;/code> to &lt;code>true&lt;/code>.&lt;/p>
 &lt;p>For example, the below filter will only be applied on message having a log message containing &amp;ldquo;BadCredentialsException&amp;rdquo;&lt;/p>
-&lt;pre>&lt;code>filters.TagSecurityException.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
+&lt;pre tabindex="0">&lt;code>filters.TagSecurityException.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.TagSecurityException.if={{ contains(data.logmessage, BadCredentialsException) }}
 filters.TagSecurityException.invert=false
 filters.TagSecurityException.field=tags
@@ -835,9 +835,9 @@ But, you can also configure each filter to either ignore errors or to branch to 
 &lt;p>Using &lt;code>ignoreFailure=true&lt;/code> can be recommended for optional filters.&lt;/p>
 &lt;h3 id="example">Example&lt;/h3>
 &lt;p>In the below example, the he filter with alias Log4jGrokFilter will be skip in case of failure.&lt;/p>
-&lt;pre>&lt;code>filters=Log4jGrokFilter
+&lt;pre tabindex="0">&lt;code>filters=Log4jGrokFilter
 filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
-filters.Log4jGrokFilter.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+filters.Log4jGrokFilter.match=&amp;#34;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;#34;
 filters.Log4jGrokFilter.source=message
 filters.Log4jGrokFilter.ignoreFailure=true
 &lt;/code>&lt;/pre>&lt;h2 id="defining-error-filter-chain">Defining error filter chain&lt;/h2>
@@ -868,15 +868,15 @@ filters.Log4jGrokFilter.ignoreFailure=true
 &lt;/table>
 &lt;h3 id="example-1">Example&lt;/h3>
 &lt;p>In the below example, an &lt;code>errorMessage&lt;/code> field is added to the record value if the filter with alias Log4jGrokFilter fails.&lt;/p>
-&lt;pre>&lt;code>filters=Log4jGrokFilter
+&lt;pre tabindex="0">&lt;code>filters=Log4jGrokFilter
 filters.Log4jGrokFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter
-filters.Log4jGrokFilter.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
+filters.Log4jGrokFilter.match=&amp;#34;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;#34;
 filters.Log4jGrokFilter.source=message
 filters.Log4jGrokFilter.overwrite=message
 filters.Log4jGrokFilter.withOnFailure=AppendError
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendError.field=errorMessage
-filters.AppendError.value=&amp;quot;$error.message&amp;quot;
+filters.AppendError.value=&amp;#34;$error.message&amp;#34;
 &lt;/code>&lt;/pre></description></item><item><title>Docs: Processing Filters</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/filters/</link><pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/filters/</guid><description>
 &lt;p>These filters are available for use with Kafka Connect File Pulse:&lt;/p>
 &lt;table>
@@ -1010,64 +1010,64 @@ value or a value extracted from another existing field using &lt;a href="https:/
 using a &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#string-substitution">substitution expression&lt;/a>.
 The concat value is then added to the a field named &lt;code>result&lt;/code>.&lt;/p>
 &lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&amp;quot;result&amp;quot;
-filters.SubstituteFilter.value=&amp;quot;{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}&amp;quot;
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&amp;#34;result&amp;#34;
+filters.SubstituteFilter.value=&amp;#34;{{ extract_array($.values,0) }}-{{ extract_array($.values,1) }}&amp;#34;
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">],&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;result&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;Hello-World&amp;#34;&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>In the previous example, we used the simple property expression &lt;code>result&lt;/code> to indicate the target field to which our value is added.
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;result&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;Hello-World&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In the previous example, we used the simple property expression &lt;code>result&lt;/code> to indicate the target field to which our value is added.
 We have actually omitted the &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/accessing-data-and-metadata/#scopes">expression scope&lt;/a> &lt;code>$value&lt;/code>.
 By default, if no scope is defined in an expression, the scope &lt;code>$value&lt;/code> is implicitly applied.
 Hence, we could have used the fully expression &lt;code>$value.result&lt;/code> which is similar to the simplified expression &lt;code>result&lt;/code>.&lt;/p>
 &lt;p>But, you can perfectly used another expression scope. For example, you can leverage the &lt;code>AppendFilter&lt;/code> to dynamically
 resolve the record-key or the output topic based on the record data.&lt;/p>
 &lt;p>The following configuration show how to use the &lt;code>$topic&lt;/code> scope :&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&amp;quot;$topic&amp;quot;
-filters.SubstituteFilter.value=&amp;quot;my-topic-{{ lowercase(extract_array($.values,0)) }}&amp;quot;
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&amp;#34;$topic&amp;#34;
+filters.SubstituteFilter.value=&amp;#34;my-topic-{{ lowercase(extract_array($.values,0)) }}&amp;#34;
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;context&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;topic&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;my-topic-hello&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>Finally the &lt;code>AppendFilter&lt;/code> can also accept an substitution expression for the property field.
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;context&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;topic&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;my-topic-hello&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Finally the &lt;code>AppendFilter&lt;/code> can also accept an substitution expression for the property field.
 This allows to dynamically determine the name of the field to be added.&lt;/p>
 &lt;p>The following examples show how to use a property expression to get the named of the field from a&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&amp;quot;$.target&amp;quot;
-filters.SubstituteFilter.value=&amp;quot;{{ extract_array($.values, 0) }}-{{ extract_array($.values,1) }}&amp;quot;
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.SubstituteFilter.field=&amp;#34;$.target&amp;#34;
+filters.SubstituteFilter.value=&amp;#34;{{ extract_array($.values, 0) }}-{{ extract_array($.values,1) }}&amp;#34;
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;result&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;result&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">],&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;result&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;Hello-World&amp;#34;&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="convertfilter">ConvertFilter&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;result&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;result&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;value&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Hello&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;World&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;result&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;Hello-World&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="convertfilter">ConvertFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ConvertFilter&lt;/code>&lt;/p>
 &lt;p>The &lt;code>ConvertFilter&lt;/code> can be used to convert a field&amp;rsquo;s value into a specific type.&lt;/p>
 &lt;h3 id="configuration-1">Configuration&lt;/h3>
@@ -1127,13 +1127,13 @@ filters.SubstituteFilter.value=&amp;quot;{{ extract_array($.values, 0) }}-{{ ext
 &lt;h3 id="examples-1">Examples&lt;/h3>
 &lt;p>The following example shows how to convert a a field&amp;rsquo;s value containing the string &lt;code>yes&lt;/code> into a boolean.&lt;/p>
 &lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.BooleanConverter.field=&amp;quot;target&amp;quot;
-filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.BooleanConverter.field=&amp;#34;target&amp;#34;
+filters.BooleanConverter.to=&amp;#34;BOOLEAN&amp;#34;
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;yes&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">true&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="datefilter">DateFilter&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;yes&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;target&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">true&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="datefilter">DateFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.DateFilter&lt;/code>&lt;/p>
 &lt;p>The &lt;code>DateFilter&lt;/code> converts a field&amp;rsquo;s value containing a date to a unix epoch time.&lt;/p>
 &lt;h3 id="configuration-2">Configuration&lt;/h3>
@@ -1186,23 +1186,23 @@ filters.BooleanConverter.to=&amp;quot;BOOLEAN&amp;quot;
 &lt;/tbody>
 &lt;/table>
 &lt;h3 id="examples-2">Examples&lt;/h3>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.MyDateFilter.field=&amp;quot;$.date&amp;quot;
-filters.MyDateFilter.target=&amp;quot;$.timestamp&amp;quot;
-filters.MyDateFilter.format=&amp;quot;yyyy-MM-dd'T'HH:mm:ss&amp;quot;
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.MyDateFilter.field=&amp;#34;$.date&amp;#34;
+filters.MyDateFilter.target=&amp;#34;$.timestamp&amp;#34;
+filters.MyDateFilter.format=&amp;#34;yyyy-MM-dd&amp;#39;T&amp;#39;HH:mm:ss&amp;#34;
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2001-07-04T12:08:56&amp;#34;&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2001-07-04T12:08:56&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;timestamp&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">994248536000&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="delimitedrowfilter">DelimitedRowFilter&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2001-07-04T12:08:56&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2001-07-04T12:08:56&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;timestamp&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">994248536000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="delimitedrowfilter">DelimitedRowFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>DelimitedRowFilter&lt;/code> can be used to parse and stream delimited row files (i.e CSV) into Kafka.
 Each row is parsed and published into a configured topic as a single Kafka data.&lt;/p>
@@ -1258,10 +1258,10 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 &lt;h3 id="examples-3">Examples&lt;/h3>
 &lt;p>The following example shows the use of the &lt;code>DelimitedRowFilter&lt;/code> to split the &lt;code>message&lt;/code> field using &lt;code>|&lt;/code> as a separator character.
 The name of each column is extracted from the fields &lt;code>headers&lt;/code>.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.ParseDelimitedRow.extractColumnNam=&amp;quot;headers&amp;quot;
-filters.ParseDelimitedRow.separator=&amp;quot;\\|&amp;quot;
-filters.ParseDelimitedRow.trimColumn=&amp;quot;true&amp;quot;
-filters.ParseDelimitedRow.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&amp;quot;
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.ParseDelimitedRow.extractColumnNam=&amp;#34;headers&amp;#34;
+filters.ParseDelimitedRow.separator=&amp;#34;\\|&amp;#34;
+filters.ParseDelimitedRow.trimColumn=&amp;#34;true&amp;#34;
+filters.ParseDelimitedRow.type=&amp;#34;io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&amp;#34;
 &lt;/code>&lt;/pre>
 &lt;div class="alert alert-info" role="alert">
 &lt;h4 class="alert-heading">Important&lt;/h4>
@@ -1302,9 +1302,9 @@ method accepts a regex as argument then any special character must be escaped.
 &lt;p>For more information about &lt;code>if&lt;/code> property, see : &lt;a href="conditional-execution">Conditional execution&lt;/a>.&lt;/p>
 &lt;h3 id="examples-4">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>DropFilter&lt;/strong> to only keep records with a field &lt;code>level&lt;/code> containing to &lt;code>ERROR&lt;/code>.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Drop
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Drop
 filters.Drop.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
-filters.Drop.if={{ equals($.level, 'ERROR') }}
+filters.Drop.if={{ equals($.level, &amp;#39;ERROR&amp;#39;) }}
 filters.Drop.invert=true
 &lt;/code>&lt;/pre>&lt;h2 id="excludefilter">ExcludeFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFilter&lt;/code>.&lt;/p>
@@ -1332,14 +1332,14 @@ filters.Drop.invert=true
 &lt;/table>
 &lt;h3 id="examples-5">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>ExplodeFilter&lt;/strong>.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Exclude
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Exclude
 filters.Exclude.type=io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFilter
 filters.Exclude.fields=message
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;message&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;{\&amp;#34;name\&amp;#34;:\&amp;#34;pulse\&amp;#34;}&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="explodefilter">ExplodeFilter&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;message&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;{\&amp;#34;name\&amp;#34;:\&amp;#34;pulse\&amp;#34;}&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="explodefilter">ExplodeFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>ExplodeFilter&lt;/code> can be used to explode an array or list field into separate records.&lt;/p>
 &lt;h3 id="configuration-6">Configuration&lt;/h3>
@@ -1365,17 +1365,17 @@ filters.Exclude.fields=message
 &lt;/table>
 &lt;h3 id="examples-6">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>ExplodeFilter&lt;/strong>.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Explode
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Explode
 filters.Explode.type=io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter
 filters.Explode.source=measurements
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input (single record)&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#0000cf;font-weight:bold">38&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">40&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">42&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">37&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output (multiple records)&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">38&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">40&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">42&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">37&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="failfilter">FailFilter&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>&lt;span style="color:#0000cf;font-weight:bold">38&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">40&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">42&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">37&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output (multiple records)&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">38&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">40&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">42&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;captor-0001&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;date&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2020-08-06T17:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">37&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="failfilter">FailFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.FailFilter&lt;/code>.&lt;/p>
 &lt;p>The fail filter can be used to throw an exception with a provided error message.
 For example, this can be useful to stop processing a file when a non-conform record is read.&lt;/p>
@@ -1416,7 +1416,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 &lt;/table>
 &lt;h3 id="examples-7">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>FailFilter&lt;/strong> to stop processing a file when a field is equals to &lt;code>null&lt;/code>.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=Fail
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Fail
 filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
 filters.Fail.if={{ is_null($.user_id) }}
 filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
@@ -1485,11 +1485,11 @@ Grok are built on top of on regular expressions, so you can use any regular expr
 &lt;/table>
 &lt;h3 id="examples-8">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>GrokFilter&lt;/strong> to parse and extract fields from application log message.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.ParseLog4jLog.match=&amp;quot;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;quot;
-filters.ParseLog4jLog.overwrite=&amp;quot;message&amp;quot;
-filters.ParseLog4jLog.source=&amp;quot;message&amp;quot;
-filters.ParseLog4jLog.type=&amp;quot;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&amp;quot;
-filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.ParseLog4jLog.match=&amp;#34;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;#34;
+filters.ParseLog4jLog.overwrite=&amp;#34;message&amp;#34;
+filters.ParseLog4jLog.source=&amp;#34;message&amp;#34;
+filters.ParseLog4jLog.type=&amp;#34;io.streamthoughts.kafka.connect.filepulse.filter.GrokFilter&amp;#34;
+filters.ParseLog4jLog.ignoreFailure=&amp;#34;true&amp;#34;
 &lt;/code>&lt;/pre>&lt;h2 id="grouprowfilter">GroupRowFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.GroupRowFilter&lt;/code>.&lt;/p>
 &lt;h3 id="configuration-9">Configuration&lt;/h3>
@@ -1528,7 +1528,7 @@ filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
 &lt;/tbody>
 &lt;/table>
 &lt;h3 id="examples-9">Examples&lt;/h3>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">&lt;/code>&lt;/pre>&lt;h2 id="joinfilter">JoinFilter&lt;/h2>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">&lt;/code>&lt;/pre>&lt;h2 id="joinfilter">JoinFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter&lt;/code>.&lt;/p>
 &lt;h3 id="configuration-10">Configuration&lt;/h3>
 &lt;table>
@@ -1612,7 +1612,7 @@ filters.ParseLog4jLog.ignoreFailure=&amp;quot;true&amp;quot;
 &lt;/tbody>
 &lt;/table>
 &lt;h3 id="examples-11">Examples&lt;/h3>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=MyJsonFilter
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=MyJsonFilter
 filters.MyJsonFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter
 filters.MyJsonFilter.source=message
 filters.MyJsonFilter.target=payload
@@ -1670,7 +1670,7 @@ filters.MyJsonFilter.target=payload
 &lt;/table>
 &lt;h3 id="examples-12">Examples&lt;/h3>
 &lt;p>The following example shows the usage of the &lt;code>MultiRowFilter&lt;/code> to join Java exception message with its stacktrace.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=StackTraceMultiRowFilter
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=StackTraceMultiRowFilter
 filters.StackTraceMultiRowFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
 filters.StackTraceMultiRowFilter.negate=false
 filters.StackTraceMultiRowFilter.pattern=^[\t]
@@ -1713,13 +1713,13 @@ filters.StackTraceMultiRowFilter.pattern=^[\t]
 &lt;/tbody>
 &lt;/table>
 &lt;h3 id="examples-13">Examples&lt;/h3>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.MyRenameFilter.field=input
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.MyRenameFilter.field=input
 filters.MyRenameFilter.target=renamed
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;renamed&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="splitfilter">SplitFilter&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;renamed&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="splitfilter">SplitFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>SplitFilter&lt;/code> splits a field&amp;rsquo;s value of type string into an array by using a specific separator.&lt;/p>
 &lt;h3 id="configuration-14">Configuration&lt;/h3>
@@ -1759,73 +1759,73 @@ filters.MyRenameFilter.target=renamed
 &lt;/table>
 &lt;h3 id="example">Example&lt;/h3>
 &lt;p>&lt;strong>Configuration&lt;/strong>&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters.MySplitterFilter.split=input
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters.MySplitterFilter.split=input
 filters.MySplitterFilter.separator=,
 &lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0,val1,val2&amp;#34;&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4">&lt;code class="language-json" data-lang="json">&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0,val1,val2&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;span style="color:#204a87;font-weight:bold">&amp;#34;output&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val1&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val2&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Tracking File Status</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/tracking-files-status/</link><pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/tracking-files-status/</guid><description>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0,val1,val2&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span> &lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;input&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0,val1,val2&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;output&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val0&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val1&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;val2&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Tracking File Status</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/tracking-files-status/</link><pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.4.x/developer-guide/tracking-files-status/</guid><description>
 &lt;p>Connect File Pulse use an internal topic (&lt;em>default:&lt;code>connect-file-pulse-status&lt;/code>&lt;/em>) to track the current state of files being processed.
 This topic is used internally by Tasks to communicate to the SourceConnector instance but you can easily use it to monitor files progression.&lt;/p>
 &lt;h2 id="the-message-format">The message format&lt;/h2>
 &lt;p>Status event are publish into JSON with the following schema :&lt;/p>
-&lt;pre>&lt;code>{
-&amp;quot;hostname&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
-&amp;quot;description: &amp;quot;The machine from which the source file is read.&amp;quot;
+&lt;pre tabindex="0">&lt;code>{
+&amp;#34;hostname&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
+&amp;#34;description: &amp;#34;The machine from which the source file is read.&amp;#34;
 },
-&amp;quot;status&amp;quot;:{
-&amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
-&amp;quot;description: &amp;quot;The current status&amp;quot;
+&amp;#34;status&amp;#34;:{
+&amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
+&amp;#34;description: &amp;#34;The current status&amp;#34;
 },
-&amp;quot;metadata&amp;quot;:{
-&amp;quot;name&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
-&amp;quot;description: &amp;quot;The file name.&amp;quot;
+&amp;#34;metadata&amp;#34;:{
+&amp;#34;name&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
+&amp;#34;description: &amp;#34;The file name.&amp;#34;
 },
-&amp;quot;path&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;string&amp;quot;,
-&amp;quot;description: &amp;quot;The file absolute path.&amp;quot;
+&amp;#34;path&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
+&amp;#34;description: &amp;#34;The file absolute path.&amp;#34;
 },
-&amp;quot;size&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;int&amp;quot;,
-&amp;quot;description: &amp;quot;The file size.&amp;quot;
+&amp;#34;size&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;int&amp;#34;,
+&amp;#34;description: &amp;#34;The file size.&amp;#34;
 },
-lastModified&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;long&amp;quot;,
-&amp;quot;description: &amp;quot;The file last-modified property.&amp;quot;
+lastModified&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;long&amp;#34;,
+&amp;#34;description: &amp;#34;The file last-modified property.&amp;#34;
 },
-&amp;quot;inode&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;int&amp;quot;,
-&amp;quot;description: &amp;quot;The file inode&amp;quot;
+&amp;#34;inode&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;int&amp;#34;,
+&amp;#34;description: &amp;#34;The file inode&amp;#34;
 },
-&amp;quot;hash&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;int&amp;quot;,
-&amp;quot;description: &amp;quot;CRC32&amp;quot;
+&amp;#34;hash&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;int&amp;#34;,
+&amp;#34;description: &amp;#34;CRC32&amp;#34;
 }
 },
-&amp;quot;offset&amp;quot;:{
-&amp;quot;position&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;long&amp;quot;,
-&amp;quot;description: &amp;quot;The current position in the source file (default : -1).&amp;quot;
+&amp;#34;offset&amp;#34;:{
+&amp;#34;position&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;long&amp;#34;,
+&amp;#34;description: &amp;#34;The current position in the source file (default : -1).&amp;#34;
 },
-&amp;quot;rows&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;long&amp;quot;,
-&amp;quot;description: &amp;quot;The number of rows already read from the source file (default : -1).&amp;quot;
+&amp;#34;rows&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;long&amp;#34;,
+&amp;#34;description: &amp;#34;The number of rows already read from the source file (default : -1).&amp;#34;
 },
-&amp;quot;timestamp&amp;quot;: {
-&amp;quot;type&amp;quot;: &amp;quot;long&amp;quot;,
-&amp;quot;description: &amp;quot;The offset timestamp&amp;quot;
+&amp;#34;timestamp&amp;#34;: {
+&amp;#34;type&amp;#34;: &amp;#34;long&amp;#34;,
+&amp;#34;description: &amp;#34;The offset timestamp&amp;#34;
 }
 }
 &lt;/code>&lt;/pre>&lt;h2 id="list-of-file-status">List of File Status&lt;/h2>
@@ -1907,19 +1907,19 @@ you can used one of the following override prefixes :&lt;/p>
 &lt;h3 id="deletecleanpolicy">DeleteCleanPolicy&lt;/h3>
 &lt;p>This policy deletes all files regardless of their final status (completed or failed).&lt;/p>
 &lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
-&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanPolicy
+&lt;pre tabindex="0">&lt;code>io.streamthoughts.kafka.connect.filepulse.clean.DeleteCleanPolicy
 &lt;/code>&lt;/pre>&lt;h4 id="configuration">Configuration&lt;/h4>
 &lt;p>no configuration&lt;/p>
 &lt;h3 id="logcleanpolicy">LogCleanPolicy&lt;/h3>
 &lt;p>This policy prints to logs some information after files completion.&lt;/p>
 &lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
-&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.clean.LogCleanPolicy
+&lt;pre tabindex="0">&lt;code>io.streamthoughts.kafka.connect.filepulse.clean.LogCleanPolicy
 &lt;/code>&lt;/pre>&lt;h4 id="configuration-1">Configuration&lt;/h4>
 &lt;p>no configuration&lt;/p>
 &lt;h3 id="movecleanpolicy">MoveCleanPolicy&lt;/h3>
 &lt;p>This policy attempts to move atomically files to configurable target directories.&lt;/p>
 &lt;p>To enable this policy, the property &lt;code>fs.cleanup.policy.class&lt;/code> must configured to :&lt;/p>
-&lt;pre>&lt;code>io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanPolicy
+&lt;pre tabindex="0">&lt;code>io.streamthoughts.kafka.connect.filepulse.clean.MoveCleanPolicy
 &lt;/code>&lt;/pre>&lt;h4 id="configuration-2">Configuration&lt;/h4>
 &lt;table>
 &lt;thead>

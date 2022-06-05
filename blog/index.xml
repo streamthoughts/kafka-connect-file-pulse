@@ -62,9 +62,9 @@
 &lt;/table>
 &lt;p>These new functions allows for specifying more complex conditions on configured &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/">&lt;em>Processing Filters&lt;/em>&lt;/a>.
 For example, we can use them to remove all records retrieved from files that are older than 24 hours.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=DropTooLateFiles
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=DropTooLateFiles
 filters.DropTooLateFiles.type=io.streamthoughts.kafka.connect.filepulse.filter.DropFilter
-filters.DropTooLateFiles.if=&amp;quot;{{ gt(timestamp_diff('HOURS', $metadata.lastModified, unix_timestamp()), 24) }}&amp;quot;
+filters.DropTooLateFiles.if=&amp;#34;{{ gt(timestamp_diff(&amp;#39;HOURS&amp;#39;, $metadata.lastModified, unix_timestamp()), 24) }}&amp;#34;
 filters.DropTooLateFiles.invert=false
 &lt;/code>&lt;/pre>&lt;h1 id="xml-processing">XML Processing&lt;/h1>
 &lt;p>XML is still widely used in legacy systems. To ease the integration of this data in Kafka,
@@ -73,7 +73,7 @@ this release introduces two new &lt;em>Processing Filters&lt;/em>: &lt;code>XmlT
 &lt;p>This &lt;em>processing filter&lt;/em> can be used to parse and convert an XML file that you read, for example, using the &lt;code>LocalBytesArrayInputReader&lt;/code> into a &lt;code>Struct&lt;/code> record.
 This filter should be preferred to the &lt;code>XMLFileInputReader&lt;/code> when you need to deal with invalid XML files.&lt;/p>
 &lt;p>For example, you may want to send invalid XML files into specific &lt;em>Dead Letter Topic&lt;/em>.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">filters=ParseXmlDocument
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=ParseXmlDocument
 filters.ParseXmlDocument.type=io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter
 filters.ParseXmlDocument.source=message
 filters.ParseXmlDocument.xml.parser.validating.enabled=true
@@ -96,7 +96,7 @@ In previous versions, only the exception message was available (e.g., using &lt;
 &lt;li>&lt;code>$error.exceptionClassName&lt;/code>&lt;/li>
 &lt;/ul>
 &lt;p>The below examples shows how to add the exception information to teh record headers.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">...
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">...
 filters.ParseXmlDocument.withOnFailure=SetToErrorTopic,AppendErrorMessageToHeader,AppendErrorStacktraceToHeader,AppendErrorClassNameToHeader
 filters.AppendErrorMessageToHeader.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendErrorMessageToHeader.field=$headers.errors.exception.message
@@ -115,7 +115,7 @@ filters.AppendErrorClassNameToHeader.value={{ $error.exceptionClassName }}
 &lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7fea775">7fea775&lt;/a> feat(dataformat): add config to specify a prefix used to prepend XML attributes (&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/issues/176">#176&lt;/a>)&lt;/li>
 &lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4fc2cb9">4fc2cb9&lt;/a> feat(expression): add expression function TimestampDiff&lt;/li>
 &lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/9d72e47">9d72e47&lt;/a> feat(expression): add expression function ToTimestamp&lt;/li>
-&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0644cb9">0644cb9&lt;/a> feat(expressions): add built-in function &amp;lsquo;gt&amp;rsquo; and &amp;lsquo;lt&amp;rsquo; to ScEL&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/0644cb9">0644cb9&lt;/a> feat(expressions): add built-in function &amp;lsquo;gt&amp;rsquo; and &amp;rsquo;lt&amp;rsquo; to ScEL&lt;/li>
 &lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/e4375c8">e4375c8&lt;/a> feat(expressions): add built-in function &amp;lsquo;or&amp;rsquo; and &amp;lsquo;and&amp;rsquo; to ScEL&lt;/li>
 &lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/28a6126">28a6126&lt;/a> feat(expressions): add built-in function &amp;lsquo;if&amp;rsquo; to ScEL&lt;/li>
 &lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/4fe77fd">4fe77fd&lt;/a> feat(api): add access to error stacktrace in filter chain&lt;/li>
@@ -253,7 +253,7 @@ For this, you can use the new connector&amp;rsquo;s configuration property: &lt;
 &lt;/ul>
 &lt;h3 id="docs">Docs&lt;/h3>
 &lt;ul>
-&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1b72a96">1b72a96&lt;/a> docs(site): fix syntax for &amp;lsquo;exists&amp;rsquo; ScEL Built-in Function (#148)&lt;/li>
+&lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/1b72a96">1b72a96&lt;/a> docs(site): fix syntax for &amp;rsquo;exists&amp;rsquo; ScEL Built-in Function (#148)&lt;/li>
 &lt;li>&lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/commit/7da7e41">7da7e41&lt;/a> docs(site): fix documentation error for StateBackingStore (#147)&lt;/li>
 &lt;/ul>
 &lt;h3 id="sub-tasks">Sub-Tasks&lt;/h3>
@@ -275,7 +275,7 @@ Using a single Kafka Connect Source Connector you can now read files from the lo
 &lt;p>In addition, the connector supports a variety of formats equally for all storage systems, e.g., text files, CSV, XML, JSON, Avro, etc.
 At the same time, you can still benefit from the powerful &lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/">processing-filters&lt;/a> mechanism of Connect FilePulse to process data records as they are read by the connector.&lt;/p>
 &lt;p>For example, here is the configuration for reading CSV object files from an Amazon S3 bucket.&lt;/p>
-&lt;pre>&lt;code class="language-properties" data-lang="properties">name=connect-file-pulse-amazon-s3-csv
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">name=connect-file-pulse-amazon-s3-csv
 connector.class=io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector
 topic=connect-filepulse-csv-data-records
 tasks.max=1

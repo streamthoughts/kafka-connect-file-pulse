@@ -82,7 +82,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>3.0.0-M6</maven.surefire.plugin.version>
         <maven.failsafe.plugin.version>3.0.0-M6</maven.failsafe.plugin.version>
         <apache.avro.version>1.8.2</apache.avro.version>
         <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
@@ -139,7 +139,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0-M6</version>
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
@@ -206,7 +206,7 @@
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>
                             <artifactId>findsecbugs-plugin</artifactId>
-                            <version>1.10.1</version>
+                            <version>1.12.0</version>
                         </plugin>
                     </plugins>
                 </configuration>
@@ -427,7 +427,7 @@
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>json-path</artifactId>
-                <version>3.3.0</version>
+                <version>5.1.0</version>
                 <scope>test</scope>
             </dependency>
             <!-- END test dependencies-->

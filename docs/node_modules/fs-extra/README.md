@@ -1,16 +1,13 @@
 Node.js: fs-extra
 =================
 
-`fs-extra` adds file system methods that aren't included in the native `fs` module and adds promise support to the `fs` methods. It should be a drop in replacement for `fs`.
+`fs-extra` adds file system methods that aren't included in the native `fs` module and adds promise support to the `fs` methods. It also uses [`graceful-fs`](https://github.com/isaacs/node-graceful-fs) to prevent `EMFILE` errors. It should be a drop in replacement for `fs`.
 
-[![npm Package](https://img.shields.io/npm/v/fs-extra.svg?style=flat-square)](https://www.npmjs.org/package/fs-extra)
-[![build status](https://api.travis-ci.org/jprichardson/node-fs-extra.svg)](http://travis-ci.org/jprichardson/node-fs-extra)
-[![windows Build status](https://img.shields.io/appveyor/ci/jprichardson/node-fs-extra/master.svg?label=windows%20build)](https://ci.appveyor.com/project/jprichardson/node-fs-extra/branch/master)
+[![npm Package](https://img.shields.io/npm/v/fs-extra.svg)](https://www.npmjs.org/package/fs-extra)
+[![License](https://img.shields.io/npm/l/fs-extra.svg)](https://github.com/jprichardson/node-fs-extra/blob/master/LICENSE)
+[![build status](https://img.shields.io/github/workflow/status/jprichardson/node-fs-extra/Node.js%20CI/master)](https://github.com/jprichardson/node-fs-extra/actions/workflows/ci.yml?query=branch%3Amaster)
 [![downloads per month](http://img.shields.io/npm/dm/fs-extra.svg)](https://www.npmjs.org/package/fs-extra)
-[![Coverage Status](https://img.shields.io/coveralls/jprichardson/node-fs-extra.svg)](https://coveralls.io/r/jprichardson/node-fs-extra)
-
-<a href="https://github.com/feross/standard"><img src="https://cdn.rawgit.com/feross/standard/master/sticker.svg" alt="Standard JavaScript" width="100"></a>
-
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 Why?
 ----
@@ -23,7 +20,7 @@ I got tired of including `mkdirp`, `rimraf`, and `ncp` in most of my projects.
 Installation
 ------------
 
-    npm install --save fs-extra
+    npm install fs-extra
 
 
 
@@ -58,11 +55,13 @@ const fs = require('fs')
 const fse = require('fs-extra')
 ```
 
-Sync vs Async
+Sync vs Async vs Async/Await
 -------------
 Most methods are async by default. All async methods will return a promise if the callback isn't passed.
 
 Sync methods on the other hand will throw if an error occurs.
+
+Also Async/Await will throw an error if one occurs.
 
 Example:
 
@@ -87,6 +86,18 @@ try {
 } catch (err) {
   console.error(err)
 }
+
+// Async/Await:
+async function copyFiles () {
+  try {
+    await fs.copy('/tmp/myfile', '/tmp/mynewfile')
+    console.log('success!')
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+copyFiles()
 ```
 
 
@@ -101,6 +112,7 @@ Methods
 - [ensureDir](docs/ensureDir.md)
 - [ensureLink](docs/ensureLink.md)
 - [ensureSymlink](docs/ensureSymlink.md)
+- [mkdirp](docs/ensureDir.md)
 - [mkdirs](docs/ensureDir.md)
 - [move](docs/move.md)
 - [outputFile](docs/outputFile.md)
@@ -118,6 +130,7 @@ Methods
 - [ensureDirSync](docs/ensureDir-sync.md)
 - [ensureLinkSync](docs/ensureLink-sync.md)
 - [ensureSymlinkSync](docs/ensureSymlink-sync.md)
+- [mkdirpSync](docs/ensureDir-sync.md)
 - [mkdirsSync](docs/ensureDir-sync.md)
 - [moveSync](docs/move-sync.md)
 - [outputFileSync](docs/outputFile-sync.md)
@@ -128,7 +141,7 @@ Methods
 - [writeJsonSync](docs/writeJson-sync.md)
 
 
-**NOTE:** You can still use the native Node.js methods. They are promisified and copied over to `fs-extra`. See [notes on `fs.read()` & `fs.write()`](docs/fs-read-write.md)
+**NOTE:** You can still use the native Node.js methods. They are promisified and copied over to `fs-extra`. See [notes on `fs.read()`, `fs.write()`, & `fs.writev()`](docs/fs-read-write-writev.md)
 
 ### What happened to `walk()` and `walkSync()`?
 
@@ -138,6 +151,9 @@ They were removed from `fs-extra` in v2.0.0. If you need the functionality, `wal
 Third Party
 -----------
 
+### CLI
+
+[fse-cli](https://www.npmjs.com/package/@atao60/fse-cli) allows you to run `fs-extra` from a console or from [npm](https://www.npmjs.com) scripts.
 
 ### TypeScript
 
@@ -148,9 +164,13 @@ If you like TypeScript, you can use `fs-extra` with it: https://github.com/Defin
 
 If you want to watch for changes to files or directories, then you should use [chokidar](https://github.com/paulmillr/chokidar).
 
+### Obtain Filesystem (Devices, Partitions) Information
+
+[fs-filesystem](https://github.com/arthurintelligence/node-fs-filesystem) allows you to read the state of the filesystem of the host on which it is run. It returns information about both the devices and the partitions (volumes) of the system.
 
 ### Misc.
 
+- [fs-extra-debug](https://github.com/jdxcode/fs-extra-debug) - Send your fs-extra calls to [debug](https://npmjs.org/package/debug).
 - [mfs](https://github.com/cadorn/mfs) - Monitor your fs-extra calls.
 
 
@@ -167,7 +187,7 @@ you're gonna have to get over it :) If `standard` is good enough for `npm`, it's
 What's needed?
 - First, take a look at existing issues. Those are probably going to be where the priority lies.
 - More tests for edge cases. Specifically on different platforms. There can never be enough tests.
-- Improve test coverage. See coveralls output for more info.
+- Improve test coverage.
 
 Note: If you make any big changes, **you should definitely file an issue for discussion first.**
 

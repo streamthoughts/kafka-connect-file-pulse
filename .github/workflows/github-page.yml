@@ -32,8 +32,8 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: "12.x"
-      - run: (cd ./docs; npm install && npm install postcss-cli)
+          node-version: "14.x"
+      - run: (cd ./docs; npm install)
 
       - name: Build
         run: hugo --minify -v -s ./docs -d ./public

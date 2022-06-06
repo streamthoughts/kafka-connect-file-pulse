@@ -1,5 +1,5 @@
 ---
-date: 2020-05-22
+date: 2022-06-06
 title: "Getting Started"
 linkTitle: "Getting Started"
 weight: 10
@@ -13,42 +13,46 @@ The prerequisites for this tutorial are :
 
 * IDE or Text editor.
 * Maven 3+
-* Docker (for running a Kafka Cluster 2.x).
+* Docker (for running a Kafka Cluster 3.x).
 
 ## Start Docker Environment
 
 Set the following environment variable to execute next commands.
 
 ```bash
-$ export GITHUB_REPO_MASTER=https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/
+export GITHUB_REPO_MASTER=https://raw.githubusercontent.com/streamthoughts/kafka-connect-file-pulse/master/
 ```
 
 **1 ) Run Confluent Platforms with Connect File Pulse**
 
 ```bash
-
-$ curl -sSL $GITHUB_REPO_MASTER/docker-compose.yml -o docker-compose.yml
-$ docker-compose up -d
+curl -sSL $GITHUB_REPO_MASTER/docker-compose.yml -o docker-compose.yml
+docker-compose up -d
 ```
 
 **2 ) Verify that Connect Worker is running (optional)**
-```
-$ docker-compose logs "connect-file-pulse"
+
+```bash
+docker-compose logs "connect-file-pulse"
 ```
 
 **3 ) Check that Connect File Pulse plugin is correctly loaded (optional)**
+
 ```bash
-$ curl -sX GET http://localhost:8083/connector-plugins | grep FilePulseSourceConnector
+curl -sX GET http://localhost:8083/connector-plugins | grep FilePulseSourceConnector
 ```
 
-## Example : Logs Parsing (Log4j)
+## Examples 
+
+### Logs Parsing (Log4j)
 
 This example starts a new connector instance to parse the Kafka Connect container log4j logs before writing them into a configured topic.
 
 **1 ) Start a new connector instance**
 
 ```bash
-$ curl -sSL $GITHUB_REPO_MASTER/examples/connect-file-pulse-quickstart-log4j.json -o connect-file-pulse-quickstart-log4j.json
+ 
+curl -sSL $GITHUB_REPO_MASTER/examples/connect-file-pulse-quickstart-log4j.json -o connect-file-pulse-quickstart-log4j.json
  
 $ curl -sX PUT http://localhost:8083/connectors/connect-file-pulse-quickstart-log4j/config \
 -d @connect-file-pulse-quickstart-log4j.json \
@@ -57,7 +61,7 @@ $ curl -sX PUT http://localhost:8083/connectors/connect-file-pulse-quickstart-lo
 
 **2 ) Check connector status**
 ```bash
-$ curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-log4j | jq
+curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-log4j/status | jq
 ```
 
 **3 ) Consume output topics**
@@ -72,10 +76,10 @@ $ docker exec -it -e KAFKA_OPTS="" connect kafka-avro-console-consumer \
 (output)
 ```json
 ...
-{"loglevel":{"string":"INFO"},"logdate":{"string":"2019-06-16 20:41:15,247"},"message":{"string":"[main] Scanning for plugin classes. This might take a moment ... (org.apache.kafka.connect.cli.ConnectDistributed)"}}
-{"loglevel":{"string":"INFO"},"logdate":{"string":"2019-06-16 20:41:15,270"},"message":{"string":"[main] Loading plugin from: /usr/share/java/schema-registry (org.apache.kafka.connect.runtime.isolation.DelegatingClassLoader)"}}
-{"loglevel":{"string":"INFO"},"logdate":{"string":"2019-06-16 20:41:16,115"},"message":{"string":"[main] Registered loader: PluginClassLoader{pluginLocation=file:/usr/share/java/schema-registry/} (org.apache.kafka.connect.runtime.isolation.DelegatingClassLoader)"}}
-{"loglevel":{"string":"INFO"},"logdate":{"string":"2019-06-16 20:41:16,115"},"message":{"string":"[main] Added plugin 'org.apache.kafka.common.config.provider.FileConfigProvider' (org.apache.kafka.connect.runtime.isolation.DelegatingClassLoader)"}}
+{"logdate":{"string":"2022-06-06 14:10:34,193"},"loglevel":{"string":"INFO"},"message":{"string":"[task-thread-connect-file-pulse-quickstart-log4j-0] Started FilePulse source task (io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceTask)"}}
+{"logdate":{"string":"2022-06-06 14:10:34,193"},"loglevel":{"string":"INFO"},"message":{"string":"[task-thread-connect-file-pulse-quickstart-log4j-0] WorkerSourceTask{id=connect-file-pulse-quickstart-log4j-0} Source task finished initialization and start (org.apache.kafka.connect.runtime.WorkerSourceTask)"}}
+{"logdate":{"string":"2022-06-06 14:10:34,194"},"loglevel":{"string":"INFO"},"message":{"string":"[task-thread-connect-file-pulse-quickstart-log4j-0] WorkerSourceTask{id=connect-file-pulse-quickstart-log4j-0} Executing source task (org.apache.kafka.connect.runtime.WorkerSourceTask)"}}
+{"logdate":{"string":"2022-06-06 14:10:34,695"},"loglevel":{"string":"INFO"},"message":{"string":"[task-thread-connect-file-pulse-quickstart-log4j-0] Completed all object files. FilePulse source task is transitioning to IDLE state while waiting for new reconfiguration request from source connector. (io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceTask)"}}
 ...
 ```
 
@@ -92,10 +96,11 @@ $ docker exec -it -e KAFKA_OPTS="" connect kafka-console-consumer \
 
 (output)
 ```json
-{"hostname":"f51d45f96ed5","status":"SCHEDULED","metadata":{"name":"kafka-connect.log","path":"/var/log/kafka","size":172559,"lastModified":1560772525000,"inode":1705406,"hash":661976312},"offset":{"position":-1,"rows":0,"timestamp":1560772525527}}
-{"hostname":"f51d45f96ed5","status":"STARTED","metadata":{"name":"kafka-connect.log","path":"/var/log/kafka","size":172559,"lastModified":1560772525000,"inode":1705406,"hash":661976312},"offset":{"position":-1,"rows":0,"timestamp":1560772525719}}
-{"hostname":"f51d45f96ed5","status":"READING","metadata":{"name":"kafka-connect.log","path":"/var/log/kafka","size":172559,"lastModified":1560772525000,"inode":1705406,"hash":661976312},"offset":{"position":174780,"rows":1911,"timestamp":1560772535322}}
-...
+{"metadata":{"uri":"file:/var/log/kafka/kafka-connect.log","name":"kafka-connect.log","contentLength":110900,"lastModified":1654524649569,"contentDigest":{"digest":"2445040665","algorithm":"CRC32"},"userDefinedMetadata":{"system.inode":33827724,"system.hostname":"5c1e920f9a28"}},"offset":{"position":-1,"rows":0,"timestamp":1654524649578},"status":"SCHEDULED"}
+{"metadata":{"uri":"file:/var/log/kafka/kafka-connect.log","name":"kafka-connect.log","contentLength":111122,"lastModified":1654524649597,"contentDigest":{"digest":"1755089447","algorithm":"CRC32"},"userDefinedMetadata":{"system.inode":33827724,"system.hostname":"5c1e920f9a28"}},"offset":{"position":0,"rows":0,"timestamp":1654524649604},"status":"STARTED"}
+{"metadata":{"uri":"file:/var/log/kafka/kafka-connect.log","name":"kafka-connect.log","contentLength":111122,"lastModified":1654524649597,"contentDigest":{"digest":"1755089447","algorithm":"CRC32"},"userDefinedMetadata":{"system.inode":33827724,"system.hostname":"5c1e920f9a28"}},"offset":{"position":111530,"rows":1271,"timestamp":1654524654094},"status":"READING"}
+{"metadata":{"uri":"file:/var/log/kafka/kafka-connect.log","name":"kafka-connect.log","contentLength":111122,"lastModified":1654524649597,"contentDigest":{"digest":"1755089447","algorithm":"CRC32"},"userDefinedMetadata":{"system.inode":33827724,"system.hostname":"5c1e920f9a28"}},"offset":{"position":112158,"rows":1274,"timestamp":1654524664011},"status":"READING"}
+{"metadata":{"uri":"file:/var/log/kafka/kafka-connect.log","name":"kafka-connect.log","contentLength":111122,"lastModified":1654524649597,"contentDigest":{"digest":"1755089447","algorithm":"CRC32"},"userDefinedMetadata":{"system.inode":33827724,"system.hostname":"5c1e920f9a28"}},"offset":{"position":112786,"rows":1277,"timestamp":1654524674029},"status":"READING"}
 ```
 
 **5 ) Stop all containers**
@@ -103,7 +108,7 @@ $ docker exec -it -e KAFKA_OPTS="" connect kafka-console-consumer \
 docker-compose down
 ```
 
-### Example : CSV File Parsing
+### Parsing a CSV file
 
 This example starts a new connector instance that parse a CSV file and filter rows based on column's values before writing record into Kafka.
 
@@ -127,12 +132,13 @@ $ docker cp quickstart-musics-dataset.csv connect://tmp/kafka-connect/examples/q
 
 **3 ) Check connector status**
 ```bash
-$ curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-csv | jq
+$ curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-csv/status | jq
 ```
 
 **4 ) Check for task completion**
+
 ```
-$ docker logs --tail="all" -f connect | grep "Orphan task detected"
+docker logs --tail="all" -f connect | grep "source task is transitioning to IDLE state"
 ```
 
 **5 ) Consume output topics**

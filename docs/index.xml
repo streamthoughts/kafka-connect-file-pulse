@@ -1,4 +1,25 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – Documentation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/</link><description>Recent content in Documentation on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.3.x/developer-guide/installation/</link><pubDate>Sun, 05 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.3.x/developer-guide/installation/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – Documentation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/</link><description>Recent content in Documentation on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</link><pubDate>Tue, 07 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</guid><description>
+&lt;p>&lt;strong>Connect FilePulse&lt;/strong> can be installed either from &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases">GitHub Releases Page&lt;/a> or from &lt;a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse">Confluent Hub&lt;/a>.&lt;/p>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Caution&lt;/h4>
+You should note that the connector downloaded from Confluent Hub may not reflect the latest available version.
+&lt;/div>
+&lt;p>&lt;strong>Confluent Hub CLI installation&lt;/strong>&lt;/p>
+&lt;p>Use the &lt;a href="https://docs.confluent.io/current/confluent-hub/client.html">Confluent Hub client&lt;/a> to install this connector with:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>confluent-hub install streamthoughts/kafka-connect-file-pulse:latest
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Download Installation&lt;/strong>&lt;/p>
+&lt;p>Download the distribution ZIP file for the latest available version.&lt;/p>
+&lt;p>&lt;strong>Example :&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">export&lt;/span> &lt;span style="color:#000">VERSION&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>2.6.0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>wget https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v&lt;span style="color:#000">$VERSION&lt;/span>/streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Extract it into one of the directories that is listed on the &lt;code>plugin.path&lt;/code> worker configuration property.&lt;/p>
+&lt;p>You can also use the Confluent Hub CLI for installing it.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Important&lt;/h4>
+When you run Connect workers in &lt;strong>distributed mode&lt;/strong>, the connector-plugin must be installed &lt;strong>on each of machines&lt;/strong> running Kafka Connect.
+&lt;/div></description></item><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.3.x/developer-guide/installation/</link><pubDate>Sun, 05 Sep 2021 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.3.x/developer-guide/installation/</guid><description>
 &lt;h2 id="confluent-hub">Confluent Hub&lt;/h2>
 &lt;p>Connect FilePulse can be installed directly from &lt;a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse">Confluent Hub&lt;/a> using the &lt;a href="https://docs.confluent.io/current/confluent-hub/client.html">Confluent Hub client&lt;/a> .&lt;/p>
 &lt;p>The following command can be used to install the last version of the plugin available on the Confluent Hub:&lt;/p>
@@ -217,27 +238,6 @@ You should note that the connector downloaded from Confluent Hub may not reflect
 &lt;h4 class="alert-heading">Important&lt;/h4>
 When you run Connect workers in &lt;strong>distributed mode&lt;/strong>, the connector-plugin must be installed &lt;strong>on each of machines&lt;/strong> running Kafka Connect.
 &lt;/div></description></item><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.6.x/developer-guide/installation/</link><pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.6.x/developer-guide/installation/</guid><description>
-&lt;p>&lt;strong>Connect FilePulse&lt;/strong> can be installed either from &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases">GitHub Releases Page&lt;/a> or from &lt;a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse">Confluent Hub&lt;/a>.&lt;/p>
-&lt;div class="alert alert-warning" role="alert">
-&lt;h4 class="alert-heading">Caution&lt;/h4>
-You should note that the connector downloaded from Confluent Hub may not reflect the latest available version.
-&lt;/div>
-&lt;p>&lt;strong>Confluent Hub CLI installation&lt;/strong>&lt;/p>
-&lt;p>Use the &lt;a href="https://docs.confluent.io/current/confluent-hub/client.html">Confluent Hub client&lt;/a> to install this connector with:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>confluent-hub install streamthoughts/kafka-connect-file-pulse:latest
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Download Installation&lt;/strong>&lt;/p>
-&lt;p>Download the distribution ZIP file for the latest available version.&lt;/p>
-&lt;p>&lt;strong>Example :&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">export&lt;/span> &lt;span style="color:#000">VERSION&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>1.3.0
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v&lt;span style="color:#000">$VERSION&lt;/span>/streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Extract it into one of the directories that is listed on the &lt;code>plugin.path&lt;/code> worker configuration property.&lt;/p>
-&lt;p>You can also use the Confluent Hub CLI for installing it.&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
-&lt;div class="alert alert-info" role="alert">
-&lt;h4 class="alert-heading">Important&lt;/h4>
-When you run Connect workers in &lt;strong>distributed mode&lt;/strong>, the connector-plugin must be installed &lt;strong>on each of machines&lt;/strong> running Kafka Connect.
-&lt;/div></description></item><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</link><pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</guid><description>
 &lt;p>&lt;strong>Connect FilePulse&lt;/strong> can be installed either from &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases">GitHub Releases Page&lt;/a> or from &lt;a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse">Confluent Hub&lt;/a>.&lt;/p>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Caution&lt;/h4>

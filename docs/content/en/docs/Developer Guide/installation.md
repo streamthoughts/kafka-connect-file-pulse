@@ -1,5 +1,5 @@
 ---
-date: 2020-05-21
+date: 2022-06-07
 title: "Installation"
 linkTitle: "Installation"
 weight: 10
@@ -27,9 +27,10 @@ confluent-hub install streamthoughts/kafka-connect-file-pulse:latest
 Download the distribution ZIP file for the latest available version.
 
 **Example :**
+
 ```bash
-export VERSION=1.3.0
-curl -sSL https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v$VERSION/streamthoughts-kafka-connect-file-pulse-$VERSION.zip
+export VERSION=2.6.0
+wget https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v$VERSION/streamthoughts-kafka-connect-file-pulse-$VERSION.zip
 ```
 
 Extract it into one of the directories that is listed on the `plugin.path` worker configuration property.
@@ -37,7 +38,7 @@ Extract it into one of the directories that is listed on the `plugin.path` worke
 You can also use the Confluent Hub CLI for installing it.
 
 ```bash
-$ confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-$VERSION.zip
+confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-$VERSION.zip
 ```
 
 {{% alert title="Important" color="info" %}}

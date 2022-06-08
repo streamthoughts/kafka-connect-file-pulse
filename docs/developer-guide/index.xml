@@ -1016,17 +1016,17 @@ used by Kafka Connect to persist the position of the connector for each file (i.
 &lt;td>HIGH&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: Filter Chain Definition</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/</link><pubDate>Wed, 30 Sep 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/</guid><description>
+&lt;/table></description></item><item><title>Docs: Filter Chain Definition</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/</link><pubDate>Wed, 08 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/</guid><description>
 &lt;p>The connector can be configured to apply complex transformations on messages before they are written to Kafka.&lt;/p>
 &lt;h2 id="configuration">Configuration&lt;/h2>
-&lt;p>A &lt;a href="#filters">filter&lt;/a> chain can be specified in the connector configuration.&lt;/p>
+&lt;p>A &lt;a href="../filters">filter&lt;/a> chain can be specified in the connector configuration.&lt;/p>
 &lt;ul>
-&lt;li>filters - List of aliases for the filter, specifying the order in which the filters will be applied.&lt;/li>
-&lt;li>filters.$alias.type - Fully qualified class name for the filter.&lt;/li>
-&lt;li>filters.$alias.$filterSpecificConfig Configuration properties for the filter&lt;/li>
+&lt;li>&lt;code>filters&lt;/code> - List of aliases for the filter, specifying the order in which the filters will be applied.&lt;/li>
+&lt;li>&lt;code>filters.$alias.type&lt;/code> - Fully qualified class name for the filter.&lt;/li>
+&lt;li>&lt;code>filters.$alias.$filterSpecificConf&lt;/code> - Configuration properties for the filter&lt;/li>
 &lt;/ul>
 &lt;p>For example, let&amp;rsquo;s parse a standard application logs file written with log4j using the build-in filters :&lt;/p>
-&lt;pre tabindex="0">&lt;code>filters=GroupMultilineException, ExtractFirstLine, ParseLog4jLog
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=GroupMultilineException, ExtractFirstLine, ParseLog4jLog
 filters.GroupMultilineException.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
 filters.GroupMultilineException.negate=false
 filters.GroupMultilineException.pattern=&amp;#34;^[\\t]&amp;#34;
@@ -1037,7 +1037,7 @@ filters.ParseLog4jLog.type=io.streamthoughts.kafka.connect.filepulse.filter.impl
 filters.ParseLog4jLog.match=&amp;#34;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:thread} %{GREEDYDATA:logmessage}&amp;#34;
 filters.ParseLog4jLog.source=log
 filters.ParseLog4jLog.overwrite=logmessage
-&lt;/code>&lt;/pre>&lt;h2 id="available-filters">Available Filters&lt;/h2>
+&lt;/code>&lt;/pre>&lt;h2 id="available-processing-filters">Available Processing Filters&lt;/h2>
 &lt;p>These filters are available for use with Kafka Connect File Pulse:&lt;/p>
 &lt;table>
 &lt;thead>
@@ -3782,61 +3782,62 @@ filters.ParseXmlDocument.xml.parser.validating.enabled=true
 filters.ParseXmlDocument.xml.parser.namespace.aware.enabled=true
 filters.ParseXmlDocument.xml.exclude.empty.elements=true
 filters.ParseXmlDocument.xml.data.type.inference.enabled=true
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Tracking File Status</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Tracking File Status</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</link><pubDate>Wed, 08 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/tracking-files-status/</guid><description>
 &lt;p>Connect File Pulse uses an internal topic (&lt;em>default:&lt;code>connect-file-pulse-status&lt;/code>&lt;/em>) to track the current state of files being processed.
 This topic is used internally by Tasks to communicate to the SourceConnector instance, but you can easily use it to monitor files progression.&lt;/p>
 &lt;h2 id="the-message-format">The message format&lt;/h2>
 &lt;p>Status event are published into JSON with the following schema :&lt;/p>
-&lt;pre tabindex="0">&lt;code>{
-&amp;#34;hostname&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
-&amp;#34;description: &amp;#34;The machine from which the source file is read.&amp;#34;
-},
-&amp;#34;status&amp;#34;:{
-&amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
-&amp;#34;description: &amp;#34;The current status&amp;#34;
-},
-&amp;#34;metadata&amp;#34;:{
-&amp;#34;name&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
-&amp;#34;description: &amp;#34;The file name.&amp;#34;
-},
-&amp;#34;path&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;string&amp;#34;,
-&amp;#34;description: &amp;#34;The file absolute path.&amp;#34;
-},
-&amp;#34;size&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;int&amp;#34;,
-&amp;#34;description: &amp;#34;The file size.&amp;#34;
-},
-lastModified&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;long&amp;#34;,
-&amp;#34;description: &amp;#34;The file last-modified property.&amp;#34;
-},
-&amp;#34;inode&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;int&amp;#34;,
-&amp;#34;description: &amp;#34;The file inode&amp;#34;
-},
-&amp;#34;hash&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;int&amp;#34;,
-&amp;#34;description: &amp;#34;CRC32&amp;#34;
-}
-},
-&amp;#34;offset&amp;#34;:{
-&amp;#34;position&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;long&amp;#34;,
-&amp;#34;description: &amp;#34;The current position in the source file (default : -1).&amp;#34;
-},
-&amp;#34;rows&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;long&amp;#34;,
-&amp;#34;description: &amp;#34;The number of rows already read from the source file (default : -1).&amp;#34;
-},
-&amp;#34;timestamp&amp;#34;: {
-&amp;#34;type&amp;#34;: &amp;#34;long&amp;#34;,
-&amp;#34;description: &amp;#34;The offset timestamp&amp;#34;
-}
-}
-&lt;/code>&lt;/pre>&lt;h2 id="list-of-file-status">List of File Status&lt;/h2>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;hostname&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The machine from which the source file is read.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;status&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The current status&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;metadata&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The file name.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;path&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The file absolute path.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;size&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;int&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The file size.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;lastModified&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;long&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The file last-modified property.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;inode&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;int&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The file inode&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;hash&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;int&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;CRC32&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;offset&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;position&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;long&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The current position in the source file (default : -1).&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;rows&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;long&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The number of rows already read from the source file (default : -1).&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;timestamp&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;long&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The offset timestamp&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="list-of-file-status">List of File Status&lt;/h2>
 &lt;p>An object file can be in the following states :&lt;/p>
 &lt;ul>
 &lt;li>[1] &lt;strong>SCHEDULED&lt;/strong> : The file has been scheduled by the connector monitoring thread.&lt;/li>

@@ -1525,7 +1525,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ converts(field_expression, type) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ converts(&amp;lt;field_expression&amp;gt;, &amp;lt;type&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>ANY&lt;/code>&lt;/td>
@@ -1544,7 +1544,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ gt(field_expression1, field_expression2) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ gt(&amp;lt;field_expression1&amp;gt;, &amp;lt;field_expression2&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1563,7 +1563,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ lt(field_expression1, field_expression2) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ lt(&amp;lt;field_expression1&amp;gt;, &amp;lt;field_expression2&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1574,7 +1574,7 @@ Variables are not cached between records.
 &lt;p>Executes &amp;ldquo;&lt;em>greater than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>TRUE&lt;/code> if the first value is greater than the second value, &lt;code>FALSE&lt;/code>, otherwise.&lt;/p>
 &lt;/blockquote>
 &lt;h3 id="binary-functions">Binary Functions&lt;/h3>
-&lt;h4 id="and">`AND&lt;/h4>
+&lt;h4 id="and">&lt;code>AND&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1583,7 +1583,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ and(boolean_expression1, boolean_expression2) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ and(&amp;lt;boolean_expression1&amp;gt;, &amp;lt;boolean_expression2&amp;gt;, [...]) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1602,7 +1602,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ and(boolean_expression1, boolean_expression2) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ if(&amp;lt;boolean_expression&amp;gt;, &amp;lt;value_expression_if_true&amp;gt;, &amp;lt;value_expression_if_false&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1621,7 +1621,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ not(boolean_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ not(&amp;lt;boolean_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1640,7 +1640,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ not(boolean_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ or(&amp;lt;boolean_expression1&amp;gt;, &amp;lt;boolean_expression2&amp;gt;, [...]) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1660,7 +1660,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ extract_array(array_expression, index) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ extract_array(&amp;lt;array_expression&amp;gt;, &amp;lt;index&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>ANY&lt;/code>&lt;/td>
@@ -1679,7 +1679,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ length(array_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ length(&amp;lt;array_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>INTEGER&lt;/code>&lt;/td>
@@ -1698,7 +1698,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ contains(array_expression, value_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ contains(&amp;lt;array_expression&amp;gt;, &amp;lt;value_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1737,7 +1737,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ to_timestamp(datetime_expression, pattern [, timezone]) }} }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ to_timestamp(&amp;lt;datetime_expression&amp;gt;, &amp;lt;pattern&amp;gt;, [&amp;lt;timezone&amp;gt;]) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>LONG&lt;/code>&lt;/td>
@@ -1767,7 +1767,7 @@ Variables are not cached between records.
 &lt;p>Returns the current time in milliseconds.&lt;/p>
 &lt;/blockquote>
 &lt;h3 id="nulls">Nulls&lt;/h3>
-&lt;h4 id="is_empty">`IS_EMPTY&lt;/h4>
+&lt;h4 id="is_empty">&lt;code>IS_EMPTY&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1776,7 +1776,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ is_empty(array_expression1) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ is_empty(&amp;lt;array_expression1&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1795,7 +1795,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ is_null(field_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ is_null(&amp;lt;field_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1814,7 +1814,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ nlv(field_expression, default_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ nlv(&amp;lt;field_expression&amp;gt;, &amp;lt;default_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>Any&lt;/code>&lt;/td>
@@ -1834,7 +1834,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ concat(field_expression01, field_expression02, ...) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ concat(&amp;lt;field_expression1&amp;gt;, &amp;lt;field_expression2, ...) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
@@ -1865,7 +1865,7 @@ Variables are not cached between records.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ concat_ws(separator, prefix, suffix, field_expression01, field_expression02, ...) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ concat_ws(&amp;lt;separator&amp;gt;, &amp;lt;prefix&amp;gt;, &amp;lt;suffix&amp;gt;, &amp;lt;field_expression1&amp;gt;, &amp;lt;field_expression2&amp;gt;, ...) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
@@ -1897,7 +1897,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ hash(field_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ hash(&amp;lt;field_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
@@ -1916,7 +1916,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ equals(field_expression, value_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ equals(&amp;lt;field_expression&amp;gt;, &amp;lt;value_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1935,7 +1935,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ ends_with(field_expression, suffix) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ ends_with(&amp;lt;field_expression&amp;gt;, &amp;lt;suffix&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1966,7 +1966,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ exists(struct_expression, 'field') }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ exists(&amp;lt;struct_expression&amp;gt;, &amp;lt;field&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -1980,12 +1980,12 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.7.0&lt;/code>&lt;/strong>&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ extract_struct_field(struct_expression, 'path') }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ extract_struct_field(&amp;lt;struct_expression&amp;gt;, &amp;lt;path&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>ANY&lt;/code>&lt;/td>
@@ -1996,6 +1996,26 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;p>Extracts the value at the specified field &lt;code>path&lt;/code> from the &lt;code>STRUCT&lt;/code> returned by the given &lt;code>struct_expression&lt;/code>.
 If the requested &lt;code>path&lt;/code> does not exist, the function returns &lt;code>NULL&lt;/code>.&lt;/p>
 &lt;/blockquote>
+&lt;h4 id="from_bytes">&lt;code>FROM_BYTES&lt;/code>&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.7.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ from_bytes(struct_expression, '&amp;lt;path&amp;gt;') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Converts a &lt;code>BYTES&lt;/code> value to a &lt;code>STRING&lt;/code> in the specified encoding type.
+The following list shows the supported encoding types: &lt;code>hex&lt;/code>, &lt;code>utf8&lt;/code>, &lt;code>ascii&lt;/code> and &lt;code>base64&lt;/code>.&lt;/p>
+&lt;/blockquote>
 &lt;h4 id="lowercase">&lt;code>LOWERCASE&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
@@ -2005,7 +2025,7 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ lowercase(field_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ lowercase(&amp;lt;field_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
@@ -2036,7 +2056,7 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ matches(field_expression, 'regex') }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ matches(&amp;lt;field_expression&amp;gt;, &amp;lt;regex&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -2055,7 +2075,7 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ md5(field_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ md5(&amp;lt;field_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
@@ -2074,7 +2094,7 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ replace_all(field_expression, 'regex', 'replacement') }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ replace_all(&amp;lt;field_expression&amp;gt;, &amp;lt;regex&amp;gt;, &amp;lt;replacement&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
@@ -2093,7 +2113,7 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ split(field_expr, regex [,limit]) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ split(&amp;lt;field_expression&amp;gt;, &amp;lt;regex&amp;gt;, [&amp;lt;limit&amp;gt;]) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>ARRAY&amp;lt;STRING&amp;gt;&lt;/code>&lt;/td>
@@ -2112,7 +2132,7 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ starts_with(field_expression, suffix) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ starts_with(&amp;lt;field_expression&amp;gt;, &amp;lt;suffix&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>BOOLEAN&lt;/code>&lt;/td>
@@ -2143,7 +2163,7 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ trim(field_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ trim(&amp;lt;field_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
@@ -2174,7 +2194,7 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ uppercase(field_expression) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ uppercase(&amp;lt;field_expression&amp;gt;) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>STRING&lt;/code>&lt;/td>
@@ -2220,12 +2240,12 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.6.0&lt;/code>&lt;/strong>&lt;/th>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>2.7.0&lt;/code>&lt;/strong>&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ parse_url(field_expression[,permissive]) }}&lt;/code>&lt;/td>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ parse_url(&amp;lt;field_expression&amp;gt;, [&amp;lt;permissive&amp;gt;]) }}&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -2279,100 +2299,34 @@ If the requested &lt;code>path&lt;/code> does not exist, the function returns &l
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
 &lt;/ul></description></item><item><title>Docs: Conditional Execution</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/conditional-execution/</guid><description>
 &lt;p>A conditional property &lt;code>if&lt;/code> can be configured on each filter to determine if that filter should be applied or skipped.
-When a filter is skipped, message flow to the next filter without any modification.&lt;/p>
-&lt;p>&lt;code>if&lt;/code> configuration accepts a Simple Connect Expression that must return to &lt;code>true&lt;/code> or &lt;code>false&lt;/code>.
+When a filter is skipped, record flow to the next filter without any modification.&lt;/p>
+&lt;p>&lt;code>if&lt;/code> configuration accepts a &lt;a href="../accessing-data-and-metadata">Simple Connect Expression&lt;/a> that must return to &lt;code>TRUE&lt;/code> or &lt;code>FALSE&lt;/code>.
 If the configured expression does not evaluate to a boolean value the filter chain will fail.&lt;/p>
-&lt;p>The&lt;code>if&lt;/code> property supports (&lt;a href="accessing-data-and-metadata">simple expression&lt;/a>)&lt;/p>
-&lt;p>The boolean value returned from the filter condition can be inverted by setting the property &lt;code>invert&lt;/code> to &lt;code>true&lt;/code>.&lt;/p>
-&lt;p>For example, the below filter will only be applied on message having a log message containing &amp;ldquo;BadCredentialsException&amp;rdquo;&lt;/p>
+&lt;p>The &lt;code>BOOLEAN&lt;/code> value returned from the filter condition can be inverted by setting the property &lt;code>invert&lt;/code> to &lt;code>TRUE&lt;/code>.&lt;/p>
+&lt;p>For example, the below filter will only be applied on records having a log message containing &amp;ldquo;BadCredentialsException&amp;rdquo;&lt;/p>
 &lt;pre tabindex="0">&lt;code>filters.TagSecurityException.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.TagSecurityException.if={{ contains(data.logmessage, BadCredentialsException) }}
 filters.TagSecurityException.invert=false
 filters.TagSecurityException.field=tags
 filters.TagSecurityException.values=SecurityAlert
-&lt;/code>&lt;/pre>&lt;p>These conditional functions are available for use with the &lt;code>if&lt;/code> config property :&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Function&lt;/th>
-&lt;th>Since&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Syntax&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>and&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Checks if all of the given conditional expressions are &lt;code>true&lt;/code>.&lt;/td>
-&lt;td>&lt;code>{{ and(booleanExpression1, booleanExpression2, ...) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>contains&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an array field&amp;rsquo;s value contains the specified value&lt;/td>
-&lt;td>&lt;code>{{ contains(field, value) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>ends_with&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an a string field&amp;rsquo;s value end with the specified string suffix&lt;/td>
-&lt;td>&lt;code>{{ ends_with(field, suffix) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>equals&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an a string or number fields&amp;rsquo;s value equals the specified value&lt;/td>
-&lt;td>&lt;code>{{ equals(field, value) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>exists&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an the specified field exists&lt;/td>
-&lt;td>&lt;code>{{ exists(struct, field) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>gt&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Executes &amp;ldquo;&lt;em>greater than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is greater than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
-&lt;td>&lt;code>{{ gt(expressionValue1, expressionValue2) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>is_null&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if a field&amp;rsquo;s value is null&lt;/td>
-&lt;td>&lt;code>{{ is_null(field) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>lt&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Executes &amp;ldquo;&lt;em>less than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>true&lt;/code> if the first value is less than the second value, &lt;code>false&lt;/code>, otherwise.&lt;/td>
-&lt;td>&lt;code>{{ lt(expressionValue1, expressionValue2) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>matches&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if a field&amp;rsquo;s value match the specified regex&lt;/td>
-&lt;td>&lt;code>{{ matches(field, regex) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>starts_with&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>Returns &lt;code>true&lt;/code> if an a string field&amp;rsquo;s value start with the specified string prefix&lt;/td>
-&lt;td>&lt;code>{{ starts_with(field, prefix) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>or&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Checks if at least one of the given conditional expressions is &lt;code>true&lt;/code>..&lt;/td>
-&lt;td>&lt;code>{{ or(booleanExpression1, booleanExpression2, ...) }}&lt;/code>&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Limitations&lt;/strong> :&lt;/p>
+&lt;/code>&lt;/pre>&lt;p>The following list shows the supported functions that return a &lt;code>BOOLEAN&lt;/code> type for use with the &lt;code>if&lt;/code> config property:&lt;/p>
 &lt;ul>
-&lt;li>conditions cannot be used to easily create pipeline branching.&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Handling Failures</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</guid><description>
+&lt;li>&lt;a href="../accessing-data-and-metadata#and">&lt;code>and&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#contains">&lt;code>contains&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#ends_with">&lt;code>ends_with&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#equals">&lt;code>equals&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#exists">&lt;code>exists&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#gt">&lt;code>gt&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#is_null">&lt;code>is_null&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#lt">&lt;code>lt&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#matches">&lt;code>matches&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#starts_with">&lt;code>starts_with&lt;/code>&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../accessing-data-and-metadata#or">&lt;code>or&lt;/code>&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Limitations&lt;/h4>
+Conditions cannot be used to easily create pipeline branching.
+&lt;/div></description></item><item><title>Docs: Handling Failures</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/handling-failures/</guid><description>
 &lt;p>The connector provides some mechanisms to handle failures while executing filters.&lt;/p>
 &lt;p>By default, the filters chain will immediately fail after an exception is thrown.
 But, you can also configure each filter to either ignore errors or to branch to a sub filters-chain.&lt;/p>

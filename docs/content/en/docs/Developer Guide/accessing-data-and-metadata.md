@@ -245,7 +245,7 @@ ScEL supports a number of predefined functions that can be used to apply a singl
 
 ScEL numeric functions are used primarily for numeric manipulation and/or mathematical calculations.
 
-#### CONVERTS
+#### `CONVERTS`
 
 | **Since**: **`-`**                                    |
 |-------------------------------------------------------|
@@ -254,7 +254,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Converts one type to another. The following casts are supported:
 
-#### GT
+#### `GT`
 
 | **Since**: **`2.4.0`**                                        |
 |---------------------------------------------------------------|
@@ -263,7 +263,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Executes "*less than operation*" on two values and returns `TRUE` if the first value is less than the second value, `FALSE`, otherwise.
 
-#### LT
+#### `LT`
 
 | **Since**: **`2.4.0`**                                        |
 |---------------------------------------------------------------|
@@ -274,7 +274,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 ### Binary Functions
 
-#### AND
+#### `AND
 
 | **Since**: **`2.4.0`**                                             |
 |--------------------------------------------------------------------|
@@ -283,7 +283,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Checks if all of the given conditional expressions are `TRUE`.
 
-#### IF
+#### `IF`
 
 | **Since**: **`2.4.0`**                                             |
 |--------------------------------------------------------------------|
@@ -292,7 +292,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Evaluates the given boolean expression and returns one value if `TRUE` and another value if `FALSE`.
 
-#### NOT
+#### `NOT`
 
 | **Since**: **`2.4.0`**                       |
 |----------------------------------------------|
@@ -301,7 +301,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Reverses a boolean value.
 
-#### OR
+#### `OR`
 
 | **Since**: **`2.4.0`**                       |
 |----------------------------------------------|
@@ -312,7 +312,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 ### Collection
 
-#### EXCTRACT_ARRAY
+#### `EXCTRACT_ARRAY`
 
 | **Since**: **`-`**                                          |
 |-------------------------------------------------------------|
@@ -321,7 +321,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Returns the element at the specified position of the specified array. 
 
-#### LENGTH
+#### `LENGTH`
 
 | **Since**: **`2.4.0`**                        |
 |-----------------------------------------------|
@@ -330,7 +330,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Returns the number of elements into an array or the length of a string field
 
-#### CONTAINS
+#### `CONTAINS`
 
 | **Since**: **`-`**                                                |
 |-------------------------------------------------------------------|
@@ -341,7 +341,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 ### Date and time
 
-#### TIMESTAMP_DIFF
+#### `TIMESTAMP_DIFF`
 
 | **Since**: **`2.4.0`**                                                                    |
 |-------------------------------------------------------------------------------------------|
@@ -350,7 +350,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Calculates the amount of time between two epoch times in seconds or milliseconds. For more information on `unit` see [ChronoUnit](https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html).
  
-#### TO_TIMESTAMP
+#### `TO_TIMESTAMP`
 
 | **Since**: **`2.4.0`**                                                           |
 |----------------------------------------------------------------------------------|
@@ -359,7 +359,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Parses a given string value and returns the epoch-time in milliseconds.
 
-#### UNIX_TIMESTAMP
+#### `UNIX_TIMESTAMP`
 
 | **Since**: **`2.4.0`**                |
 |---------------------------------------|
@@ -370,7 +370,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 ### Nulls
 
-#### IS_EMPTY
+#### `IS_EMPTY
 
 | **Since**: **`2.4.0`**                           |
 |--------------------------------------------------|
@@ -379,7 +379,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Returns `TRUE` if an array as no elements or a string field has no characters
 
-#### IS_NULL
+#### `IS_NULL`
 
 | **Since**: **`2.4.0`**                         |
 |------------------------------------------------|
@@ -388,7 +388,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Returns `TRUE` if a field's value is `NULL`.
 
-#### NLV
+#### `NLV`
 
 | **Since**: **`-`**                                             |
 |----------------------------------------------------------------|
@@ -399,7 +399,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 ### Strings & Objects
 
-#### CONCAT
+#### `CONCAT`
 
 | **Since**: **`-`**                                                       |
 |--------------------------------------------------------------------------|
@@ -420,7 +420,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
   `helloworld`
 
-#### CONCAT_WS
+#### `CONCAT_WS`
 
 | **Since**: **`-`**                                                                                     |
 |--------------------------------------------------------------------------------------------------------|
@@ -442,7 +442,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
   `hello world!`
 
-##### HASH
+##### `HASH`
 
 | **Since**: **`-`**                          |
 |---------------------------------------------|
@@ -451,7 +451,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Returns the hashed of a given `STRING` expression, using murmur2 algorithm.
 
-#### EQUALS
+#### `EQUALS`
 
 | **Since**: **`-`**                                              |
 |-----------------------------------------------------------------|
@@ -460,7 +460,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 >  Returns `TRUE` if a `STRING` or number fields's value equals the specified value.
 
-#### ENDS_WITH
+#### `ENDS_WITH`
 
 | **Since**: **`-`**                                       |
 |----------------------------------------------------------|
@@ -481,7 +481,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
   `true`
 
-#### EXISTS
+#### `EXISTS`
 
 | **Since**: **`-`**                                      |
 |---------------------------------------------------------|
@@ -490,7 +490,17 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Returns `TRUE` if a `STRUCT` has the specified field.
 
-#### LOWERCASE
+#### `EXTRACT_STRUCT_FIELD`
+
+| **Since**: **`-`**                                                   |
+|----------------------------------------------------------------------|
+| **Syntax** : `{{ extract_struct_field(struct_expression, 'path') }}` |
+| **Returned type** : `ANY`                                            |
+
+> Extracts the value at the specified field `path` from the `STRUCT` returned by the given `struct_expression`.
+> If the requested `path` does not exist, the function returns `NULL`.
+
+#### `LOWERCASE`
 
 | **Since**: **`-`**                               |
 |--------------------------------------------------|
@@ -511,7 +521,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
   `apache kafka`
 
-#### MATCHES
+#### `MATCHES`
 
 | **Since**: **`-`**                                      |
 |---------------------------------------------------------|
@@ -520,7 +530,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Returns `TRUE` if a field's value match the specified regex.
 
-#### MD5
+#### `MD5`
 
 | **Since**: **`-`**                         |
 |--------------------------------------------|
@@ -529,7 +539,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Returns the MD5 digest of `STRING` value.
 
-#### REPLACE_ALL
+#### `REPLACE_ALL`
 
 | **Since**: **`-`**                                                         |
 |----------------------------------------------------------------------------|
@@ -538,7 +548,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Replaces every subsequence of a `STRING` that matches the given pattern with the given replacement string.
 
-#### SPLIT
+#### `SPLIT`
 
 | **Since**: **`-`**                                     |
 |--------------------------------------------------------|
@@ -547,7 +557,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 > Splits a `STRING` value using the specified regex or character and returns the resulting array. 
 
-#### STARTS_WITH
+#### `STARTS_WITH`
 
 | **Since**: **`-`**                                         |
 |------------------------------------------------------------|
@@ -569,7 +579,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
   `true`
 
 
-#### TRIM
+#### `TRIM`
 
 | **Since**: **`-`**                          |
 |---------------------------------------------|
@@ -590,7 +600,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
   `FilePulse`
 
-#### UPPERCASE
+#### `UPPERCASE`
 
 | **Since**: **`-`**                               |
 |--------------------------------------------------|
@@ -611,7 +621,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
   `APACHE KAFKA`
 
-#### UUID
+#### `UUID`
 
 | **Since**: **`-`**           |
 |------------------------------|
@@ -622,7 +632,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 ### URLs
 
-#### PARSE_URL
+#### `PARSE_URL`
 
 | **Since**: **`2.6.0`**                                        |
 |---------------------------------------------------------------|

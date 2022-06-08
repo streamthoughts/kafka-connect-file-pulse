@@ -28,7 +28,6 @@ import java.util.Objects;
 
 /**
  * Class which is used to pair an object with its corresponding {@link Schema}.
- *
  * TypeValue supports dynamic type conversion.
  */
 public class TypedValue implements GettableByType {
@@ -345,7 +344,6 @@ public class TypedValue implements GettableByType {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public TypedStruct getStruct() throws DataException {
         return (TypedStruct) value;
     }

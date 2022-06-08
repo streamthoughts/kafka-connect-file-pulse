@@ -247,66 +247,66 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `CONVERTS`
 
-| **Since**: **`-`**                                    |
-|-------------------------------------------------------|
-| **Syntax** : `{{ converts(field_expression, type) }}` |
-| **Returned type** : `ANY`                             |
+| **Since**: **`-`**                                        |
+|-----------------------------------------------------------|
+| **Syntax** : `{{ converts(<field_expression>, <type>) }}` |
+| **Returned type** : `ANY`                                 |
 
 > Converts one type to another. The following casts are supported:
 
 #### `GT`
 
-| **Since**: **`2.4.0`**                                        |
-|---------------------------------------------------------------|
-| **Syntax** : `{{ gt(field_expression1, field_expression2) }}` |
-| **Returned type** : `BOOLEAN`                                 |
+| **Since**: **`2.4.0`**                                            |
+|-------------------------------------------------------------------|
+| **Syntax** : `{{ gt(<field_expression1>, <field_expression2>) }}` |
+| **Returned type** : `BOOLEAN`                                     |
 
 > Executes "*less than operation*" on two values and returns `TRUE` if the first value is less than the second value, `FALSE`, otherwise.
 
 #### `LT`
 
-| **Since**: **`2.4.0`**                                        |
-|---------------------------------------------------------------|
-| **Syntax** : `{{ lt(field_expression1, field_expression2) }}` |
-| **Returned type** : `BOOLEAN`                                 |
+| **Since**: **`2.4.0`**                                            |
+|-------------------------------------------------------------------|
+| **Syntax** : `{{ lt(<field_expression1>, <field_expression2>) }}` |
+| **Returned type** : `BOOLEAN`                                     |
 
 > Executes "*greater than operation*" on two values and returns `TRUE` if the first value is greater than the second value, `FALSE`, otherwise.
 
 ### Binary Functions
 
-#### `AND
+#### `AND`
 
-| **Since**: **`2.4.0`**                                             |
-|--------------------------------------------------------------------|
-| **Syntax** : `{{ and(boolean_expression1, boolean_expression2) }}` |
-| **Returned type** : `BOOLEAN`                                      |
+| **Since**: **`2.4.0`**                                                        |
+|-------------------------------------------------------------------------------|
+| **Syntax** : `{{ and(<boolean_expression1>, <boolean_expression2>, [...]) }}` |
+| **Returned type** : `BOOLEAN`                                                 |
 
 > Checks if all of the given conditional expressions are `TRUE`.
 
 #### `IF`
 
-| **Since**: **`2.4.0`**                                             |
-|--------------------------------------------------------------------|
-| **Syntax** : `{{ and(boolean_expression1, boolean_expression2) }}` |
-| **Returned type** : `BOOLEAN`                                      |
+| **Since**: **`2.4.0`**                                                                                  |
+|---------------------------------------------------------------------------------------------------------|
+| **Syntax** : `{{ if(<boolean_expression>, <value_expression_if_true>,  <value_expression_if_false>) }}` |
+| **Returned type** : `BOOLEAN`                                                                           |
 
 > Evaluates the given boolean expression and returns one value if `TRUE` and another value if `FALSE`.
 
 #### `NOT`
 
-| **Since**: **`2.4.0`**                       |
-|----------------------------------------------|
-| **Syntax** : `{{ not(boolean_expression) }}` |
-| **Returned type** : `BOOLEAN`                |
+| **Since**: **`2.4.0`**                         |
+|------------------------------------------------|
+| **Syntax** : `{{ not(<boolean_expression>) }}` |
+| **Returned type** : `BOOLEAN`                  |
 
 > Reverses a boolean value.
 
 #### `OR`
 
-| **Since**: **`2.4.0`**                       |
-|----------------------------------------------|
-| **Syntax** : `{{ not(boolean_expression) }}` |
-| **Returned type** : `BOOLEAN`                |
+| **Since**: **`2.4.0`**                                                       |
+|------------------------------------------------------------------------------|
+| **Syntax** : `{{ or(<boolean_expression1>, <boolean_expression2>, [...]) }}` |
+| **Returned type** : `BOOLEAN`                                                |
 
 > Checks if at least one of the given conditional expressions is `TRUE`.
 
@@ -314,28 +314,28 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `EXCTRACT_ARRAY`
 
-| **Since**: **`-`**                                          |
-|-------------------------------------------------------------|
-| **Syntax** : `{{ extract_array(array_expression, index) }}` |
-| **Returned type** : `ANY`                                   |
+| **Since**: **`-`**                                              |
+|-----------------------------------------------------------------|
+| **Syntax** : `{{ extract_array(<array_expression>, <index>) }}` |
+| **Returned type** : `ANY`                                       |
 
 > Returns the element at the specified position of the specified array. 
 
 #### `LENGTH`
 
-| **Since**: **`2.4.0`**                        |
-|-----------------------------------------------|
-| **Syntax** : `{{ length(array_expression) }}` |
-| **Returned type** : `INTEGER`                 |
+| **Since**: **`2.4.0`**                          |
+|-------------------------------------------------|
+| **Syntax** : `{{ length(<array_expression>) }}` |
+| **Returned type** : `INTEGER`                   |
 
 > Returns the number of elements into an array or the length of a string field
 
 #### `CONTAINS`
 
-| **Since**: **`-`**                                                |
-|-------------------------------------------------------------------|
-| **Syntax** : `{{ contains(array_expression, value_expression) }}` |
-| **Returned type** : `BOOLEAN`                                     |
+| **Since**: **`-`**                                                    |
+|-----------------------------------------------------------------------|
+| **Syntax** : `{{ contains(<array_expression>, <value_expression>) }}` |
+| **Returned type** : `BOOLEAN`                                         |
 
 > Returns `TRUE` if an array contains a given value.
 
@@ -352,10 +352,10 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
  
 #### `TO_TIMESTAMP`
 
-| **Since**: **`2.4.0`**                                                           |
-|----------------------------------------------------------------------------------|
-| **Syntax** : `{{  to_timestamp(datetime_expression, pattern [, timezone]) }} }}` |
-| **Returned type** : `LONG`                                                       |
+| **Since**: **`2.4.0`**                                                             |
+|------------------------------------------------------------------------------------|
+| **Syntax** : `{{  to_timestamp(<datetime_expression>, <pattern>, [<timezone>]) }}` |
+| **Returned type** : `LONG`                                                         |
 
 > Parses a given string value and returns the epoch-time in milliseconds.
 
@@ -370,30 +370,30 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 ### Nulls
 
-#### `IS_EMPTY
+#### `IS_EMPTY`
 
-| **Since**: **`2.4.0`**                           |
-|--------------------------------------------------|
-| **Syntax** : `{{ is_empty(array_expression1) }}` |
-| **Returned type** : `BOOLEAN`                    |
+| **Since**: **`2.4.0`**                             |
+|----------------------------------------------------|
+| **Syntax** : `{{ is_empty(<array_expression1>) }}` |
+| **Returned type** : `BOOLEAN`                      |
 
 > Returns `TRUE` if an array as no elements or a string field has no characters
 
 #### `IS_NULL`
 
-| **Since**: **`2.4.0`**                         |
-|------------------------------------------------|
-| **Syntax** : `{{ is_null(field_expression) }}` |
-| **Returned type** : `BOOLEAN`                  |
+| **Since**: **`2.4.0`**                           |
+|--------------------------------------------------|
+| **Syntax** : `{{ is_null(<field_expression>) }}` |
+| **Returned type** : `BOOLEAN`                    |
 
 > Returns `TRUE` if a field's value is `NULL`.
 
 #### `NLV`
 
-| **Since**: **`-`**                                             |
-|----------------------------------------------------------------|
-| **Syntax** : `{{ nlv(field_expression, default_expression) }}` |
-| **Returned type** : `Any`                                      |
+| **Since**: **`-`**                                                 |
+|--------------------------------------------------------------------|
+| **Syntax** : `{{ nlv(<field_expression>, <default_expression>) }}` |
+| **Returned type** : `Any`                                          |
 
 > Sets a default value if a field's value is `NULL`
 
@@ -401,10 +401,10 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `CONCAT`
 
-| **Since**: **`-`**                                                       |
-|--------------------------------------------------------------------------|
-| **Syntax** : `{{ concat(field_expression01, field_expression02, ...) }}` |
-| **Returned type** : `STRING`                                             |
+| **Since**: **`-`**                                                        |
+|---------------------------------------------------------------------------|
+| **Syntax** : `{{ concat(<field_expression1>, <field_expression2, ...) }}` |
+| **Returned type** : `STRING`                                              |
 
 > Returns a `STRING` value consisting of the concatenation of two or more string expressions.
 
@@ -422,10 +422,10 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `CONCAT_WS`
 
-| **Since**: **`-`**                                                                                     |
-|--------------------------------------------------------------------------------------------------------|
-| **Syntax** : `{{ concat_ws(separator, prefix, suffix, field_expression01, field_expression02, ...) }}` |
-| **Returned type** : `STRING`                                                                           |
+| **Since**: **`-`**                                                                                             |
+|----------------------------------------------------------------------------------------------------------------|
+| **Syntax** : `{{ concat_ws(<separator>, <prefix>, <suffix>, <field_expression1>, <field_expression2>, ...) }}` |
+| **Returned type** : `STRING`                                                                                   |
 
 > Returns a `STRING` value consisting of the concatenation of two or more string expressions, using the specified separator between each. 
   Optionally, the returned `STRING` may be prefixed and/or suffixed.
@@ -444,28 +444,28 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 ##### `HASH`
 
-| **Since**: **`-`**                          |
-|---------------------------------------------|
-| **Syntax** : `{{ hash(field_expression) }}` |
-| **Returned type** : `STRING`                |
+| **Since**: **`-`**                            |
+|-----------------------------------------------|
+| **Syntax** : `{{ hash(<field_expression>) }}` |
+| **Returned type** : `STRING`                  |
 
 > Returns the hashed of a given `STRING` expression, using murmur2 algorithm.
 
 #### `EQUALS`
 
-| **Since**: **`-`**                                              |
-|-----------------------------------------------------------------|
-| **Syntax** : `{{ equals(field_expression, value_expression) }}` |
-| **Returned type** : `BOOLEAN`                                   |
+| **Since**: **`-`**                                                  |
+|---------------------------------------------------------------------|
+| **Syntax** : `{{ equals(<field_expression>, <value_expression>) }}` |
+| **Returned type** : `BOOLEAN`                                       |
 
 >  Returns `TRUE` if a `STRING` or number fields's value equals the specified value.
 
 #### `ENDS_WITH`
 
-| **Since**: **`-`**                                       |
-|----------------------------------------------------------|
-| **Syntax** : `{{ ends_with(field_expression, suffix) }}` |
-| **Returned type** : `BOOLEAN`                            |
+| **Since**: **`-`**                                           |
+|--------------------------------------------------------------|
+| **Syntax** : `{{ ends_with(<field_expression>, <suffix>) }}` |
+| **Returned type** : `BOOLEAN`                                |
 
 > Returns `TRUE` if a string field's value end with the specified string suffix.
 
@@ -483,29 +483,39 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `EXISTS`
 
-| **Since**: **`-`**                                      |
-|---------------------------------------------------------|
-| **Syntax** : `{{ exists(struct_expression, 'field') }}` |
-| **Returned type** : `BOOLEAN`                           |
+| **Since**: **`-`**                                        |
+|-----------------------------------------------------------|
+| **Syntax** : `{{ exists(<struct_expression>, <field>) }}` |
+| **Returned type** : `BOOLEAN`                             |
 
 > Returns `TRUE` if a `STRUCT` has the specified field.
 
 #### `EXTRACT_STRUCT_FIELD`
 
-| **Since**: **`-`**                                                   |
-|----------------------------------------------------------------------|
-| **Syntax** : `{{ extract_struct_field(struct_expression, 'path') }}` |
-| **Returned type** : `ANY`                                            |
+| **Since**: **`2.7.0`**                                                 |
+|------------------------------------------------------------------------|
+| **Syntax** : `{{ extract_struct_field(<struct_expression>, <path>) }}` |
+| **Returned type** : `ANY`                                              |
 
 > Extracts the value at the specified field `path` from the `STRUCT` returned by the given `struct_expression`.
 > If the requested `path` does not exist, the function returns `NULL`.
 
+#### `FROM_BYTES`
+
+| **Since**: **`2.7.0`**                                       |
+|--------------------------------------------------------------|
+| **Syntax** : `{{ from_bytes(struct_expression, '<path>') }}` |
+| **Returned type** : `STRING`                                 |
+
+> Converts a `BYTES` value to a `STRING` in the specified encoding type.
+> The following list shows the supported encoding types: `hex`, `utf8`, `ascii` and `base64`.
+
 #### `LOWERCASE`
 
-| **Since**: **`-`**                               |
-|--------------------------------------------------|
-| **Syntax** : `{{ lowercase(field_expression) }}` |
-| **Returned type** : `STRING`                     |
+| **Since**: **`-`**                                 |
+|----------------------------------------------------|
+| **Syntax** : `{{ lowercase(<field_expression>) }}` |
+| **Returned type** : `STRING`                       |
 
 > Converts all of the characters in a `STRING` value to lower case.
 
@@ -523,46 +533,46 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `MATCHES`
 
-| **Since**: **`-`**                                      |
-|---------------------------------------------------------|
-| **Syntax** : `{{ matches(field_expression, 'regex') }}` |
-| **Returned type** : `BOOLEAN`                           |
+| **Since**: **`-`**                                        |
+|-----------------------------------------------------------|
+| **Syntax** : `{{ matches(<field_expression>, <regex>) }}` |
+| **Returned type** : `BOOLEAN`                             |
 
 > Returns `TRUE` if a field's value match the specified regex.
 
 #### `MD5`
 
-| **Since**: **`-`**                         |
-|--------------------------------------------|
-| **Syntax** : `{{ md5(field_expression) }}` |
-| **Returned type** : `STRING`               |
+| **Since**: **`-`**                           |
+|----------------------------------------------|
+| **Syntax** : `{{ md5(<field_expression>) }}` |
+| **Returned type** : `STRING`                 |
 
 > Returns the MD5 digest of `STRING` value.
 
 #### `REPLACE_ALL`
 
-| **Since**: **`-`**                                                         |
-|----------------------------------------------------------------------------|
-| **Syntax** : `{{ replace_all(field_expression, 'regex', 'replacement') }}` |
-| **Returned type** : `STRING`                                               |
+| **Since**: **`-`**                                                           |
+|------------------------------------------------------------------------------|
+| **Syntax** : `{{ replace_all(<field_expression>, <regex>, <replacement>) }}` |
+| **Returned type** : `STRING`                                                 |
 
 > Replaces every subsequence of a `STRING` that matches the given pattern with the given replacement string.
 
 #### `SPLIT`
 
-| **Since**: **`-`**                                     |
-|--------------------------------------------------------|
-| **Syntax** : `{{ split(field_expr, regex [,limit]) }}` |
-| **Returned type** : `ARRAY<STRING>`                    |
+| **Since**: **`-`**                                                 |
+|--------------------------------------------------------------------|
+| **Syntax** : `{{ split(<field_expression>, <regex>, [<limit>]) }}` |
+| **Returned type** : `ARRAY<STRING>`                                |
 
 > Splits a `STRING` value using the specified regex or character and returns the resulting array. 
 
 #### `STARTS_WITH`
 
-| **Since**: **`-`**                                         |
-|------------------------------------------------------------|
-| **Syntax** : `{{ starts_with(field_expression, suffix) }}` |
-| **Returned type** : `BOOLEAN`                              |
+| **Since**: **`-`**                                             |
+|----------------------------------------------------------------|
+| **Syntax** : `{{ starts_with(<field_expression>, <suffix>) }}` |
+| **Returned type** : `BOOLEAN`                                  |
 
 > Returns `STRING` if a string field's value start with the specified string prefix.
 
@@ -581,10 +591,10 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `TRIM`
 
-| **Since**: **`-`**                          |
-|---------------------------------------------|
-| **Syntax** : `{{ trim(field_expression) }}` |
-| **Returned type** : `STRING`                |
+| **Since**: **`-`**                            |
+|-----------------------------------------------|
+| **Syntax** : `{{ trim(<field_expression>) }}` |
+| **Returned type** : `STRING`                  |
 
 > Trims the spaces from the beginning and end of a string.
 
@@ -602,10 +612,10 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `UPPERCASE`
 
-| **Since**: **`-`**                               |
-|--------------------------------------------------|
-| **Syntax** : `{{ uppercase(field_expression) }}` |
-| **Returned type** : `STRING`                     |
+| **Since**: **`-`**                                 |
+|----------------------------------------------------|
+| **Syntax** : `{{ uppercase(<field_expression>) }}` |
+| **Returned type** : `STRING`                       |
 
 > Converts all of the characters in a `STRING` value to upper case.
 
@@ -634,9 +644,9 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 
 #### `PARSE_URL`
 
-| **Since**: **`2.6.0`**                                        |
-|---------------------------------------------------------------|
-| **Syntax** : `{{ parse_url(field_expression[,permissive]) }}` |
+| **Since**: **`2.7.0`**                                             |
+|--------------------------------------------------------------------|
+| **Syntax** : `{{ parse_url(<field_expression>, [<permissive>]) }}` |
 
 > Parses a valid field-value URL/URI and return a struct consisting of all the components (fragment, host, path, port, query, scheme, userInfo).
 

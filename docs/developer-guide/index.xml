@@ -1516,7 +1516,7 @@ Variables are not cached between records.
 &lt;p>ScEL supports a number of predefined functions that can be used to apply a single transformation on a field.&lt;/p>
 &lt;h3 id="numeric-functions">Numeric functions&lt;/h3>
 &lt;p>ScEL numeric functions are used primarily for numeric manipulation and/or mathematical calculations.&lt;/p>
-&lt;h4 id="converts">CONVERTS&lt;/h4>
+&lt;h4 id="converts">&lt;code>CONVERTS&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1535,7 +1535,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Converts one type to another. The following casts are supported:&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="gt">GT&lt;/h4>
+&lt;h4 id="gt">&lt;code>GT&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1554,7 +1554,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Executes &amp;ldquo;&lt;em>less than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>TRUE&lt;/code> if the first value is less than the second value, &lt;code>FALSE&lt;/code>, otherwise.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="lt">LT&lt;/h4>
+&lt;h4 id="lt">&lt;code>LT&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1574,7 +1574,7 @@ Variables are not cached between records.
 &lt;p>Executes &amp;ldquo;&lt;em>greater than operation&lt;/em>&amp;rdquo; on two values and returns &lt;code>TRUE&lt;/code> if the first value is greater than the second value, &lt;code>FALSE&lt;/code>, otherwise.&lt;/p>
 &lt;/blockquote>
 &lt;h3 id="binary-functions">Binary Functions&lt;/h3>
-&lt;h4 id="and">AND&lt;/h4>
+&lt;h4 id="and">`AND&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1593,7 +1593,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Checks if all of the given conditional expressions are &lt;code>TRUE&lt;/code>.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="if">IF&lt;/h4>
+&lt;h4 id="if">&lt;code>IF&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1612,7 +1612,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Evaluates the given boolean expression and returns one value if &lt;code>TRUE&lt;/code> and another value if &lt;code>FALSE&lt;/code>.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="not">NOT&lt;/h4>
+&lt;h4 id="not">&lt;code>NOT&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1631,7 +1631,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Reverses a boolean value.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="or">OR&lt;/h4>
+&lt;h4 id="or">&lt;code>OR&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1651,7 +1651,7 @@ Variables are not cached between records.
 &lt;p>Checks if at least one of the given conditional expressions is &lt;code>TRUE&lt;/code>.&lt;/p>
 &lt;/blockquote>
 &lt;h3 id="collection">Collection&lt;/h3>
-&lt;h4 id="exctract_array">EXCTRACT_ARRAY&lt;/h4>
+&lt;h4 id="exctract_array">&lt;code>EXCTRACT_ARRAY&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1670,7 +1670,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Returns the element at the specified position of the specified array.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="length">LENGTH&lt;/h4>
+&lt;h4 id="length">&lt;code>LENGTH&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1689,7 +1689,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Returns the number of elements into an array or the length of a string field&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="contains">CONTAINS&lt;/h4>
+&lt;h4 id="contains">&lt;code>CONTAINS&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1709,7 +1709,7 @@ Variables are not cached between records.
 &lt;p>Returns &lt;code>TRUE&lt;/code> if an array contains a given value.&lt;/p>
 &lt;/blockquote>
 &lt;h3 id="date-and-time">Date and time&lt;/h3>
-&lt;h4 id="timestamp_diff">TIMESTAMP_DIFF&lt;/h4>
+&lt;h4 id="timestamp_diff">&lt;code>TIMESTAMP_DIFF&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1728,7 +1728,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Calculates the amount of time between two epoch times in seconds or milliseconds. For more information on &lt;code>unit&lt;/code> see &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/time/temporal/ChronoUnit.html">ChronoUnit&lt;/a>.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="to_timestamp">TO_TIMESTAMP&lt;/h4>
+&lt;h4 id="to_timestamp">&lt;code>TO_TIMESTAMP&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1747,7 +1747,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Parses a given string value and returns the epoch-time in milliseconds.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="unix_timestamp">UNIX_TIMESTAMP&lt;/h4>
+&lt;h4 id="unix_timestamp">&lt;code>UNIX_TIMESTAMP&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1767,7 +1767,7 @@ Variables are not cached between records.
 &lt;p>Returns the current time in milliseconds.&lt;/p>
 &lt;/blockquote>
 &lt;h3 id="nulls">Nulls&lt;/h3>
-&lt;h4 id="is_empty">IS_EMPTY&lt;/h4>
+&lt;h4 id="is_empty">`IS_EMPTY&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1786,7 +1786,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Returns &lt;code>TRUE&lt;/code> if an array as no elements or a string field has no characters&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="is_null">IS_NULL&lt;/h4>
+&lt;h4 id="is_null">&lt;code>IS_NULL&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1805,7 +1805,7 @@ Variables are not cached between records.
 &lt;blockquote>
 &lt;p>Returns &lt;code>TRUE&lt;/code> if a field&amp;rsquo;s value is &lt;code>NULL&lt;/code>.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="nlv">NLV&lt;/h4>
+&lt;h4 id="nlv">&lt;code>NLV&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1825,7 +1825,7 @@ Variables are not cached between records.
 &lt;p>Sets a default value if a field&amp;rsquo;s value is &lt;code>NULL&lt;/code>&lt;/p>
 &lt;/blockquote>
 &lt;h3 id="strings--objects">Strings &amp;amp; Objects&lt;/h3>
-&lt;h4 id="concat">CONCAT&lt;/h4>
+&lt;h4 id="concat">&lt;code>CONCAT&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1856,7 +1856,7 @@ Variables are not cached between records.
 &lt;p>&lt;code>helloworld&lt;/code>&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h4 id="concat_ws">CONCAT_WS&lt;/h4>
+&lt;h4 id="concat_ws">&lt;code>CONCAT_WS&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1888,7 +1888,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;p>&lt;code>hello world!&lt;/code>&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h5 id="hash">HASH&lt;/h5>
+&lt;h5 id="hash">&lt;code>HASH&lt;/code>&lt;/h5>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1907,7 +1907,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;blockquote>
 &lt;p>Returns the hashed of a given &lt;code>STRING&lt;/code> expression, using murmur2 algorithm.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="equals">EQUALS&lt;/h4>
+&lt;h4 id="equals">&lt;code>EQUALS&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1926,7 +1926,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;blockquote>
 &lt;p>Returns &lt;code>TRUE&lt;/code> if a &lt;code>STRING&lt;/code> or number fields&amp;rsquo;s value equals the specified value.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="ends_with">ENDS_WITH&lt;/h4>
+&lt;h4 id="ends_with">&lt;code>ENDS_WITH&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1957,7 +1957,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;p>&lt;code>true&lt;/code>&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h4 id="exists">EXISTS&lt;/h4>
+&lt;h4 id="exists">&lt;code>EXISTS&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -1976,7 +1976,27 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;blockquote>
 &lt;p>Returns &lt;code>TRUE&lt;/code> if a &lt;code>STRUCT&lt;/code> has the specified field.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="lowercase">LOWERCASE&lt;/h4>
+&lt;h4 id="extract_struct_field">&lt;code>EXTRACT_STRUCT_FIELD&lt;/code>&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>&lt;strong>Since&lt;/strong>: &lt;strong>&lt;code>-&lt;/code>&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;strong>Syntax&lt;/strong> : &lt;code>{{ extract_struct_field(struct_expression, 'path') }}&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;strong>Returned type&lt;/strong> : &lt;code>ANY&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;blockquote>
+&lt;p>Extracts the value at the specified field &lt;code>path&lt;/code> from the &lt;code>STRUCT&lt;/code> returned by the given &lt;code>struct_expression&lt;/code>.
+If the requested &lt;code>path&lt;/code> does not exist, the function returns &lt;code>NULL&lt;/code>.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="lowercase">&lt;code>LOWERCASE&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2007,7 +2027,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;p>&lt;code>apache kafka&lt;/code>&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h4 id="matches">MATCHES&lt;/h4>
+&lt;h4 id="matches">&lt;code>MATCHES&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2026,7 +2046,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;blockquote>
 &lt;p>Returns &lt;code>TRUE&lt;/code> if a field&amp;rsquo;s value match the specified regex.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="md5">MD5&lt;/h4>
+&lt;h4 id="md5">&lt;code>MD5&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2045,7 +2065,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;blockquote>
 &lt;p>Returns the MD5 digest of &lt;code>STRING&lt;/code> value.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="replace_all">REPLACE_ALL&lt;/h4>
+&lt;h4 id="replace_all">&lt;code>REPLACE_ALL&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2064,7 +2084,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;blockquote>
 &lt;p>Replaces every subsequence of a &lt;code>STRING&lt;/code> that matches the given pattern with the given replacement string.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="split">SPLIT&lt;/h4>
+&lt;h4 id="split">&lt;code>SPLIT&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2083,7 +2103,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;blockquote>
 &lt;p>Splits a &lt;code>STRING&lt;/code> value using the specified regex or character and returns the resulting array.&lt;/p>
 &lt;/blockquote>
-&lt;h4 id="starts_with">STARTS_WITH&lt;/h4>
+&lt;h4 id="starts_with">&lt;code>STARTS_WITH&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2114,7 +2134,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;p>&lt;code>true&lt;/code>&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h4 id="trim">TRIM&lt;/h4>
+&lt;h4 id="trim">&lt;code>TRIM&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2145,7 +2165,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;p>&lt;code>FilePulse&lt;/code>&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h4 id="uppercase">UPPERCASE&lt;/h4>
+&lt;h4 id="uppercase">&lt;code>UPPERCASE&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2176,7 +2196,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;p>&lt;code>APACHE KAFKA&lt;/code>&lt;/p>
 &lt;/li>
 &lt;/ul>
-&lt;h4 id="uuid">UUID&lt;/h4>
+&lt;h4 id="uuid">&lt;code>UUID&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -2196,7 +2216,7 @@ Optionally, the returned &lt;code>STRING&lt;/code> may be prefixed and/or suffix
 &lt;p>Returns a Universally Unique Identifier (UUID)&lt;/p>
 &lt;/blockquote>
 &lt;h3 id="urls">URLs&lt;/h3>
-&lt;h4 id="parse_url">PARSE_URL&lt;/h4>
+&lt;h4 id="parse_url">&lt;code>PARSE_URL&lt;/code>&lt;/h4>
 &lt;table>
 &lt;thead>
 &lt;tr>

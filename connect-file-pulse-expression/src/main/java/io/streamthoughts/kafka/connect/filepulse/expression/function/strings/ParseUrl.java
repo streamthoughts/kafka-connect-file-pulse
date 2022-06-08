@@ -35,11 +35,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,7 +116,7 @@ public class ParseUrl implements ExpressionFunction {
                         .put(FRAGMENT_FIELD, uri.getFragment())
                         .put(HOST_FIELD, uri.getHost())
                         .put(USER_INFO_FIELD, uri.getUserInfo())
-                        .put(PATH_FIELD, uri.getPath())
+                        .put(PATH_FIELD, getPath(uri))
                         .put(PORT_FIELD, uri.getPort() == -1 ? null : uri.getPort())
                         .put(QUERY_FIELD, uri.getQuery())
                         .put(SCHEME_FIELD, uri.getScheme())
@@ -129,6 +125,10 @@ public class ParseUrl implements ExpressionFunction {
             } catch (IllegalArgumentException e) {
                 return rethrowOrGetPermissiveResult(stringValue, e.getLocalizedMessage());
             }
+        }
+
+        private static String getPath(final URI uri) {
+            return Optional.ofNullable(uri.getPath()).orElse(uri.getSchemeSpecificPart());
         }
 
         private TypedValue rethrowOrGetPermissiveResult(final String stringValue,

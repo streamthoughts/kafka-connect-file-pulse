@@ -58,7 +58,7 @@ public class ParseUrlTest {
         Assert.assertEquals("EXAMPLE.COM", struct.getString(ParseUrl.HOST_FIELD));
         Assert.assertEquals("USER:PASS", struct.getString(ParseUrl.USER_INFO_FIELD));
         Assert.assertEquals("/HELLO.PHP", struct.getString(ParseUrl.PATH_FIELD));
-        Assert.assertEquals(new Integer(1234), struct.getInt(ParseUrl.PORT_FIELD));
+        Assert.assertEquals(Integer.valueOf (1234), struct.getInt(ParseUrl.PORT_FIELD));
         Assert.assertEquals("USER=1", struct.getString(ParseUrl.QUERY_FIELD));
         Assert.assertEquals("HTTP", struct.getString(ParseUrl.SCHEME_FIELD));
         Assert.assertNull(struct.getString(ParseUrl.FRAGMENT_FIELD));
@@ -74,7 +74,7 @@ public class ParseUrlTest {
         TypedValue result = expression.readValue(EMPTY_CONTEXT, TypedValue.class);
         TypedStruct struct = result.getStruct();
         Assert.assertNull(struct.getString(ParseUrl.HOST_FIELD));
-        Assert.assertNull("abc@xyz.com", struct.getString(ParseUrl.PATH_FIELD));
+        Assert.assertEquals("abc@xyz.com", struct.getString(ParseUrl.PATH_FIELD));
         Assert.assertNull(struct.getInt(ParseUrl.PORT_FIELD));
         Assert.assertNull(struct.getString(ParseUrl.QUERY_FIELD));
         Assert.assertEquals("mailto", struct.getString(ParseUrl.SCHEME_FIELD));

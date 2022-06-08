@@ -39,6 +39,7 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Nlv
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Concat;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ConcatWs;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.EndsWith;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.FromBytes;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Hash;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.IsEmpty;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Length;
@@ -110,6 +111,7 @@ public class ExpressionFunctionExecutors {
         register(new Not());
         register(new ParseUrl());
         register(new ExtractStructField());
+        register(new FromBytes());
     }
 
     private ExpressionFunctionExecutor make(final String functionName, final Expression[] arguments) {

@@ -1,5 +1,5 @@
 ---
-date: 2020-09-30
+date: 2022-06-08
 title: "Filter Chain Definition"
 linkTitle: "Filter Chain Definition"
 weight: 50
@@ -11,15 +11,15 @@ The connector can be configured to apply complex transformations on messages bef
 
 ## Configuration
 
-A [filter](#filters) chain can be specified in the connector configuration.
+A [filter](../filters) chain can be specified in the connector configuration.
 
- * filters - List of aliases for the filter, specifying the order in which the filters will be applied.
- * filters.$alias.type - Fully qualified class name for the filter.
- * filters.$alias.$filterSpecificConfig Configuration properties for the filter
+ * `filters` - List of aliases for the filter, specifying the order in which the filters will be applied.
+ * `filters.$alias.type` - Fully qualified class name for the filter.
+ * `filters.$alias.$filterSpecificConf` - Configuration properties for the filter
 
 For example, let's parse a standard application logs file written with log4j using the build-in filters :
 
-```
+```properties
 filters=GroupMultilineException, ExtractFirstLine, ParseLog4jLog
 
 filters.GroupMultilineException.type=io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter
@@ -36,7 +36,7 @@ filters.ParseLog4jLog.source=log
 filters.ParseLog4jLog.overwrite=logmessage
 ```
 
-## Available Filters
+## Available Processing Filters
 
 These filters are available for use with Kafka Connect File Pulse:
 

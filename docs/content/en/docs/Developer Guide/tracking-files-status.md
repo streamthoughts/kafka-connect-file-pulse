@@ -1,5 +1,5 @@
 ---
-date: 2022-03-02
+date: 2022-06-08
 title: "Tracking File Status"
 linkTitle: "Tracking File Status"
 weight: 90
@@ -13,55 +13,56 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 ## The message format
 Status event are published into JSON with the following schema :
 
-```
+```json
 {
-"hostname": {
+  "hostname": {
     "type": "string",
-    "description: "The machine from which the source file is read."
-},
-"status":{
+    "description": "The machine from which the source file is read."
+  },
+  "status": {
     "type": "string",
-    "description: "The current status"
-},
-"metadata":{
+    "description": "The current status"
+  },
+  "metadata": {
     "name": {
-        "type": "string",
-        "description: "The file name."
+      "type": "string",
+      "description": "The file name."
     },
     "path": {
-        "type": "string",
-        "description: "The file absolute path."
+      "type": "string",
+      "description": "The file absolute path."
     },
     "size": {
-        "type": "int",
-        "description: "The file size."
+      "type": "int",
+      "description": "The file size."
     },
-    lastModified": {
-        "type": "long",
-        "description: "The file last-modified property."
+    "lastModified": {
+      "type": "long",
+      "description": "The file last-modified property."
     },
     "inode": {
-        "type": "int",
-        "description: "The file inode"
+      "type": "int",
+      "description": "The file inode"
     },
     "hash": {
-        "type": "int",
-        "description: "CRC32"
+      "type": "int",
+      "description": "CRC32"
     }
-},
-"offset":{
+  },
+  "offset": {
     "position": {
-        "type": "long",
-        "description: "The current position in the source file (default : -1)."
+      "type": "long",
+      "description": "The current position in the source file (default : -1)."
     },
     "rows": {
-        "type": "long",
-        "description: "The number of rows already read from the source file (default : -1)."
+      "type": "long",
+      "description": "The number of rows already read from the source file (default : -1)."
     },
     "timestamp": {
-        "type": "long",
-        "description: "The offset timestamp"
+      "type": "long",
+      "description": "The offset timestamp"
     }
+  }
 }
 ```
 

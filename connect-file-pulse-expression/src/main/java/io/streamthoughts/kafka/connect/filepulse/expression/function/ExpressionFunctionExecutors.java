@@ -31,7 +31,11 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.conditions.
 import io.streamthoughts.kafka.connect.filepulse.expression.function.datetime.TimestampDiff;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.datetime.ToTimestamp;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.datetime.UnixTimestamp;
-import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.*;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Converts;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Exists;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.ExtractStructField;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.IsNull;
+import io.streamthoughts.kafka.connect.filepulse.expression.function.objects.Nlv;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Concat;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.ConcatWs;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.EndsWith;

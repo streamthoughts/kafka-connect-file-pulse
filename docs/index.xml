@@ -1,4 +1,25 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – Documentation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/</link><description>Recent content in Documentation on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</link><pubDate>Tue, 07 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – Documentation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/</link><description>Recent content in Documentation on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.7.x/developer-guide/installation/</link><pubDate>Tue, 07 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.7.x/developer-guide/installation/</guid><description>
+&lt;p>&lt;strong>Connect FilePulse&lt;/strong> can be installed either from &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases">GitHub Releases Page&lt;/a> or from &lt;a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse">Confluent Hub&lt;/a>.&lt;/p>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Caution&lt;/h4>
+You should note that the connector downloaded from Confluent Hub may not reflect the latest available version.
+&lt;/div>
+&lt;p>&lt;strong>Confluent Hub CLI installation&lt;/strong>&lt;/p>
+&lt;p>Use the &lt;a href="https://docs.confluent.io/current/confluent-hub/client.html">Confluent Hub client&lt;/a> to install this connector with:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>confluent-hub install streamthoughts/kafka-connect-file-pulse:latest
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Download Installation&lt;/strong>&lt;/p>
+&lt;p>Download the distribution ZIP file for the latest available version.&lt;/p>
+&lt;p>&lt;strong>Example :&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87">export&lt;/span> &lt;span style="color:#000">VERSION&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">=&lt;/span>2.6.0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>wget https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v&lt;span style="color:#000">$VERSION&lt;/span>/streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Extract it into one of the directories that is listed on the &lt;code>plugin.path&lt;/code> worker configuration property.&lt;/p>
+&lt;p>You can also use the Confluent Hub CLI for installing it.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>confluent-hub install --no-prompt streamthoughts-kafka-connect-file-pulse-&lt;span style="color:#000">$VERSION&lt;/span>.zip
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Important&lt;/h4>
+When you run Connect workers in &lt;strong>distributed mode&lt;/strong>, the connector-plugin must be installed &lt;strong>on each of machines&lt;/strong> running Kafka Connect.
+&lt;/div></description></item><item><title>Docs: Installation</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</link><pubDate>Tue, 07 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/installation/</guid><description>
 &lt;p>&lt;strong>Connect FilePulse&lt;/strong> can be installed either from &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/releases">GitHub Releases Page&lt;/a> or from &lt;a href="https://www.confluent.io/hub/streamthoughts/kafka-connect-file-pulse">Confluent Hub&lt;/a>.&lt;/p>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Caution&lt;/h4>
@@ -439,6 +460,24 @@ file compatible with &lt;a href="https://docs.confluent.io/current/connect/manag
 Connect File Pulse is packaged into an archive
 file compatible with &lt;a href="https://docs.confluent.io/current/connect/managing/confluent-hub/client.html">confluent-hub client&lt;/a>.
 &lt;/div></description></item><item><title>Docs: Getting the code</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.6.x/project-info/getting_the_code/</link><pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.6.x/project-info/getting_the_code/</guid><description>
+&lt;h2 id="prerequisites-for-building-connect-file-pulse">Prerequisites for building Connect File Pulse&lt;/h2>
+&lt;ul>
+&lt;li>Git&lt;/li>
+&lt;li>Maven (we recommend version 3.5.3)&lt;/li>
+&lt;li>Java 11&lt;/li>
+&lt;/ul>
+&lt;h2 id="building-connect-file-pulse">Building Connect File Pulse&lt;/h2>
+&lt;p>The code of Connect File Pulse is kept in GitHub. You can check it out like this:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ git clone https://github.com/streamthoughts/kafka-connect-file-pulse.git
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The project uses Maven, you can build it like this:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>$ &lt;span style="color:#204a87">cd&lt;/span> kafka-connect-file-pulse
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ mvn clean package -DskipTests
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Confluent Hub&lt;/h4>
+Connect File Pulse is packaged into an archive
+file compatible with &lt;a href="https://docs.confluent.io/current/connect/managing/confluent-hub/client.html">confluent-hub client&lt;/a>.
+&lt;/div></description></item><item><title>Docs: Getting the code</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.7.x/project-info/getting_the_code/</link><pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.7.x/project-info/getting_the_code/</guid><description>
 &lt;h2 id="prerequisites-for-building-connect-file-pulse">Prerequisites for building Connect File Pulse&lt;/h2>
 &lt;ul>
 &lt;li>Git&lt;/li>
@@ -927,6 +966,458 @@ If there is no schema pass through the connector configuration, a schema will be
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.6.x/developer-guide/configuration/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.6.x/developer-guide/configuration/</guid><description>
+&lt;h2 id="commons-configuration">Commons configuration&lt;/h2>
+&lt;p>Whatever the kind of files you are processing a connector should always be configured with the below properties.
+These configurations are described in detail in subsequent chapters.&lt;/p>
+&lt;p>&lt;strong>Common Kafka Connect properties&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>topic&lt;/code>&lt;/td>
+&lt;td>The default output topic to write&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.max&lt;/code>&lt;/td>
+&lt;td>The maximum number of tasks that should be created for this connector.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for listing and cleaning object files (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/">FileSystemListing&lt;/a>)&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.class&lt;/code>&lt;/td>
+&lt;td>Class which is used to list eligible files from the scanned file system.&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.filters&lt;/code>&lt;/td>
+&lt;td>Filters use to list eligible input files&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.interval.ms&lt;/code>&lt;/td>
+&lt;td>Time interval (in milliseconds) at wish to scan input directory&lt;/td>
+&lt;td>long&lt;/td>
+&lt;td>&lt;em>10000&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.task.delegation.enabled&lt;/code>&lt;/td>
+&lt;td>Boolean indicating whether the file listing process should be delegated to tasks.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.class&lt;/code>&lt;/td>
+&lt;td>The fully qualified name of the class which is used to cleanup files&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.cleanup.policy.triggered.on&lt;/code>&lt;/td>
+&lt;td>Specify the status when a file get cleanup. Valid values are: &lt;code>COMPLETED&lt;/code>, &lt;code>COMMITTED&lt;/code>&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>COMPLETED&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>max.scheduled.files&lt;/code>&lt;/td>
+&lt;td>Maximum number of files that can be schedules to tasks.&lt;/td>
+&lt;td>long&lt;/td>
+&lt;td>&lt;em>1000&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>allow.tasks.reconfiguration.after.timeout.ms&lt;/code>&lt;/td>
+&lt;td>Specify the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed.&lt;/td>
+&lt;td>long&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>task.partitioner.class&lt;/code>&lt;/td>
+&lt;td>The TaskPartitioner to be used for partitioning files to tasks.&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;code>io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.halt.on.error&lt;/code>&lt;/td>
+&lt;td>Should a task halt when it encounters an error or continue to the next file.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.processing.order.by&lt;/code>&lt;/td>
+&lt;td>The strategy to be used for sorting files for processing. Valid values are: &lt;code>LAST_MODIFIED&lt;/code>, &lt;code>URI&lt;/code>, &lt;code>CONTENT_LENGTH&lt;/code>, &lt;code>CONTENT_LENGTH_DESC&lt;/code>.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>LAST_MODIFIED&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.empty.poll.wait.ms&lt;/code>&lt;/td>
+&lt;td>The amount of time in millisecond a tasks should wait if a poll returns an empty list of records.&lt;/td>
+&lt;td>long&lt;/td>
+&lt;td>&lt;em>500&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>ignore.committed.offsets&lt;/code>&lt;/td>
+&lt;td>Should a task ignore committed offsets while scheduling a file.&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>value.connect.schema&lt;/code>&lt;/td>
+&lt;td>The schema for the record-value.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for transforming object file record(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/">Filters Chain Definition&lt;/a>)&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>filters&lt;/code>&lt;/td>
+&lt;td>List of filters aliases to apply on each data (order is important)&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for reading object file record(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/">FileReaders&lt;/a>)&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>tasks.reader.class&lt;/code>&lt;/td>
+&lt;td>The fully qualified name of the class which is used by tasks to read input files&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for uniquely identifying object files and records (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/">FileReaders&lt;/a>)&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>offset.policy.class&lt;/code>&lt;/td>
+&lt;td>Class which is used to determine the source partition and offset that uniquely identify a input record&lt;/td>
+&lt;td>&lt;code>class&lt;/code>&lt;/td>
+&lt;td>&lt;em>io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for synchronizing Connector and Tasks&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.class&lt;/code>&lt;/td>
+&lt;td>The FileObjectStateBackingStore class to be used for storing status state of file objects.&lt;/td>
+&lt;td>&lt;code>Class&lt;/code>&lt;/td>
+&lt;td>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Available implementations are :&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.InMemoryFileObjectStateBackingStore&lt;/code>&lt;/li>
+&lt;li>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Limitation&lt;/h4>
+The &lt;code>InMemoryFileObjectStateBackingStore&lt;/code> implement is not fault-tolerant and should be only when using Kafka Connect in standalone mode or a single worker.
+&lt;/div>
+&lt;p>&lt;strong>Properties for configuring the &lt;code>KafkaFileObjectStateBackingStore&lt;/code> class&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.topic&lt;/code>&lt;/td>
+&lt;td>Name of the internal topic used by tasks and connector to report and monitor file progression.&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;em>connect-file-pulse-status&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.bootstrap.servers&lt;/code>&lt;/td>
+&lt;td>A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.topic.partitions&lt;/code>&lt;/td>
+&lt;td>The number of partitions to be used for the status storage topic.&lt;/td>
+&lt;td>int&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.topic.replication.factor&lt;/code>&lt;/td>
+&lt;td>The replication factor to be used for the status storage topic.&lt;/td>
+&lt;td>float&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Properties for configuring the &lt;code>InMemoryFileObjectStateBackingStore&lt;/code> class&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;th>Since&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>tasks.file.status.storage.cache.max.size.capacity&lt;/code>&lt;/td>
+&lt;td>Specifies the max size capacity of the LRU in-memory cache.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;em>10000&lt;/em>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;td>v2.5.0&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>In addition, to override the default configuration for the internal consumer and producer clients,
+you can use one of the following override prefixes :&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>tasks.file.status.storage.consumer.&amp;lt;consumer_property&amp;gt;&lt;/code>&lt;/li>
+&lt;li>&lt;code>tasks.file.status.storage.producer.&amp;lt;producer_property&amp;gt;&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h2 id="examples">Examples&lt;/h2>
+&lt;p>Some configuration examples are available &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples">here&lt;/a>.&lt;/p>
+&lt;h2 id="defining-connect-record-schema">Defining Connect Record Schema&lt;/h2>
+&lt;p>The optional &lt;code>value.connect.schema&lt;/code> config property can be used to set the connect-record schema that should be used.
+If there is no schema pass through the connector configuration, a schema will be resolved for each record produced.&lt;/p>
+&lt;p>The &lt;code>value.connect.schema&lt;/code> must be passed as a JSON string that respects the following schema (using Avro representation):&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fields&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The name of this schema&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;enum&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;symbols&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;STRUCT&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;BOOLEAN&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;INT8&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;INT16&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;INT32&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;INT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;FLOAT32&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;FLOAT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;BYTES&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;MAP&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;ARRAY&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The type of this schema&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The documentation for this schema&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;fieldSchemas&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The fields for this Schema. Throws a DataException if this schema is not a struct.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;valueSchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The value schema for this map or array schema. Throws a DataException if this schema is not a map or array.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;keySchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The key schema for this map schema. Throws a DataException if this schema is not a map.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;defaultValue&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;boolean&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;true if this field is optional, false otherwise&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;version&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;integer&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The optional version of the schema. If a version is included, newer versions *must* be larger than older ones.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;com.example.User&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRUCT&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldSchemas&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;INT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;first_name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;last_name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;email&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;gender&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;country&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;favorite_colors&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;ARRAY&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;valueSchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.7.x/developer-guide/configuration/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.7.x/developer-guide/configuration/</guid><description>
 &lt;h2 id="commons-configuration">Commons configuration&lt;/h2>
 &lt;p>Whatever the kind of files you are processing a connector should always be configured with the below properties.
 These configurations are described in detail in subsequent chapters.&lt;/p>
@@ -3764,7 +4255,295 @@ Those configuration are described in detail in subsequent chapters.&lt;/p>
 &lt;td>high&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link><pubDate>Wed, 13 Apr 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</guid><description>
+&lt;/table></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.7.x/developer-guide/file-system-listing/</link><pubDate>Wed, 13 Apr 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.7.x/developer-guide/file-system-listing/</guid><description>
+&lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically lists object files that may be streamed into Kafka using the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing&lt;/a>&lt;br>
+configured in the connector&amp;rsquo;s configuration.&lt;/p>
+&lt;h2 id="supported-filesystems">Supported Filesystems&lt;/h2>
+&lt;p>Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>AmazonS3FileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>AzureBlobStorageFileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>GcsFileSystemListing&lt;/code>&lt;/li>
+&lt;li>&lt;code>LocalFSDirectoryListing&lt;/code> (default)&lt;/li>
+&lt;/ul>
+&lt;h3 id="local-filesystem-default">Local Filesystem (default)&lt;/h3>
+&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> class can be used for listing files that exist in a local filesystem directory.&lt;/p>
+&lt;h4 id="how-to-use-it-">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.directory.path&lt;/code>&lt;/td>
+&lt;td>The input directory to scan&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.recursive.enabled&lt;/code>&lt;/td>
+&lt;td>Flag indicating whether local directory should be recursively scanned&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>true&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="supported-file-types">Supported File types&lt;/h4>
+&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)
+Supported content-types are:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
+&lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
+&lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;h3 id="amazon-s3">Amazon S3&lt;/h3>
+&lt;p>The &lt;code>AmazonS3FileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p>
+&lt;h4 id="how-to-use-it--1">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration-1">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>aws.access.key.id&lt;/code>&lt;/td>
+&lt;td>AWS Access Key ID AWS&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.secret.access.key&lt;/code>&lt;/td>
+&lt;td>AWS Secret Access Key&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.secret.session.token&lt;/code>&lt;/td>
+&lt;td>AWS Secret Session Token&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
+&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
+&lt;td>&lt;code>class&lt;/code>&lt;/td>
+&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.region&lt;/code>&lt;/td>
+&lt;td>The AWS S3 Region, e.g. us-east-1&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>Regions.DEFAULT_REGION.getName()&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.service.endpoint&lt;/code>&lt;/td>
+&lt;td>AWS S3 custom service endpoint.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.path.style.access.enabled&lt;/code>&lt;/td>
+&lt;td>Configures the client to use path-style access for all requests.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.bucket.name&lt;/code>&lt;/td>
+&lt;td>The name of the Amazon S3 bucket.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.bucket.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for restricting the listing of the objects in the bucket&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.default.object.storage.class&lt;/code>&lt;/td>
+&lt;td>The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation). Accepted values are: &lt;code>STANDARD&lt;/code>, &lt;code>GLACIER&lt;/code>, &lt;code>REDUCED_REDUNDANCY&lt;/code>, &lt;code>STANDARD_IA&lt;/code>,&lt;code>ONEZONE_IA&lt;/code>,&lt;code>INTELLIGENT_TIERING&lt;/code>,&lt;code>DEEP_ARCHIVE&lt;/code>&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.delay.ms&lt;/code>&lt;/td>
+&lt;td>The base back-off time (milliseconds) before retrying a request.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>100&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.max.delay.ms&lt;/code>&lt;/td>
+&lt;td>The maximum back-off time (in milliseconds) before retrying a request.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>20_000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.max.retries&lt;/code>&lt;/td>
+&lt;td>The maximum number of retry attempts for failed retryable requests.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>3&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="google-cloud-storage">Google Cloud Storage&lt;/h3>
+&lt;p>The &lt;code>GcsFileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Google Cloud Storage bucket.&lt;/p>
+&lt;h4 id="how-to-use-it--2">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.GcsFileSystemListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration-2">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>gcs.credentials.path&lt;/code>&lt;/td>
+&lt;td>The path to GCP credentials file. Cannot be set when &lt;code>GCS_CREDENTIALS_JSON_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.credentials.json&lt;/code>&lt;/td>
+&lt;td>The GCP credentials as JSON string. Cannot be set when &lt;code>GCS_CREDENTIALS_PATH_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.bucket.name&lt;/code>&lt;/td>
+&lt;td>The GCS bucket name to download the object files from.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.blobs.filter.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for filtering blobs whose names begin with it.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="azure-blob-storage">Azure Blob Storage&lt;/h3>
+&lt;p>The &lt;code>AzureBlobStorageConfig&lt;/code> class can be used for listing objects that exist in a specific Azure Storage Container.&lt;/p>
+&lt;h4 id="how-to-use-it--3">How to use it ?&lt;/h4>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageFileSystemListing&lt;/code>&lt;/p>
+&lt;h4 id="configuration-3">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.connection.string&lt;/code>&lt;/td>
+&lt;td>Azure storage account connection string.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.account.name&lt;/code>&lt;/td>
+&lt;td>The Azure storage account name.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.account.key&lt;/code>&lt;/td>
+&lt;td>The Azure storage account key.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.container.name&lt;/code>&lt;/td>
+&lt;td>The Azure storage container name.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.blob.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for restricting the listing of the blobs in the container.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="filtering-input-files">Filtering input files&lt;/h2>
+&lt;p>You can configure one or more &lt;code>FileFilter&lt;/code> that will be used to determine if a file should be scheduled for processing or ignored.
+All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
+At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p>
+&lt;p>FilePulse packs with the following built-in filters :&lt;/p>
+&lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
+&lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
+&lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.IgnoreHiddenFileListFilter
+&lt;/code>&lt;/pre>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Limitation&lt;/h4>
+This filter is only supported by the &lt;code>LocalFSDirectoryListing&lt;/code>.
+&lt;/div>
+&lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
+&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter all files that have been modified to recently based on their last modified date property.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.LastModifiedFileFilter
+# The last modified time for a file can be accepted (default: 5000)
+file.filter.minimum.age.ms=10000
+&lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
+&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter all files that do not match the specified regex.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
+# The regex pattern used to match input files
+file.filter.regex.pattern=&amp;#34;\\.log$&amp;#34;
+&lt;/code>&lt;/pre>&lt;h3 id="sizefilelistfilter">SizeFileListFilter&lt;/h3>
+&lt;p>The &lt;code>SizeFileListFilter&lt;/code> can be used to filter all files that are smaller or larger than a specific byte size.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
+file.filter.minimum.size.bytes=0
+file.filter.maximum.size.bytes=9223372036854775807
+&lt;/code>&lt;/pre></description></item><item><title>Docs: FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link><pubDate>Wed, 13 Apr 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</guid><description>
 &lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically lists object files that may be streamed into Kafka using the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing&lt;/a>&lt;br>
 configured in the connector&amp;rsquo;s configuration.&lt;/p>
 &lt;h2 id="supported-filesystems">Supported Filesystems&lt;/h2>
@@ -5980,641 +6759,4 @@ file.filter.regex.pattern=&amp;#34;\\.log$&amp;#34;
 &lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
 &lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
 &lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Scanning Files</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.5.x/developer-guide/scanning-files/</link><pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.5.x/developer-guide/scanning-files/</guid><description>
-&lt;p>The connector must be configured with a specific &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java">FSDirectoryWalker&lt;/a>&lt;br>
-that will be responsible for scanning an input directory to find files eligible to be streamed in Kafka.&lt;/p>
-&lt;p>The default &lt;code>FSDirectoryWalker&lt;/code> implementation is :&lt;/p>
-&lt;p>&lt;code>io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/code>.&lt;/p>
-&lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically triggers a file system scan of the directory specified in the &lt;code>input.directory.path&lt;/code>
-connector property. Scan is executed in a background-thread invoking the configured &lt;code>FSDirectoryWalker&lt;/code>.&lt;/p>
-&lt;h2 id="configuring-directory-scan-using-localfsdirectorywalker">Configuring Directory Scan (using &lt;code>LocalFSDirectoryWalker&lt;/code>)&lt;/h2>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>fs.scanner.class&lt;/code>&lt;/td>
-&lt;td>The class used to scan file system&lt;/td>
-&lt;td>class&lt;/td>
-&lt;td>&lt;em>io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/em>&lt;/td>
-&lt;td>medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.scan.directory.path&lt;/code>&lt;/td>
-&lt;td>The input directory to scan&lt;/td>
-&lt;td>string&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>high&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.scan.interval.ms&lt;/code>&lt;/td>
-&lt;td>Time interval in milliseconds at wish the input directory is scanned&lt;/td>
-&lt;td>long&lt;/td>
-&lt;td>&lt;em>10000&lt;/em>&lt;/td>
-&lt;td>high&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.scan.filters&lt;/code>&lt;/td>
-&lt;td>The comma-separated list of fully qualified class names of the filter-filters to be uses to list eligible input files&lt;/td>
-&lt;td>list&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.recursive.scan.enable&lt;/code>&lt;/td>
-&lt;td>Boolean indicating whether local directory should be recursively scanned&lt;/td>
-&lt;td>boolean&lt;/td>
-&lt;td>&lt;em>true&lt;/em>&lt;/td>
-&lt;td>medium&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="filtering-input-files">Filtering input files&lt;/h2>
-&lt;p>You can configure one or more &lt;code>FileFilter&lt;/code> that will be used to determine if a file should be scheduled for processing or ignored.
-All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
-At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p>
-&lt;p>FilePulse packs with the following built-in filters :&lt;/p>
-&lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
-&lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
-&lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
-&lt;/code>&lt;/pre>&lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
-&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
-# The last modified time for a file can be accepted (default: 5000)
-file.filter.minimum.age.ms=10000
-&lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
-&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter files that do not match the specified regex.&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
-# The regex pattern used to matches input files
-file.filter.regex.pattern=&amp;#34;\\.log$&amp;#34;
-&lt;/code>&lt;/pre>&lt;h2 id="supported-file-types">Supported File types&lt;/h2>
-&lt;p>&lt;code>LocalFSDirectoryWalker&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)&lt;/p>
-&lt;p>The connector supports the following content types :&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
-&lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
-&lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: Scanning Files</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.6.x/developer-guide/scanning-files/</link><pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v1.6.x/developer-guide/scanning-files/</guid><description>
-&lt;p>The connector must be configured with a specific &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-plugin/src/main/java/io/streamthoughts/kafka/connect/filepulse/scanner/local/FSDirectoryWalker.java">FSDirectoryWalker&lt;/a>&lt;br>
-that will be responsible for scanning an input directory to find files eligible to be streamed in Kafka.&lt;/p>
-&lt;p>The default &lt;code>FSDirectoryWalker&lt;/code> implementation is :&lt;/p>
-&lt;p>&lt;code>io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/code>.&lt;/p>
-&lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically triggers a file system scan of the directory specified in the &lt;code>input.directory.path&lt;/code>
-connector property. Scan is executed in a background-thread invoking the configured &lt;code>FSDirectoryWalker&lt;/code>.&lt;/p>
-&lt;h2 id="configuring-directory-scan-using-localfsdirectorywalker">Configuring Directory Scan (using &lt;code>LocalFSDirectoryWalker&lt;/code>)&lt;/h2>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>fs.scanner.class&lt;/code>&lt;/td>
-&lt;td>The class used to scan file system&lt;/td>
-&lt;td>class&lt;/td>
-&lt;td>&lt;em>io.streamthoughts.kafka.connect.filepulse.scanner.local.LocalFSDirectoryWalker&lt;/em>&lt;/td>
-&lt;td>medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.scan.directory.path&lt;/code>&lt;/td>
-&lt;td>The input directory to scan&lt;/td>
-&lt;td>string&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>high&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.scan.interval.ms&lt;/code>&lt;/td>
-&lt;td>Time interval in milliseconds at wish the input directory is scanned&lt;/td>
-&lt;td>long&lt;/td>
-&lt;td>&lt;em>10000&lt;/em>&lt;/td>
-&lt;td>high&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.scan.filters&lt;/code>&lt;/td>
-&lt;td>The comma-separated list of fully qualified class names of the filter-filters to be uses to list eligible input files&lt;/td>
-&lt;td>list&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.recursive.scan.enable&lt;/code>&lt;/td>
-&lt;td>Boolean indicating whether local directory should be recursively scanned&lt;/td>
-&lt;td>boolean&lt;/td>
-&lt;td>&lt;em>true&lt;/em>&lt;/td>
-&lt;td>medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>allow.tasks.reconfiguration.after.timeout.ms&lt;/code>&lt;/td>
-&lt;td>Specifies the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed&lt;/td>
-&lt;td>long&lt;/td>
-&lt;td>&lt;em>Long.MAX_VALUE&lt;/em>&lt;/td>
-&lt;td>medium&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="filtering-input-files">Filtering input files&lt;/h2>
-&lt;p>You can configure one or more &lt;code>FileFilter&lt;/code> that will be used to determine if a file should be scheduled for processing or ignored.
-All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
-At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p>
-&lt;p>FilePulse packs with the following built-in filters :&lt;/p>
-&lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
-&lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
-&lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.IgnoreHiddenFileListFilter
-&lt;/code>&lt;/pre>&lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
-&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter files that have been modified to recently based on their last modified date property.&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.LastModifiedFileFilter
-# The last modified time for a file can be accepted (default: 5000)
-file.filter.minimum.age.ms=10000
-&lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
-&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter files that do not match the specified regex.&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.scan.filters=io.streamthoughts.kafka.connect.filepulse.scanner.local.filter.RegexFileListFilter
-# The regex pattern used to matches input files
-file.filter.regex.pattern=&amp;#34;\\.log$&amp;#34;
-&lt;/code>&lt;/pre>&lt;h2 id="supported-file-types">Supported File types&lt;/h2>
-&lt;p>&lt;code>LocalFSDirectoryWalker&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)&lt;/p>
-&lt;p>The connector supports the following content types :&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
-&lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
-&lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
-&lt;/ul></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.5.x/developer-guide/file-readers/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.5.x/developer-guide/file-readers/</guid><description>
-&lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
-configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
-&lt;p>Currently, Connect FilePulse provides the following &lt;code>FileInputReader&lt;/code> implementations :&lt;/p>
-&lt;p>&lt;strong>Amazon S3&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>AmazonS3AvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3BytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3RowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3XMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3MetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Azure Blob Storage&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>AzureBlobStorageAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Google Cloud Storage&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>GcsAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Local Filesystem&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>LocalAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;h2 id="rowfileinputreader-default">RowFileInputReader (default)&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;RowFileInputReader&lt;/code>s can be used to read files line by line.
-This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.&lt;/p>
-&lt;h3 id="configuration">Configuration&lt;/h3>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>file.encoding&lt;/code>&lt;/td>
-&lt;td>The text file encoding to use&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>UTF_8&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>buffer.initial.bytes.size&lt;/code>&lt;/td>
-&lt;td>The initial buffer size used to read input files.&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>4096&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>min.read.records&lt;/code>&lt;/td>
-&lt;td>The minimum number of records to read from file before returning to task.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>1&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>skip.headers&lt;/code>&lt;/td>
-&lt;td>The number of rows to be skipped in the beginning of file.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>skip.footers&lt;/code>&lt;/td>
-&lt;td>The number of rows to be skipped at the end of file.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>read.max.wait.ms&lt;/code>&lt;/td>
-&lt;td>The maximum time to wait in milliseconds for more bytes after hitting end of file.&lt;/td>
-&lt;td>&lt;code>Long&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="xxxbytesarrayinputreader">XxxBytesArrayInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;BytesArrayInputReader&lt;/code>s create a single byte array record from a source file.&lt;/p>
-&lt;h2 id="xxxavrofileinputreader">XxxAvroFileInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;AvroFileInputReader&lt;/code>s can be used to read Avro files.&lt;/p>
-&lt;h2 id="xxxxmlfileinputreader">XxxXMLFileInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;XMLFileInputReader&lt;/code>s can be used to read XML files.&lt;/p>
-&lt;h3 id="configuration-1">Configuration&lt;/h3>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Since&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>reader.xpath.expression&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The XPath expression used extract data from XML input files&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>/&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xpath.result.type&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The expected result type for the XPath expression in [NODESET, STRING]&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>NODESET&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.force.array.on.fields&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The comma-separated list of fields for which an array-type must be forced&lt;/td>
-&lt;td>&lt;code>List&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.parser.validating.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the parser will validate documents as they are parsed.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.parser.namespace.aware.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the XML parser will provide support for XML namespaces.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.empty.elements&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should exclude element having no field.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.node.attributes&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should exclude all node attributes.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.node.attributes.in.namespaces&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&lt;/td>
-&lt;td>&lt;code>list&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.data.type.inference.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.3.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should try to infer the type of data nodes.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.attribute.prefix&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>&amp;quot;&amp;quot;&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.content.field.name&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
-&lt;td>Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>value&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.field.name.characters.regex.pattern&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
-&lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>[.\-]'&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.field.name.characters.string.replacement&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
-&lt;td>Specifies the replacement string to be used when converting a document to a struct.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>_&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.force.content.field.for.paths&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
-&lt;td>The comma-separated list of field for which a content-field must be forced.&lt;/td>
-&lt;td>&lt;code>List&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="xxxmetadatafileinputreader">XxxMetadataFileInputReader&lt;/h2>
-&lt;p>The &lt;code>FileInputMetadataReader&lt;/code>s can be used to send a single record per file containing metadata, i.e.: &lt;code>name&lt;/code>, &lt;code>path&lt;/code>, &lt;code>hash&lt;/code>, &lt;code>lastModified&lt;/code>, &lt;code>size&lt;/code>, etc.&lt;/p></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.6.x/developer-guide/file-readers/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.6.x/developer-guide/file-readers/</guid><description>
-&lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
-configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
-&lt;p>Currently, Connect FilePulse provides the following &lt;code>FileInputReader&lt;/code> implementations :&lt;/p>
-&lt;p>&lt;strong>Amazon S3&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>AmazonS3AvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3BytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3RowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3XMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AmazonS3MetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Azure Blob Storage&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>AzureBlobStorageAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Google Cloud Storage&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>GcsAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;p>&lt;strong>Local Filesystem&lt;/strong>&lt;/p>
-&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>LocalAvroFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalBytesArrayInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalRowFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalXMLFileInputReader&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalMetadataFileInputReader&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;h2 id="rowfileinputreader-default">RowFileInputReader (default)&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;RowFileInputReader&lt;/code>s can be used to read files line by line.
-This reader creates one record per row. It should be used for reading delimited text files, application log files, etc.&lt;/p>
-&lt;h3 id="configuration">Configuration&lt;/h3>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>file.encoding&lt;/code>&lt;/td>
-&lt;td>The text file encoding to use&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>UTF_8&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>buffer.initial.bytes.size&lt;/code>&lt;/td>
-&lt;td>The initial buffer size used to read input files.&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>4096&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>min.read.records&lt;/code>&lt;/td>
-&lt;td>The minimum number of records to read from file before returning to task.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>1&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>skip.headers&lt;/code>&lt;/td>
-&lt;td>The number of rows to be skipped in the beginning of file.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>skip.footers&lt;/code>&lt;/td>
-&lt;td>The number of rows to be skipped at the end of file.&lt;/td>
-&lt;td>&lt;code>Integer&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>read.max.wait.ms&lt;/code>&lt;/td>
-&lt;td>The maximum time to wait in milliseconds for more bytes after hitting end of file.&lt;/td>
-&lt;td>&lt;code>Long&lt;/code>&lt;/td>
-&lt;td>&lt;code>0&lt;/code>&lt;/td>
-&lt;td>Medium&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="xxxbytesarrayinputreader">XxxBytesArrayInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;BytesArrayInputReader&lt;/code>s create a single byte array record from a source file.&lt;/p>
-&lt;h2 id="xxxavrofileinputreader">XxxAvroFileInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;AvroFileInputReader&lt;/code>s can be used to read Avro files.&lt;/p>
-&lt;h2 id="xxxxmlfileinputreader">XxxXMLFileInputReader&lt;/h2>
-&lt;p>The &lt;code>&amp;lt;PREFIX&amp;gt;XMLFileInputReader&lt;/code>s can be used to read XML files.&lt;/p>
-&lt;h3 id="configuration-1">Configuration&lt;/h3>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Since&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>reader.xpath.expression&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The XPath expression used extract data from XML input files&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>/&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xpath.result.type&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The expected result type for the XPath expression in [NODESET, STRING]&lt;/td>
-&lt;td>&lt;code>String&lt;/code>&lt;/td>
-&lt;td>&lt;code>NODESET&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.force.array.on.fields&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>The comma-separated list of fields for which an array-type must be forced&lt;/td>
-&lt;td>&lt;code>List&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.parser.validating.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the parser will validate documents as they are parsed.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.parser.namespace.aware.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the XML parser will provide support for XML namespaces.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.empty.elements&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.2.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should exclude element having no field.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.node.attributes&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should exclude all node attributes.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.exclude.node.attributes.in.namespaces&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should only exclude node attributes in the defined list of namespaces.&lt;/td>
-&lt;td>&lt;code>list&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.data.type.inference.enabled&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.3.0&lt;/code>&lt;/td>
-&lt;td>Specifies that the reader should try to infer the type of data nodes.&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>false&lt;/code>&lt;/td>
-&lt;td>High&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.attribute.prefix&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.4.0&lt;/code>&lt;/td>
-&lt;td>If set, the name of attributes will be prepended with the specified prefix when they are added to a record.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>&amp;quot;&amp;quot;&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.content.field.name&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
-&lt;td>Specifies the name to be used for naming the field that will contain the value of a TextNode element having attributes.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>value&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.field.name.characters.regex.pattern&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
-&lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>[.\-]'&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.field.name.characters.string.replacement&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
-&lt;td>Specifies the replacement string to be used when converting a document to a struct.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>_&lt;/code>&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>reader.xml.force.content.field.for.paths&lt;/code>&lt;/td>
-&lt;td>&lt;code>2.5.4&lt;/code>&lt;/td>
-&lt;td>The comma-separated list of field for which a content-field must be forced.&lt;/td>
-&lt;td>&lt;code>List&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>Low&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="xxxmetadatafileinputreader">XxxMetadataFileInputReader&lt;/h2>
-&lt;p>The &lt;code>FileInputMetadataReader&lt;/code>s can be used to send a single record per file containing metadata, i.e.: &lt;code>name&lt;/code>, &lt;code>path&lt;/code>, &lt;code>hash&lt;/code>, &lt;code>lastModified&lt;/code>, &lt;code>size&lt;/code>, etc.&lt;/p></description></item></channel></rss>
+&lt;/ul></description></item></channel></rss>

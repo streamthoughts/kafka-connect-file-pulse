@@ -169,3 +169,6 @@ no = 'Sorry to hear that. Please <a href="https://github.com/streamthoughts/kafk
 [[params.versions]]
   version = "v2.6.x"
   url = "/kafka-connect-file-pulse/v2-6/docs"
+[[params.versions]]
+  version = "v2.7.x"
+  url = "/kafka-connect-file-pulse/v2-7/docs"

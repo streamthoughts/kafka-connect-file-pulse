@@ -1037,7 +1037,7 @@ filters.ParseLog4jLog.type=io.streamthoughts.kafka.connect.filepulse.filter.impl
 filters.ParseLog4jLog.match=&amp;#34;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:thread} %{GREEDYDATA:logmessage}&amp;#34;
 filters.ParseLog4jLog.source=log
 filters.ParseLog4jLog.overwrite=logmessage
-&lt;/code>&lt;/pre>&lt;h2 id="available-processing-filters">Available Processing Filters&lt;/h2>
+&lt;/code>&lt;/pre>&lt;h2 id="list-of-processing-filters-available">List of Processing Filters Available&lt;/h2>
 &lt;p>These filters are available for use with Kafka Connect File Pulse:&lt;/p>
 &lt;table>
 &lt;thead>
@@ -1059,9 +1059,9 @@ filters.ParseLog4jLog.overwrite=logmessage
 &lt;td>&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;a href="./filters#csvfilter">CSVFilter&lt;/a>&lt;/td>
+&lt;td>&lt;a href="../filters#csvfilter">CSVFilter&lt;/a>&lt;/td>
 &lt;td>Parses a message field&amp;rsquo;s value containing columns delimited by a character into a struct&lt;/td>
-&lt;td>&lt;code>v2.6.0&lt;/code>&lt;/td>
+&lt;td>&lt;code>v2.7.0&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;a href="../filters#datefilter">DateFilter&lt;/a>&lt;/td>
@@ -1177,16 +1177,16 @@ For example, they can be used to split one input message to multiple messages or
 &lt;p>The expression language can be used to easily select one field from the input record :&lt;/p>
 &lt;p>&lt;code>$.username&lt;/code>&lt;/p>
 &lt;h3 id="nested-navigation">Nested Navigation&lt;/h3>
-&lt;p>To navigate down a struct value, just use a period to indicate a nested field value :&lt;/p>
+&lt;p>To navigate down a struct value, just use a period to indicate a nested field value:&lt;/p>
 &lt;p>&lt;code>$.address.city&lt;/code>&lt;/p>
 &lt;h3 id="string-substitution">String substitution&lt;/h3>
-&lt;p>The expression language can be used to easily build a new string field that concatenate multiple ones :&lt;/p>
+&lt;p>The expression language can be used to easily build a new string field that concatenate multiple ones:&lt;/p>
 &lt;p>&lt;code>The user {{ $.username }} is living in city {{ $.address.city }}&lt;/code>&lt;/p>
 &lt;h3 id="function">Function&lt;/h3>
-&lt;p>The expression language support function call :&lt;/p>
+&lt;p>The expression language provides built-in functions that can be used for easily transforming a field value:&lt;/p>
 &lt;p>&lt;code>The user {{ $.username }} is living in city {{ uppercase($.address.city) }}&lt;/code>&lt;/p>
-&lt;p>In addition, ScEL supports nested functions.&lt;/p>
-&lt;p>For example, the following expression can be used to replace all whitespace characters after transforming our field&amp;rsquo;s value into lowercase.&lt;/p>
+&lt;p>Functions can also be nested to build more complex transformations.
+For example, the below expression shows how to replace all whitespace characters after transforming a field&amp;rsquo;s value into lowercase.&lt;/p>
 &lt;pre tabindex="0">&lt;code>replace_all(lowercase($.field), &amp;#39;\\s&amp;#39;, &amp;#39;-&amp;#39;)
 &lt;/code>&lt;/pre>
 &lt;div class="alert alert-warning" role="alert">
@@ -1198,7 +1198,6 @@ Currently, FilePulse does not support user-defined functions (UDFs). So you cann
 &lt;p>The bellow example shows how to dynamically build a field selector by concatenating &lt;code>$.&lt;/code> and
 the first element present in the array field &lt;code>$.values&lt;/code>.&lt;/p>
 &lt;p>&lt;code>{{ '$.'extract_array($.values, 0) }}&lt;/code>&lt;/p>
-&lt;p>Note the use of double-quotes to define a substitution expressions&lt;/p>
 &lt;h2 id="scopes">Scopes&lt;/h2>
 &lt;p>In the previous section, we saw how to use the expression language to select a specific field was part of the record being processed.&lt;/p>
 &lt;p>In addition to that, &lt;em>ScEL&lt;/em> allows you to access additional fields through the use of &lt;em>Scopes&lt;/em>.
@@ -1320,7 +1319,7 @@ In case of failures an additional &lt;code>$error&lt;/code> scope will be added 
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;p>The &lt;code>userDefinedMetadata&lt;/code> object may contain additional information about the source object.&lt;/p>
+&lt;p>The &lt;code>userDefinedMetadata&lt;/code> object may contain additional information (i.e. properties) about the source object.&lt;/p>
 &lt;p>&lt;strong>Azure&lt;/strong>&lt;/p>
 &lt;ul>
 &lt;li>&lt;code>azure.blob.storage.account&lt;/code>&lt;/li>
@@ -2283,7 +2282,7 @@ The following list shows the supported encoding types: &lt;code>hex&lt;/code>, &
 &lt;/li>
 &lt;li>
 &lt;p>&lt;em>Output&lt;/em> (type=&lt;code>STRUCT&lt;/code>):&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;host&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;abc@xyz.com&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;path&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;port&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;scheme&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;mailto&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fragment&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;query&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;userInfo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;host&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;path&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;abc@xyz.com&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;port&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;scheme&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;mailto&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fragment&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;query&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;userInfo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
 &lt;/ul>
 &lt;p>&lt;strong>Parse an invalid URL that is missing the scheme. missing &lt;em>scheme&lt;/em>.&lt;/strong>&lt;/p>
@@ -2440,7 +2439,7 @@ filters.AppendError.value={{ $error.exceptionMessage }}
 &lt;tr>
 &lt;td>&lt;a href="#csvfilter">CSVFilter&lt;/a>&lt;/td>
 &lt;td>Parses a message field&amp;rsquo;s value containing columns delimited by a character into a struct&lt;/td>
-&lt;td>&lt;code>v2.6.0&lt;/code>&lt;/td>
+&lt;td>&lt;code>v2.7.0&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;a href="#datefilter">DateFilter&lt;/a>&lt;/td>

@@ -38,25 +38,24 @@ The expression language can be used to easily select one field from the input re
 
 ### Nested Navigation
 
-To navigate down a struct value, just use a period to indicate a nested field value : 
+To navigate down a struct value, just use a period to indicate a nested field value: 
 
 `$.address.city`
 
 ### String substitution
 
-The expression language can be used to easily build a new string field that concatenate multiple ones : 
+The expression language can be used to easily build a new string field that concatenate multiple ones: 
 
 `The user {{ $.username }} is living in city {{ $.address.city }}`
 
 ### Function
 
-The expression language support function call : 
+The expression language provides built-in functions that can be used for easily transforming a field value:
 
 `The user {{ $.username }} is living in city {{ uppercase($.address.city) }}`
 
-In addition, ScEL supports nested functions.
-
-For example, the following expression can be used to replace all whitespace characters after transforming our field's value into lowercase.
+Functions can also be nested to build more complex transformations.
+For example, the below expression shows how to replace all whitespace characters after transforming a field's value into lowercase.
 
 ```
 replace_all(lowercase($.field), '\\s', '-')
@@ -74,8 +73,6 @@ The bellow example shows how to dynamically build a field selector by concatenat
 the first element present in the array field `$.values`.
 
 `{{ '$.'extract_array($.values, 0) }}`
-
-Note the use of double-quotes to define a substitution expressions
 
 ## Scopes
 
@@ -134,7 +131,7 @@ The scope `metadata` allows read access to information about the file being proc
 | `$metadata.contentDigest`       | The digest of the source object content.                              | `string`              |
 | `$metadata.userDefinedMetadata` | The user-defined metadata.                                            | `Map[string, object]` |
 
-The `userDefinedMetadata` object may contain additional information about the source object.
+The `userDefinedMetadata` object may contain additional information (i.e. properties) about the source object.
 
 **Azure**
 
@@ -685,7 +682,7 @@ ScEL numeric functions are used primarily for numeric manipulation and/or mathem
 * _Output_ (type=`STRUCT`):
 
   ```json
-  {"host":"abc@xyz.com", "path":"", "port":null, "scheme":"mailto", "fragment":null, "query":null, "userInfo":null}
+  {"host":null, "path":"abc@xyz.com", "port":null, "scheme":"mailto", "fragment":null, "query":null, "userInfo":null}
   ```
 
 **Parse an invalid URL that is missing the scheme.  missing _scheme_.**

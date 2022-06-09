@@ -36,7 +36,7 @@ filters.ParseLog4jLog.source=log
 filters.ParseLog4jLog.overwrite=logmessage
 ```
 
-## Available Processing Filters
+## List of Processing Filters Available
 
 These filters are available for use with Kafka Connect File Pulse:
 
@@ -44,7 +44,7 @@ These filters are available for use with Kafka Connect File Pulse:
 |-----------------------------------------------------|------------------------------------------------------------------------------------------|----------|
 | [AppendFilter](../filters#appendfilter)             | Appends one or more values to an existing or non-existing array field                    |          |
 | [ConvertFilter](../filters#convertfilter)           | Converts a message field's value to a specific type                                      |          |
-| [CSVFilter](./filters#csvfilter)                    | Parses a message field's value containing columns delimited by a character into a struct | `v2.6.0` |
+| [CSVFilter](../filters#csvfilter)                   | Parses a message field's value containing columns delimited by a character into a struct | `v2.7.0` |
 | [DateFilter](../filters#datefilter)                 | Converts a field's value containing a date to a unix epoch time                          |          |
 | [DelimitedRowFilter](../filters#delimitedrowfilter) | Parses a message field's value containing columns delimited by a separator into a struct |          |
 | [DropFilter](../filters#dropfilter)                 | Drops messages satisfying a specific condition without throwing exception.               |          |

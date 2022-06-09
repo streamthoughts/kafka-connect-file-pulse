@@ -13,7 +13,7 @@ These filters are available for use with Kafka Connect File Pulse:
 |-------------------------------------------|------------------------------------------------------------------------------------------|----------|
 | [AppendFilter](#appendfilter)             | Appends one or more values to an existing or non-existing array field                    |          |
 | [ConvertFilter](#convertfilter)           | Converts a message field's value to a specific type                                      |          |
-| [CSVFilter](#csvfilter)                   | Parses a message field's value containing columns delimited by a character into a struct | `v2.6.0` |
+| [CSVFilter](#csvfilter)                   | Parses a message field's value containing columns delimited by a character into a struct | `v2.7.0` |
 | [DateFilter](#datefilter)                 | Converts a field's value containing a date to a unix epoch time                          |          |
 | [DelimitedRowFilter](#delimitedrowfilter) | Parses a message field's value containing columns delimited by a regex into a struct     |          |
 | [DropFilter](#dropfilter)                 | Drops messages satisfying a specific condition without throwing exception.               |          |

@@ -68,7 +68,7 @@ public class FileObjectStateReporter implements StateListener {
      * @param context   the object file context.
      * @param status    the status.
      */
-    void notify(final FileContext context, final FileObjectStatus status) {
+    void notify(final FileObjectContext context, final FileObjectStatus status) {
         notify(context.key(), context.metadata(), context.offset(), status);
     }
 
@@ -76,9 +76,9 @@ public class FileObjectStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onScheduled(final FileContext context) {
+    public void onScheduled(final FileObjectContext context) {
         Objects.requireNonNull(context, "context can't be null");
-        LOG.debug("Scheduling source file '{}'", context.metadata());
+        LOG.debug("Scheduling object-file: '{}'", context.metadata());
         notify(context, FileObjectStatus.SCHEDULED);
     }
 
@@ -87,7 +87,7 @@ public class FileObjectStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onInvalid(final FileContext context) {
+    public void onInvalid(final FileObjectContext context) {
         Objects.requireNonNull(context, "context can't be null");
         notify(context, FileObjectStatus.INVALID);
     }
@@ -96,9 +96,9 @@ public class FileObjectStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onStart(final FileContext context) {
+    public void onStart(final FileObjectContext context) {
         Objects.requireNonNull(context, "context can't be null");
-        LOG.debug("Starting to precess source file '{}'", context.metadata());
+        LOG.debug("Starting to precess object-file: '{}'", context.metadata());
         notify(context, FileObjectStatus.STARTED);
     }
 
@@ -107,9 +107,9 @@ public class FileObjectStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onCompleted(final FileContext context) {
+    public void onCompleted(final FileObjectContext context) {
         Objects.requireNonNull(context, "context can't be null");
-        LOG.debug("Completed source file '{}'", context.metadata());
+        LOG.debug("Completed object-file: '{}'", context.metadata());
         notify(context, FileObjectStatus.COMPLETED);
     }
 
@@ -117,9 +117,9 @@ public class FileObjectStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
-    public void onFailure(final FileContext context, final Throwable t) {
+    public void onFailure(final FileObjectContext context, final Throwable t) {
         Objects.requireNonNull(context, "context can't be null");
-        LOG.error("Error while processing source file '{}'", context.metadata(), t);
+        LOG.error("Error while processing object-file: '{}'", context.metadata(), t);
         notify(context, FileObjectStatus.FAILED);
     }
 

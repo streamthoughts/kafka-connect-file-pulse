@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.BytesRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIteratorFactory;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
@@ -63,6 +63,9 @@ public class FileInputMetadataIteratorFactory implements FileInputIteratorFactor
                     .put("metadata", metadata.userDefinedMetadata());
 
             TypedFileRecord record = new TypedFileRecord(BytesRecordOffset.empty(), struct);
-            return new DelegatingFileInputIterator(new FileContext(metadata), Collections.singleton(record).iterator());
+            return new DelegatingFileInputIterator(
+                    new FileObjectContext(metadata),
+                    Collections.singleton(record).iterator()
+            );
     }
 }

@@ -21,7 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
@@ -79,7 +79,7 @@ public class RowFileInputIteratorTest {
             Assert.assertNotNull(next);
         }
 
-        FileContext context = iterator.context();
+        FileObjectContext context = iterator.context();
         Assert.assertEquals(NLINES, context.offset().rows());
         Assert.assertEquals(file.length(), context.offset().position());
     }

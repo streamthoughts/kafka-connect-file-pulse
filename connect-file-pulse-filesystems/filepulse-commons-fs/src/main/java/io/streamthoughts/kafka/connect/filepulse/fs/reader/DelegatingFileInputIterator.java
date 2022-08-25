@@ -22,7 +22,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.FilterContext;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
@@ -34,7 +34,7 @@ public final class DelegatingFileInputIterator implements FileInputIterator<File
 
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
     private final Iterator<TypedFileRecord> iterator;
-    private final FileContext context;
+    private final FileObjectContext context;
 
     /**
      * Creates a new {@link DelegatingFileInputIterator} instance.
@@ -42,7 +42,7 @@ public final class DelegatingFileInputIterator implements FileInputIterator<File
      * @param context   the {@link FilterContext} object.
      * @param iterator  the {@link Iterator} to delegate.
      */
-    DelegatingFileInputIterator(final FileContext context,
+    DelegatingFileInputIterator(final FileObjectContext context,
                                 final Iterator<TypedFileRecord> iterator) {
         this.context = context;
         this.iterator = iterator;
@@ -52,7 +52,7 @@ public final class DelegatingFileInputIterator implements FileInputIterator<File
      * {@inheritDoc}
      */
     @Override
-    public FileContext context() {
+    public FileObjectContext context() {
         return context;
     }
 

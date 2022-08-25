@@ -23,7 +23,7 @@ import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputItera
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
@@ -39,7 +39,7 @@ public class BytesArrayInputIterator extends ManagedFileInputIterator<TypedStruc
 
     private boolean hasNext = true;
 
-    private final FileContext context;
+    private final FileObjectContext context;
 
     /**
      * Creates a new {@link BytesArrayInputIterator} instance.
@@ -53,14 +53,14 @@ public class BytesArrayInputIterator extends ManagedFileInputIterator<TypedStruc
                             final IteratorManager iteratorManager) {
         super(meta, iteratorManager);
         this.stream = stream;
-        this.context = new FileContext(meta);
+        this.context = new FileObjectContext(meta);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public FileContext context() {
+    public FileObjectContext context() {
         return context;
     }
 

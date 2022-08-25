@@ -62,7 +62,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private FileObjectStateReporter reporter;
 
-    private volatile FileContext contextToBeCommitted;
+    private volatile FileObjectContext contextToBeCommitted;
 
     private StateBackingStoreAccess sharedStore;
 
@@ -74,7 +74,7 @@ public class FilePulseSourceTask extends SourceTask {
 
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    private final ConcurrentLinkedQueue<FileContext> completedToCommit = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<FileObjectContext> completedToCommit = new ConcurrentLinkedQueue<>();
 
     private final Map<String, Schema> valueSchemas = new HashMap<>();
 
@@ -111,7 +111,7 @@ public class FilePulseSourceTask extends SourceTask {
 
             reporter = new FileObjectStateReporter(sharedStore.get().getResource()) {
                 @Override
-                public void onCompleted(final FileContext context) {
+                public void onCompleted(final FileObjectContext context) {
                     super.onCompleted(context);
                     completedToCommit.add(context);
                 }
@@ -198,7 +198,7 @@ public class FilePulseSourceTask extends SourceTask {
                     try {
                         final RecordsIterable<FileRecord<TypedStruct>> records = consumer.next();
                         if (!records.isEmpty()) {
-                            final FileContext context = consumer.context();
+                            final FileObjectContext context = consumer.context();
                             LOG.debug("Returning {} records for {}", records.size(), context.metadata());
                             results = records.stream()
                                     .map(r -> buildSourceRecord(context, r))
@@ -227,6 +227,7 @@ public class FilePulseSourceTask extends SourceTask {
             }
         } catch (final Throwable t) {
             // This task has failed, so close any resources (maybe reopened if needed) before throwing
+            LOG.error("This task has failed due to uncaught error and will be stopped.");
             closeResources();
             throw t;
         }
@@ -252,14 +253,14 @@ public class FilePulseSourceTask extends SourceTask {
 
         if (!closed.get()) {
             while (!completedToCommit.isEmpty()) {
-                final FileContext file = completedToCommit.poll();
+                final FileObjectContext file = completedToCommit.poll();
                 LOG.info("Committed offset for file: {}", file.metadata());
                 safelyCommit(file);
             }
         }
     }
 
-    private void safelyCommit(final FileContext committed) {
+    private void safelyCommit(final FileObjectContext committed) {
         try {
             reporter.notify(committed, FileObjectStatus.COMMITTED);
         } catch (Exception e) {
@@ -267,7 +268,7 @@ public class FilePulseSourceTask extends SourceTask {
         }
     }
 
-    private SourceRecord buildSourceRecord(final FileContext context,
+    private SourceRecord buildSourceRecord(final FileObjectContext context,
                                            final FileRecord<?> record) {
         final FileObjectMeta metadata = context.metadata();
 

@@ -36,8 +36,6 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter<T>> im
 
     private boolean ignoreFailure;
 
-    private CommonFilterConfig filterConfig;
-
     /**
      * {@inheritDoc}
      */
@@ -57,7 +55,7 @@ public abstract class AbstractRecordFilter<T extends AbstractRecordFilter<T>> im
      */
     @Override
     public void configure(final Map<String, ?> props, final RecordFilterProvider provider) {
-        filterConfig = new CommonFilterConfig(props);
+        CommonFilterConfig filterConfig = new CommonFilterConfig(props);
         withOnCondition(filterConfig.condition());
         withIgnoreFailure(filterConfig.ignoreFailure());
         if (!filterConfig.onFailure().isEmpty()) {

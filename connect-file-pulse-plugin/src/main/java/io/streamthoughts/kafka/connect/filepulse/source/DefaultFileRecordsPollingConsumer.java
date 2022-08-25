@@ -60,7 +60,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      *
      * @param taskContext            the current task context.
      * @param reader                 the reader to be used.
-     * @param pipeline               the filter pipeline to apply on each records.
+     * @param pipeline               the filter pipeline to apply on each record.
      * @param offsetPolicy           the source offset/partition policy.
      * @param ignoreCommittedOffsets flag to indicate if committed offsets should be ignored.
      */
@@ -100,7 +100,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
 
                 iterables.add(new DelegateFileInputIterator(key, uri, reader));
                 if (hasListener()){
-                    listener.onScheduled(new FileContext(key, objectMeta));
+                    listener.onScheduled(new FileObjectContext(key, objectMeta));
                 }
             // Else, object-file does NOT exist or is not readable.
             } else {
@@ -110,7 +110,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
                     final FileObjectKey key = FileObjectKey.of(offsetPolicy.toPartitionJson(objectMeta));
                     if (hasListener()){
                         LOG.warn("Object-file does not exist or is not readable. Skip and continue '{}'", uri);
-                        listener.onInvalid(new FileContext(key, objectMeta));
+                        listener.onInvalid(new FileObjectContext(key, objectMeta));
                     }
                 } catch (Exception e) {
                     throw new ConnectFilePulseException(
@@ -128,11 +128,11 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      * {@inheritDoc}
      */
     @Override
-    public FileContext context() {
+    public FileObjectContext context() {
         if (currentIterator != null) {
-            FileContext context = currentIterator.context();
+            FileObjectContext context = currentIterator.context();
             if (latestPolledRecord != null) {
-                context = new FileContext(
+                context = new FileObjectContext(
                         context.key(),
                         context.metadata(),
                         latestPolledRecord.offset().toSourceOffset());
@@ -194,6 +194,10 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
 
         } finally {
             if (exception != null) {
+                LOG.error(
+                    "Stopped processing due to error during filter-chain execution for object-file: '{}'",
+                    currentIterator.context().metadata()
+                );
                 closeIterator(currentIterator, exception);
             }
         }
@@ -219,20 +223,20 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
                             "Object-file does not exist or is not readable. Skip and continue '{}'",
                             candidate.getObjectURI());
                         queue.remove();
-                        listener.onInvalid(new FileContext(candidate.key(), objectMeta));
+                        listener.onInvalid(new FileObjectContext(candidate.key(), objectMeta));
                         continue;
                     }
                     ret = openAndGetIteratorOrNullIfCompleted(candidate);
                     if (ret == null) {
                         // Remove the current iterator and continue
-                        deleteFileQueueAndInvokeListener(new FileContext(candidate.key(), objectMeta), null);
+                        deleteFileQueueAndInvokeListener(new FileObjectContext(candidate.key(), objectMeta), null);
                     }
                 } catch (Exception e) {
                     LOG.error(
                         "Failed to open and initialize new iterator for object-file: {}.",
                         candidate.getObjectURI()
                     );
-                    deleteFileQueueAndInvokeListener(new FileContext(candidate.key(), objectMeta), e);
+                    deleteFileQueueAndInvokeListener(new FileObjectContext(candidate.key(), objectMeta), e);
                     // Rethrow the exception.
                     throw e;
                 }
@@ -364,7 +368,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
 
     private void closeIterator(final FileInputIterator<FileRecord<TypedStruct>> iterator,
                                final Exception cause) {
-        final FileContext context = iterator.context();
+        final FileObjectContext context = iterator.context();
         try {
             iterator.close();
         } catch (final Exception e) {
@@ -374,7 +378,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
         }
     }
 
-    private void deleteFileQueueAndInvokeListener(final FileContext fileContext,
+    private void deleteFileQueueAndInvokeListener(final FileObjectContext fileContext,
                                                   final Throwable exception) {
         queue.remove();
         if (hasListener()) {

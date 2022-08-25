@@ -86,7 +86,6 @@
         <maven.failsafe.plugin.version>3.0.0-M6</maven.failsafe.plugin.version>
         <apache.avro.version>1.8.2</apache.avro.version>
         <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
-        <io.confluent.version>6.2.1</io.confluent.version>
         <org.apache.kafka.version>3.2.1</org.apache.kafka.version>
         <junit.version>5.9.0</junit.version>
         <testcontainer.version>1.17.2</testcontainer.version>

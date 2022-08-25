@@ -19,7 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
@@ -35,7 +35,7 @@ public abstract class ManagedFileInputIterator<T> implements FileInputIterator<F
      */
     private final IteratorManager iteratorManager;
 
-    protected FileContext context;
+    protected FileObjectContext context;
 
     /**
      * Creates a new {@link ManagedFileInputIterator} instance.
@@ -47,14 +47,14 @@ public abstract class ManagedFileInputIterator<T> implements FileInputIterator<F
                                     final IteratorManager iteratorManager) {
         this.iteratorManager =  Objects.requireNonNull(iteratorManager, "iteratorManager can't be null");
         this.closed = new AtomicBoolean(false);
-        this.context = new FileContext(objectMeta);
+        this.context = new FileObjectContext(objectMeta);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public FileContext context() {
+    public FileObjectContext context() {
         return context;
     }
 

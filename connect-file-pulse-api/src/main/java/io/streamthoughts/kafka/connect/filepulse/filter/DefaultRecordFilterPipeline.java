@@ -21,7 +21,7 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
@@ -43,11 +43,12 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
 
     private final FilterNode rootNode;
 
-    private FileContext context;
+    private FileObjectContext fileObjectObject;
 
     /**
      * Creates a new {@link RecordFilterPipeline} instance.
-     * @param filters   the list of filters.
+     *
+     * @param filters the list of filters.
      */
     public DefaultRecordFilterPipeline(final List<RecordFilter> filters) {
         Objects.requireNonNull(filters, "filters can't be null");
@@ -64,14 +65,14 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
      * {@inheritDoc}
      */
     @Override
-    public void init(final FileContext context) {
-        this.context = context;
+    public void init(final FileObjectContext fileObjectObject) {
+        this.fileObjectObject = fileObjectObject;
         FilterNode node = rootNode;
         while (node != null) {
             // Initialize on failure pipeline
             RecordFilterPipeline<FileRecord<TypedStruct>> pipelineOnFailure = node.filter.onFailure();
             if (pipelineOnFailure != null) {
-                pipelineOnFailure.init(context);
+                pipelineOnFailure.init(fileObjectObject);
             }
             // Prepare filter for next input file.
             node.filter.clear();
@@ -97,7 +98,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
             FileRecord<TypedStruct> record = iterator.next();
             boolean doHasNext = hasNext || iterator.hasNext();
             // Create new context for current record and file-object metadata.
-            FilterContext context = newContextFor(record.offset(), this.context.metadata());
+            FilterContext context = newContextFor(record.offset(), fileObjectObject.metadata());
             // Apply the filter-chain on current record.
             results.addAll(apply(context, record.value(), doHasNext));
         }
@@ -107,14 +108,14 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
     private FilterContext newContextFor(final FileRecordOffset offset,
                                         final FileObjectMeta metadata) {
         return FilterContextBuilder
-            .newBuilder()
-            .withMetadata(metadata)
-            .withOffset(offset)
-            .build();
+                .newBuilder()
+                .withMetadata(metadata)
+                .withOffset(offset)
+                .build();
     }
 
     private void checkState() {
-        if (context == null) {
+        if (fileObjectObject == null) {
             throw new IllegalStateException("Cannot apply this pipeline, no context initialized");
         }
     }
@@ -128,7 +129,7 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
                                                final boolean hasNext) {
         if (rootNode == null) {
             return Collections.singletonList(
-                new TypedFileRecord(context.offset(), record)
+                    new TypedFileRecord(context.offset(), record)
             );
         }
         return rootNode.apply(context, record, hasNext);
@@ -142,8 +143,8 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
         /**
          * Creates a new {@link FilterNode} instance.
          *
-         * @param filter       the current filter.
-         * @param onSuccess    the next filter ot be applied on success.
+         * @param filter    the current filter.
+         * @param onSuccess the next filter ot be applied on success.
          */
         private FilterNode(final RecordFilter filter,
                            final FilterNode onSuccess) {
@@ -157,74 +158,89 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
 
             final List<FileRecord<TypedStruct>> filtered = new LinkedList<>();
 
-            if (filter.accept(context, record)) {
-                try {
-                    RecordsIterable<TypedStruct> data = filter.apply(context, record, hasNext);
-                    List<FileRecord<TypedStruct>> records = data
-                        .stream()
-                        .map(s -> newRecordFor(context, s))
-                        .collect(Collectors.toList());
-                    filtered.addAll(records);
-
-                    if (onSuccess == null) {
-                        return filtered;
+            // Check whether current filter does NOT accept this record.
+            if (!filter.accept(context, record)) {
+                // skip current filter and forward record to the next one.
+                if (onSuccess != null) {
+                    filtered.addAll(onSuccess.apply(context, record, hasNext));
+                } else {
+                    if (!hasNext) {
+                        filtered.addAll(flush(context));
                     }
-                    return filtered
-                        .stream()
-                        .flatMap(r ->
-                            onSuccess.apply(FilterContextBuilder.newBuilder(context).build(), r.value(), hasNext)
-                                     .stream()
-                        )
-                        .collect(Collectors.toList());
-                // handle any error
-                } catch (final Exception e) {
+                    // add current record to filtered result and make sure to copy all context information.
+                    filtered.add(newRecordFor(context, record));
+                }
+                return filtered;
+            }
 
-                    if (filter.onFailure() == null && !filter.ignoreFailure()) {
-                        LOG.error(
-                            "Error occurred while executing filter '{}' on record='{}'",
+            final RecordsIterable<TypedStruct> data;
+            try {
+                data = filter.apply(context, record, hasNext);
+            } catch (final Exception e) {
+                RecordFilterPipeline<FileRecord<TypedStruct>> onFailure = filter.onFailure();
+
+                if (onFailure == null && !filter.ignoreFailure()) {
+                    LOG.error(
+                            "Failed to execute filter '{}' on record at offset '{}' from object-file {}. Error: {}",
                             filter.label(),
-                            record
-                        );
-                        throw e;
-                    }
-                    // Some filters can aggregate records which follow each other by maintaining internal buffers.
-                    // Those buffered records are expected to be returned at a certain point in time on the
-                    // invocation of the method apply.
-                    // When an error occurred, current record can be ignored or forward to an error pipeline.
-                    // Thus, following records can potentially trigger unexpected aggregates to be built.
-                    // To address that we force a flush of all records still buffered by the current filter.
-                    List<FileRecord<TypedStruct>> flushed = flush(context);
-                    filtered.addAll(flushed);
+                            context.offset(),
+                            context.metadata(),
+                            e.getLocalizedMessage()
+                    );
+                    throw e;
+                } else {
+                    LOG.debug("Failed to execute filter '{}' on record at offset '{}' from object-file {}. Error: {} "
+                           +  "Exception will be either ignored or handled by a dedicated filter chain.",
+                            filter.label(),
+                            context.offset(),
+                            context.metadata(),
+                            e.getLocalizedMessage()
+                    );
+                }
 
-                    if (filter.onFailure() != null) {
-                        final FilterContext errorContext = FilterContextBuilder
-                                .newBuilder(context)
-                                .withError(FilterError.of(e, filter.label()))
-                                .build();
-                        filtered.addAll(filter.onFailure().apply(errorContext, record, hasNext));
+                // Some filters can aggregate records which follow each other by maintaining internal buffers.
+                // Those buffered records are expected to be returned at a certain point in time on the
+                // invocation of the method apply.
+                // When an error occurred, current record can be ignored or forward to an error pipeline.
+                // Thus, following records can potentially trigger unexpected aggregates to be built.
+                // To address that we force a flush of all records still buffered by the current filter.
+                List<FileRecord<TypedStruct>> flushed = flush(context);
+                filtered.addAll(flushed);
+
+                if (onFailure != null) {
+                    final FilterContext errorContext = FilterContextBuilder
+                            .newBuilder(context)
+                            .withError(FilterError.of(e, filter.label()))
+                            .build();
+                    filtered.addAll(onFailure.apply(errorContext, record, hasNext));
                     // Ignore exception (i.e. ignoreFailure = true)
+                } else {
+                    if (onSuccess != null) {
+                        filtered.addAll(onSuccess.apply(context, record, hasNext));
                     } else {
-                        if (onSuccess != null) {
-                            filtered.addAll(onSuccess.apply(context, record, hasNext));
-                        } else {
-                            filtered.add(newRecordFor(context, record));
-                        }
+                        filtered.add(newRecordFor(context, record));
                     }
-                    return filtered;
                 }
+                return filtered;
+            }
 
+            List<FileRecord<TypedStruct>> records = data
+                    .stream()
+                    .map(s -> newRecordFor(context, s))
+                    .collect(Collectors.toList());
+            filtered.addAll(records);
+
+            if (onSuccess == null) {
+                return filtered;
             }
-            // skip current filter and forward record to the next one.
-            if (onSuccess != null) {
-                filtered.addAll(onSuccess.apply(context, record, hasNext));
-            } else {
-                if (!hasNext) {
-                    filtered.addAll(flush(context));
-                }
-                // add current record to filtered result and make sure to copy all context information.
-                filtered.add(newRecordFor(context, record));
-            }
-           return filtered;
+            return filtered
+                    .stream()
+                    .flatMap(r ->
+                            onSuccess.apply(FilterContextBuilder.newBuilder(context).build(), r.value(), hasNext)
+                                    .stream()
+                    )
+                    .collect(Collectors.toList());
+
         }
 
         private TypedFileRecord newRecordFor(final FilterContext context, final TypedStruct object) {

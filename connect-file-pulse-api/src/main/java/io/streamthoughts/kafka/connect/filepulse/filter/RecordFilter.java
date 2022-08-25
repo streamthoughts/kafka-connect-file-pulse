@@ -89,7 +89,7 @@ public interface RecordFilter extends Configurable {
     }
 
     /**
-     * Checks whether this filter should be apply on the input {@link TypedStruct}.
+     * Checks whether this filter should be applied on the input {@link TypedStruct}.
      *
      * @param context   the {@link FilterContext} instance.
      * @param record    the {@link TypedStruct} instance.

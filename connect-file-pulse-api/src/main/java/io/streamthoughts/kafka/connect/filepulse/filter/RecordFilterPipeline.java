@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public interface RecordFilterPipeline<T extends FileRecord<TypedStruct>> {
      * Initialize the value-filter chain for the specified context.
      * @param context   the input file context.
      */
-    void init(final FileContext context);
+    void init(final FileObjectContext context);
 
     /**
      * Execute filters on the given records.

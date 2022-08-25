@@ -28,11 +28,11 @@ public interface FileRecordsPollingConsumer<T> extends FileInputIterator<T> {
 
     /**
      * Returns the context for the last record return from the {@link #next()} method.
-     * Can return {@code null} if the {@link #next()} method has never been invoke.
+     * Can return {@code null} if the {@link #next()} method has never been invoked.
      *
-     * @return  a {@link FileContext} instance.
+     * @return  a {@link FileObjectContext} instance.
      */
-    FileContext context();
+    FileObjectContext context();
 
     /**
      * Sets a state listener.

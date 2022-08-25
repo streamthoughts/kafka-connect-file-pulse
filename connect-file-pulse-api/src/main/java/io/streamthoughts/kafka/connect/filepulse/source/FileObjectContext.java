@@ -21,9 +21,9 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 import java.util.Objects;
 
 /**
- * Immutable class which is use to wrap contextual information about an input file.
+ * Immutable class which is used to wrap contextual information about an input file.
  */
-public final class FileContext {
+public final class FileObjectContext {
 
     private final FileObjectKey key;
 
@@ -32,34 +32,34 @@ public final class FileContext {
     private final FileObjectOffset offset;
 
     /**
-     * Creates a new {@link FileContext} instance.
+     * Creates a new {@link FileObjectContext} instance.
      *
      * @param metadata  the source metadata.
      */
-    public FileContext(final FileObjectMeta metadata) {
+    public FileObjectContext(final FileObjectMeta metadata) {
         this(null, metadata);
     }
 
     /**
-     * Creates a new {@link FileContext} instance.
+     * Creates a new {@link FileObjectContext} instance.
      *
      * @param metadata  the source metadata.
      */
-    public FileContext(final FileObjectKey key, final FileObjectMeta metadata) {
+    public FileObjectContext(final FileObjectKey key, final FileObjectMeta metadata) {
         this(key, metadata, FileObjectOffset.empty());
     }
 
 
     /**
-     * Creates a new {@link FileContext} instance.
+     * Creates a new {@link FileObjectContext} instance.
      *
      * @param key       the object file's key.
      * @param metadata  the object file's metadata.
      * @param offset    the object file's startPosition.
      */
-    public FileContext(final FileObjectKey key,
-                       final FileObjectMeta metadata,
-                       final FileObjectOffset offset) {
+    public FileObjectContext(final FileObjectKey key,
+                             final FileObjectMeta metadata,
+                             final FileObjectOffset offset) {
         this.metadata =  Objects.requireNonNull(metadata, "metadata can't be null");
         this.offset = Objects.requireNonNull(offset, "startPosition can't be null");
         this.key = key;
@@ -92,8 +92,8 @@ public final class FileContext {
         return key;
     }
 
-    public FileContext withOffset(final FileObjectOffset offset) {
-        return new FileContext(key, metadata, offset);
+    public FileObjectContext withOffset(final FileObjectOffset offset) {
+        return new FileObjectContext(key, metadata, offset);
     }
 
     /**
@@ -102,8 +102,8 @@ public final class FileContext {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FileContext)) return false;
-        FileContext that = (FileContext) o;
+        if (!(o instanceof FileObjectContext)) return false;
+        FileObjectContext that = (FileObjectContext) o;
         return Objects.equals(key, that.key) &&
                Objects.equals(metadata, that.metadata) &&
                 Objects.equals(offset, that.offset);

@@ -20,7 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.source.FileContext;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 
@@ -46,7 +46,7 @@ public abstract class RowFileInputIteratorDecorator implements FileInputIterator
      * {@inheritDoc}
      */
     @Override
-    public FileContext context() {
+    public FileObjectContext context() {
         return iterator.context();
     }
 

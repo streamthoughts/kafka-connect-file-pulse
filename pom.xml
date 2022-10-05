@@ -83,7 +83,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.surefire.plugin.version>3.0.0-M7</maven.surefire.plugin.version>
-        <maven.failsafe.plugin.version>3.0.0-M6</maven.failsafe.plugin.version>
+        <maven.failsafe.plugin.version>3.0.0-M7</maven.failsafe.plugin.version>
         <apache.avro.version>1.8.2</apache.avro.version>
         <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
         <io.confluent.version>6.2.1</io.confluent.version>
@@ -146,7 +146,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0-M7</version>
                 <executions>
                     <execution>
                         <goals>

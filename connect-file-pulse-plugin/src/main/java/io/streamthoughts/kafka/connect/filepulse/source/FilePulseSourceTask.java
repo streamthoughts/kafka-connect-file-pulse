@@ -39,6 +39,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -70,15 +72,30 @@ public class FilePulseSourceTask extends SourceTask {
 
     private String connectorGroupName;
 
-    private final AtomicBoolean running = new AtomicBoolean(false);
+    /**
+     * Used to check if the task's resources was closed.
+     */
+    private final AtomicBoolean isResourceClosed = new AtomicBoolean(false);
 
-    private final AtomicBoolean closed = new AtomicBoolean(false);
+    /**
+     * Used to check if the task is idle.
+     */
+    private final AtomicBoolean isIdle = new AtomicBoolean(false);
 
     private final ConcurrentLinkedQueue<FileObjectContext> completedToCommit = new ConcurrentLinkedQueue<>();
 
     private final Map<String, Schema> valueSchemas = new HashMap<>();
 
     private final AtomicLong taskThreadId = new AtomicLong(0);
+
+    private final AtomicReference<State> state = new AtomicReference<>(State.STOPPED);
+
+    /**
+     * Used to ensure that start(), stop() and commitRecord() calls are serialized.
+     */
+    private final ReentrantLock stateLock = new ReentrantLock();
+
+    protected enum State {RUNNING, STOPPED}
 
     /**
      * {@inheritDoc}
@@ -93,16 +110,24 @@ public class FilePulseSourceTask extends SourceTask {
      */
     @Override
     public void start(final Map<String, String> props) {
-        LOG.info("Starting FilePulse source task");
 
-        final Map<String, String> configProperties = new HashMap<>(props);
+        stateLock.lock();
 
-        taskConfig = new SourceTaskConfig(configProperties);
-        connectorGroupName = props.get(CONNECT_NAME_CONFIG);
-        offsetPolicy = taskConfig.getSourceOffsetPolicy();
-        defaultTopic = taskConfig.topic();
-        valueSchemas.put(defaultTopic, taskConfig.getValueConnectSchema());
         try {
+            if (!state.compareAndSet(State.STOPPED, State.RUNNING)) {
+                LOG.info("Connector has already been started");
+                return;
+            }
+
+            LOG.info("Starting FilePulse source task");
+            final Map<String, String> configProperties = new HashMap<>(props);
+
+            taskConfig = new SourceTaskConfig(configProperties);
+            connectorGroupName = props.get(CONNECT_NAME_CONFIG);
+            offsetPolicy = taskConfig.getSourceOffsetPolicy();
+            defaultTopic = taskConfig.topic();
+            valueSchemas.put(defaultTopic, taskConfig.getValueConnectSchema());
+
             sharedStore = new StateBackingStoreAccess(
                     connectorGroupName,
                     taskConfig::getStateBackingStore,
@@ -121,13 +146,15 @@ public class FilePulseSourceTask extends SourceTask {
             consumer.setStateListener(reporter);
             fileURIProvider = taskConfig.getFileURIProvider();
 
-            running.set(true);
             taskThreadId.set(Thread.currentThread().getId());
             LOG.info("Started FilePulse source task");
         } catch (final Throwable t) {
-            // This task has failed, so close any resources (maybe reopened if needed) before throwing
+            // This task has failed, so close any resources before throwing
             closeResources();
             throw t;
+
+        } finally {
+            stateLock.unlock();
         }
     }
 
@@ -148,13 +175,19 @@ public class FilePulseSourceTask extends SourceTask {
      */
     @Override
     public List<SourceRecord> poll() throws InterruptedException {
+        if (isIdle.get()) {
+            LOG.trace("Cannot poll new data. FilePulse source task is in IDLE state");
+            busyWait();
+            return null;
+        }
+
         LOG.trace("Polling for new data");
         try {
             final MaxConsecutiveAttempts consecutiveWaits = new MaxConsecutiveAttempts(CONSECUTIVE_WAITS_BEFORE_RETURN);
 
             contextToBeCommitted = consumer.context();
 
-            while (running.get()) {
+            while (isTaskRunning()) {
                 List<SourceRecord> results = null;
                 if (!consumer.hasNext()) {
                     contextToBeCommitted = null;
@@ -163,35 +196,20 @@ public class FilePulseSourceTask extends SourceTask {
                         // fileURIProvider may have more URIs but still return empty collection
                         // if no file is immediately available. In this case, this method should
                         // be blocked before returning.
-                        if (!consumer.hasNext() &&
-                                consecutiveWaits.checkAndDecrement()) {
+                        if (!consumer.hasNext() && consecutiveWaits.checkAndDecrement()) {
                             // Check if the SourceTask is still running to
                             // return immediately instead of waiting
-                            if (running.get()) busyWait();
+                            if (isTaskRunning()) busyWait();
                             continue;
                         }
+                        // No more data can be read from this Source Task
                     } else {
                         LOG.info(
-                                "Completed all object files. FilePulse source task is transitioning to " +
-                                "IDLE state while waiting for new reconfiguration request from source connector."
+                            "Completed all object files. FilePulse source task is transiting to " +
+                            "IDLE state while waiting for new reconfiguration request from source connector."
                         );
-                        running.set(false);
-
-                        // we can safely close resources for this task if no more completed
-                        // object files need to be committed
-                        if (completedToCommit.isEmpty()) {
-                            closeResources();
-                        }
-
-                        synchronized (this) {
-                            // Wait for the source task being stopped by the TaskWorker
-                            this.wait();
-                        }
-
-                        if (closed.get()) {
-                            // Return directly as resources are already closed
-                            return null;
-                        }
+                        isIdle.set(true);
+                        return null;
                     }
                 } else {
 
@@ -206,7 +224,7 @@ public class FilePulseSourceTask extends SourceTask {
 
                             // Check if the SourceTask is still running to
                             // return immediately instead of waiting
-                        } else if (running.get() &&
+                        } else if (isTaskRunning() &&
                                 consumer.hasNext() &&
                                 consecutiveWaits.checkAndDecrement()) {
                             busyWait();
@@ -222,7 +240,7 @@ public class FilePulseSourceTask extends SourceTask {
                 }
 
                 // Check if the SourceTask should stop to close resources.
-                if (!running.get()) continue;
+                if (!isTaskRunning()) continue;
                 return results;
             }
         } catch (final Throwable t) {
@@ -237,8 +255,12 @@ public class FilePulseSourceTask extends SourceTask {
         return null;
     }
 
+    private boolean isTaskRunning() {
+        return state.get() == State.RUNNING;
+    }
+
     private void busyWait() throws InterruptedException {
-        LOG.trace("Waiting {} ms to poll next records", taskConfig.getTaskEmptyPollWaitMs());
+        LOG.trace("Waiting {} ms to execute next poll iteration", taskConfig.getTaskEmptyPollWaitMs());
         Thread.sleep(taskConfig.getTaskEmptyPollWaitMs());
     }
 
@@ -247,16 +269,31 @@ public class FilePulseSourceTask extends SourceTask {
      */
     @Override
     public void commit() {
-        if (running.get() && contextToBeCommitted != null) {
-            reporter.notify(contextToBeCommitted, FileObjectStatus.READING);
-        }
+        boolean locked = stateLock.tryLock();
 
-        if (!closed.get()) {
-            while (!completedToCommit.isEmpty()) {
-                final FileObjectContext file = completedToCommit.poll();
-                LOG.info("Committed offset for file: {}", file.metadata());
-                safelyCommit(file);
+        if (locked) {
+            try {
+                if (isTaskRunning() && contextToBeCommitted != null) {
+                    reporter.notify(contextToBeCommitted, FileObjectStatus.READING);
+                }
+
+                if (!isResourceClosed.get()) {
+                    while (!completedToCommit.isEmpty()) {
+                        final FileObjectContext file = completedToCommit.poll();
+                        LOG.info("Committed offset for file: {}", file.metadata());
+                        safelyCommit(file);
+                    }
+                    // If in IDLE state then we can close resources
+                    // without waiting for the task to be stopped.
+                    if (isIdle.get()) {
+                        closeResources();
+                    }
+                }
+            } finally {
+                stateLock.unlock();
             }
+        } else {
+            LOG.warn("Couldn't commit due to a concurrent connector shutdown or restart");
         }
     }
 
@@ -313,52 +350,61 @@ public class FilePulseSourceTask extends SourceTask {
      */
     @Override
     public void stop() {
-        LOG.info("Stopping FilePulse source task");
+        stateLock.lock();
 
+        try {
+            if (!state.compareAndSet(State.RUNNING, State.STOPPED)) {
+                LOG.info("Task has already been stopped");
+                return;
+            }
+            LOG.info("Stopping FilePulse source task");
+            doStop();
+        } finally {
+            stateLock.unlock();
+        }
+    }
+
+    private void doStop() {
         // In earlier versions of Kafka Connect, 'SourceTask::stop()' was not called from the task thread.
         // In this case, resources should be closed at the end of 'SourceTask::poll()'
         // when no longer running or if there is an error.
-        running.set(false);
-
         // Since https://issues.apache.org/jira/browse/KAFKA-10792 the SourceTask::stop()
         // is called from the source task's dedicated thread
         if (taskThreadId.longValue() == Thread.currentThread().getId()) {
             closeResources();
             LOG.info("Stopped FilePulse source task.");
-        } else {
-            // For backward-compatibility with earlier versions of Kafka Connect.
-            synchronized (this) {
-                notify();
-            }
         }
     }
 
     private void closeResources() {
-        if (closed.compareAndSet(false, true)) {
-            LOG.info("Closing resources FilePulse source task");
-            try {
-                if (consumer != null) {
-                    try {
-                        consumer.close();
-                    } catch (final Throwable t) {
-                        LOG.warn("Failed to close FileRecordsPollingConsumer. Error: {}", t.getMessage());
-                    }
-                }
+        if (!isResourceClosed.compareAndSet(false, true)) {
+            LOG.info("Task's resources have already been closed");
+            return;
+        }
 
-                if (fileURIProvider != null) {
-                    try {
-                        fileURIProvider.close();
-                    } catch (final Exception e) {
-                        LOG.warn("Failed to close FileURIProvider. Error: {}", e.getMessage());
-                    }
+        LOG.info("Closing resources FilePulse source task");
+        try {
+            if (consumer != null) {
+                try {
+                    consumer.close();
+                } catch (final Throwable t) {
+                    LOG.warn("Failed to close FileRecordsPollingConsumer. Error: {}", t.getMessage());
                 }
-            } finally {
-                contextToBeCommitted = null;
-                consumer = null;
-                reporter = null;
-                closeSharedStateBackingStore();
-                LOG.info("Closed resources FilePulse source task");
             }
+
+            if (fileURIProvider != null) {
+                try {
+                    fileURIProvider.close();
+                } catch (final Exception e) {
+                    LOG.warn("Failed to close FileURIProvider. Error: {}", e.getMessage());
+                }
+            }
+        } finally {
+            contextToBeCommitted = null;
+            consumer = null;
+            reporter = null;
+            closeSharedStateBackingStore();
+            LOG.info("Closed resources FilePulse source task");
         }
     }
 

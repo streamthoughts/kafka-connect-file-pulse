@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 # Kafka Connect File Pulse
-FROM confluentinc/cp-kafka-connect-base:6.2.1
+FROM confluentinc/cp-kafka-connect-base:7.3.0
 
 USER root
 

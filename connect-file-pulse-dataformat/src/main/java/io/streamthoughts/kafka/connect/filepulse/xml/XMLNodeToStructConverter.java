@@ -189,6 +189,8 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
                                                      final String nodeName,
                                                      final FieldPaths forceArrayFields,
                                                      final FieldPaths forceContentFields) {
+        if (node == null) return Optional.empty();
+
         if (isWhitespaceOrNewLineNodeElement(node) ||
             isNodeOfType(node, Node.DOCUMENT_TYPE_NODE)) {
             return Optional.empty();

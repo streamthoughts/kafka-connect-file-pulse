@@ -7,10 +7,10 @@
 [![Issues](https://img.shields.io/github/issues/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/github/issues/streamthoughts/kafka-connect-file-pulse)
 ![Java CI Build](https://github.com/streamthoughts/kafka-connect-file-pulse/actions/workflows/build.yml/badge.svg)
 
-![Reliability_rating](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=reliability_rating)
-![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=sqale_rating)
-![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=vulnerabilities)
-![Coverage](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=coverage)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=streamthoughts_kafka-connect-file-pulse)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=streamthoughts_kafka-connect-file-pulse)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=streamthoughts_kafka-connect-file-pulse)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=coverage)](https://sonarcloud.io/summary/new_code?id=streamthoughts_kafka-connect-file-pulse)
 
 <p align="center">
   <img width="400" height="400" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/assets/logo.png">

@@ -169,6 +169,7 @@ public class KafkaBasedLog<K, V> {
             try {
                 if (thread != null) thread.join();
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new ConnectException("Failed to stop KafkaBasedLog. Exiting without cleanly shutting " +
                         "down it's producer and consumer.", e);
             }

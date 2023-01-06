@@ -240,6 +240,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
         try {
             kafkaLog.readToEnd().get(timeout, unit);
         } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException("Error trying to read to end of log", e);
         }
     }

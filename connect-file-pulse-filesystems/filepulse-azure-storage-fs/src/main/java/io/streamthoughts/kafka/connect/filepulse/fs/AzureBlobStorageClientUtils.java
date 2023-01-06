@@ -22,11 +22,13 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.kafka.common.config.ConfigException;
+import org.apache.kafka.common.config.types.Password;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Utility class for creating new {@link BlobContainerClient} client.
@@ -38,24 +40,25 @@ public final class AzureBlobStorageClientUtils {
     public static BlobContainerClient createBlobContainerClient(final AzureBlobStorageConfig config) {
         Objects.requireNonNull(config, "config should not be null");
 
-        if (config.getConnectionString().isPresent()) {
-
+        final Optional<Password> optionalConnectionString = config.getConnectionString();
+        if (optionalConnectionString.isPresent()) {
             LOG.info("Creating new BlobContainerClient using the connection.string that was passed "
                     + "through the connector's configuration");
-            final String connectionString = config.getConnectionString().get().value();
+            final String connectionString = optionalConnectionString.get().value();
             return new BlobServiceClientBuilder()
                     .connectionString(connectionString).buildClient()
                     .getBlobContainerClient(config.getContainerName());
         }
 
-        if (config.getAccountName().isPresent() &&
-            config.getAccountKey().isPresent()) {
+        final Optional<String> optionalAccountName = config.getAccountName();
+        final Optional<Password> optionalAccountKey = config.getAccountKey();
+        if (optionalAccountName.isPresent() && optionalAccountKey.isPresent()) {
             LOG.info("Creating new BlobContainerClient using the account name and "
                     + "the account key that were passed "
                     + "through the connector's configuration");
 
-            final String accountName = config.getAccountName().get();
-            final String accountKey = config.getAccountKey().get().value();
+            final String accountName = optionalAccountName.get();
+            final String accountKey = optionalAccountKey.get().value();
 
             return getBlobContainerClient(accountName, accountKey, config.getContainerName());
         }

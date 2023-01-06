@@ -56,6 +56,6 @@ public class LocalFileObjectMetaTest {
         if (!os.startsWith("win") && !os.startsWith("mac")) {
             Assert.assertNotNull(metadata.inode());
         }
-        Assert.assertNotEquals(-1, metadata.contentDigest().digest());
+        Assert.assertNotEquals("-1", metadata.contentDigest().digest());
     }
 }

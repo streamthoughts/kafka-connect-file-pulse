@@ -340,7 +340,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
     }
 
     private static boolean isNodeOfType(final Node node, int textNode) {
-        return node.getNodeType() == textNode;
+        return node != null && node.getNodeType() == textNode;
     }
 
     private static boolean isNotXmlNamespace(final Node node) {

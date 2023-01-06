@@ -89,6 +89,7 @@ public class KafkaFileObjectStateBackingStore implements FileObjectStateBackingS
             }
         } catch (InterruptedException e) {
             LOG.warn("Failed to create topic '{}'", topic, e);
+            Thread.currentThread().interrupt();
         }
     }
 

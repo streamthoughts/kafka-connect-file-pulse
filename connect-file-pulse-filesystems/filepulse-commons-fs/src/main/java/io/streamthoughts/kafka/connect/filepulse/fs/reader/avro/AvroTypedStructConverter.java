@@ -118,6 +118,10 @@ public class AvroTypedStructConverter {
                 .stream()
                 .filter(s -> s.getType() != Schema.Type.NULL)
                 .findFirst();
+
+        if (nonNullSchema.isEmpty()) {
+            throw new ReaderException("Unsupported avro type. Union should contain at-least one non-null type.");
+        }
         return fromSchemaAndValue(nonNullSchema.get(), value);
     }
 

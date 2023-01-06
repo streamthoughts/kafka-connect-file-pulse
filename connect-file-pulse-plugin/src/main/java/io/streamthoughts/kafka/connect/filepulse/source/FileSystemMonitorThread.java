@@ -96,6 +96,7 @@ public class FileSystemMonitorThread extends Thread {
             }
         } catch (InterruptedException e) {
             LOG.error("Unexpected InterruptedException, ignoring: ", e);
+            Thread.currentThread().interrupt();
         } finally {
             monitor.close();
             LOG.info("Stopped filesystem monitoring thread.");
@@ -110,6 +111,7 @@ public class FileSystemMonitorThread extends Thread {
             this.waitingLatch.await(timeoutMs, TimeUnit.MILLISECONDS);
         } catch (InterruptedException ignore) {
             LOG.error("Timeout : scan loop is not terminated yet.");
+            Thread.currentThread().interrupt();
         }
     }
 }

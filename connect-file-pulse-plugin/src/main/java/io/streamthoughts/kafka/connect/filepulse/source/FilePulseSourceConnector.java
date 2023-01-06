@@ -205,7 +205,7 @@ public class FilePulseSourceConnector extends SourceConnector {
     private Map<String, String> createTaskConfig(final int taskId,
                                                  final int taskCount,
                                                  final long taskConfigGen,
-                                                 final List<String> URIs) {
+                                                 final List<String> uris) {
         final Map<String, String> taskConfig = new HashMap<>(configProperties);
         taskConfig.put(SourceTaskConfig.TASK_GENERATION_ID, String.valueOf(taskConfigGen));
         if (connectorConfig.isFileListingTaskDelegationEnabled()) {
@@ -216,7 +216,7 @@ public class FilePulseSourceConnector extends SourceConnector {
             taskConfig.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG, "true");
         } else {
             taskConfig.put(SourceTaskConfig.FILE_URIS_PROVIDER_CONFIG, DefaultTaskFileURIProvider.class.getName());
-            taskConfig.put(DefaultTaskFileURIProvider.Config.FILE_OBJECT_URIS_CONFIG, String.join(",", URIs));
+            taskConfig.put(DefaultTaskFileURIProvider.Config.FILE_OBJECT_URIS_CONFIG, String.join(",", uris));
             taskConfig.put(TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG, "false");
         }
         return taskConfig;
@@ -242,6 +242,7 @@ public class FilePulseSourceConnector extends SourceConnector {
                     fsMonitorThread.join(DEFAULT_MAX_TIMEOUT);
                     } catch (InterruptedException e) {
                         LOG.warn("Failed to close file-system monitoring thread. Error: {}", e.getMessage());
+                        Thread.currentThread().interrupt();
                     }
                 }
                 if (partitioner != null) {

@@ -57,7 +57,6 @@ import java.util.function.Predicate;
  */
 public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
-    // TODO: Timeout should be user-configurable
     private static final long TASK_CONFIGURATION_DEFAULT_TIMEOUT = 15000L;
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultFileSystemMonitor.class);
@@ -112,7 +111,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
      */
     public DefaultFileSystemMonitor(final Long allowTasksReconfigurationAfterTimeoutMs,
                                     final FileSystemListing<?> fsListening,
-                                    final GenericFileCleanupPolicy cleanPolicy,
+                                    final GenericFileCleanupPolicy<?, ?> cleanPolicy,
                                     final Predicate<FileObjectStatus> cleanablePredicate,
                                     final SourceOffsetPolicy offsetPolicy,
                                     final StateBackingStore<FileObject> store,
@@ -195,7 +194,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 .map(it -> it.getValue().withKey(FileObjectKey.of(it.getKey())))
                 .filter(it -> cleanablePredicate.test(it.status()))
                 .forEach(cleanable::add);
-        LOG.info("Finished recovering previously completed files : " + cleanable);
+        LOG.info("Finished recovering previously completed files : {}", cleanable);
     }
 
     private boolean readStatesToEnd(final Duration timeout) {
@@ -361,6 +360,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                         wait(Math.max(0, TASK_CONFIGURATION_DEFAULT_TIMEOUT - (now - started)));
                     }
                 } catch (InterruptedException ignore) {
+                    Thread.currentThread().interrupt();
                 }
                 now = Time.SYSTEM.milliseconds();
             }

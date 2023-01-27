@@ -55,7 +55,7 @@
     <suppress checks="NPathComplexity" files="DefaultFileSystemMonitor.java"/>
     <suppress checks="ParameterNumber" files="InternalFilterContext" />
     <suppress checks="Header" files="kafka-connect-source-file-pulse-version.properties"/>
-    <suppress checks="Header" files="log4j.properties"/>
+    <suppress checks="Header" files=".*.properties"/>
     <suppress checks="[a-zA-Z0-9]*" files="src/main/java/io/streamthoughts/kafka/connect/filepulse/expression/parser/antlr4/*"/>
     <suppress checks="BooleanExpressionComplexity" files="io.streamthoughts.kafka.connect.filepulse.internal.StringUtils"/>
     <suppress checks="ClassFanOutComplexity" files="ExpressionFunctionExecutors"/>

@@ -86,6 +86,11 @@ public class CommonSourceConfig extends AbstractConfig {
     public static final String RECORD_VALUE_SCHEMA_CONFIG = "value.connect.schema";
     private static final String RECORD_VALUE_SCHEMA_DOC = "The schema for the record-value";
 
+    public static final String RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_CONFIG = "value.connect.schema.condition.topic.pattern";
+
+    private static final String RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_DOC =
+            "Specify the Java regular expression pattern to match topic for which value schema must be applied";
+
     public static final String RECORD_VALUE_SCHEMA_MERGE_ENABLE_CONFIG = "merge.value.connect.schemas";
     private static final String RECORD_VALUE_SCHEMA_MERGE_ENABLE_DOC = "Specify if schemas deriving from record-values should be recursively merged. " +
             "If set to true, then schemas deriving from a record will be merged with the schema of the last produced record. " +
@@ -101,7 +106,7 @@ public class CommonSourceConfig extends AbstractConfig {
         super(definition, originals, false);
     }
 
-    public static ConfigDef getConfigDev() {
+    public static ConfigDef getConfigDef() {
         int groupCounter = 0;
         return new ConfigDef()
                 .define(
@@ -180,6 +185,17 @@ public class CommonSourceConfig extends AbstractConfig {
                         groupCounter++,
                         ConfigDef.Width.NONE,
                         TASKS_FILE_STATUS_STORAGE_CLASS_CONFIG
+                )
+                .define(
+                        RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_CONFIG,
+                        ConfigDef.Type.STRING,
+                        null,
+                        ConfigDef.Importance.MEDIUM,
+                        RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_CONFIG
                 )
                 .define(
                         RECORD_VALUE_SCHEMA_CONFIG,
@@ -282,6 +298,10 @@ public class CommonSourceConfig extends AbstractConfig {
                 TASKS_FILE_STATUS_STORAGE_CLASS_CONFIG,
                 FileObjectStateBackingStore.class
         );
+    }
+
+    public String getValueSchemaConditionTopicPattern() {
+        return getString(RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_CONFIG);
     }
 
     public Schema getValueConnectSchema() {

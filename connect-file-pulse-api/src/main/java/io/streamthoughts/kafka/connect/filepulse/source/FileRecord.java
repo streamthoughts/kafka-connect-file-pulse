@@ -23,6 +23,7 @@ import org.apache.kafka.connect.source.SourceRecord;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
  * An object representing a single record value that was read from an input file.
@@ -73,10 +74,14 @@ public interface FileRecord<T> {
         private final boolean connectSchemaMergeEnabled;
         private final boolean keepSchemaLeadingUnderscore;
 
+        private final Pattern connectSchemaConditionTopicPattern;
+
         public ConnectSchemaMapperOptions(final boolean connectSchemaMergeEnabled,
-                                          final boolean keepSchemaLeadingUnderscore) {
+                                          final boolean keepSchemaLeadingUnderscore,
+                                          final Pattern connectSchemaConditionTopicPattern) {
             this.connectSchemaMergeEnabled = connectSchemaMergeEnabled;
             this.keepSchemaLeadingUnderscore = keepSchemaLeadingUnderscore;
+            this.connectSchemaConditionTopicPattern = connectSchemaConditionTopicPattern;
         }
 
         public boolean isConnectSchemaMergeEnabled() {
@@ -85,6 +90,10 @@ public interface FileRecord<T> {
 
         public boolean isKeepSchemaLeadingUnderscore() {
             return keepSchemaLeadingUnderscore;
+        }
+
+        public Pattern getConnectSchemaConditionTopicPattern() {
+            return connectSchemaConditionTopicPattern;
         }
     }
 }

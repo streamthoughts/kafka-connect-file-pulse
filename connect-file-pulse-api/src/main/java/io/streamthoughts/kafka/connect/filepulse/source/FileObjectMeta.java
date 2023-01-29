@@ -28,6 +28,7 @@ import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -83,9 +84,15 @@ public interface FileObjectMeta extends Serializable, Comparable<FileObjectMeta>
     default ConnectHeaders toConnectHeader() {
         ConnectHeaders headers = new ConnectHeaders();
         headers.addString("connect.file.name", name());
+
         headers.addString("connect.file.uri", uri().toString());
-        headers.addLong("connect.file.contentLength", contentLength());
-        headers.addLong("connect.file.lastModified", lastModified());
+
+        Optional.ofNullable(contentLength())
+                .ifPresent(val -> headers.addLong("connect.file.contentLength", val));
+
+        Optional.ofNullable(lastModified())
+                .ifPresent(val -> headers.addLong("connect.file.lastModified", val));
+
         userDefinedMetadata().forEach( (k, v) -> {
             if (v != null) {
                 headers.addString("connect.file." + k, v.toString());

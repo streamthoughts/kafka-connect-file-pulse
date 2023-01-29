@@ -35,12 +35,14 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -312,6 +314,8 @@ public class FilePulseSourceTask extends SourceTask {
         final Map<String, ?> sourcePartition = offsetPolicy.toPartitionMap(metadata);
         final Map<String, ?> sourceOffsets = offsetPolicy.toOffsetMap(record.offset().toSourceOffset());
 
+
+       final String topicPattern = taskConfig.getValueSchemaConditionTopicPattern();
         try {
             final SourceRecord result = record.toSourceRecord(
                     sourcePartition,
@@ -322,7 +326,8 @@ public class FilePulseSourceTask extends SourceTask {
                     valueSchemas::get,
                     new FileRecord.ConnectSchemaMapperOptions(
                             taskConfig.isValueConnectSchemaMergeEnabled(),
-                            taskConfig.isSchemaKeepLeadingUnderscoreOnFieldName()
+                            taskConfig.isSchemaKeepLeadingUnderscoreOnFieldName(),
+                            Optional.ofNullable(topicPattern).map(Pattern::compile).orElse(null)
                     )
             );
 

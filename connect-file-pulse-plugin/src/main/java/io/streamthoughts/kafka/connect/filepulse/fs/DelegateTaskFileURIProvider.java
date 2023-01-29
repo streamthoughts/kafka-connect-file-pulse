@@ -154,7 +154,7 @@ public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
         }
 
         static ConfigDef getConf() {
-            return CommonSourceConfig.getConfigDev()
+            return CommonSourceConfig.getConfigDef()
                     .define(
                             TASK_ID_CONFIG,
                             ConfigDef.Type.INT,

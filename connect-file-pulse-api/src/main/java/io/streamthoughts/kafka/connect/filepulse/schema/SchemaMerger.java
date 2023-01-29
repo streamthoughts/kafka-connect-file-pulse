@@ -169,7 +169,7 @@ public class SchemaMerger implements BiFunction<Schema, Schema, Schema> {
         // Remaining fields only exist on LEFT schema.
         fieldSchemas.putAll(remaining);
 
-        // Fields should be add ordered by name to make schema merge operation as idempotent as possible.
+        // Fields should be added ordered by name to make schema merge operation as idempotent as possible.
         fieldSchemas.entrySet().stream()
             .sorted(Map.Entry.comparingByKey())
             .forEach(it -> merged.field(it.getKey(), context.buildSchemaWithCyclicSchemaWrapper(it.getValue())));

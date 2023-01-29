@@ -30,6 +30,8 @@ import org.apache.kafka.connect.source.SourceRecord;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
 
@@ -40,11 +42,12 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
     private final InternalSourceRecordBuilder internalSourceRecordBuilder;
 
     private final ConnectSchemaMapper mapper = new ConnectSchemaMapper();
+
     /**
      * Creates a new {@link TypedFileRecord} instance.
      *
-     * @param offset    the {@link FileRecordOffset} instance.
-     * @param struct    the {@link TypedStruct} instance.
+     * @param offset the {@link FileRecordOffset} instance.
+     * @param struct the {@link TypedStruct} instance.
      */
     public TypedFileRecord(final FileRecordOffset offset,
                            final TypedStruct struct) {
@@ -64,17 +67,26 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
                                        final Function<String, Schema> connectSchemaSupplier,
                                        final ConnectSchemaMapperOptions options) {
         mapper.setKeepLeadingUnderscoreCharacters(options.isKeepSchemaLeadingUnderscore());
-        final TypedStruct value = value();
 
-        final String targetTopic = isNotBlank(internalSourceRecordBuilder.topic()) ?
-                internalSourceRecordBuilder.topic() :
-                defaultTopic;
+        String recordTopic = internalSourceRecordBuilder.topic();
 
-        final Schema connectSchema = Optional
+        final String targetTopic = isNotBlank(recordTopic) ? recordTopic : defaultTopic;
+
+        Schema connectSchema = Optional
                 .ofNullable(connectSchemaSupplier.apply(targetTopic))
                 .orElse(connectSchemaSupplier.apply(defaultTopic));
 
+        // Check if the connectSchema must be used for this topic
+        Pattern topicPattern = options.getConnectSchemaConditionTopicPattern();
+        if (topicPattern != null) {
+            Matcher matcher = topicPattern.matcher(targetTopic);
+            if (!matcher.matches()) {
+                connectSchema = null;
+            }
+        }
+
         final Schema valueSchema;
+        final TypedStruct value = value();
         if (options.isConnectSchemaMergeEnabled() && value != null) {
             // Convert dynamic StrutSchema to static Connect Schema
             Schema recordValueSchema = value.schema().map(mapper, false);
@@ -92,20 +104,20 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
 
         if (valueSchema != null) {
             internalSourceRecordBuilder.withValue(() ->
-                value == null ? null : mapper.map(valueSchema, value)
+                    value == null ? null : mapper.map(valueSchema, value)
             );
         } else {
             internalSourceRecordBuilder.withValue(() ->
-                value == null ? null : mapper.map(value.schema(), value, false)
+                    value == null ? null : mapper.map(value.schema(), value, false)
             );
         }
 
         return internalSourceRecordBuilder.build(
-            sourcePartition,
-            sourceOffset,
-            metadata,
-            defaultTopic,
-            defaultPartition
+                sourcePartition,
+                sourceOffset,
+                metadata,
+                defaultTopic,
+                defaultPartition
         );
     }
 
@@ -131,12 +143,12 @@ public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
 
     public TypedFileRecord withKey(final TypedValue key) {
         internalSourceRecordBuilder.withKey(
-            () -> {
-                if (key == null || key.isNull() ) {
-                    return null;
+                () -> {
+                    if (key == null || key.isNull()) {
+                        return null;
+                    }
+                    return key.schema().map(mapper, key.value(), false);
                 }
-                return key.schema().map(mapper, key.value(), false);
-            }
         );
         return this;
     }

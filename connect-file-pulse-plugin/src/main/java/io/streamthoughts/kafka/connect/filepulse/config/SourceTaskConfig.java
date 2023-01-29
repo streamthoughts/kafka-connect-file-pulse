@@ -53,7 +53,7 @@ public class SourceTaskConfig extends CommonSourceConfig {
     private final EnrichedConnectorConfig enrichedConfig;
 
     static ConfigDef getConf() {
-        return CommonSourceConfig.getConfigDev()
+        return CommonSourceConfig.getConfigDef()
                 .define(
                         FILE_URIS_PROVIDER_CONFIG,
                         ConfigDef.Type.CLASS,

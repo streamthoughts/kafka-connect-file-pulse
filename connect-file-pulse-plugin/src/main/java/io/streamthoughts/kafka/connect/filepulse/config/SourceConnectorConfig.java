@@ -61,7 +61,7 @@ public class SourceConnectorConfig extends CommonSourceConfig {
     }
 
     public static ConfigDef getConf() {
-        return CommonSourceConfig.getConfigDev()
+        return CommonSourceConfig.getConfigDef()
                 .define(
                         FS_LISTING_INTERVAL_MS_CONFIG,
                         ConfigDef.Type.LONG,

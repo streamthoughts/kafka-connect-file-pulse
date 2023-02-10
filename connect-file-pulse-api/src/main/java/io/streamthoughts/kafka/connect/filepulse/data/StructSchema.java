@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 public class StructSchema implements Schema, Iterable<TypedField> {
 
@@ -107,7 +106,9 @@ public class StructSchema implements Schema, Iterable<TypedField> {
     }
 
     public List<TypedField> fields() {
-        return new ArrayList<>(fields.values());
+        ArrayList<TypedField> ordered = new ArrayList<>(fields.values());
+        ordered.sort(Comparator.comparing(TypedField::name));
+        return ordered;
     }
 
     void set(final String fieldName, final Schema fieldSchema) {
@@ -151,11 +152,7 @@ public class StructSchema implements Schema, Iterable<TypedField> {
      */
     @Override
     public Iterator<TypedField> iterator() {
-        return this.fields.values()
-            .stream()
-            .sorted(Comparator.comparing(TypedField::name))
-            .collect(Collectors.toUnmodifiableList())
-            .iterator();
+        return fields().iterator();
     }
 
     /**

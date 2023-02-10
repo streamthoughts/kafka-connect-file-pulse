@@ -51,6 +51,7 @@
     <suppress checks="CyclomaticComplexity" files="Schema.java"/>
     <suppress checks="CyclomaticComplexity" files="FilePulseSourceTask.java"/>
     <suppress checks="LineLength" files="KafkaStateBackingStore.java"/>
+    <suppress checks="NPathComplexity" files="KafkaStateBackingStore.java"/>
     <suppress checks="NPathComplexity" files="DefaultFileRecordsPollingConsumer.java"/>
     <suppress checks="NPathComplexity" files="DefaultFileSystemMonitor.java"/>
     <suppress checks="ParameterNumber" files="InternalFilterContext" />
@@ -65,4 +66,7 @@
     <!-- Classes used for configuration -->
     <suppress checks="(MethodLength|LineLength|CyclomaticComplexity|NPathComplexity|JavaNCSS)" files=".*Config.java"/>
     <suppress checks="(LineLength|CyclomaticComplexity|NPathComplexity|JavaNCSS)" files="SchemaMerger.java"/>
+
+    <suppress checks="NPathComplexity" files="AbstracConnectSchemaConverter.java"/>
+    <suppress checks="JavaNCSS" files="ConfigSchema.java"/>
 </suppressions>

@@ -37,7 +37,7 @@ class LocalPropertiesFileInputReaderTest {
     static {
         try {
             var cl = LocalPropertiesFileInputReaderTest.class.getClassLoader();
-            FILE_URI = Objects.requireNonNull(cl.getResource("./datasets/local.properties")).toURI();
+            FILE_URI = Objects.requireNonNull(cl.getResource("./datasets/test-LocalPropertiesFileInputReader.properties")).toURI();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

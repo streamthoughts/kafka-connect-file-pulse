@@ -217,8 +217,8 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
 
     private static Struct toConnectStruct(final Schema connectSchema, final TypedStruct struct) {
         final Struct connectStruct = new Struct(connectSchema);
-        for (Field connectField : connectSchema.fields()) {
 
+        for (Field connectField : connectSchema.fields()) {
             final String recordName = connectSchema.name();
             final String fieldName = connectField.name();
 

@@ -19,6 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.config;
 
 import com.jsoniter.JsonIterator;
+import io.streamthoughts.kafka.connect.filepulse.avro.AvroSchemaConverter;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileOrder;
@@ -33,13 +34,10 @@ import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  *
@@ -51,23 +49,23 @@ public class CommonSourceConfig extends AbstractConfig {
     public static final String OUTPUT_TOPIC_CONFIG = "topic";
     private static final String OUTPUT_TOPIC_DOC = "The Kafka topic to write the value to.";
 
-    public static final String FS_LISTING_CLASS_CONFIG        = "fs.listing.class";
-    private static final String FS_LISTING_CLASS_DOC          = "Class which is used to list eligible files from the scanned file system.";
+    public static final String FS_LISTING_CLASS_CONFIG = "fs.listing.class";
+    private static final String FS_LISTING_CLASS_DOC = "Class which is used to list eligible files from the scanned file system.";
 
-    public static final String FS_LISTING_FILTERS_CONFIG      = "fs.listing.filters";
-    private static final String FS_SCAN_FILTERS_DOC           = "Filters classes which are used to apply list input files.";
+    public static final String FS_LISTING_FILTERS_CONFIG = "fs.listing.filters";
+    private static final String FS_SCAN_FILTERS_DOC = "Filters classes which are used to apply list input files.";
 
     public static final String TASKS_FILE_READER_CLASS_CONFIG = "tasks.reader.class";
-    private static final String TASKS_FILE_READER_CLASS_DOC   = "Class which is used by tasks to read an input file.";
+    private static final String TASKS_FILE_READER_CLASS_DOC = "Class which is used by tasks to read an input file.";
 
     public static final String TASKS_FILE_PROCESSING_ORDER_BY_CONFIG = "tasks.file.processing.order.by";
     private static final String TASKS_FILE_PROCESSING_ORDER_BY_DOC = "The strategy to be used for sorting files for processing. Valid values are: LAST_MODIFIED, URI, CONTENT_LENGTH, CONTENT_LENGTH_DESC.";
 
-    public static final String TASKS_HALT_ON_ERROR_CONFIG     = "tasks.halt.on.error";
-    private static final String TASKS_HALT_ON_ERROR_DOC       = "Should a task halt when it encounters an error or continue to the next file.";
+    public static final String TASKS_HALT_ON_ERROR_CONFIG = "tasks.halt.on.error";
+    private static final String TASKS_HALT_ON_ERROR_DOC = "Should a task halt when it encounters an error or continue to the next file.";
 
     public static final String TASKS_EMPTY_POLL_WAIT_MS_CONFIG = "tasks.empty.poll.wait.ms";
-    public static final String TASKS_EMPTY_POLL_WAIT_MS_DOC    = "The amount of time in millisecond a tasks should wait if a poll returns an empty list of records.";
+    public static final String TASKS_EMPTY_POLL_WAIT_MS_DOC = "The amount of time in millisecond a tasks should wait if a poll returns an empty list of records.";
 
     public static final String OFFSET_STRATEGY_CLASS_CONFIG = "offset.policy.class";
     private static final String OFFSET_STRATEGY_CLASS_DOC = "Class which is used to determine the source partition and offset that uniquely identify a input record";
@@ -85,6 +83,9 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public static final String RECORD_VALUE_SCHEMA_CONFIG = "value.connect.schema";
     private static final String RECORD_VALUE_SCHEMA_DOC = "The schema for the record-value";
+
+    public static final String RECORD_VALUE_SCHEMA_TYPE_CONFIG = "value.connect.schema.type";
+    private static final String RECORD_VALUE_SCHEMA_TYPE_DOC = "The type of the schema passed through 'value.connect.schema' (supported values are: 'CONNECT', 'AVRO')";
 
     public static final String RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_CONFIG = "value.connect.schema.condition.topic.pattern";
 
@@ -198,6 +199,17 @@ public class CommonSourceConfig extends AbstractConfig {
                         RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_CONFIG
                 )
                 .define(
+                        RECORD_VALUE_SCHEMA_TYPE_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConnectSchemaType.CONNECT.name(),
+                        ConfigDef.Importance.MEDIUM,
+                        RECORD_VALUE_SCHEMA_TYPE_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        RECORD_VALUE_SCHEMA_TYPE_CONFIG
+                )
+                .define(
                         RECORD_VALUE_SCHEMA_CONFIG,
                         ConfigDef.Type.STRING,
                         null,
@@ -305,7 +317,20 @@ public class CommonSourceConfig extends AbstractConfig {
     }
 
     public Schema getValueConnectSchema() {
-        return readSchema(RECORD_VALUE_SCHEMA_CONFIG);
+        String valueConnectSchemaTypeString = getString(RECORD_VALUE_SCHEMA_TYPE_CONFIG);
+        ConnectSchemaType schemaType = ConnectSchemaType.getForNameIgnoreCase(valueConnectSchemaTypeString);
+        switch (schemaType) {
+            case CONNECT:
+                return readConfigSchema();
+            case AVRO:
+                return readAvroSchema();
+            case INVALID:
+            default:
+                throw new ConfigException(
+                        "Unsupported or invalid value for '"
+                                + RECORD_VALUE_SCHEMA_TYPE_CONFIG + "' , was "
+                                + valueConnectSchemaTypeString);
+        }
     }
 
     public boolean isValueConnectSchemaMergeEnabled() {
@@ -316,103 +341,28 @@ public class CommonSourceConfig extends AbstractConfig {
         return getBoolean(CONNECT_SCHEMA_KEEP_LEADING_UNDERSCORES_ON_FIELD_NAME_CONFIG);
     }
 
-    private Schema readSchema(final String key) {
-        final String schema = this.getString(key);
+    private Schema readAvroSchema() {
+        try {
+            final String schema = getString(CommonSourceConfig.RECORD_VALUE_SCHEMA_CONFIG);
+            if (StringUtils.isBlank(schema)) return null;
 
-        if (StringUtils.isBlank(schema)) {
-            return null;
+            AvroSchemaConverter converter = new AvroSchemaConverter();
+            return converter.toConnectSchema(schema);
+        } catch (Exception e) {
+            throw new ConfigException(
+                    "Failed to read avro-schema for '" + CommonSourceConfig.RECORD_VALUE_SCHEMA_CONFIG + "'", e);
         }
+    }
+
+    private Schema readConfigSchema() {
+        final String schema = getString(CommonSourceConfig.RECORD_VALUE_SCHEMA_CONFIG);
+        if (StringUtils.isBlank(schema)) return null;
 
         try {
             return JsonIterator.deserialize(schema, ConfigSchema.class).get();
         } catch (Exception e) {
-            throw new ConfigException("Failed to read schema for '" + key + "'", e);
-        }
-    }
-
-    public static class ConfigSchema implements Supplier<Schema> {
-
-        public Schema.Type type;
-        public boolean isOptional;
-        public String name;
-        public Integer version;
-        public Object defaultValue;
-        public String doc;
-        public Map<String, String> parameters;
-        public ConfigSchema keySchema;
-        public ConfigSchema valueSchema;
-        public Map<String, ConfigSchema> fieldSchemas;
-
-        @Override
-        public Schema get() {
-            final SchemaBuilder builder;
-            switch (this.type) {
-                case MAP:
-                    Objects.requireNonNull(keySchema, "keySchema cannot be null.");
-                    Objects.requireNonNull(valueSchema, "valueSchema cannot be null.");
-                    builder = SchemaBuilder.map(keySchema.get(), valueSchema.get());
-                    break;
-                case ARRAY:
-                    Objects.requireNonNull(valueSchema, "valueSchema cannot be null.");
-                    builder = SchemaBuilder.array(valueSchema.get());
-                    break;
-                default:
-                    builder = SchemaBuilder.type(type);
-                    break;
-            }
-
-            if (Schema.Type.STRUCT == type) {
-                for (Map.Entry<String, ConfigSchema> kvp : fieldSchemas.entrySet()) {
-                    builder.field(kvp.getKey(), kvp.getValue().get());
-                }
-            }
-
-            if (StringUtils.isNotBlank(name))
-                builder.name(name);
-
-            if (StringUtils.isNotBlank(doc))
-                builder.doc(doc);
-
-            if (null != defaultValue) {
-                Object value;
-                switch (type) {
-                    case INT8:
-                        value = ((Number) defaultValue).byteValue();
-                        break;
-                    case INT16:
-                        value = ((Number) defaultValue).shortValue();
-                        break;
-                    case INT32:
-                        value = ((Number) defaultValue).intValue();
-                        break;
-                    case INT64:
-                        value = ((Number) defaultValue).longValue();
-                        break;
-                    case FLOAT32:
-                        value = ((Number) defaultValue).floatValue();
-                        break;
-                    case FLOAT64:
-                        value = ((Number) defaultValue).doubleValue();
-                        break;
-                    default:
-                        value = defaultValue;
-                        break;
-                }
-                builder.defaultValue(value);
-            }
-
-            if (null != parameters) {
-                builder.parameters(parameters);
-            }
-
-            if (isOptional) {
-                builder.optional();
-            }
-
-            if (null != version) {
-                builder.version(version);
-            }
-            return builder.build();
+            throw new ConfigException(
+                    "Failed to read connect-schema for '" + CommonSourceConfig.RECORD_VALUE_SCHEMA_CONFIG + "'", e);
         }
     }
 }

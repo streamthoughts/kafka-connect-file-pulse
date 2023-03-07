@@ -164,7 +164,7 @@ public interface Schema {
     Type type() ;
 
     /**
-     * Checks whether this schemas is resolvable.
+     * Checks whether this schema is resolvable.
      *
      * @see LazyArraySchema
      * @see LazyMapSchema

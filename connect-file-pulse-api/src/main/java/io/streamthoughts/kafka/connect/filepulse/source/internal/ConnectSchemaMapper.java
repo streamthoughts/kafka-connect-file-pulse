@@ -297,8 +297,15 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
             return typed.getMap().entrySet()
                     .stream()
                     .collect(Collectors.toMap(
-                                    e -> toConnectObject(connectKeySchema, TypedValue.of(e.getKey(), keySchema)),
-                                    e -> toConnectObject(connectValueSchema, TypedValue.of(e.getValue(), valueSchema))
+                                    e -> {
+                                        TypedValue value = TypedValue.of(e.getKey(), keySchema);
+                                        return toConnectObject(connectKeySchema, value);
+                                    },
+                                    e -> {
+                                        Object converted = valueSchema.type().convert(e.getValue());
+                                        TypedValue elemValue = TypedValue.of(converted, valueSchema);
+                                        return toConnectObject(connectValueSchema, elemValue);
+                                    }
                             )
                     );
         }
@@ -311,7 +318,11 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
 
             return typed.getArray()
                     .stream()
-                    .map(e -> toConnectObject(connectValueSchema, TypedValue.of(e, valueSchema)))
+                    .map(value -> {
+                        Object converted = valueSchema.type().convert(value);
+                        TypedValue elemValue = TypedValue.of(converted, valueSchema);
+                        return toConnectObject(connectValueSchema, elemValue);
+                    })
                     .collect(Collectors.toList());
         }
         return typed.value();

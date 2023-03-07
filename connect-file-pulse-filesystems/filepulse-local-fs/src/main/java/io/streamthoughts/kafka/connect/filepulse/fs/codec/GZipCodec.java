@@ -42,6 +42,7 @@ public class GZipCodec implements CodecHandler {
 
     static  {
         MIME_TYPES.add("application/x-gzip");
+        MIME_TYPES.add("application/gzip");
     }
 
     /**

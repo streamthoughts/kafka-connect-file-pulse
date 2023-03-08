@@ -49,6 +49,7 @@
     <properties>
         <org.jruby.joni.version>2.1.40</org.jruby.joni.version>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
+        <com.opencsv.version>5.7.1</com.opencsv.version>
     </properties>
 
     <dependencies>
@@ -63,7 +64,7 @@
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>5.6</version>
+            <version>${com.opencsv.version}</version>
         </dependency>
         <dependency>
             <groupId>io.streamthoughts</groupId>

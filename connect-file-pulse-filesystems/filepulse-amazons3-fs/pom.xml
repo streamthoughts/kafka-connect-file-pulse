@@ -33,7 +33,7 @@
 
     <properties>
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
-        <aws-java-sdk.version>1.12.421</aws-java-sdk.version>
+        <aws-java-sdk.version>1.12.423</aws-java-sdk.version>
     </properties>
 
     <dependencies>

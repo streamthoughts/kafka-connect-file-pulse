@@ -245,11 +245,14 @@ public class FilePulseSourceTask extends SourceTask {
                 if (!isTaskRunning()) continue;
                 return results;
             }
-        } catch (final Throwable t) {
-            // This task has failed, so close any resources (maybe reopened if needed) before throwing
+        } catch (final Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            // This task has failed, so close any resources before throwing
             LOG.error("This task has failed due to uncaught error and will be stopped.");
             closeResources();
-            throw t;
+            throw e;
         }
         // Only in case of shutdown
         closeResources();

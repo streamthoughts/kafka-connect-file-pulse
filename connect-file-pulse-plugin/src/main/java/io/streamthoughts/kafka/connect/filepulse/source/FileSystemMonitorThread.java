@@ -108,7 +108,9 @@ public class FileSystemMonitorThread extends Thread {
         LOG.info("Shutting down thread monitoring filesystem.");
         this.shutdownLatch.countDown();
         try {
-            this.waitingLatch.await(timeoutMs, TimeUnit.MILLISECONDS);
+            if (waitingLatch.await(timeoutMs, TimeUnit.MILLISECONDS)) {
+                LOG.debug("Timeout reached before completing thread shutdown");
+            }
         } catch (InterruptedException ignore) {
             LOG.error("Timeout : scan loop is not terminated yet.");
             Thread.currentThread().interrupt();

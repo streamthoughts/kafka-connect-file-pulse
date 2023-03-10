@@ -87,7 +87,7 @@
         <maven.surefire.plugin.version>3.0.0-M9</maven.surefire.plugin.version>
         <maven.failsafe.plugin.version>3.0.0-M7</maven.failsafe.plugin.version>
         <maven.source.plugin>3.2.1</maven.source.plugin>
-        <maven.javadoc.plugin>3.4.1</maven.javadoc.plugin>
+        <maven.javadoc.plugin>3.5.0</maven.javadoc.plugin>
         <apache.avro.version>1.8.2</apache.avro.version>
         <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
         <io.confluent.version>7.3.2</io.confluent.version>
@@ -359,7 +359,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.4.1</version>
+                        <version>3.5.0</version>
                         <configuration>
                             <doclint>none</doclint><!-- Turnoff all checks -->
                             <source>11</source>

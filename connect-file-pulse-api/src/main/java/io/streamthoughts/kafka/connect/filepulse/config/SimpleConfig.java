@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 StreamThoughts.
+ * Copyright 2023 StreamThoughts.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -16,22 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.streamthoughts.kafka.connect.filepulse.fs.reader;
+package io.streamthoughts.kafka.connect.filepulse.config;
 
-import io.streamthoughts.kafka.connect.filepulse.fs.LocalFileStorage;
-import io.streamthoughts.kafka.connect.filepulse.reader.StorageAwareFileInputReader;
+import org.apache.kafka.common.config.AbstractConfig;
+import org.apache.kafka.common.config.ConfigDef;
 
-public abstract class BaseLocalFileInputReader
-        extends AbstractFileInputReader
-        implements StorageAwareFileInputReader<LocalFileStorage> {
+import java.util.Map;
 
-    private final LocalFileStorage storage = new LocalFileStorage();
+public class SimpleConfig extends AbstractConfig {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public LocalFileStorage storage() {
-        return storage;
+    public SimpleConfig(ConfigDef configDef, Map<?, ?> originals) {
+        super(configDef, originals, false);
     }
+
 }

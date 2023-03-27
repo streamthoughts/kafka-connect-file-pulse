@@ -19,7 +19,7 @@
 
 package io.streamthoughts.kafka.connect.filepulse.fs.clean;
 
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalFileStorage;
+import io.streamthoughts.kafka.connect.filepulse.fs.LocalFileStorage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;

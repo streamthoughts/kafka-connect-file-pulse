@@ -134,7 +134,7 @@ public final class XMLNodeToStructConverter implements Function<Node, TypedStruc
     }
 
     /**
-     * Converts the given {@link Node} object tree into a new new {@link TypedStruct} instance.
+     * Converts the given {@link Node} object tree into a new {@link TypedStruct} instance.
      *
      * @param node the {@link Node} object tree to convert.
      * @return the new {@link TypedStruct} instance.

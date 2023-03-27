@@ -38,7 +38,7 @@ public interface FileSystemMonitor {
     void invoke(final ConnectorContext context);
 
     /**
-     * Enables or disables the the file-listing process either temporarily or permanently.
+     * Enables or disables the file-listing process either temporarily or permanently.
      * In other words, if disabled then {@link #listFilesToSchedule()} will always return an empty list.
      *
      * @param enabled is the file-listing process enabled.

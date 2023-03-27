@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.fs;
 import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
 import io.streamthoughts.kafka.connect.filepulse.fs.codec.CodecHandler;
 import io.streamthoughts.kafka.connect.filepulse.fs.codec.CodecManager;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalFileStorage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import org.apache.kafka.connect.errors.ConnectException;

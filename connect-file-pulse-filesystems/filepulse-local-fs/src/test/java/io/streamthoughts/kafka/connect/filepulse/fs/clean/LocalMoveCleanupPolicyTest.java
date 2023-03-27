@@ -19,8 +19,7 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.clean;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListingConfig;
-import io.streamthoughts.kafka.connect.filepulse.fs.clean.LocalMoveCleanupPolicy;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalFileStorage;
+import io.streamthoughts.kafka.connect.filepulse.fs.LocalFileStorage;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;

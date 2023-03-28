@@ -26,8 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * ReversedInputFileReader is attend to be used to read a fixed number of lines from bottom of a file.
- *
+ * ReversedInputFileReader is attended to be used to read a fixed number of lines from bottom of a file.
  * This class is not optimized for reading a whole file from bottom to top.
  */
 public class ReversedInputFileReader implements AutoCloseable {
@@ -136,7 +135,7 @@ public class ReversedInputFileReader implements AutoCloseable {
 
             input.readFully(buffer, 0, nread);
 
-            // Reset buffer cursor to beginning before reading before.
+            // Reset buffer cursor to beginning before reading.
             bufferOffset = 0;
             TextBlock line;
             do {

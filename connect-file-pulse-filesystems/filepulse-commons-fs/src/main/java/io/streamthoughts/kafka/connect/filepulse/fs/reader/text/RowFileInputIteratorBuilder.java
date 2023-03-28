@@ -23,6 +23,8 @@ import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -33,6 +35,8 @@ import java.util.function.Supplier;
  * Simple class to build a new {@link RowFileInputIterator}.
  */
 public class RowFileInputIteratorBuilder {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RowFileInputIteratorBuilder.class);
 
     private Charset charset = StandardCharsets.UTF_8;
     private int minNumReadRecords = 1;
@@ -91,15 +95,17 @@ public class RowFileInputIteratorBuilder {
                 .setMaxWaitMs(waitMaxMs);
 
         if (skipFooters > 0) {
+            LOG.debug("Decorate RowFileInputIterator with RowFileWithFooterInputIterator");
             iterator = new RowFileWithFooterInputIterator(
                 skipFooters,
-                new File(metadata.uri()),
+                metadata.uri(),
                 charset,
                 iterator
             );
         }
 
         if (skipHeaders > 0) {
+            LOG.debug("Decorate RowFileInputIterator with RowFileWithHeadersInputIterator");
             iterator = new RowFileWithHeadersInputIterator(
                 skipHeaders,
                 readerSupplier,

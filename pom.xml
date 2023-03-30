@@ -99,7 +99,7 @@
         <com.fasterxml.jackson.databind.version>2.14.2</com.fasterxml.jackson.databind.version>
         <com.fasterxml.jackson.core.version>2.14.2</com.fasterxml.jackson.core.version>
         <com.fasterxml.jackson.annotations.version>2.14.2</com.fasterxml.jackson.annotations.version>
-        <slf4j.version>1.7.32</slf4j.version>
+        <slf4j.version>2.0.7</slf4j.version>
         <spotbugs.maven.plugin.version>4.5.3.0</spotbugs.maven.plugin.version>
         <jacoco.version>0.8.8</jacoco.version>
         <sonar.organization>streamthoughts</sonar.organization>

@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.state;
 
+import io.streamthoughts.kafka.connect.filepulse.internal.KafkaUtils;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.AbstractConfig;
@@ -70,11 +71,24 @@ public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
         return this.getString(TASKS_FILE_STATUS_STORAGE_NAME_CONFIG);
     }
 
-    public Map<String, Object> getTaskStorageConfigs() {
+    public Map<String, Object> getConsumerTaskStorageConfigs() {
         final Map<String, Object> configs = new HashMap<>();
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
         configs.putAll(getInternalKafkaConsumerConfigs());
+        return configs;
+    }
+
+    public Map<String, Object> getProducerTaskStorageConfigs() {
+        final Map<String, Object> configs = new HashMap<>();
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
         configs.putAll(getInternalKafkaProducerConfigs());
+        return configs;
+    }
+
+    public Map<String, Object> getAdminClientTaskStorageConfigs() {
+        final Map<String, Object> configs = new HashMap<>();
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
+        configs.putAll(getInternalKafkaAdminClientConfigs());
         return configs;
     }
 
@@ -82,12 +96,22 @@ public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
         return this.getString(TASKS_FILE_STATUS_STORAGE_BOOTSTRAP_SERVERS_CONFIG);
     }
 
+    private Map<String, Object> getInternalKafkaAdminClientConfigs() {
+        Map<String, Object> consumerConfigs = KafkaUtils.getAdminClientConfigs(originals());
+        consumerConfigs.putAll(originalsWithPrefix("tasks.file.status.storage.admin."));
+        return consumerConfigs;
+    }
+
     private Map<String, Object> getInternalKafkaConsumerConfigs() {
-        return this.originalsWithPrefix("tasks.file.status.storage.consumer.");
+        Map<String, Object> consumerConfigs = KafkaUtils.getConsumerConfigs(originals());
+        consumerConfigs.putAll(originalsWithPrefix("tasks.file.status.storage.consumer."));
+        return consumerConfigs;
     }
 
     private Map<String, Object> getInternalKafkaProducerConfigs() {
-        return this.originalsWithPrefix("tasks.file.status.storage.producer.");
+        Map<String, Object> producerConfigs = KafkaUtils.getProducerConfigs(originals());
+        producerConfigs.putAll(originalsWithPrefix("tasks.file.status.storage.producer."));
+        return producerConfigs;
     }
 
     Optional<Integer> getTopicPartitions() {

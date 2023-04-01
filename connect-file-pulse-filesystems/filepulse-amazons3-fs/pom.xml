@@ -33,8 +33,26 @@
 
     <properties>
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
-        <aws-java-sdk.version>1.12.428</aws-java-sdk.version>
+        <aws.version>1.12.428</aws.version>
+        <aws.msk.version>1.1.6</aws.msk.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bom</artifactId>
+                <version>${aws.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-sts</artifactId>
+                <version>${aws.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -53,12 +71,16 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>${aws-java-sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sts</artifactId>
-            <version>${aws-java-sdk.version}</version>
+        </dependency>
+        <!-- Add AWS MSK IAM support -->
+        <dependency>
+            <groupId>software.amazon.msk</groupId>
+            <artifactId>aws-msk-iam-auth</artifactId>
+            <version>${aws.msk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>

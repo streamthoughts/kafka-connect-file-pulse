@@ -19,9 +19,9 @@
 package io.streamthoughts.kafka.connect.filepulse.storage;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
+
+import io.streamthoughts.kafka.connect.filepulse.internal.KafkaUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
@@ -30,42 +30,54 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.utils.Time;
 
+import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
+
 /**
  */
 class KafkaBasedLogFactory {
 
-    private final Map<String, ?> configs;
+    private final Map<String, ?> producerConfigs;
+    private final Map<String, ?> consumerConfigs;
 
     /**
      * Creates a new {@link KafkaBasedLogFactory} instance.
      *
-     * @param configs the kafka configuration.
+     * @param producerConfigs configuration options to use when creating the internal producer.
+     * @param consumerConfigs configuration options to use when creating the internal consumer.
      */
-    KafkaBasedLogFactory(final Map<String, ?> configs) {
-        this.configs = Collections.unmodifiableMap(configs);
+    KafkaBasedLogFactory(final Map<String, ?> producerConfigs,
+                         final Map<String, ?> consumerConfigs) {
+        this.producerConfigs = Collections.unmodifiableMap(producerConfigs);
+        this.consumerConfigs = Collections.unmodifiableMap(consumerConfigs);
     }
 
     KafkaBasedLog<String, byte[]> make(final String topic,
                                        final Callback<ConsumerRecord<String, byte[]>> consumedCallback) {
-        return new KafkaBasedLog<>(topic,
-                newProducerConfigs(), newConsumerConfigs(), consumedCallback, Time.SYSTEM, null);
+        return new KafkaBasedLog<>(
+                topic,
+                newProducerConfigs(),
+                newConsumerConfigs(),
+                consumedCallback,
+                Time.SYSTEM,
+                null
+        );
     }
 
     private Map<String, Object> newConsumerConfigs() {
-        final Map<String, Object> consumerProps = new HashMap<>(configs);
-        consumerProps
-                .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        consumerProps
-                .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
-        return consumerProps;
+        Map<String, Object> clientProps = KafkaUtils.getConsumerConfigs(consumerConfigs);
+        clientProps.put(KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        clientProps.put(VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
+        return clientProps;
     }
 
     private Map<String, Object> newProducerConfigs() {
-        final Map<String, Object> producerProps = new HashMap<>(configs);
-        producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        producerProps
-                .put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
-        producerProps.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
-        return producerProps;
+        Map<String, Object> clientProps = KafkaUtils.getProducerConfigs(producerConfigs);
+        clientProps.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        clientProps.put(VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
+        clientProps.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE);
+        return clientProps;
     }
 }

@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.expression.accessor;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
-
 import java.util.Objects;
 
 public class TypedStructAccessor implements PropertyAccessor {

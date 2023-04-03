@@ -23,7 +23,6 @@ import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-
 import java.util.Objects;
 
 /**

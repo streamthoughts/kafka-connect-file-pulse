@@ -19,17 +19,16 @@
 package io.streamthoughts.kafka.connect.filepulse.schema;
 
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.Schema.Type;
-import org.apache.kafka.connect.data.SchemaBuilder;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import org.apache.kafka.connect.data.Field;
+import org.apache.kafka.connect.data.Schema;
+import org.apache.kafka.connect.data.Schema.Type;
+import org.apache.kafka.connect.data.SchemaBuilder;
 
 /**
  * Utility class to merge Connect {@link Schema}.

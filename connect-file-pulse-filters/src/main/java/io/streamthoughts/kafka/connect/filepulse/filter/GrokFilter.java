@@ -27,11 +27,6 @@ import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.transform.pattern.GrokMatcher;
 import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternCompiler;
 import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternResolver;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.connect.data.Field;
+import org.apache.kafka.connect.data.Schema;
+import org.apache.kafka.connect.data.SchemaBuilder;
 
 public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
 

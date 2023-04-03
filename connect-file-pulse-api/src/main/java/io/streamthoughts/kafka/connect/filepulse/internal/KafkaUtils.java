@@ -18,13 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.internal;
 
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 
 public class KafkaUtils {
 

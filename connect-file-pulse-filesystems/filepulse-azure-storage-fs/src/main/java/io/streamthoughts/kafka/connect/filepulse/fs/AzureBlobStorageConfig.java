@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import java.util.Map;
+import java.util.Optional;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.types.Password;
-
-import java.util.Map;
-import java.util.Optional;
 
 public class AzureBlobStorageConfig extends AbstractConfig {
 

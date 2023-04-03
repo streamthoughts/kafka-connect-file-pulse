@@ -18,18 +18,17 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import static io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers.parseExpression;
+
 import io.streamthoughts.kafka.connect.filepulse.config.JoinFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers.parseExpression;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class JoinFilter extends AbstractRecordFilter<JoinFilter> {
 

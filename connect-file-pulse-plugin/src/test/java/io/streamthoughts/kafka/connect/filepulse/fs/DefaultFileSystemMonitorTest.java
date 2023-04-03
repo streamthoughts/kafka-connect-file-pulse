@@ -18,6 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
@@ -30,16 +33,6 @@ import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
 import io.streamthoughts.kafka.connect.filepulse.utils.MockFileCleaner;
 import io.streamthoughts.kafka.connect.filepulse.utils.TemporaryFileInput;
-import org.apache.kafka.connect.connector.ConnectorContext;
-import org.apache.kafka.connect.source.SourceTaskContext;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
-import org.mockito.Mockito;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,9 +42,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.apache.kafka.connect.connector.ConnectorContext;
+import org.apache.kafka.connect.source.SourceTaskContext;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestRule;
+import org.mockito.Mockito;
 
 public class DefaultFileSystemMonitorTest {
 

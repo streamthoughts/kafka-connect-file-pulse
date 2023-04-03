@@ -19,10 +19,9 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 /**
  * Default class to report file state progression into Kafka.

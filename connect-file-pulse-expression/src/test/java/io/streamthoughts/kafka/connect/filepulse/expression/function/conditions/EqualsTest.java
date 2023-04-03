@@ -18,16 +18,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.conditions;
 
+import static io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers.parseExpression;
+
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers.parseExpression;
 
 public class EqualsTest {
 

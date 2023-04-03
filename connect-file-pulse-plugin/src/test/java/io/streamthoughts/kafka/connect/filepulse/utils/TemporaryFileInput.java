@@ -18,23 +18,20 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.utils;
 
-import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-
-import java.io.IOException;
-
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class TemporaryFileInput implements TestRule {
 

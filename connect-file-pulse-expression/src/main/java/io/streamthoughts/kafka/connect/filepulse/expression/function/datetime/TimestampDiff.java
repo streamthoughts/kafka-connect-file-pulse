@@ -27,7 +27,6 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExp
 import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 

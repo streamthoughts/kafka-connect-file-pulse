@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
-import org.apache.kafka.common.config.AbstractConfig;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import org.apache.kafka.common.config.AbstractConfig;
+import org.apache.kafka.common.config.ConfigDef;
 
 /**
  * Configuration for reading a file line by line.

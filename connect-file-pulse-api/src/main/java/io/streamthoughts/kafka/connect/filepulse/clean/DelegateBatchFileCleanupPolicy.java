@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.clean;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;

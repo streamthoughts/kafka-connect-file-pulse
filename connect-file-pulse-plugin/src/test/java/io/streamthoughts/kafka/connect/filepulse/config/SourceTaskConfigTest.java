@@ -26,13 +26,12 @@ import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class SourceTaskConfigTest {
 

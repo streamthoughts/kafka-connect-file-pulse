@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractTransformExpressionFunction;
-
 import java.util.Locale;
 
 /**

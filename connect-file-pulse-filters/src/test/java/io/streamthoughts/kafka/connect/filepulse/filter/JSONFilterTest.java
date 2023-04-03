@@ -18,25 +18,22 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.*;
+
 import io.streamthoughts.kafka.connect.filepulse.config.JSONFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.SchemaSupplier;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.source.internal.ConnectSchemaMapper;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class JSONFilterTest {
 

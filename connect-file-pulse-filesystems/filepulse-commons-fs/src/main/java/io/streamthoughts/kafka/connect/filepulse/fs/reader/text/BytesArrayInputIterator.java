@@ -19,8 +19,8 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
@@ -28,7 +28,6 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.NoSuchElementException;

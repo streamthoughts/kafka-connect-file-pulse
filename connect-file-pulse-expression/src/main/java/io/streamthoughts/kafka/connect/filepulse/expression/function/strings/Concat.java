@@ -16,12 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 

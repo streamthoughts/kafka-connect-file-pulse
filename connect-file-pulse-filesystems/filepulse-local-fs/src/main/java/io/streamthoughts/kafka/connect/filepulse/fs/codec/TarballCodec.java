@@ -19,11 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.codec;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +29,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TarballCodec implements CodecHandler {
 
@@ -80,7 +79,8 @@ public class TarballCodec implements CodecHandler {
                 new FileInputStream(file))) {
 
             ArchiveEntry entry;
-            String entryName, entryDir;
+            String entryName;
+            String entryDir;
             while ((entry = inputStream.getNextEntry()) != null) {
 
                 entryName = entry.getName();

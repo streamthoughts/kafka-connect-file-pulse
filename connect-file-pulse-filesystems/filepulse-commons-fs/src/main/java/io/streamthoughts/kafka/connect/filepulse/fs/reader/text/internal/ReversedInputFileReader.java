@@ -168,7 +168,8 @@ public class ReversedInputFileReader implements AutoCloseable {
     }
 
     private TextBlock tryToExtractLine() {
-        int newline = -1, newStart = -1;
+        int newline = -1;
+        int newStart = -1;
         // We always read buffer from the end
         for (int i = bufferEndOffset; i > bufferOffset; i--) {
             // LF

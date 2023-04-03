@@ -18,7 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import org.apache.kafka.common.config.ConfigDef;
+import static io.streamthoughts.kafka.connect.transform.GrokConfig.GROK_PATTERNS_DIR_CONFIG;
+import static io.streamthoughts.kafka.connect.transform.GrokConfig.GROK_PATTERN_CONFIG;
+import static io.streamthoughts.kafka.connect.transform.GrokConfig.GROK_PATTERN_DEFINITIONS_CONFIG;
 
 import java.io.File;
 import java.util.Collection;
@@ -26,10 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.connect.transform.GrokConfig.GROK_PATTERNS_DIR_CONFIG;
-import static io.streamthoughts.kafka.connect.transform.GrokConfig.GROK_PATTERN_CONFIG;
-import static io.streamthoughts.kafka.connect.transform.GrokConfig.GROK_PATTERN_DEFINITIONS_CONFIG;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class MultiRowFilterConfig extends CommonFilterConfig {
 

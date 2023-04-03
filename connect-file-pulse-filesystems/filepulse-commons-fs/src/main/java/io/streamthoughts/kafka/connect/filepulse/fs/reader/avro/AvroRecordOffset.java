@@ -20,9 +20,8 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.avro;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.TimestampedRecordOffset;
-import org.apache.kafka.common.utils.Time;
-
 import java.util.Objects;
+import org.apache.kafka.common.utils.Time;
 
 /**
  * Represents the position of a record into an Avro container file.

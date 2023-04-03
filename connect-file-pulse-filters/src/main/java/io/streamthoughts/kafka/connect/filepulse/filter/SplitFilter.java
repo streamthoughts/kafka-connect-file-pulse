@@ -23,10 +23,9 @@ import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.LinkedList;
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
 
 /**
  * Split one or multiples message field's value to array.

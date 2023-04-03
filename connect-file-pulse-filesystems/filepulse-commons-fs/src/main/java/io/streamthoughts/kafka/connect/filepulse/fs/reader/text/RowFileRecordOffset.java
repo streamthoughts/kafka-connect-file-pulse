@@ -19,9 +19,8 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
-import org.apache.kafka.common.utils.SystemTime;
-
 import java.util.Objects;
+import org.apache.kafka.common.utils.SystemTime;
 
 /**
  * Represents the position of a record into a text XML file.

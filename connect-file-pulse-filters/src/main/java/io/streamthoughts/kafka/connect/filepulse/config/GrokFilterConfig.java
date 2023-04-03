@@ -19,9 +19,8 @@
 package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.transform.GrokConfig;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class GrokFilterConfig extends CommonFilterConfig {
 

@@ -18,11 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.*;
 import static org.junit.Assert.*;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TypedStructTest {
 

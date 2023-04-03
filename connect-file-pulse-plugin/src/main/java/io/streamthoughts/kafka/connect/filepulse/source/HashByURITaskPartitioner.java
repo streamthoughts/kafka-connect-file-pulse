@@ -18,8 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import org.apache.kafka.common.utils.Utils;
-
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -28,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
+import org.apache.kafka.common.utils.Utils;
 
 public class HashByURITaskPartitioner implements TaskPartitioner {
 

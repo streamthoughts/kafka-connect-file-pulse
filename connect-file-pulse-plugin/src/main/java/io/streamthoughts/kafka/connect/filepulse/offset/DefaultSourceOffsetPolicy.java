@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.offset;
 
+import static io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta.SYSTEM_FILE_INODE_META_KEY;
+
 import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,8 +33,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-
-import static io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta.SYSTEM_FILE_INODE_META_KEY;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultSourceOffsetPolicy extends AbstractSourceOffsetPolicy {
 

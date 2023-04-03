@@ -13,12 +13,12 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=coverage)](https://sonarcloud.io/summary/new_code?id=streamthoughts_kafka-connect-file-pulse)
 
 <p align="center">
-  <img width="400" height="400" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/assets/logo.png">
+<img width="400" height="400" src="https://github.com/streamthoughts/kafka-connect-file-pulse/raw/master/assets/logo.png">
 </p>
 
-**Connect FilePulse** is a multipurpose, scalable and reliable, 
+**Connect FilePulse** is a multipurpose, scalable and reliable,
 [Kafka Connector](http://kafka.apache.org/documentation.html#connect) that makes it easy to parse, transform and stream any file, in any format, into Apache Kafka™.
-It provides capabilities for reading files from: **local-filesystem**, **Amazon S3**, **Azure Storage** and **Google Cloud Storage**. 
+It provides capabilities for reading files from: **local-filesystem**, **Amazon S3**, **Azure Storage** and **Google Cloud Storage**.
 
 ## Motivation
 
@@ -26,8 +26,8 @@ In organizations, data is frequently exported, shared and integrated from legacy
 files in a wide variety of formats (e.g. CSV, XML, JSON, Avro, etc.). Dealing with all of these formats can
 quickly become a real challenge for enterprise that usually end up with a complex and hard
 to maintain data integration mess.
-	
-	
+
+
 A modern approach consists in building a scalable data streaming platform as a central nervous
 system to decouple applications from each other. **Apache Kafka™** is one of the most widely
 used technologies to build such a system. The Apache Kafka project packs with Kafka Connect a distributed,
@@ -54,7 +54,7 @@ Connect FilePulse provides a set of built-in features for streaming files from m
 
 ## 🙏 Show your support
 
-You think this project can help you or your team to ingest data into Kafka ? 
+You think this project can help you or your team to ingest data into Kafka ?
 Please 🌟 this repository to support us!
 
 ## 🏁 How to get started ?

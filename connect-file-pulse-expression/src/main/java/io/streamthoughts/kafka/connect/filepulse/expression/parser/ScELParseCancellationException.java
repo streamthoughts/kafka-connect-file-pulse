@@ -16,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.expression.parser;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;

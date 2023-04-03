@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 import com.jsoniter.annotation.JsonCreator;
 import com.jsoniter.annotation.JsonIgnore;
 import com.jsoniter.annotation.JsonProperty;
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;

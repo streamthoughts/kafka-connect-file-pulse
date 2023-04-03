@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.data.internal;
 
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;

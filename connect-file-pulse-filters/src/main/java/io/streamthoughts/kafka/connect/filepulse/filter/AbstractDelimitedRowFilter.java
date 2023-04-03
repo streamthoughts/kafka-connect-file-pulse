@@ -18,6 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_COLUMNS_CONFIG;
+
 import io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
@@ -26,9 +30,6 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,10 +39,8 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_COLUMNS_CONFIG;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigException;
 
 public abstract class AbstractDelimitedRowFilter<T extends AbstractRecordFilter<T>> extends AbstractRecordFilter<T> {
 

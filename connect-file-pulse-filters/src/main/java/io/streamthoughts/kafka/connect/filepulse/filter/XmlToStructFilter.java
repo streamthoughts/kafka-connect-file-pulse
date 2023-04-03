@@ -28,6 +28,10 @@ import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.xml.XMLCommonConfig;
 import io.streamthoughts.kafka.connect.filepulse.xml.XMLDocumentReader;
 import io.streamthoughts.kafka.connect.filepulse.xml.XMLNodeToStructConverter;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import org.apache.kafka.common.config.ConfigDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +39,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * This {@link RecordFilter} can be used to parse a field containing a XML Document into struct record.

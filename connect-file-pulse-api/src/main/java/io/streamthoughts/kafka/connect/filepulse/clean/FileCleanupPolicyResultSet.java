@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.clean;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Objects;

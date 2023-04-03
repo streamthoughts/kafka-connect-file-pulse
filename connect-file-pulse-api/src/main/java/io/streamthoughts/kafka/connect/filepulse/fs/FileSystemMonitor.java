@@ -19,9 +19,8 @@
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.apache.kafka.connect.connector.ConnectorContext;
-
 import java.util.List;
+import org.apache.kafka.connect.connector.ConnectorContext;
 
 /**
  * A {@code FileSystemMonitor} is responsible for monitoring a specific file-system

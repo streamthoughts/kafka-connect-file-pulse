@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.avro;
 
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.kafka.connect.data.Schema;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 class AvroSchemaConverterTest {
 

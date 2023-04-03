@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

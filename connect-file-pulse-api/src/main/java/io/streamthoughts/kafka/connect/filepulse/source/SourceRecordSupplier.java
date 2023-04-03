@@ -18,10 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
+import java.util.Map;
 import org.apache.kafka.connect.header.ConnectHeaders;
 import org.apache.kafka.connect.source.SourceRecord;
-
-import java.util.Map;
 
 /**
  * Default interface to build connect output {@link SourceRecord}..

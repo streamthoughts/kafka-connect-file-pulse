@@ -23,14 +23,13 @@ import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.config.SimpleConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-import org.apache.kafka.common.config.ConfigDef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.kafka.common.config.ConfigDef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Policy for printing into log files completed files.

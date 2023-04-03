@@ -20,11 +20,10 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Predicate;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class SourceConnectorConfig extends CommonSourceConfig {
 

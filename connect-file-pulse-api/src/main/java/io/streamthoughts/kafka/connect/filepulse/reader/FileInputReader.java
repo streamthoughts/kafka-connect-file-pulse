@@ -21,10 +21,9 @@ package io.streamthoughts.kafka.connect.filepulse.reader;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-import org.apache.kafka.common.Configurable;
-
 import java.net.URI;
 import java.util.Map;
+import org.apache.kafka.common.Configurable;
 
 /**
  * A {@code FileInputReader} is the principal class used to read an input file/object.

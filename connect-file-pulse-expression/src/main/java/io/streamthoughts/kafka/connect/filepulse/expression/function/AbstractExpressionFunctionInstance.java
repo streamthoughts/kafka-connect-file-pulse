@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
-
 import java.util.stream.IntStream;
 
 public abstract class AbstractExpressionFunctionInstance implements ExpressionFunction.Instance {

@@ -21,10 +21,9 @@ package io.streamthoughts.kafka.connect.filepulse.avro;
 import io.streamthoughts.kafka.connect.filepulse.avro.internal.ConnectSchemaConverter;
 import io.streamthoughts.kafka.connect.filepulse.avro.internal.ConnectSchemaConverters;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
-import org.apache.kafka.connect.data.Schema;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.kafka.connect.data.Schema;
 
 /**
  * Utilities for converting between Connect runtime data format and Avro.

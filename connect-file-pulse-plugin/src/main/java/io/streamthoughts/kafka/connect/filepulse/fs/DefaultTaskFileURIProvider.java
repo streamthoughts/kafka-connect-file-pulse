@@ -18,15 +18,14 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import org.apache.kafka.common.config.AbstractConfig;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.config.AbstractConfig;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class DefaultTaskFileURIProvider implements TaskFileURIProvider {
 

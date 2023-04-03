@@ -18,10 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.avro.internal;
 
+import static org.apache.kafka.connect.data.Schema.STRING_SCHEMA;
+
 import org.apache.avro.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
-
-import static org.apache.kafka.connect.data.Schema.STRING_SCHEMA;
 
 public final class MapSchemaConverter extends AbstracConnectSchemaConverter {
 

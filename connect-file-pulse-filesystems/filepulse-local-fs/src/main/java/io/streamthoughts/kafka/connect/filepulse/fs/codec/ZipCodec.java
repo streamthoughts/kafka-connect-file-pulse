@@ -19,9 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.codec;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,6 +32,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZipCodec implements CodecHandler {
 
@@ -81,7 +80,8 @@ public class ZipCodec implements CodecHandler {
         File parent = IOUtils.createDirectoryFromFile(file);
         try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(file))) {
             ZipEntry zipEntry;
-            String entryName, entryDir;
+            String entryName;
+            String entryDir;
             while ((zipEntry = inputStream.getNextEntry()) != null) {
                 entryName = zipEntry.getName();
                 if (zipEntry.isDirectory()) {

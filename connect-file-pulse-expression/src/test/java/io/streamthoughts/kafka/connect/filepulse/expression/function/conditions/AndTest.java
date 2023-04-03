@@ -27,12 +27,11 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunctionExecutors;
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class AndTest {
 

@@ -32,7 +32,7 @@
     <artifactId>kafka-connect-filepulse-filters</artifactId>
 
     <name>Kafka Connect Source File Pulse Filters</name>
-    <description>Connect File Pulse is a multi-purpose source connector for streaming files from a local filesystem to Kafka.</description>
+    <description>Connect File Pulse is a multipurpose source connector for streaming files from a local filesystem to Kafka.</description>
 
     <organization>
         <name>streamthoughts</name>
@@ -49,6 +49,7 @@
     <properties>
         <org.jruby.joni.version>2.1.40</org.jruby.joni.version>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
+        <license.header.file>${project.parent.basedir}/license-header</license.header.file>
         <com.opencsv.version>5.7.1</com.opencsv.version>
     </properties>
 

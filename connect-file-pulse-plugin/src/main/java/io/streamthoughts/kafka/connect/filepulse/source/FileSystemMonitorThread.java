@@ -19,14 +19,13 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemMonitor;
+import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.connect.connector.ConnectorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Default thread scheduling periodic scans of the targeted file-system.

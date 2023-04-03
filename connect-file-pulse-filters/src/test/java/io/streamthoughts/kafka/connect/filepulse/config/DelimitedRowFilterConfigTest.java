@@ -18,16 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
-import io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_DEFAULT;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_COLUMNS_CONFIG;
@@ -35,6 +25,15 @@ import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilte
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_TRIM_COLUMN_DEFAULT;
 import static io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter.READER_FIELD_SEPARATOR_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter.READER_FIELD_SEPARATOR_DEFAULT;
+
+import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
+import io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class DelimitedRowFilterConfigTest {
 

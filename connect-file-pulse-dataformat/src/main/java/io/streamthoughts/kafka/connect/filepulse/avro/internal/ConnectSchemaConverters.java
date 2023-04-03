@@ -19,14 +19,13 @@
 package io.streamthoughts.kafka.connect.filepulse.avro.internal;
 
 import io.streamthoughts.kafka.connect.filepulse.avro.UnsupportedAvroTypeException;
-import org.apache.avro.Schema;
-import org.apache.kafka.connect.data.SchemaBuilder;
-import org.apache.kafka.connect.errors.DataException;
-
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import org.apache.avro.Schema;
+import org.apache.kafka.connect.data.SchemaBuilder;
+import org.apache.kafka.connect.errors.DataException;
 
 public final class ConnectSchemaConverters {
 

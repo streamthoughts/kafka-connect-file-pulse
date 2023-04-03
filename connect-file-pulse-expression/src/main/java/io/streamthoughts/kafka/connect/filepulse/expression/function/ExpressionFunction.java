@@ -22,7 +22,6 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;

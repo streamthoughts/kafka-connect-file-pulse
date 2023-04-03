@@ -18,19 +18,18 @@
  */
 package io.streamthoughts.kafka.connect.filepulse;
 
+import static io.restassured.RestAssured.defaultParser;
+import static io.restassured.RestAssured.given;
+
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
 import io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import static io.restassured.RestAssured.defaultParser;
-import static io.restassured.RestAssured.given;
-
-import java.util.List;
-import java.util.Map;
 
 @Tag("integration")
 public class FilePulseConnectorPluginsIT extends AbstractKafkaConnectTest {

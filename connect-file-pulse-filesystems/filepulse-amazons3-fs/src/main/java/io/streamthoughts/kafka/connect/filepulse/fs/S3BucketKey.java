@@ -18,13 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.substringAfterLast;
+
 import com.amazonaws.services.s3.AmazonS3URI;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
-
 import java.net.URI;
 import java.util.Objects;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.substringAfterLast;
 
 /**
  * This class represents an object stored in Amazon S3. This object contains

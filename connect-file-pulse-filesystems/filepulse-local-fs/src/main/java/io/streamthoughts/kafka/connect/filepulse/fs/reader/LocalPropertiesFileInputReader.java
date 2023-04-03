@@ -29,7 +29,6 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;

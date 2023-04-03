@@ -25,15 +25,14 @@ import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationCo
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
 import io.streamthoughts.kafka.connect.filepulse.internal.DateTimeParser;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.connect.errors.ConnectException;
-
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.connect.errors.ConnectException;
 
 public class DateFilter extends AbstractRecordFilter<DateFilter> {
 

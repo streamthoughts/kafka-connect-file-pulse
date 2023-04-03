@@ -18,10 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
-import org.apache.kafka.connect.data.SchemaAndValue;
-
 import java.util.Collection;
 import java.util.Map;
+import org.apache.kafka.connect.data.SchemaAndValue;
 
 /**
  * Default interface to map {@link io.streamthoughts.kafka.connect.filepulse.data.Schema} and a value.

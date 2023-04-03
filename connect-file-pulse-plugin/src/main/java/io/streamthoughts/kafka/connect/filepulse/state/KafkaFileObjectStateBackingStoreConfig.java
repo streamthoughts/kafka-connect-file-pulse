@@ -19,14 +19,13 @@
 package io.streamthoughts.kafka.connect.filepulse.state;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.KafkaUtils;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
 

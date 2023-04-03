@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.source.SourceRecord;
-
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import org.apache.kafka.connect.data.Schema;
+import org.apache.kafka.connect.source.SourceRecord;
 
 /**
  * An object representing a single record value that was read from an input file.

@@ -20,9 +20,8 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class ConvertFilterConfig extends CommonFilterConfig {
 

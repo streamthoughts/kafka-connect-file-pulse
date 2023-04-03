@@ -18,14 +18,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class HashByURITaskPartitionerTest {
 

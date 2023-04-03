@@ -23,7 +23,6 @@ import io.streamthoughts.kafka.connect.filepulse.expression.ExpressionException;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractExpressionFunctionInstance;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-
 import java.math.BigDecimal;
 
 public class LessThan implements ExpressionFunction {

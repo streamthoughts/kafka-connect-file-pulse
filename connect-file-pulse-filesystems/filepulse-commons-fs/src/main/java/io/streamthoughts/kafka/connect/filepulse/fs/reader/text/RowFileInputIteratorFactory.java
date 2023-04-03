@@ -19,14 +19,13 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIteratorFactory;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIteratorFactory;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-
 import java.net.URI;
 
 public class RowFileInputIteratorFactory implements FileInputIteratorFactory {

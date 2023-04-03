@@ -24,13 +24,12 @@ import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class GroupRowFilter extends AbstractRecordFilter<GroupRowFilter> {
 

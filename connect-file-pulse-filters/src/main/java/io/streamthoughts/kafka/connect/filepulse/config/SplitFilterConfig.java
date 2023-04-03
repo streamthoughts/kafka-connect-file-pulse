@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class SplitFilterConfig extends CommonFilterConfig {
 

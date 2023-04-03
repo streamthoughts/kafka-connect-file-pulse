@@ -18,13 +18,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import org.junit.Test;
 
 public class SubstitutionExpressionTest {
 

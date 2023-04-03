@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

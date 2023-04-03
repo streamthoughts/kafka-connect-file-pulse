@@ -19,11 +19,10 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.time.Instant;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class LastModifiedFileListFilterTest {
 

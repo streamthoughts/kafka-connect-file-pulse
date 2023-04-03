@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class XmlToJsonFilterConfig extends CommonFilterConfig {
 

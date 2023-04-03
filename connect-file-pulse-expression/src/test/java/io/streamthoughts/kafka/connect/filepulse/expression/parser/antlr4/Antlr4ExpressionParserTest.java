@@ -16,21 +16,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.expression.parser.antlr4;
+
+import static org.junit.Assert.assertEquals;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.FunctionExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.PropertyExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.SubstitutionExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.ValueExpression;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class Antlr4ExpressionParserTest {
 

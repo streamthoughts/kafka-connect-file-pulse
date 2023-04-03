@@ -26,7 +26,6 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
-
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 

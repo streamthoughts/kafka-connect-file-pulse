@@ -22,7 +22,6 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.Converters;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunctionExecutor;
-
 import java.util.List;
 
 public class FunctionExpression extends AbstractExpression {

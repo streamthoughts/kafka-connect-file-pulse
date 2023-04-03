@@ -18,19 +18,18 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.json;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class DefaultJSONStructConverterTest {
 

@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data.merger;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import org.junit.Test;
-
-import java.util.Collections;
-
 import static org.junit.Assert.*;
+
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import java.util.Collections;
+import org.junit.Test;
 
 public class TypeValueMergerTest {
 

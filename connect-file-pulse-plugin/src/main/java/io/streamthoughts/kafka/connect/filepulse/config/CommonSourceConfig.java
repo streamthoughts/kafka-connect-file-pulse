@@ -30,14 +30,13 @@ import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.TaskPartitioner;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.data.Schema;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  *

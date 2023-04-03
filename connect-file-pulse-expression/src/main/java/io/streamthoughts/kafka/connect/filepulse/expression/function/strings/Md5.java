@@ -16,16 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
+
+import static io.streamthoughts.kafka.connect.filepulse.internal.Silent.unchecked;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.AbstractTransformExpressionFunction;
-
 import java.math.BigInteger;
 import java.security.MessageDigest;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.Silent.unchecked;
 
 public class Md5 extends AbstractTransformExpressionFunction {
 

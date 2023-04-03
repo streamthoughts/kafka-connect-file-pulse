@@ -27,10 +27,6 @@ import io.streamthoughts.kafka.connect.filepulse.source.TaskPartitioner;
 import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreAccess;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
-import org.apache.kafka.common.config.ConfigDef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
@@ -38,10 +34,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.apache.kafka.common.config.ConfigDef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DelegateTaskFileURIProvider implements TaskFileURIProvider {
 
-    private final Logger LOG = LoggerFactory.getLogger(DelegateTaskFileURIProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DelegateTaskFileURIProvider.class);
 
     private static final Duration DEFAULT_REFRESH_TIMEOUT = Duration.ofSeconds(30);
 

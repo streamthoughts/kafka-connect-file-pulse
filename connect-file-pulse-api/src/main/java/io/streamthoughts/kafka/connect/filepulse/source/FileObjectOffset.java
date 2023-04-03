@@ -20,9 +20,8 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 
 import com.jsoniter.annotation.JsonCreator;
 import com.jsoniter.annotation.JsonProperty;
-import org.apache.kafka.common.utils.SystemTime;
-
 import java.util.Objects;
+import org.apache.kafka.common.utils.SystemTime;
 
 /**
  * An object representing the position of next bytes to read in the input source.

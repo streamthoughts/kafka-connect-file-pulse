@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.expression;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.accessor.PropertyAccessor;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

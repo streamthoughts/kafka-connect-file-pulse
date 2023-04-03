@@ -22,7 +22,6 @@ import com.jsoniter.annotation.JsonIgnore;
 import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseException;
 import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
 import io.streamthoughts.kafka.connect.filepulse.internal.Network;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -18,21 +18,20 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.*;
+
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 
 public class CSVFilterTest {

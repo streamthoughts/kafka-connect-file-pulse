@@ -20,12 +20,11 @@ package io.streamthoughts.kafka.connect.filepulse.fs.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.PredicateFileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

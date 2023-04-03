@@ -18,19 +18,18 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
+import static java.util.Objects.requireNonNull;
+
 import com.jsoniter.annotation.JsonCreator;
 import com.jsoniter.annotation.JsonProperty;
 import io.streamthoughts.kafka.connect.filepulse.internal.Network;
-import org.apache.kafka.connect.header.ConnectHeaders;
-
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import static java.util.Objects.requireNonNull;
+import org.apache.kafka.connect.header.ConnectHeaders;
 
 /**
  * An object regrouping metadata about an input file manipulate by the connector.

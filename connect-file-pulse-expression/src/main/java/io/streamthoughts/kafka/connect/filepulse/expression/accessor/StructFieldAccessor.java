@@ -19,12 +19,11 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.accessor;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
+import java.util.Objects;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.Struct;
-
-import java.util.Objects;
 
 public class StructFieldAccessor implements PropertyAccessor {
 

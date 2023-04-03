@@ -18,15 +18,14 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import static io.streamthoughts.kafka.connect.filepulse.config.ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG;
+
 import io.streamthoughts.kafka.connect.filepulse.config.ConvertFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Map;
-
-import static io.streamthoughts.kafka.connect.filepulse.config.ConvertFilterConfig.CONVERT_IGNORE_MISSING_CONFIG;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class ConvertFilter extends AbstractRecordFilter<ConvertFilter> {
 

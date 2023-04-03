@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.IOUtils.createParentIfNotExists;
+
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -35,8 +34,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.IOUtils.createParentIfNotExists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Storage} implementation for manging files on local file-system.

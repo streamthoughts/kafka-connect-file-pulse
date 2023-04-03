@@ -19,15 +19,14 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.avro;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AvroRecordConverterTest {
 

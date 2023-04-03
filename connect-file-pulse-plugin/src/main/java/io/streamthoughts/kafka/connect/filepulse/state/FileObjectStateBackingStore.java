@@ -20,9 +20,8 @@ package io.streamthoughts.kafka.connect.filepulse.state;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
-import org.apache.kafka.common.Configurable;
-
 import java.util.Map;
+import org.apache.kafka.common.Configurable;
 
 public interface FileObjectStateBackingStore extends StateBackingStore<FileObject>, Configurable {
 

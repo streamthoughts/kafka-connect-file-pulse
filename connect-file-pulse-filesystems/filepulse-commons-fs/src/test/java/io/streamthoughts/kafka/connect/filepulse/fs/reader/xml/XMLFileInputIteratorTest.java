@@ -18,22 +18,17 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
 
+import static io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig.withKeyPrefix;
+
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputIterator;
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import io.streamthoughts.kafka.connect.filepulse.xml.XMLCommonConfig;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,8 +39,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
-import static io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReaderConfig.withKeyPrefix;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class XMLFileInputIteratorTest {
 

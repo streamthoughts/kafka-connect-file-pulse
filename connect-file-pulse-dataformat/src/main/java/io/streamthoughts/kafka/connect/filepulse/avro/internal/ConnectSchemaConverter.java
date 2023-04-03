@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.avro.internal;
 
-import org.apache.avro.Schema;
-
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.apache.avro.Schema;
 
 public interface ConnectSchemaConverter {
 

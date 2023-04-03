@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.codec;
 
-import org.apache.kafka.common.Configurable;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import org.apache.kafka.common.Configurable;
 
 public interface CodecHandler extends Configurable {
 

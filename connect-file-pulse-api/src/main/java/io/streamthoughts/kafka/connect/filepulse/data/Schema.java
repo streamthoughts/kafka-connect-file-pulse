@@ -18,9 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
-import java.util.Collection;
-import java.util.Map;
-
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_BOOLEAN;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_BYTES;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_FLOAT_32;
@@ -29,6 +26,9 @@ import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_INT_32;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_INT_64;
 import static io.streamthoughts.kafka.connect.filepulse.data.SimpleSchema.SCHEMA_STRING;
+
+import java.util.Collection;
+import java.util.Map;
 
 public interface Schema {
 

@@ -21,10 +21,9 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
+import java.util.Map;
 import org.apache.kafka.common.Configurable;
 import org.apache.kafka.common.config.ConfigDef;
-
-import java.util.Map;
 
 public interface RecordFilter extends Configurable {
 

@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.avro.internal;
 
-import org.apache.kafka.connect.data.Field;
-import org.apache.kafka.connect.data.Schema;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.kafka.connect.data.Field;
+import org.apache.kafka.connect.data.Schema;
 
 public final class CyclicSchemaWrapper implements Schema {
 

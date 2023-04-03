@@ -22,7 +22,6 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.merger.DefaultTypeValueMerger;
 import io.streamthoughts.kafka.connect.filepulse.data.merger.TypeValueMerger;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

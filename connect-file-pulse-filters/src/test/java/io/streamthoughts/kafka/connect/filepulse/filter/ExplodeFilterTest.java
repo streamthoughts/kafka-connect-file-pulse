@@ -16,23 +16,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.create;
 
+import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.connect.filepulse.data.TypedStruct.create;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ExplodeFilterTest {
 

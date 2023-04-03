@@ -16,19 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.offset;
 
-import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
-import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.junit.Assert;
-import org.junit.Test;
-
+import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class DefaultOffsetPolicyTest {
 

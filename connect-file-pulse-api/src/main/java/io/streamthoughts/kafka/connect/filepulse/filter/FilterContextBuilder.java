@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.TimestampedRecordOffset;
-import org.apache.kafka.connect.header.ConnectHeaders;
-
 import java.util.Map;
+import org.apache.kafka.connect.header.ConnectHeaders;
 
 /**
  * Class which is used for builder new {@link FilterContext} instance.

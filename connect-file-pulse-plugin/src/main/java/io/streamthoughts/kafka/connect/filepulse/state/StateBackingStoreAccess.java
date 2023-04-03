@@ -21,11 +21,10 @@ package io.streamthoughts.kafka.connect.filepulse.state;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.state.internal.OpaqueMemoryResource;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
+import java.util.function.Supplier;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.function.Supplier;
 
 /**
  * The {@code StateBackingStoreAccess} holds an access to a shared {@link StateBackingStore} instance.

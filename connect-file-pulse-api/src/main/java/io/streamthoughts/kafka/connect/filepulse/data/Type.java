@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
-import org.apache.kafka.connect.data.Schema;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.kafka.connect.data.Schema;
 
 public enum Type {
 

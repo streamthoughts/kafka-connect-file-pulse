@@ -18,10 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.List;
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class GroupRowFilterConfig extends CommonFilterConfig {
 

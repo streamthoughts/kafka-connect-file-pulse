@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.expression.function.conditions
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
-
 import java.util.stream.StreamSupport;
 
 public class Or implements ExpressionFunction {

@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;

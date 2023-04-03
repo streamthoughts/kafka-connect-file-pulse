@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
-import org.apache.kafka.common.Configurable;
-import org.apache.kafka.connect.source.SourceTaskContext;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.Configurable;
+import org.apache.kafka.connect.source.SourceTaskContext;
 
 public interface SourceOffsetPolicy extends Configurable {
 

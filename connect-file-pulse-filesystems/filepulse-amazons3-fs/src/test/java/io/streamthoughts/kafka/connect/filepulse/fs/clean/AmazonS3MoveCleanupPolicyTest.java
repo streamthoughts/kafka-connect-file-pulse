@@ -25,10 +25,9 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Map;
 
 public class AmazonS3MoveCleanupPolicyTest extends BaseAmazonS3Test {
 

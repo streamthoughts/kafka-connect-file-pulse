@@ -23,10 +23,9 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.FilterCondition;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.config.ConfigDef;
 
 public abstract class AbstractRecordFilter<T extends AbstractRecordFilter<T>> implements RecordFilter {
 

@@ -53,12 +53,11 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Sta
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Trim;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Uppercase;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.strings.Uuid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExpressionFunctionExecutors {
 

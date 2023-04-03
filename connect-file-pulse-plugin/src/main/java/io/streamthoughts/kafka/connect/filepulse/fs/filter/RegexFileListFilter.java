@@ -20,14 +20,13 @@ package io.streamthoughts.kafka.connect.filepulse.fs.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.PredicateFileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import java.util.Map;
+import java.util.regex.Pattern;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  *

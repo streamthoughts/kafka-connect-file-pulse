@@ -27,7 +27,6 @@ import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionPar
 import io.streamthoughts.kafka.connect.filepulse.filter.FilterContext;
 import io.streamthoughts.kafka.connect.filepulse.filter.FilterException;
 import io.streamthoughts.kafka.connect.filepulse.filter.InternalFilterContext;
-
 import java.util.Objects;
 
 public class ExpressionFilterCondition implements FilterCondition {

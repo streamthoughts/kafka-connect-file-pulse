@@ -18,15 +18,14 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source.internal;
 
-import io.streamthoughts.kafka.connect.filepulse.source.InvalidRecordException;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.apache.kafka.connect.data.SchemaAndValue;
-import org.apache.kafka.connect.header.ConnectHeaders;
-import org.apache.kafka.connect.source.SourceRecord;
-
+import io.streamthoughts.kafka.connect.filepulse.source.InvalidRecordException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import org.apache.kafka.connect.data.SchemaAndValue;
+import org.apache.kafka.connect.header.ConnectHeaders;
+import org.apache.kafka.connect.source.SourceRecord;
 
 public class InternalSourceRecordBuilder {
 

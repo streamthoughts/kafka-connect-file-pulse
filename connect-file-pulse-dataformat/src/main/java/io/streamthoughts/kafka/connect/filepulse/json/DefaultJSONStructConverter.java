@@ -27,7 +27,6 @@ import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;

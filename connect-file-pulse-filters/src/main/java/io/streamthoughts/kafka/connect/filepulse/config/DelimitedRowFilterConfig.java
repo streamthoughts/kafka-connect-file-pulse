@@ -21,13 +21,12 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.common.utils.ConfigUtils;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigException;
+import org.apache.kafka.common.utils.ConfigUtils;
 
 public class DelimitedRowFilterConfig extends CommonFilterConfig {
 

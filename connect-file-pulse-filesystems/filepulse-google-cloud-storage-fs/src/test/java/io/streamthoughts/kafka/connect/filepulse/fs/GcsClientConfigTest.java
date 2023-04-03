@@ -18,12 +18,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import java.util.Collections;
+import java.util.Map;
 import org.apache.kafka.common.config.ConfigException;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.Map;
 
 public class GcsClientConfigTest {
 

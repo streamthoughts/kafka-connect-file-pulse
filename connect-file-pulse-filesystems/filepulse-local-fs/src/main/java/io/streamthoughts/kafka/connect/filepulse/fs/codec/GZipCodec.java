@@ -19,9 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.codec;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,6 +30,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GZipCodec implements CodecHandler {
 

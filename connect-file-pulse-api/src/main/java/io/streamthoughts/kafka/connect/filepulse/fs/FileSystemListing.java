@@ -19,10 +19,9 @@
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.apache.kafka.common.Configurable;
-
 import java.util.Collection;
 import java.util.Map;
+import org.apache.kafka.common.Configurable;
 
 /**
  * The {@code FileSystemListing} is used to list the object files that exists under a specific file-system.

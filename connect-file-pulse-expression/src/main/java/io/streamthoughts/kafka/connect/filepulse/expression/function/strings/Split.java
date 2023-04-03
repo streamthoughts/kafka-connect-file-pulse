@@ -16,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.expression.function.strings;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
@@ -29,7 +28,6 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
-
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;

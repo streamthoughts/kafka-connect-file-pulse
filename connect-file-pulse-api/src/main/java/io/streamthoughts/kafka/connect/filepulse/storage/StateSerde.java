@@ -27,4 +27,3 @@ public interface StateSerde<T> {
 
     T deserialize(final byte[] configs);
 }
-

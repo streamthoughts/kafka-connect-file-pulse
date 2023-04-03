@@ -20,13 +20,12 @@ package io.streamthoughts.kafka.connect.filepulse.data.merger;
 
 import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
+import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;

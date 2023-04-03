@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.avro;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.Silent.unchecked;
+
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IteratorManager;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.ManagedFileInputIterator;
@@ -28,16 +30,13 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.common.utils.Time;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.Silent.unchecked;
 
 public class AvroDataFileIterator extends ManagedFileInputIterator<TypedStruct> {
 

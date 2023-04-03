@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.xml;
 
+import static java.util.Collections.singletonList;
+
 import io.streamthoughts.kafka.connect.filepulse.data.ArraySchema;
 import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
@@ -27,14 +29,6 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Attr;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.XMLConstants;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,8 +41,13 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static java.util.Collections.singletonList;
+import javax.xml.XMLConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Utility class to convert a {@link Node} object into {@link TypedStruct}.

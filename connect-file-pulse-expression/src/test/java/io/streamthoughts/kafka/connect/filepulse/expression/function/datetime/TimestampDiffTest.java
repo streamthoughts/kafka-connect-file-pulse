@@ -18,16 +18,15 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.expression.function.datetime;
 
+import static io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers.parseExpression;
+
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-
-import static io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers.parseExpression;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TimestampDiffTest {
 

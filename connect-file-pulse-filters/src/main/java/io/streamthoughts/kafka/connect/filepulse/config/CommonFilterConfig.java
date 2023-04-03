@@ -21,14 +21,13 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.ExpressionFilterCondition;
 import io.streamthoughts.kafka.connect.filepulse.filter.condition.FilterCondition;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
-import org.apache.kafka.common.config.AbstractConfig;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.kafka.common.config.AbstractConfig;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class CommonFilterConfig extends AbstractConfig {
 

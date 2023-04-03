@@ -16,13 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.expression.function;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.Expression;
-
 import java.util.Objects;
 
 public class ExpressionArgument extends GenericArgument {

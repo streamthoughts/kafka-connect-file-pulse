@@ -19,13 +19,12 @@
 package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.LocaleUtils;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class DateFilterConfig extends CommonFilterConfig {
 
@@ -135,4 +134,3 @@ public class DateFilterConfig extends CommonFilterConfig {
 
     }
 }
-

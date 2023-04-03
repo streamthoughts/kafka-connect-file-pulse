@@ -18,20 +18,19 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.apache.kafka.common.config.ConfigException;
-import org.junit.Assert;
-import org.junit.Test;
+import static io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig.AWS_S3_BUCKET_NAME_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig.AWS_S3_BUCKET_PREFIX_CONFIG;
 
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig.AWS_S3_BUCKET_NAME_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig.AWS_S3_BUCKET_PREFIX_CONFIG;
+import org.apache.kafka.common.config.ConfigException;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class AmazonS3FileSystemListingTest extends BaseAmazonS3Test {
 

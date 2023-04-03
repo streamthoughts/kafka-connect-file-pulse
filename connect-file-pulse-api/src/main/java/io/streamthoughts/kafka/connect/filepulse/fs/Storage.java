@@ -19,11 +19,10 @@
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.apache.kafka.common.Configurable;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
+import org.apache.kafka.common.Configurable;
 
 /**
  * The {@link Storage} class represents the principal interface to access and manipulate a object files.

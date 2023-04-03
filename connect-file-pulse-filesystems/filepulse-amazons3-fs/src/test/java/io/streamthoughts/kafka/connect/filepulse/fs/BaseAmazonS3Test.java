@@ -18,22 +18,19 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import com.amazonaws.services.s3.AmazonS3;
-import io.findify.s3mock.S3Mock;
-import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig;
-import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientUtils;
-import org.junit.After;
-import org.junit.Before;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
 import static io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig.AWS_ACCESS_KEY_ID_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig.AWS_S3_BUCKET_NAME_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig.AWS_S3_REGION_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig.AWS_SECRET_ACCESS_KEY_CONFIG;
+
+import com.amazonaws.services.s3.AmazonS3;
+import io.findify.s3mock.S3Mock;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import org.junit.After;
+import org.junit.Before;
 
 public class BaseAmazonS3Test {
 

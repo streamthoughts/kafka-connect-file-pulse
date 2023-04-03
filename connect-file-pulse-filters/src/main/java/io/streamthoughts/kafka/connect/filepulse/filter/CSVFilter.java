@@ -21,11 +21,10 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.ICSVParser;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
-
 import java.io.IOException;
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigException;
 
 public class CSVFilter extends AbstractDelimitedRowFilter<CSVFilter> {
 

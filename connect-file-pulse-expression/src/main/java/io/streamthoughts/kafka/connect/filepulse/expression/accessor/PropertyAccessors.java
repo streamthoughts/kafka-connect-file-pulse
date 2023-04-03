@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.accessor;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

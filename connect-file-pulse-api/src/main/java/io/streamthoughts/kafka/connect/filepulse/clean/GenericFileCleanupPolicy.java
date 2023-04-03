@@ -19,9 +19,8 @@
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.StorageAware;
-import org.apache.kafka.common.Configurable;
-
 import java.util.Map;
+import org.apache.kafka.common.Configurable;
 
 /**
  * Top level interface for cleanup policies.

@@ -18,21 +18,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.avro;
 
-import io.streamthoughts.kafka.connect.filepulse.data.Type;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericRecord;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiFunction;
-
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.bool;
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.float32;
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.float64;
@@ -40,6 +25,20 @@ import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.int32;
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.int64;
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.string;
 import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.struct;
+
+import io.streamthoughts.kafka.connect.filepulse.data.Type;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
+import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericRecord;
 
 /**
  * The {@link AvroTypedStructConverter} can be used to convert an avro object into a {@link TypedStruct}.

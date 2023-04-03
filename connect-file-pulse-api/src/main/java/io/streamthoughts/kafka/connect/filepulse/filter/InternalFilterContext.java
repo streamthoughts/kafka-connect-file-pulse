@@ -20,14 +20,13 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.internal.Environment;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.apache.kafka.connect.header.ConnectHeaders;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.kafka.connect.header.ConnectHeaders;
 
 /**
  * Simple {@link FilterContext} implementation class.
@@ -181,4 +180,3 @@ public class InternalFilterContext extends Environment implements FilterContext 
         return variables;
     }
 }
-

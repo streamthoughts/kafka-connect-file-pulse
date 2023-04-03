@@ -20,15 +20,14 @@ package io.streamthoughts.kafka.connect.filepulse.source.internal;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.Struct;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 class ConnectSchemaMapperTest {
 

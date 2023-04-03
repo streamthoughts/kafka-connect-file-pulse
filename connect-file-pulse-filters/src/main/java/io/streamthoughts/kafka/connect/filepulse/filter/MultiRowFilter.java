@@ -27,16 +27,15 @@ import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import io.streamthoughts.kafka.connect.transform.pattern.GrokMatcher;
 import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternCompiler;
 import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternResolver;
-import org.apache.kafka.common.config.ConfigDef;
-import org.joni.Matcher;
-import org.joni.Option;
-import org.joni.Regex;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
+import org.joni.Matcher;
+import org.joni.Option;
+import org.joni.Regex;
 
 public class MultiRowFilter extends AbstractRecordFilter<MultiRowFilter> {
 

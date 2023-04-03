@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.apache.kafka.connect.header.ConnectHeaders;
-
+import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import java.util.Map;
+import org.apache.kafka.connect.header.ConnectHeaders;
 
 /**
  * Default interface to expose contextual information to {@link RecordFilter}.

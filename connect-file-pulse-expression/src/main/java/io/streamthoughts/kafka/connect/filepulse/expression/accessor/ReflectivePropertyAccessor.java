@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.expression.accessor;
 
 import io.streamthoughts.kafka.connect.filepulse.expression.EvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.Converters;
-
 import java.lang.reflect.Method;
 import java.util.Objects;
 

@@ -19,11 +19,10 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class XmlToJsonFilterTest {
 

@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.clean;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-
 import java.util.List;
 
 /**

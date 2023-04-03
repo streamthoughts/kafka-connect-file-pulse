@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -25,18 +27,15 @@ import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import org.apache.kafka.common.config.ConfigException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
+import org.apache.kafka.common.config.ConfigException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@code AmazonS3FileSystemListing} that can be used for listing objects that exist in a specific Amazon S3 bucket.

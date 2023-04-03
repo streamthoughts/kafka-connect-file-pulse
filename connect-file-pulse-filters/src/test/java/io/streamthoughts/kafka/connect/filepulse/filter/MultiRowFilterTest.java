@@ -25,10 +25,6 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import io.streamthoughts.kafka.connect.transform.GrokConfig;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +35,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class MultiRowFilterTest {
 

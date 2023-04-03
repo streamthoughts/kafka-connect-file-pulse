@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.reader;
 import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.StorageProvider;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-
 import java.net.URI;
 
 public interface StorageAwareFileInputReader<T extends Storage> extends StorageProvider<T>, FileInputReader {

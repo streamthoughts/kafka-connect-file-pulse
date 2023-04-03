@@ -26,11 +26,10 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSerde;
-import org.apache.kafka.common.errors.SerializationException;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import org.apache.kafka.common.errors.SerializationException;
 
 /**
  */

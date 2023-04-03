@@ -18,9 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Map;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class JoinFilterConfig extends CommonFilterConfig {
 

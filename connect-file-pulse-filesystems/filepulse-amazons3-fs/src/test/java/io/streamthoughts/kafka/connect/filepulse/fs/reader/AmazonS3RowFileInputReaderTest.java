@@ -21,17 +21,11 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.BaseAmazonS3Test;
+import io.streamthoughts.kafka.connect.filepulse.fs.S3BucketKey;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
-import io.streamthoughts.kafka.connect.filepulse.fs.S3BucketKey;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +33,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class AmazonS3RowFileInputReaderTest extends BaseAmazonS3Test {
 

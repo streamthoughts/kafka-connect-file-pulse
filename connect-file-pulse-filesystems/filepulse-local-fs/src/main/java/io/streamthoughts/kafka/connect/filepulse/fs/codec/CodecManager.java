@@ -18,13 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.codec;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple class to manager {@link CodecHandler} handler.

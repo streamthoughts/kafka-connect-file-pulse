@@ -18,13 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
-import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.internal.TextBlock;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static io.streamthoughts.kafka.connect.filepulse.fs.reader.text.NonBlockingBufferReader.DEFAULT_INITIAL_CAPACITY;
 
+import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.internal.TextBlock;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,8 +31,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-
-import static io.streamthoughts.kafka.connect.filepulse.fs.reader.text.NonBlockingBufferReader.DEFAULT_INITIAL_CAPACITY;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class NonBlockingBufferReaderTest {
 

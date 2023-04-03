@@ -18,25 +18,24 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.clean;
 
+import static org.junit.Assert.assertTrue;
+
 import io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListingConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.LocalFileStorage;
-import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class LocalMoveCleanupPolicyTest {
 

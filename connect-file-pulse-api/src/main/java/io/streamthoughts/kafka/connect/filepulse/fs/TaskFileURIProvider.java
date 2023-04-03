@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import org.apache.kafka.common.Configurable;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import org.apache.kafka.common.Configurable;
 
 /**
  * Class that can be used to provide to {@link org.apache.kafka.connect.source.SourceTask}

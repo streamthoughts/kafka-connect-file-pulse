@@ -18,13 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.internal;
 
+import java.util.Map;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 class KafkaUtilsTest {
 

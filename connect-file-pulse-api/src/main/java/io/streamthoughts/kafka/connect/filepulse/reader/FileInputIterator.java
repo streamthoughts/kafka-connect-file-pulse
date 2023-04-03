@@ -18,9 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.reader;
 
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
-
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import java.util.Iterator;
 
 /**

@@ -21,14 +21,13 @@ package io.streamthoughts.kafka.connect.filepulse.fs;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.common.config.types.Password;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Utility class for creating new {@link BlobContainerClient} client.

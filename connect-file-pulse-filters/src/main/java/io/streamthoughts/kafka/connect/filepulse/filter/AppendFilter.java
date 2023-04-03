@@ -25,13 +25,12 @@ import io.streamthoughts.kafka.connect.filepulse.expression.PropertyExpression;
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParsers;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.apache.kafka.common.config.ConfigDef;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.kafka.common.config.ConfigDef;
 
 public class AppendFilter extends AbstractMergeRecordFilter<AppendFilter> {
 

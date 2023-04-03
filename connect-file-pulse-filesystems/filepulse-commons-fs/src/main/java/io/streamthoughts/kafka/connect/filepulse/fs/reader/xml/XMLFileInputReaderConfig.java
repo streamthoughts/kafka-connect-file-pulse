@@ -18,13 +18,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
 
-import io.streamthoughts.kafka.connect.filepulse.xml.XMLCommonConfig;
-import org.apache.kafka.common.config.ConfigDef;
-
-import javax.xml.xpath.XPathConstants;
-import java.util.Map;
-
 import static org.apache.kafka.common.config.ConfigDef.ValidString.in;
+
+import io.streamthoughts.kafka.connect.filepulse.xml.XMLCommonConfig;
+import java.util.Map;
+import javax.xml.xpath.XPathConstants;
+import org.apache.kafka.common.config.ConfigDef;
 
 /**
  *

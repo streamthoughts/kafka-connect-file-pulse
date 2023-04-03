@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.xml;
 
+import static io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord.DEFAULT_MESSAGE_FIELD;
+
 import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.IndexRecordOffset;
@@ -31,6 +33,15 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
 import io.streamthoughts.kafka.connect.filepulse.xml.XMLDocumentReader;
 import io.streamthoughts.kafka.connect.filepulse.xml.XMLNodeToStructConverter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import net.sf.saxon.lib.NamespaceConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,18 +50,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
-
-import javax.xml.namespace.QName;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
-
-import static io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord.DEFAULT_MESSAGE_FIELD;
 
 public class XMLFileInputIterator extends ManagedFileInputIterator<TypedStruct> {
 

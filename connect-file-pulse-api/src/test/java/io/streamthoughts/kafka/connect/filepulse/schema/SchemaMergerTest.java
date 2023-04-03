@@ -18,16 +18,15 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.schema;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import io.streamthoughts.kafka.connect.filepulse.data.DataException;
+import java.util.function.Function;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.function.Function;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class SchemaMergerTest {
 

@@ -18,11 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.data;
 
+import java.util.function.Function;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.concurrent.Callable;
-import java.util.function.Function;
 
 public class StructSchemaTest {
 

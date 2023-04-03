@@ -27,7 +27,6 @@ import io.streamthoughts.kafka.connect.filepulse.expression.accessor.TypedStruct
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.PrimitiveConverter;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.TypedValueConverter;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

@@ -24,7 +24,6 @@ import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-
 import java.net.URI;
 
 public class AzureBlobStorageAvroFileInputReader extends AzureBlobStorageInputReader {

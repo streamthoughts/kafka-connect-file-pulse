@@ -18,6 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
+import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_NAME_CONFIG;
+
 import io.streamthoughts.kafka.connect.filepulse.Version;
 import io.streamthoughts.kafka.connect.filepulse.config.SourceConnectorConfig;
 import io.streamthoughts.kafka.connect.filepulse.config.SourceTaskConfig;
@@ -28,14 +31,6 @@ import io.streamthoughts.kafka.connect.filepulse.fs.DelegateTaskFileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemMonitor;
 import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreAccess;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.connect.connector.Task;
-import org.apache.kafka.connect.errors.ConnectException;
-import org.apache.kafka.connect.source.SourceConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,9 +40,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_NAME_CONFIG;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigException;
+import org.apache.kafka.connect.connector.Task;
+import org.apache.kafka.connect.errors.ConnectException;
+import org.apache.kafka.connect.source.SourceConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The FilePulseSourceConnector.

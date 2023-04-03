@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.data.merger;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
-
 import java.util.Set;
 
 /**

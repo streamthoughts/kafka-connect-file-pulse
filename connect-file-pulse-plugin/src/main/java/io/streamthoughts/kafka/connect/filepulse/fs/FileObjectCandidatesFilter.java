@@ -23,9 +23,6 @@ import io.streamthoughts.kafka.connect.filepulse.internal.KeyValuePair;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectKey;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +31,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class which is used to determinate if a list of file can be processed.

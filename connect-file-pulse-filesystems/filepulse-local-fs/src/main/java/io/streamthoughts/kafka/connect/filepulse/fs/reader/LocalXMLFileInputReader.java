@@ -24,7 +24,6 @@ import io.streamthoughts.kafka.connect.filepulse.fs.reader.xml.XMLFileInputReade
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-
 import java.net.URI;
 import java.util.Map;
 

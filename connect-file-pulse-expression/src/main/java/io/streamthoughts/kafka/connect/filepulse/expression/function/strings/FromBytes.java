@@ -28,7 +28,6 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.Arguments;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.EvaluatedExecutionContext;
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunction;
 import io.streamthoughts.kafka.connect.filepulse.internal.Encoding;
-
 import java.util.Objects;
 
 public class FromBytes implements ExpressionFunction {

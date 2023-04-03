@@ -20,13 +20,8 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.DefaultTaskFileURIProvider;
-import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
 import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileURIProvider;
-import org.apache.kafka.common.config.AbstractConfig;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.connect.errors.ConnectException;
-
+import io.streamthoughts.kafka.connect.filepulse.reader.FileInputReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.kafka.common.config.AbstractConfig;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigException;
+import org.apache.kafka.connect.errors.ConnectException;
 
 /**
  *

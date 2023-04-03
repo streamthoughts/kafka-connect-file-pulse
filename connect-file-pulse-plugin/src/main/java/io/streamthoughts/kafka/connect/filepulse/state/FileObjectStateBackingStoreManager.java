@@ -24,14 +24,13 @@ import io.streamthoughts.kafka.connect.filepulse.state.internal.ResourceDisposer
 import io.streamthoughts.kafka.connect.filepulse.state.internal.ResourceInitializer;
 import io.streamthoughts.kafka.connect.filepulse.storage.KafkaStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@code StateBackingStoreManager} is used to manage {@link StateBackingStore} shared
@@ -154,4 +153,3 @@ public final class FileObjectStateBackingStoreManager {
         }
     }
 }
-

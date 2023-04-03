@@ -18,22 +18,21 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.clean;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.IOUtils.isAbsolute;
+
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListingConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.internal.IOUtils;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-import org.apache.kafka.common.config.AbstractConfig;
-import org.apache.kafka.common.config.ConfigDef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Map;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.IOUtils.isAbsolute;
+import org.apache.kafka.common.config.AbstractConfig;
+import org.apache.kafka.common.config.ConfigDef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Policy for moving atomically files to configurable target directories.

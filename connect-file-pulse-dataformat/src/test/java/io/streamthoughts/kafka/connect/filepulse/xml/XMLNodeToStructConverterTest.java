@@ -20,14 +20,13 @@ package io.streamthoughts.kafka.connect.filepulse.xml;
 
 import io.streamthoughts.kafka.connect.filepulse.data.FieldPaths;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.List;
 
 public class XMLNodeToStructConverterTest {
 

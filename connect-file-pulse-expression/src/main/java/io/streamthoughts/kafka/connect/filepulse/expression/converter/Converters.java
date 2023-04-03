@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.expression.converter;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;

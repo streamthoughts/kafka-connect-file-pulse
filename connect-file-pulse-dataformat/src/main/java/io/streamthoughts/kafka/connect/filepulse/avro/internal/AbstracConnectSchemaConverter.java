@@ -18,11 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.avro.internal;
 
+import java.util.Map;
 import org.apache.avro.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.errors.DataException;
-
-import java.util.Map;
 
 public abstract class AbstracConnectSchemaConverter implements ConnectSchemaConverter {
 

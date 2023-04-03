@@ -21,7 +21,6 @@ package io.streamthoughts.kafka.connect.filepulse.expression;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.Converters;
 import io.streamthoughts.kafka.connect.filepulse.expression.converter.PropertyConverter;
-
 import java.util.List;
 import java.util.Objects;
 

@@ -21,13 +21,12 @@ package io.streamthoughts.kafka.connect.filepulse.filter;
 import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.transform.GrokConfig;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class GrokFilterTest {
 

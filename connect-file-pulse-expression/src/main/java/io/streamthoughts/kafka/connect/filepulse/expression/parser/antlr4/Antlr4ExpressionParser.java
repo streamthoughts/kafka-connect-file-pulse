@@ -16,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.expression.parser.antlr4;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
@@ -31,6 +30,10 @@ import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionF
 import io.streamthoughts.kafka.connect.filepulse.expression.function.ExpressionFunctionExecutors;
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.ExpressionParser;
 import io.streamthoughts.kafka.connect.filepulse.expression.parser.ScELParseCancellationException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStream;
@@ -39,11 +42,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
 
 /**
  * {@link ExpressionParser} based on Antlr4 Lexer/Parser

@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 
 import com.jsoniter.annotation.JsonCreator;
 import com.jsoniter.annotation.JsonProperty;
-
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;

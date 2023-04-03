@@ -18,10 +18,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.schema;
 
-import org.apache.kafka.connect.data.Schema;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.kafka.connect.data.Schema;
 
 public class SchemaContext {
 

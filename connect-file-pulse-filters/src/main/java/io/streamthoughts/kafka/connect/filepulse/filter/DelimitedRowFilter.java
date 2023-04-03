@@ -19,11 +19,10 @@
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.utils.ConfigUtils;
-
 import java.util.Map;
 import java.util.regex.Pattern;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.utils.ConfigUtils;
 
 public class DelimitedRowFilter extends AbstractDelimitedRowFilter<DelimitedRowFilter> {
 

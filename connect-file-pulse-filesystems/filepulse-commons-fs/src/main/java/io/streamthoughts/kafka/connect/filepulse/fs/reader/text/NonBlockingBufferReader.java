@@ -19,10 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.text.internal.TextBlock;
-import org.apache.kafka.connect.errors.ConnectException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +27,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.kafka.connect.errors.ConnectException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link BufferedReader} wrapper to read lines in non-blocking way.
@@ -256,7 +255,8 @@ public class NonBlockingBufferReader implements AutoCloseable {
     }
 
     private TextBlock tryToExtractLine() {
-        int until = -1, newStart = -1;
+        int until = -1;
+        int newStart = -1;
         for (int i = 0; i < bufferOffset; i++) {
             if (buffer[i] == '\n') {
                 until = i;

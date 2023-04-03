@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
+
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -26,17 +28,14 @@ import com.azure.storage.blob.models.BlobListDetails;
 import com.azure.storage.blob.models.ListBlobsOptions;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@code AzureBlobStorageFileSystemListing} that can be used for listing objects

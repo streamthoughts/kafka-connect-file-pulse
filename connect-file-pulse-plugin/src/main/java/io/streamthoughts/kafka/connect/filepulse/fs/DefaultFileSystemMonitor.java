@@ -31,11 +31,6 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
-import org.apache.kafka.common.utils.Time;
-import org.apache.kafka.connect.connector.ConnectorContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +46,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+import org.apache.kafka.common.utils.Time;
+import org.apache.kafka.connect.connector.ConnectorContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default {@link FileSystemMonitor} that can be used to trigger file

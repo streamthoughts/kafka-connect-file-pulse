@@ -19,10 +19,9 @@
 package io.streamthoughts.kafka.connect.filepulse.offset;
 
 import io.streamthoughts.kafka.connect.filepulse.config.SourceConnectorConfig;
+import java.util.Map;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
-
-import java.util.Map;
 
 public class DefaultSourceOffsetPolicyConfig extends AbstractConfig {
 

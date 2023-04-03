@@ -20,10 +20,9 @@ package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Map;
 
 public class AmazonS3ClientUtilsTest{
 

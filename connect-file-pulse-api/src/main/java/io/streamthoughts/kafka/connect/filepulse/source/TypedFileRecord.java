@@ -18,22 +18,21 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.source;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
+
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.schema.SchemaMerger;
 import io.streamthoughts.kafka.connect.filepulse.source.internal.ConnectSchemaMapper;
 import io.streamthoughts.kafka.connect.filepulse.source.internal.InternalSourceRecordBuilder;
-import org.apache.kafka.connect.data.Schema;
-import org.apache.kafka.connect.header.ConnectHeaders;
-import org.apache.kafka.connect.source.SourceRecord;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
+import org.apache.kafka.connect.data.Schema;
+import org.apache.kafka.connect.header.ConnectHeaders;
+import org.apache.kafka.connect.source.SourceRecord;
 
 public class TypedFileRecord extends AbstractFileRecord<TypedStruct> {
 

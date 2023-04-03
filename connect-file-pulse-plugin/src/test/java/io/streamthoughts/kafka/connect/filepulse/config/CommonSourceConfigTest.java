@@ -19,11 +19,10 @@
 package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader;
+import java.util.HashMap;
 import org.apache.kafka.connect.data.Schema;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.HashMap;
 
 public class CommonSourceConfigTest {
 

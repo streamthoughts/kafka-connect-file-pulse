@@ -22,12 +22,11 @@ import io.streamthoughts.kafka.connect.filepulse.errors.ConnectFilePulseExceptio
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
-import org.apache.kafka.connect.source.SourceTaskContext;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.apache.kafka.connect.source.SourceTaskContext;
 
 public abstract class AbstractSourceOffsetPolicy implements SourceOffsetPolicy {
 

@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
+
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.PredefinedClientConfigurations;
 import com.amazonaws.auth.AWSCredentials;
@@ -32,13 +34,9 @@ import com.amazonaws.retry.RetryPolicy;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import java.util.Optional;
-
-import static io.streamthoughts.kafka.connect.filepulse.internal.StringUtils.isNotBlank;
 
 /**
  * Utility class for creating new {@link AmazonS3} client.

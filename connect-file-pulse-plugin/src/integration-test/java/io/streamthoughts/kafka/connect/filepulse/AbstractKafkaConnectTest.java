@@ -18,6 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse;
 
+import static org.testcontainers.containers.wait.strategy.Wait.forHttp;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -28,8 +30,6 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-
-import static org.testcontainers.containers.wait.strategy.Wait.forHttp;
 
 @Testcontainers
 public class AbstractKafkaConnectTest {

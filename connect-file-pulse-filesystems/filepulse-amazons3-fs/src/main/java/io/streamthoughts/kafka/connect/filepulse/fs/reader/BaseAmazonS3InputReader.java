@@ -20,14 +20,13 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
 import com.amazonaws.services.s3.AmazonS3;
 import io.streamthoughts.kafka.connect.filepulse.annotation.VisibleForTesting;
-import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientConfig;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3ClientUtils;
+import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3Storage;
 import io.streamthoughts.kafka.connect.filepulse.reader.StorageAwareFileInputReader;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * The {@code BaseAmazonS3InputReader} provides the {@link AmazonS3Storage}.

@@ -23,12 +23,6 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
-import org.apache.kafka.common.config.ConfigDef;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
-import org.json.XMLParserConfiguration;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -36,6 +30,11 @@ import java.io.StringReader;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import org.apache.kafka.common.config.ConfigDef;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
+import org.json.XMLParserConfiguration;
 
 public class XmlToJsonFilter extends AbstractMergeRecordFilter<XmlToJsonFilter> {
 

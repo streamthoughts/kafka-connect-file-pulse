@@ -20,10 +20,9 @@ package io.streamthoughts.kafka.connect.filepulse.expression.accessor;
 
 
 import io.streamthoughts.kafka.connect.filepulse.expression.StandardEvaluationContext;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Map;
 
 public class MapAdaptablePropertyAccessorTest {
 

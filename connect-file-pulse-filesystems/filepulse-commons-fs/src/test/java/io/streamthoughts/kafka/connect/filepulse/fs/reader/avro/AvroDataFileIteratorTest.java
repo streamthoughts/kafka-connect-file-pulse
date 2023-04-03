@@ -24,7 +24,6 @@ import io.streamthoughts.kafka.connect.filepulse.internal.Silent;
 import io.streamthoughts.kafka.connect.filepulse.reader.FileInputIterator;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-
 import java.io.File;
 
 public class AvroDataFileIteratorTest extends BaseAvroDataIteratorTest {

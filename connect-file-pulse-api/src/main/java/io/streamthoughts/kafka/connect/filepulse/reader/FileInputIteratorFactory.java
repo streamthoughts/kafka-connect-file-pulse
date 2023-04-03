@@ -20,7 +20,6 @@ package io.streamthoughts.kafka.connect.filepulse.reader;
 
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
-
 import java.net.URI;
 
 /**

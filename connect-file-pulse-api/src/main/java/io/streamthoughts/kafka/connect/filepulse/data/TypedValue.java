@@ -19,7 +19,6 @@
 package io.streamthoughts.kafka.connect.filepulse.data;
 
 import io.streamthoughts.kafka.connect.filepulse.data.internal.TypeConverter;
-
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Date;

@@ -23,30 +23,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
-public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
+public final class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
 
     private static final String GROUP = "KafkaFileObjectStateBackingStore";
 
-    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_CONFIG = "tasks.file.status.storage.topic";
+    public static final String TASKS_FILE_STATUS_STORAGE_PREFIX = "tasks.file.status.storage.";
+
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_CONFIG = TASKS_FILE_STATUS_STORAGE_PREFIX + "topic";
     private static final String TASKS_FILE_STATUS_STORAGE_TOPIC_DOC = "The topic name which is used to report file states.";
     private static final String TASKS_FILE_STATUS_STORAGE_TOPIC_DEFAULT = "connect-file-pulse-status";
 
-    public static final String TASKS_FILE_STATUS_STORAGE_NAME_CONFIG = "tasks.file.status.storage.name";
+    public static final String TASKS_FILE_STATUS_STORAGE_NAME_CONFIG = TASKS_FILE_STATUS_STORAGE_PREFIX + "name";
     private static final String TASKS_FILE_STATUS_STORAGE_NAME_DOC = "The reporter identifier to be used by tasks and connector to report and monitor file progression.";
 
-    public static final String TASKS_FILE_STATUS_STORAGE_BOOTSTRAP_SERVERS_CONFIG = "tasks.file.status.storage.bootstrap.servers";
+    public static final String TASKS_FILE_STATUS_STORAGE_BOOTSTRAP_SERVERS_CONFIG = TASKS_FILE_STATUS_STORAGE_PREFIX + CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 
-    public static final String TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG = "tasks.file.status.storage.consumer.enabled";
+    public static final String TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_CONFIG = TASKS_FILE_STATUS_STORAGE_PREFIX + "consumer.enabled";
     public static final String TASKS_FILE_STATUS_STORAGE_CONSUMER_ENABLED_DOC = "Boolean to indicate if the storage should consume the status topic.";
 
-    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_CONFIG = "tasks.file.status.storage.topic.partitions";
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_CONFIG = TASKS_FILE_STATUS_STORAGE_PREFIX + "topic.partitions";
     public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_PARTITIONS_DOC = "The number of partitions to be used for the status storage topic.";
 
-    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_CONFIG = "tasks.file.status.storage.topic.replication.factor";
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_CONFIG = TASKS_FILE_STATUS_STORAGE_PREFIX + "topic.replication.factor";
     public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_DOC = "The replication factor to be used for the status storage topic.";
 
     /**
@@ -72,21 +73,21 @@ public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
 
     public Map<String, Object> getConsumerTaskStorageConfigs() {
         final Map<String, Object> configs = new HashMap<>();
-        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
+        configs.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
         configs.putAll(getInternalKafkaConsumerConfigs());
         return configs;
     }
 
     public Map<String, Object> getProducerTaskStorageConfigs() {
         final Map<String, Object> configs = new HashMap<>();
-        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
+        configs.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
         configs.putAll(getInternalKafkaProducerConfigs());
         return configs;
     }
 
     public Map<String, Object> getAdminClientTaskStorageConfigs() {
         final Map<String, Object> configs = new HashMap<>();
-        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
+        configs.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, getInternalBootstrapServers());
         configs.putAll(getInternalKafkaAdminClientConfigs());
         return configs;
     }
@@ -96,21 +97,24 @@ public class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig {
     }
 
     private Map<String, Object> getInternalKafkaAdminClientConfigs() {
-        Map<String, Object> consumerConfigs = KafkaUtils.getAdminClientConfigs(originals());
-        consumerConfigs.putAll(originalsWithPrefix("tasks.file.status.storage.admin."));
-        return consumerConfigs;
+        Map<String, Object> originals = originalsWithPrefix(TASKS_FILE_STATUS_STORAGE_PREFIX, true);
+        Map<String, Object> adminClientConfigs = new HashMap<>(originals);
+        adminClientConfigs.putAll(originalsWithPrefix(TASKS_FILE_STATUS_STORAGE_PREFIX + "admin."));
+        return KafkaUtils.getAdminClientConfigs(originals);
     }
 
     private Map<String, Object> getInternalKafkaConsumerConfigs() {
-        Map<String, Object> consumerConfigs = KafkaUtils.getConsumerConfigs(originals());
-        consumerConfigs.putAll(originalsWithPrefix("tasks.file.status.storage.consumer."));
-        return consumerConfigs;
+        Map<String, Object> originals = originalsWithPrefix(TASKS_FILE_STATUS_STORAGE_PREFIX, true);
+        Map<String, Object> consumerConfigs = new HashMap<>(originals);
+        consumerConfigs.putAll(originalsWithPrefix(TASKS_FILE_STATUS_STORAGE_PREFIX + "consumer."));
+        return KafkaUtils.getConsumerConfigs(consumerConfigs);
     }
 
     private Map<String, Object> getInternalKafkaProducerConfigs() {
-        Map<String, Object> producerConfigs = KafkaUtils.getProducerConfigs(originals());
-        producerConfigs.putAll(originalsWithPrefix("tasks.file.status.storage.producer."));
-        return producerConfigs;
+        Map<String, Object> originals = originalsWithPrefix(TASKS_FILE_STATUS_STORAGE_PREFIX, true);
+        Map<String, Object> producerConfigs = new HashMap<>(originals);
+        producerConfigs.putAll(originalsWithPrefix(TASKS_FILE_STATUS_STORAGE_PREFIX + "producer."));
+        return KafkaUtils.getProducerConfigs(producerConfigs);
     }
 
     Optional<Integer> getTopicPartitions() {

@@ -5,7 +5,7 @@
 [![Forks](https://img.shields.io/github/forks/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/github/forks/streamthoughts/kafka-connect-file-pulse)
 [![DockerPull](https://img.shields.io/docker/pulls/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/docker/pulls/streamthoughts/kafka-connect-file-pulse)
 [![Issues](https://img.shields.io/github/issues/streamthoughts/kafka-connect-file-pulse)](https://img.shields.io/github/issues/streamthoughts/kafka-connect-file-pulse)
-![Java CI Build](https://github.com/streamthoughts/kafka-connect-file-pulse/actions/workflows/build.yml/badge.svg)
+![Main Build](https://github.com/streamthoughts/kafka-connect-file-pulse/actions/workflows/main.yml/badge.svg)
 
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=streamthoughts_kafka-connect-file-pulse)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=streamthoughts_kafka-connect-file-pulse&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=streamthoughts_kafka-connect-file-pulse)

@@ -159,6 +159,23 @@ public class DelimitedRowFilterTest {
     }
 
     @Test
+    public void should_use_configured_schema_when_field_names_out_of_order() {
+        configs.put(READER_FIELD_COLUMNS_CONFIG, "x1:STRING;c2:INTEGER;y3:BOOLEAN");
+        filter.configure(configs, alias -> null);
+        RecordsIterable<TypedStruct> output = filter.apply(null, DEFAULT_STRUCT, false);
+        Assert.assertNotNull(output);
+        Assert.assertEquals(1, output.size());
+
+        final TypedStruct record = output.iterator().next();
+        Assert.assertEquals(Type.STRING, record.get("x1").type());
+        Assert.assertEquals(Type.INTEGER, record.get("c2").type());
+        Assert.assertEquals(Type.BOOLEAN, record.get("y3").type());
+        Assert.assertEquals("value1", record.getString("x1"));
+        Assert.assertEquals(2, record.getInt("c2").intValue());
+        Assert.assertTrue(record.getBoolean("y3"));
+    }
+
+    @Test
     public void should_only_convert_non_empty_values_given_schema() {
         // Given
         configs.put(READER_FIELD_COLUMNS_CONFIG, "c1:STRING;c2:INTEGER;c3:BOOLEAN");

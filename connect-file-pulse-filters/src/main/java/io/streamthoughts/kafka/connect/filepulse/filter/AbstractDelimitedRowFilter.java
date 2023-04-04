@@ -75,7 +75,7 @@ public abstract class AbstractDelimitedRowFilter<T extends AbstractRecordFilter<
 
         this.schema = this.configs.schema();
         if (schema != null) {
-            final List<TypedField> fields = schema.fields();
+            final List<TypedField> fields = schema.fieldsByIndex();
             IntStream.range(0, fields.size()).forEach(i -> columnsTypesByIndex.put(i, fields.get(i)));
         }
     }

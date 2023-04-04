@@ -110,6 +110,15 @@ public class StructSchema implements Schema, Iterable<TypedField> {
         return ordered;
     }
 
+    public List<TypedField> fieldsByIndex() {
+        ArrayList<TypedField> ordered = new ArrayList<>(fields.values());
+        // order elements in array to match field column index
+        for (TypedField field: fields.values()) {
+            ordered.add(field.index(),field);
+        }
+        return ordered;
+    }
+
     void set(final String fieldName, final Schema fieldSchema) {
         if (fieldName == null || fieldName.isEmpty()) {
             throw new DataException("fieldName cannot be null.");

@@ -111,7 +111,7 @@
         <sonar.java.source>${java.version}</sonar.java.source>
         <sonar.language>java</sonar.language>
         <license.header.file>${project.basedir}/license-header</license.header.file>
-        <spotless.version>2.35.0</spotless.version>
+        <spotless.version>2.36.0</spotless.version>
     </properties>
 
     <repositories>

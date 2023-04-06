@@ -114,4 +114,35 @@ class KafkaFileObjectStateBackingStoreConfigTest {
         Assertions.assertNotNull(producerConfigs.get(ProducerConfig.ACKS_CONFIG));
     }
 
+    @Test
+    void should_return_topic_creation_disable_configs_given_false_props() {
+        // GIVEN
+        var config = new KafkaFileObjectStateBackingStoreConfig(Map.of(
+                KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_NAME_CONFIG, "???",
+                KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_BOOTSTRAP_SERVERS_CONFIG, "???",
+                KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_TOPIC_CREATION_ENABLE_CONFIG, false
+        ));
+
+        // WHEN
+        boolean enable = config.isTopicCreationEnable();
+
+        // THEN
+        Assertions.assertFalse(enable);
+    }
+
+    @Test
+    void should_return_topic_creation_enable_configs_given_true_props() {
+        // GIVEN
+        var config = new KafkaFileObjectStateBackingStoreConfig(Map.of(
+                KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_NAME_CONFIG, "???",
+                KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_BOOTSTRAP_SERVERS_CONFIG, "???",
+                KafkaFileObjectStateBackingStoreConfig.TASKS_FILE_STATUS_STORAGE_TOPIC_CREATION_ENABLE_CONFIG, true
+        ));
+
+        // WHEN
+        boolean enable = config.isTopicCreationEnable();
+
+        // THEN
+        Assertions.assertTrue(enable);
+    }
 }

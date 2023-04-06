@@ -62,15 +62,17 @@ public class KafkaFileObjectStateBackingStore implements FileObjectStateBackingS
                 config.getTaskStorageConsumerEnabled()
         );
 
-        try (AdminClient client = AdminClient.create(config.getAdminClientTaskStorageConfigs())) {
-            Map<String, String> topicConfig = new HashMap<>();
-            topicConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
-            final NewTopic newTopic = new NewTopic(
-                config.getTaskStorageTopic(),
-                config.getTopicPartitions(),
-                config.getReplicationFactor()
-            ).configs(topicConfig);
-            createTopic(client, newTopic);
+        if (config.isTopicCreationEnable()) {
+            try (AdminClient client = AdminClient.create(config.getAdminClientTaskStorageConfigs())) {
+                Map<String, String> topicConfig = new HashMap<>();
+                topicConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
+                final NewTopic newTopic = new NewTopic(
+                        config.getTaskStorageTopic(),
+                        config.getTopicPartitions(),
+                        config.getReplicationFactor()
+                ).configs(topicConfig);
+                createTopic(client, newTopic);
+            }
         }
     }
 

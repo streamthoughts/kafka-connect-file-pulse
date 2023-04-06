@@ -62,7 +62,7 @@ public class KafkaStateBackingStore<T> implements StateBackingStore<T> {
      * @param groupId   the group attached to the backing topic (i.e., the connector-name).
      * @param producerProps   the kafka producer properties.
      * @param consumerProps   the kafka consumer properties.
-     * @param serde     the state serdes.
+     * @param serde     the {@link StateSerde}.
      */
     public KafkaStateBackingStore(final String topic,
                                   final String keyPrefix,

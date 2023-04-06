@@ -50,6 +50,10 @@ public final class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig
     public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_CONFIG = TASKS_FILE_STATUS_STORAGE_PREFIX + "topic.replication.factor";
     public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_DOC = "The replication factor to be used for the status storage topic.";
 
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_CREATION_ENABLE_CONFIG = TASKS_FILE_STATUS_STORAGE_PREFIX + "topic.creation.enable";
+    public static final String TASKS_FILE_STATUS_STORAGE_TOPIC_CREATION_ENABLE_DOC = "Boolean to indicate if the status storage topic should be automatically created.";
+
+
     /**
      * Creates a new {@link KafkaFileObjectStateBackingStoreConfig} instance.
      *
@@ -69,6 +73,9 @@ public final class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig
 
     public String getTaskStorageName() {
         return this.getString(TASKS_FILE_STATUS_STORAGE_NAME_CONFIG);
+    }
+    public boolean isTopicCreationEnable() {
+        return this.getBoolean(TASKS_FILE_STATUS_STORAGE_TOPIC_CREATION_ENABLE_CONFIG);
     }
 
     public Map<String, Object> getConsumerTaskStorageConfigs() {
@@ -100,7 +107,7 @@ public final class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig
         Map<String, Object> originals = originalsWithPrefix(TASKS_FILE_STATUS_STORAGE_PREFIX, true);
         Map<String, Object> adminClientConfigs = new HashMap<>(originals);
         adminClientConfigs.putAll(originalsWithPrefix(TASKS_FILE_STATUS_STORAGE_PREFIX + "admin."));
-        return KafkaUtils.getAdminClientConfigs(originals);
+        return KafkaUtils.getAdminClientConfigs(adminClientConfigs);
     }
 
     private Map<String, Object> getInternalKafkaConsumerConfigs() {
@@ -148,6 +155,17 @@ public final class KafkaFileObjectStateBackingStoreConfig extends AbstractConfig
                         groupCounter++,
                         ConfigDef.Width.NONE,
                         TASKS_FILE_STATUS_STORAGE_BOOTSTRAP_SERVERS_CONFIG
+                )
+                .define(
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_CREATION_ENABLE_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        true,
+                        ConfigDef.Importance.HIGH,
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_CREATION_ENABLE_DOC,
+                        GROUP,
+                        groupCounter++,
+                        ConfigDef.Width.NONE,
+                        TASKS_FILE_STATUS_STORAGE_TOPIC_CREATION_ENABLE_CONFIG
                 )
                 .define(
                         TASKS_FILE_STATUS_STORAGE_TOPIC_REPLICATION_FACTOR_CONFIG,

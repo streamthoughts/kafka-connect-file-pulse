@@ -100,7 +100,7 @@
         <com.fasterxml.jackson.core.version>2.14.2</com.fasterxml.jackson.core.version>
         <com.fasterxml.jackson.annotations.version>2.14.2</com.fasterxml.jackson.annotations.version>
         <slf4j.version>2.0.7</slf4j.version>
-        <spotbugs.maven.plugin.version>4.7.3.3</spotbugs.maven.plugin.version>
+        <spotbugs.maven.plugin.version>4.7.3.4</spotbugs.maven.plugin.version>
         <jacoco.version>0.8.9</jacoco.version>
         <sonar.organization>streamthoughts</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>

@@ -18,6 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.storage;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,6 +26,10 @@ import java.util.Objects;
  *
  */
 public class StateSnapshot<T> {
+
+    public static <T> StateSnapshot<T> empty() {
+        return new StateSnapshot<>(-1, Collections.emptyMap());
+    }
 
     private final long offset;
 

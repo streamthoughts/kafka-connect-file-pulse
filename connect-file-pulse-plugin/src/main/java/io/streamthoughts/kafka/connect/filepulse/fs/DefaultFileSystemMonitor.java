@@ -60,8 +60,6 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultFileSystemMonitor.class);
 
-    private static final Duration ON_START_READ_END_LOG_TIMEOUT = Duration.ofSeconds(30);
-    private static final Duration DEFAULT_READ_END_LOG_TIMEOUT = Duration.ofSeconds(5);
     private static final int MAX_SCHEDULE_ATTEMPTS = 3;
 
     private final FileSystemListing<?> fsListing;
@@ -99,12 +97,16 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
     private final TaskFileOrder taskFileOrder;
 
+    private Duration stateInitialReadTimeout = Duration.ofMinutes(5);
+
+    private Duration stateDefaultReadTimeout = Duration.ofSeconds(5);
+
     /**
      * Creates a new {@link DefaultFileSystemMonitor} instance.
      *
      * @param allowTasksReconfigurationAfterTimeoutMs {@code true} to allow tasks reconfiguration after a timeout.
      * @param fsListening                             the {@link FileSystemListing} to be used for listing object files.
-     * @param cleanPolicy                                 the {@link GenericFileCleanupPolicy} to be used for cleaning object files.
+     * @param cleanPolicy                             the {@link GenericFileCleanupPolicy} to be used for cleaning object files.
      * @param offsetPolicy                            the {@link SourceOffsetPolicy} to be used computing offset for object fileS.
      * @param store                                   the {@link StateBackingStore} used for storing object file cursor.
      */
@@ -162,9 +164,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     final FileObjectMeta removed = scheduled.remove(objectId);
                     if (removed == null && status.isOneOf(FileObjectStatus.CLEANED)) {
                         LOG.debug(
-                            "Received cleaned status but no object-file currently scheduled for: '{}'. " +
-                            "This warn should only occurred during recovering step",
-                            key
+                                "Received cleaned status but no object-file currently scheduled for: '{}'. " +
+                                        "This warn should only occurred during recovering step",
+                                key
                         );
                     }
                 }
@@ -177,23 +179,29 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     "with tasks processing files is already started. You can ignore that warning if the connector " +
                     " is recovering from a crash or resuming after being paused.");
         }
-        readStatesToEnd(ON_START_READ_END_LOG_TIMEOUT);
-        recoverPreviouslyCompletedSources();
-        // Trigger a cleanup during initialization to ensure that all cleanable
-        // object-files are eventually removed before scheduling any tasks.
-        cleanUpCompletedFiles();
+
+        if (readStatesToEnd(stateInitialReadTimeout)) {
+            recoverPreviouslyCompletedSources();
+            // Trigger a cleanup during initialization to ensure that all cleanable
+            // object-files are eventually removed before scheduling any tasks.
+            cleanUpCompletedFiles();
+        } else {
+            LOG.warn("Cannot recover completed files from previous execution. State is empty.");
+        }
         LOG.info("Initialized FileSystemMonitor");
     }
 
     private void recoverPreviouslyCompletedSources() {
-        LOG.info("Recovering completed files from a previous execution");
-        fileState.states()
-                .entrySet()
-                .stream()
-                .map(it -> it.getValue().withKey(FileObjectKey.of(it.getKey())))
-                .filter(it -> cleanablePredicate.test(it.status()))
-                .forEach(cleanable::add);
-        LOG.info("Finished recovering previously completed files : {}", cleanable);
+        if (fileState != null && !fileState.states().isEmpty()) {
+            LOG.info("Recovering completed files from a previous execution");
+            fileState.states()
+                    .entrySet()
+                    .stream()
+                    .map(it -> it.getValue().withKey(FileObjectKey.of(it.getKey())))
+                    .filter(it -> cleanablePredicate.test(it.status()))
+                    .forEach(cleanable::add);
+            LOG.info("Finished recovering completed files from previous execution: {}", cleanable);
+        }
     }
 
     private boolean readStatesToEnd(final Duration timeout) {
@@ -202,12 +210,21 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             fileState = store.snapshot();
             LOG.debug(
                     "Finished reading to end of log and updated states snapshot, new states log position: {}",
-                    fileState.offset());
+                    fileState.offset()
+            );
             return true;
         } catch (TimeoutException e) {
             LOG.warn("Failed to reach end of states log quickly enough", e);
             return false;
         }
+    }
+
+    public void setStateInitialReadTimeout(final Duration stateInitialReadTimeout) {
+        this.stateInitialReadTimeout = stateInitialReadTimeout;
+    }
+
+    public void setStateDefaultReadTimeout(final Duration stateDefaultReadTimeout) {
+        this.stateDefaultReadTimeout = stateDefaultReadTimeout;
     }
 
     /**
@@ -267,13 +284,13 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         final boolean noScheduledFiles = scheduled.isEmpty();
         if (!noScheduledFiles && allowTasksReconfigurationAfterTimeoutMs == Long.MAX_VALUE) {
             LOG.info(
-                "Scheduled files still being processed: {}. Skip filesystem listing while waiting for tasks completion",
-                scheduled.size()
+                    "Scheduled files still being processed: {}. Skip filesystem listing while waiting for tasks completion",
+                    scheduled.size()
             );
             return false;
         }
 
-        boolean toEnd = readStatesToEnd(DEFAULT_READ_END_LOG_TIMEOUT);
+        boolean toEnd = readStatesToEnd(stateDefaultReadTimeout);
         if (noScheduledFiles && !toEnd) {
             LOG.warn("Failed to read state changelog. Skip filesystem listing due to timeout");
             return false;
@@ -315,7 +332,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
             if (timeout > 0) {
                 LOG.info(
                         "Scheduled files still being processed ({}) but new files detected. " +
-                        "Waiting for {} ms before allowing task reconfiguration",
+                                "Waiting for {} ms before allowing task reconfiguration",
                         scheduled.size(),
                         timeout
                 );
@@ -372,13 +389,13 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 do {
                     changed.set(false);
                     LOG.info(
-                        "Preparing next scheduling using the object files found during last iteration (attempt={}/{}).",
-                        attempts + 1,
-                        MAX_SCHEDULE_ATTEMPTS
+                            "Preparing next scheduling using the object files found during last iteration (attempt={}/{}).",
+                            attempts + 1,
+                            MAX_SCHEDULE_ATTEMPTS
                     );
                     // Try to read states to end to make sure we do not attempt
                     // to schedule an object file that has been cleanup.
-                    final boolean toEnd = readStatesToEnd(DEFAULT_READ_END_LOG_TIMEOUT);
+                    final boolean toEnd = readStatesToEnd(stateDefaultReadTimeout);
                     if (!toEnd) {
                         LOG.warn("Failed to read state changelog while scheduling object files. Timeout.");
                     }
@@ -400,8 +417,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     if (changed.get()) {
                         if (attempts == MAX_SCHEDULE_ATTEMPTS) {
                             LOG.warn(
-                                "Failed to prepare the object files after attempts: {}.",
-                                MAX_SCHEDULE_ATTEMPTS
+                                    "Failed to prepare the object files after attempts: {}.",
+                                    MAX_SCHEDULE_ATTEMPTS
                             );
                             // Make sure to clear the schedule list before returning.
                             scheduled.clear();
@@ -415,8 +432,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
             if (partitions.isEmpty()) {
                 LOG.warn(
-                    "Filesystem could not be scanned quickly enough, " +
-                    "or no object file was detected after starting the connector."
+                        "Filesystem could not be scanned quickly enough, " +
+                                "or no object file was detected after starting the connector."
                 );
             }
             return taskFileOrder.sort(partitions);
@@ -434,7 +451,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         if (running.compareAndSet(true, false)) {
             try {
                 LOG.info("Closing FileSystemMonitor resources");
-                readStatesToEnd(DEFAULT_READ_END_LOG_TIMEOUT);
+                readStatesToEnd(stateDefaultReadTimeout);
                 cleanUpCompletedFiles();
                 LOG.info("Closed FileSystemMonitor resources");
             } catch (final Exception e) {

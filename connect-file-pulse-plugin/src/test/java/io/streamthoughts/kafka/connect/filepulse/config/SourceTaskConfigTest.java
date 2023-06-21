@@ -18,18 +18,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import io.streamthoughts.kafka.connect.filepulse.MockFileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter;
 import io.streamthoughts.kafka.connect.filepulse.filter.RecordFilter;
 import io.streamthoughts.kafka.connect.filepulse.fs.DefaultTaskFileURIProvider;
-import io.streamthoughts.kafka.connect.filepulse.fs.FileListFilter;
-import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
-import io.streamthoughts.kafka.connect.filepulse.fs.Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.reader.LocalRowFileInputReader;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -55,28 +50,5 @@ public class SourceTaskConfigTest {
         final List<RecordFilter> filters = config.filters();
         Assert.assertEquals(1, filters.size());
         Assert.assertNotNull(filters.get(0).onFailure());
-    }
-
-    static class MockFileSystemListing implements FileSystemListing {
-
-        @Override
-        public void configure(Map configs) {
-
-        }
-
-        @Override
-        public Collection<FileObjectMeta> listObjects() {
-            return null;
-        }
-
-        @Override
-        public void setFilter(FileListFilter filter) {
-
-        }
-
-        @Override
-        public Storage storage() {
-            return null;
-        }
     }
 }

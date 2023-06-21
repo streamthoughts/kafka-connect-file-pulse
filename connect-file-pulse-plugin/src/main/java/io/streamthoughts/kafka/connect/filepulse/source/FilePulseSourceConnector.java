@@ -31,6 +31,7 @@ import io.streamthoughts.kafka.connect.filepulse.fs.DelegateTaskFileURIProvider;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemListing;
 import io.streamthoughts.kafka.connect.filepulse.fs.FileSystemMonitor;
 import io.streamthoughts.kafka.connect.filepulse.state.StateBackingStoreAccess;
+import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ public class FilePulseSourceConnector extends SourceConnector {
 
     private SourceConnectorConfig connectorConfig;
 
-    private FileSystemMonitor monitor;
+    private FileSystemMonitor fsMonitor;
 
     private String connectorGroupName;
 
@@ -110,22 +111,8 @@ public class FilePulseSourceConnector extends SourceConnector {
             );
 
             partitioner = connectorConfig.getTaskPartitioner();
-
-            final FileSystemListing<?> fileSystemListing = connectorConfig.getFileSystemListing();
-            fileSystemListing.setFilter(new CompositeFileListFilter(connectorConfig.getFileSystemListingFilter()));
-
-            monitor = new DefaultFileSystemMonitor(
-                    connectorConfig.allowTasksReconfigurationAfterTimeoutMs(),
-                    fileSystemListing,
-                    connectorConfig.getFsCleanupPolicy(),
-                    connectorConfig.getFsCleanupPolicyPredicate(),
-                    connectorConfig.getSourceOffsetPolicy(),
-                    sharedStore.get().getResource(),
-                    connectorConfig.getTaskFilerOrder()
-            );
-
-            monitor.setFileSystemListingEnabled(!connectorConfig.isFileListingTaskDelegationEnabled());
-            fsMonitorThread = new FileSystemMonitorThread(context, monitor, connectorConfig.getListingInterval());
+            fsMonitor = createFileSystemMonitor(connectorConfig, sharedStore.get().getResource());
+            fsMonitorThread = new FileSystemMonitorThread(context, fsMonitor, connectorConfig.getListingInterval());
             fsMonitorThread.setUncaughtExceptionHandler((t, e) -> {
                 LOG.info("Uncaught error from file system monitoring thread [{}]", t.getName(), e);
                 context.raiseError(new ConnectException("Unexpected error from FileSystemMonitorThread", e));
@@ -136,6 +123,29 @@ public class FilePulseSourceConnector extends SourceConnector {
             closeResources();
             throw e;
         }
+    }
+
+    private FileSystemMonitor createFileSystemMonitor(final SourceConnectorConfig connectorConfig,
+                                                      final StateBackingStore<FileObject> store) {
+
+        final FileSystemListing<?> fileSystemListing = connectorConfig.getFileSystemListing();
+        fileSystemListing.setFilter(new CompositeFileListFilter(connectorConfig.getFileSystemListingFilter()));
+
+        DefaultFileSystemMonitor monitor = new DefaultFileSystemMonitor(
+                connectorConfig.allowTasksReconfigurationAfterTimeoutMs(),
+                fileSystemListing,
+                connectorConfig.getFsCleanupPolicy(),
+                connectorConfig.getFsCleanupPolicyPredicate(),
+                connectorConfig.getSourceOffsetPolicy(),
+                store,
+                connectorConfig.getTaskFilerOrder()
+        );
+
+        monitor.setStateDefaultReadTimeout(connectorConfig.getStateDefaultReadTimeoutMs());
+        monitor.setStateInitialReadTimeout(connectorConfig.getStateInitialReadTimeoutMs());
+        monitor.setFileSystemListingEnabled(!connectorConfig.isFileListingTaskDelegationEnabled());
+
+        return monitor;
     }
 
     /**
@@ -194,7 +204,7 @@ public class FilePulseSourceConnector extends SourceConnector {
     }
 
     private List<List<String>> partitionAndGet(int maxTasks) {
-        final List<FileObjectMeta> files = monitor.listFilesToSchedule(connectorConfig.getMaxScheduledFiles());
+        final List<FileObjectMeta> files = fsMonitor.listFilesToSchedule(connectorConfig.getMaxScheduledFiles());
         return partitioner.partition(files, maxTasks)
                 .stream()
                 .map(it -> it.stream().map(Object::toString).collect(Collectors.toList()))

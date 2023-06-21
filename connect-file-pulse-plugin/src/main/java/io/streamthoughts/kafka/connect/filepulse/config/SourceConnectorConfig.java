@@ -20,6 +20,7 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -39,21 +40,35 @@ public class SourceConnectorConfig extends CommonSourceConfig {
     private static final String FS_CLEANUP_POLICY_EXECUTE_DOC = "Specify the status when a file get cleanup. Valid values are: " + Arrays.toString(FS_CLEANUP_POLICY_EXECUTE_VALID_VALUES);
 
     /* Settings for FileSystemMonitorThread */
-    public static final String FS_LISTING_INTERVAL_MS_CONFIG  = "fs.listing.interval.ms";
-    private static final String FS_LISTING_INTERVAL_MS_DOC    = "The time interval, in milliseconds, in which the connector invokes the scan of the filesystem.";
-    private static final long FS_LISTING_INTERVAL_MS_DEFAULT  = 10000L;
+    public static final String FS_LISTING_INTERVAL_MS_CONFIG = "fs.listing.interval.ms";
+    private static final String FS_LISTING_INTERVAL_MS_DOC = "The time interval, in milliseconds, in which the connector invokes the scan of the filesystem.";
+    private static final long FS_LISTING_INTERVAL_MS_DEFAULT = 10000L;
+
+    /* Settings for DefaultFileSystemMonitor */
+    public static final String STATE_INITIAL_READ_TIMEOUT_MS_CONFIG = "state.initial.read.timeout.ms";
+    public static final String STATE_INITIAL_READ_TIMEOUT_MS_DOC = "The maximum amount of time in milliseconds " +
+            "the filesystem monitor thread waits to read all the file processing states before timing out. " +
+            "This property is used only on connector startup.";
+    public static final long STATE_INITIAL_READ_TIMEOUT_MS_DEFAULT = 300000L;
+
+    public static final String STATE_DEFAULT_READ_TIMEOUT_MS_CONFIG = "state.default.read.timeout.ms";
+    public static final String STATE_DEFAULT_READ_TIMEOUT_MS_DOC = "The maximum amount of time in milliseconds " +
+            "the filesystem monitor thread waits to read all the file processing states before timing out.";
+    public static final long STATE_DEFAULT_READ_TIMEOUT_MS_DEFAULT = 5000L;
 
     /* Settings for FilePulseSourceConnector */
-    public static final String MAX_SCHEDULED_FILES_CONFIG     = "max.scheduled.files";
-    private static final String MAX_SCHEDULED_FILES_DOC       = "Maximum number of files that can be schedules to tasks.";
-    private static final int MAX_SCHEDULED_FILES_DEFAULT      = 1000;
+    public static final String MAX_SCHEDULED_FILES_CONFIG = "max.scheduled.files";
+    private static final String MAX_SCHEDULED_FILES_DOC = "Maximum number of files that can be schedules to tasks.";
+    private static final int MAX_SCHEDULED_FILES_DEFAULT = 1000;
 
     public static final String FS_LISTING_TASK_DELEGATION_ENABLED_CONFIG = "fs.listing.task.delegation.enabled";
     private static final String FS_LISTING_TASK_DELEGATION_ENABLED_DOC = "Boolean indicating whether the file listing process should be delegated to tasks.";
 
+
     /**
      * Creates a new {@link SourceConnectorConfig} instance.
-     * @param originals the originals configuration.
+     *
+     * @param originals the original configuration.
      */
     public SourceConnectorConfig(final Map<?, ?> originals) {
         super(getConf(), originals);
@@ -106,6 +121,20 @@ public class SourceConnectorConfig extends CommonSourceConfig {
                         ConfigDef.ValidString.in(FS_CLEANUP_POLICY_EXECUTE_VALID_VALUES),
                         ConfigDef.Importance.MEDIUM,
                         FS_CLEANUP_POLICY_EXECUTE_DOC
+                )
+                .define(
+                        STATE_INITIAL_READ_TIMEOUT_MS_CONFIG,
+                        ConfigDef.Type.LONG,
+                        STATE_INITIAL_READ_TIMEOUT_MS_DEFAULT,
+                        ConfigDef.Importance.MEDIUM,
+                        STATE_INITIAL_READ_TIMEOUT_MS_DOC
+                )
+                .define(
+                        STATE_DEFAULT_READ_TIMEOUT_MS_CONFIG,
+                        ConfigDef.Type.LONG,
+                        STATE_DEFAULT_READ_TIMEOUT_MS_DEFAULT,
+                        ConfigDef.Importance.MEDIUM,
+                        STATE_DEFAULT_READ_TIMEOUT_MS_DOC
                 );
     }
 
@@ -135,5 +164,13 @@ public class SourceConnectorConfig extends CommonSourceConfig {
 
     public boolean isFileListingTaskDelegationEnabled() {
         return getBoolean(FS_LISTING_TASK_DELEGATION_ENABLED_CONFIG);
+    }
+
+    public Duration getStateDefaultReadTimeoutMs() {
+        return Duration.ofMillis(getLong(STATE_DEFAULT_READ_TIMEOUT_MS_CONFIG));
+    }
+
+    public Duration getStateInitialReadTimeoutMs() {
+        return Duration.ofMillis(getLong(STATE_INITIAL_READ_TIMEOUT_MS_CONFIG));
     }
 }

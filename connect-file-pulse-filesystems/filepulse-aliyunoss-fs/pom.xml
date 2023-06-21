@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2019-2021 StreamThoughts.
+  ~ Copyright 2023 StreamThoughts.
   ~
   ~ Licensed to the Apache Software Foundation (ASF) under one or more
   ~ contributor license agreements. See the NOTICE file distributed with
@@ -17,53 +17,65 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <parent>
-        <artifactId>kafka-connect-filepulse-reactor</artifactId>
         <groupId>io.streamthoughts</groupId>
+        <artifactId>kafka-connect-filepulse-filesystems</artifactId>
         <version>2.13.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>kafka-connect-filepulse-filesystems</artifactId>
-    <name>Kafka Connect Source File Pulse FS</name>
+    <name>Kafka Connect Source File Pulse Aliyun OSS FS</name>
+    <artifactId>kafka-connect-filepulse-aliyunoss-fs</artifactId>
+    <description>Kafka Connect FilePulse - FileSystem - Support for Aliyun OSS</description>
 
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>filepulse-commons-fs</module>
-        <module>filepulse-local-fs</module>
-        <module>filepulse-amazons3-fs</module>
-        <module>filepulse-azure-storage-fs</module>
-        <module>filepulse-google-cloud-storage-fs</module>
-        <module>filepulse-sftp-fs</module>
-        <module>filepulse-aliyunoss-fs</module>
-    </modules>
 
     <properties>
-        <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
-        <license.header.file>${project.parent.basedir}/license-header</license.header.file>
+        <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
+        <license.header.file>${project.parent.basedir}/../license-header</license.header.file>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <aliyun.oss.version>3.16.3</aliyun.oss.version>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>io.streamthoughts</groupId>
-            <artifactId>kafka-connect-filepulse-api</artifactId>
+            <artifactId>kafka-connect-filepulse-commons-fs</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>${aliyun.oss.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>connect-api</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.madgag.spongycastle</groupId>
+            <artifactId>core</artifactId>
+            <version>1.54.0.0</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
+
 </project>

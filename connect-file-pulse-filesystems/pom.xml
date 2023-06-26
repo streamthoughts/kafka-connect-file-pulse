@@ -38,6 +38,7 @@
         <module>filepulse-amazons3-fs</module>
         <module>filepulse-azure-storage-fs</module>
         <module>filepulse-google-cloud-storage-fs</module>
+        <module>filepulse-sftp-fs</module>
     </modules>
 
     <properties>

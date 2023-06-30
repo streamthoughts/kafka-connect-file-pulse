@@ -27,6 +27,7 @@ import com.amazonaws.services.s3.model.CopyObjectResult;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.StorageClass;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
@@ -186,6 +187,13 @@ public class AmazonS3Storage implements Storage {
         );
     }
 
+    public FileObjectMeta getObjectMetadata(final S3ObjectSummary s3ObjectSummary) {
+        return createFileObjectMeta(
+                new S3BucketKey(s3ObjectSummary.getBucketName(), s3ObjectSummary.getKey()),
+                s3ObjectSummary
+        );
+    }
+
     private ObjectMetadata loadObjectMetadata(final S3BucketKey s3Object) {
         var request = new GetObjectMetadataRequest(s3Object.bucketName(), s3Object.key());
         try {
@@ -264,11 +272,11 @@ public class AmazonS3Storage implements Storage {
         userDefinedMetadata.put("s3.object.summary.etag", objectMetadata.getETag());
         userDefinedMetadata.put("s3.object.summary.storageClass", objectMetadata.getStorageClass());
 
-        final String contentMD5 = objectMetadata.getContentMD5();
+        final String contentMD5 = objectMetadata.getETag();
 
         FileObjectMeta.ContentDigest digest = null;
         if (contentMD5 != null) {
-            digest = new FileObjectMeta.ContentDigest(contentMD5, "MD5");
+            digest = new FileObjectMeta.ContentDigest(contentMD5, "ETAG");
         }
 
         return new GenericFileObjectMeta.Builder()
@@ -278,6 +286,24 @@ public class AmazonS3Storage implements Storage {
                 .withLastModified(objectMetadata.getLastModified())
                 .withContentDigest(digest)
                 .withUserDefinedMetadata(userDefinedMetadata)
+                .build();
+    }
+
+    private static FileObjectMeta createFileObjectMeta(final S3BucketKey s3Object,
+                                                       final S3ObjectSummary s3ObjectSummary) {
+        final String contentMD5 = s3ObjectSummary.getETag();
+
+        FileObjectMeta.ContentDigest digest = null;
+        if (contentMD5 != null) {
+            digest = new FileObjectMeta.ContentDigest(contentMD5, "ETAG");
+        }
+
+        return new GenericFileObjectMeta.Builder()
+                .withUri(s3Object.toURI())
+                .withName(s3ObjectSummary.getKey())
+                .withContentLength(s3ObjectSummary.getSize())
+                .withLastModified(s3ObjectSummary.getLastModified())
+                .withContentDigest(digest)
                 .build();
     }
 }

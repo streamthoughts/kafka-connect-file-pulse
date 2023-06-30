@@ -95,11 +95,6 @@ public class AmazonS3FileSystemListing implements FileSystemListing<AmazonS3Stor
 
                 objectMetaList.addAll(objectListing.getObjectSummaries()
                         .stream()
-                        .map(s3ObjectSummary ->
-                                new S3BucketKey(
-                                        s3ObjectSummary.getBucketName(),
-                                        s3ObjectSummary.getKey()
-                                ))
                         .map(s3Storage::getObjectMetadata)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList()));

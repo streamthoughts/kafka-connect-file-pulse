@@ -382,6 +382,10 @@
             <artifactId>json-path</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.streamthoughts</groupId>
             <artifactId>kafka-connect-filepulse-local-fs</artifactId>
             <version>${project.version}</version>

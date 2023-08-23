@@ -155,3 +155,15 @@ fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFile
 file.filter.minimum.size.bytes=0
 file.filter.maximum.size.bytes=9223372036854775807
 ```
+
+### DateInFilenameFileListFilter
+
+The `DateInFilenameFileListFilter` can be used to filter all files that contain a date in filename earlier or later than a specific date.
+
+```properties
+fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.DateInFilenameFileListFilter
+file.filter.date.regex.extractor.pattern="^.*(\\d{4}-\\d{2}-\\d{2})_.*$"
+file.filter.date.formatter.pattern="yyyy MM dd"
+file.filter.date.min.date="2023-08-23"
+file.filter.date.max.date="2023-08-24"
+```

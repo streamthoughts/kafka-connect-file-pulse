@@ -18,14 +18,14 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
-import static io.streamthoughts.kafka.connect.filepulse.config.RenameStrategyType.CAMEL_CASE;
+import static io.streamthoughts.kafka.connect.filepulse.config.NamingConvention.CAMEL_CASE;
 
 import java.util.Map;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
 
-public class DefaultRenameStrategyFilterConfig extends AbstractConfig {
+public class NamingConventionFilterConfig extends AbstractConfig {
     public static final String CSV_DEFAULT_COLUMN_RENAME_STRATEGY_CONFIG = "csv.default.column.header.rename.strategy";
     public static final String CSV_DEFAULT_COLUMN_RENAME_DELIMITER_CONFIG = "csv.default.column.header.rename.delimiter";
     private static final String CSV_DEFAULT_COLUMN_RENAME_STRATEGY_DOC = "Default csv column header rename strategy, possible flavours are: camelCase, snakeCase, pascalCase";
@@ -33,7 +33,7 @@ public class DefaultRenameStrategyFilterConfig extends AbstractConfig {
 
     private static final String defaultDelimiter = "_ ,-()[]{}";
 
-    public DefaultRenameStrategyFilterConfig(Map<?, ?> originals) {
+    public NamingConventionFilterConfig(Map<?, ?> originals) {
         super(getConfigDef(), originals);
     }
 

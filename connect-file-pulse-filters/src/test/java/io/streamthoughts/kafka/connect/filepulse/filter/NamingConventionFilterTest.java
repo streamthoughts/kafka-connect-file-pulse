@@ -18,18 +18,18 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import static io.streamthoughts.kafka.connect.filepulse.config.DefaultRenameStrategyFilterConfig.CSV_DEFAULT_COLUMN_RENAME_DELIMITER_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.config.DefaultRenameStrategyFilterConfig.CSV_DEFAULT_COLUMN_RENAME_STRATEGY_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.config.RenameStrategyType.CAMEL_CASE;
-import static io.streamthoughts.kafka.connect.filepulse.config.RenameStrategyType.PASCAL_CASE;
-import static io.streamthoughts.kafka.connect.filepulse.config.RenameStrategyType.SNAKE_CASE;
+import static io.streamthoughts.kafka.connect.filepulse.config.NamingConventionFilterConfig.CSV_DEFAULT_COLUMN_RENAME_DELIMITER_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.NamingConventionFilterConfig.CSV_DEFAULT_COLUMN_RENAME_STRATEGY_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.NamingConvention.CAMEL_CASE;
+import static io.streamthoughts.kafka.connect.filepulse.config.NamingConvention.PASCAL_CASE;
+import static io.streamthoughts.kafka.connect.filepulse.config.NamingConvention.SNAKE_CASE;
 import static java.util.Collections.emptyMap;
 import static java.util.Map.of;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 
-import io.streamthoughts.kafka.connect.filepulse.config.RenameStrategyType;
+import io.streamthoughts.kafka.connect.filepulse.config.NamingConvention;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
@@ -43,15 +43,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class DefaultRenameStrategyFilterTest {
+public class NamingConventionFilterTest {
     @ParameterizedTest
     @MethodSource
     void when_given_column_name_should_convert_to_correct_format_based_on_strategy(String originalColumnName,
                                                                                    String renamedColumnName,
-                                                                                   RenameStrategyType renameStrategy) {
-        DefaultRenameStrategyFilter defaultRenameStrategyFilter = new DefaultRenameStrategyFilter();
-        defaultRenameStrategyFilter.configure(emptyMap());
-        Assertions.assertEquals(renamedColumnName, defaultRenameStrategyFilter.renameColumn(originalColumnName, renameStrategy));
+                                                                                   NamingConvention renameStrategy) {
+        NamingConventionFilter namingConventionFilter = new NamingConventionFilter();
+        namingConventionFilter.configure(emptyMap());
+        Assertions.assertEquals(renamedColumnName, namingConventionFilter.renameColumn(originalColumnName, renameStrategy));
     }
 
     public static Stream<Arguments> when_given_column_name_should_convert_to_correct_format_based_on_strategy() {
@@ -84,8 +84,8 @@ public class DefaultRenameStrategyFilterTest {
 
     @ParameterizedTest
     @MethodSource
-    void when_given_config_value_should_retrieve_the_correct_rename_strategy_enum(String configValue, RenameStrategyType renameStrategy) {
-        Assertions.assertEquals(renameStrategy, RenameStrategyType.getByConfigValue(configValue));
+    void when_given_config_value_should_retrieve_the_correct_rename_strategy_enum(String configValue, NamingConvention renameStrategy) {
+        Assertions.assertEquals(renameStrategy, NamingConvention.getByConfigValue(configValue));
     }
 
     public static Stream<Arguments> when_given_config_value_should_retrieve_the_correct_rename_strategy_enum() {
@@ -97,13 +97,13 @@ public class DefaultRenameStrategyFilterTest {
 
     @Test
     void when_given_config_value_does_not_exist_should_throw_config_exception() {
-        assertThrows(ConfigException.class, () -> RenameStrategyType.getByConfigValue("unknown strategy"));
+        assertThrows(ConfigException.class, () -> NamingConvention.getByConfigValue("unknown strategy"));
     }
 
     @ParameterizedTest
     @MethodSource
     void when_apply_method_is_called_then_record_should_contain_renamed_columns(String configValue, String[] renamedColumnNames) {
-        DefaultRenameStrategyFilter renameStrategyFilter = new DefaultRenameStrategyFilter();
+        NamingConventionFilter renameStrategyFilter = new NamingConventionFilter();
         renameStrategyFilter.configure(of(
                 CSV_DEFAULT_COLUMN_RENAME_STRATEGY_CONFIG, configValue,
                 CSV_DEFAULT_COLUMN_RENAME_DELIMITER_CONFIG, "_"));

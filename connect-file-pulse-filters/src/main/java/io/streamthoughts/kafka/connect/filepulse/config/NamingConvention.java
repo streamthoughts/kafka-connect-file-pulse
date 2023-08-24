@@ -21,18 +21,18 @@ package io.streamthoughts.kafka.connect.filepulse.config;
 import java.util.Arrays;
 import org.apache.kafka.common.config.ConfigException;
 
-public enum RenameStrategyType {
+public enum NamingConvention {
     CAMEL_CASE("camelCase"),
     PASCAL_CASE("pascalCase"),
     SNAKE_CASE("snakeCase");
     private static final String RENAME_STRATEGY_NOT_FOUND_ERROR_MSG_TEMPLATE = "Rename strategy: %s does not exist";
     private final String configValue;
 
-    RenameStrategyType(String configValue) {
+    NamingConvention(String configValue) {
         this.configValue = configValue;
     }
 
-    public static RenameStrategyType getByConfigValue(String searchedConfigValue) {
+    public static NamingConvention getByConfigValue(String searchedConfigValue) {
         return Arrays.stream(values())
                 .filter(e -> e.configValue.equals(searchedConfigValue))
                 .findAny()

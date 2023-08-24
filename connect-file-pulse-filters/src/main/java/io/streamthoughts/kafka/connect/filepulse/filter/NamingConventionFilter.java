@@ -18,10 +18,10 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import static io.streamthoughts.kafka.connect.filepulse.config.RenameStrategyType.buildRenameStrategyNotFoundErrorMsg;
+import static io.streamthoughts.kafka.connect.filepulse.config.NamingConvention.buildRenameStrategyNotFoundErrorMsg;
 
-import io.streamthoughts.kafka.connect.filepulse.config.DefaultRenameStrategyFilterConfig;
-import io.streamthoughts.kafka.connect.filepulse.config.RenameStrategyType;
+import io.streamthoughts.kafka.connect.filepulse.config.NamingConventionFilterConfig;
+import io.streamthoughts.kafka.connect.filepulse.config.NamingConvention;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedField;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
@@ -38,27 +38,27 @@ import org.slf4j.LoggerFactory;
 
 
 
-public class DefaultRenameStrategyFilter extends AbstractRecordFilter<DefaultRenameStrategyFilter> {
+public class NamingConventionFilter extends AbstractRecordFilter<NamingConventionFilter> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultRenameStrategyFilter.class);
-    private DefaultRenameStrategyFilterConfig config;
+    private static final Logger LOG = LoggerFactory.getLogger(NamingConventionFilter.class);
+    private NamingConventionFilterConfig config;
 
     @Override
     public void configure(final Map<String, ?> props) {
         super.configure(props);
-        config = new DefaultRenameStrategyFilterConfig(props);
+        config = new NamingConventionFilterConfig(props);
     }
 
     @Override
     public ConfigDef configDef() {
-        return DefaultRenameStrategyFilterConfig.getConfigDef();
+        return NamingConventionFilterConfig.getConfigDef();
     }
 
     @Override
     public RecordsIterable<TypedStruct> apply(final FilterContext context,
                                               final TypedStruct record,
                                               final boolean hasNext) throws FilterException {
-        RenameStrategyType renameStrategy = RenameStrategyType.getByConfigValue(config.getDefaultRenameStrategy());
+        NamingConvention renameStrategy = NamingConvention.getByConfigValue(config.getDefaultRenameStrategy());
         Iterator<TypedField> typedFieldsIterator = record.schema().iterator();
 
         StreamSupport.stream(
@@ -70,7 +70,7 @@ public class DefaultRenameStrategyFilter extends AbstractRecordFilter<DefaultRen
         return new RecordsIterable<>(record);
     }
 
-    String renameColumn(String columnName, RenameStrategyType renameStrategy) {
+    String renameColumn(String columnName, NamingConvention renameStrategy) {
         switch (renameStrategy) {
             case CAMEL_CASE:
                 return toCamelCase(columnName);

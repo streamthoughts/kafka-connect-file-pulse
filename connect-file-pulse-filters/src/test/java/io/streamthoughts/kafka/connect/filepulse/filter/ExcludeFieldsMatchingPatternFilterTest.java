@@ -18,8 +18,8 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import static io.streamthoughts.kafka.connect.filepulse.config.ExcludeFieldsMatchingPatternsConfig.EXCLUDE_FIELDS_BLOCK_FIELD_CONFIG;
-import static io.streamthoughts.kafka.connect.filepulse.config.ExcludeFieldsMatchingPatternsConfig.EXCLUDE_FIELDS_REGEX_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.ExcludeFieldsMatchingPatternConfig.EXCLUDE_FIELDS_BLOCK_FIELD_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.ExcludeFieldsMatchingPatternConfig.EXCLUDE_FIELDS_REGEX_CONFIG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,12 +32,12 @@ import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class ExcludeFieldsMatchingPatternsFilterTest {
+class ExcludeFieldsMatchingPatternFilterTest {
 
     @Test
     void when_record_null_apply_should_return_empty_iterable() {
         FilterContext context = mock(FilterContext.class);
-        ExcludeFieldsMatchingPatternsFilter filter = new ExcludeFieldsMatchingPatternsFilter();
+        ExcludeFieldsMatchingPatternFilter filter = new ExcludeFieldsMatchingPatternFilter();
         filter.configure(Map.of(EXCLUDE_FIELDS_REGEX_CONFIG, "[a-z]"));
 
         RecordsIterable<TypedStruct> iterable = filter.apply(context, null, false);
@@ -48,7 +48,7 @@ class ExcludeFieldsMatchingPatternsFilterTest {
     @Test
     void when_record_apply_should_propagate_null_for_fields_matching_regex_and_propagate_all_other_fields() {
         FilterContext context = mock(FilterContext.class);
-        ExcludeFieldsMatchingPatternsFilter filter = new ExcludeFieldsMatchingPatternsFilter();
+        ExcludeFieldsMatchingPatternFilter filter = new ExcludeFieldsMatchingPatternFilter();
         filter.configure(Map.of(EXCLUDE_FIELDS_REGEX_CONFIG, Fixture.nullFieldRegex));
 
         TypedStruct typedStruct = TypedStruct.create()
@@ -77,7 +77,7 @@ class ExcludeFieldsMatchingPatternsFilterTest {
     @Test
     void when_record_apply_should_block_fields_matching_regex_and_propagate_all_other_fields() {
         FilterContext context = mock(FilterContext.class);
-        ExcludeFieldsMatchingPatternsFilter filter = new ExcludeFieldsMatchingPatternsFilter();
+        ExcludeFieldsMatchingPatternFilter filter = new ExcludeFieldsMatchingPatternFilter();
         filter.configure(Map.of(EXCLUDE_FIELDS_REGEX_CONFIG, Fixture.nullFieldRegex,
                 EXCLUDE_FIELDS_BLOCK_FIELD_CONFIG, "true"));
 

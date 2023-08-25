@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.kafka.common.config.ConfigDef;
 
-public class ExcludeFieldsMatchingPatternsConfig extends CommonFilterConfig {
+public class ExcludeFieldsMatchingPatternConfig extends CommonFilterConfig {
     public static final String EXCLUDE_FIELDS_REGEX_CONFIG = "regex";
 
     private static final String EXCLUDE_FIELDS_REGEX_CONFIG_DOC = "Regexp pattern applied to a field value to determine if the fields should be propagated or not.";
@@ -31,7 +31,7 @@ public class ExcludeFieldsMatchingPatternsConfig extends CommonFilterConfig {
 
     private static final String EXCLUDE_FIELDS_BLOCK_FIELD_CONFIG_DOC = "If true, omits propagating the field downstream. Otherwise, propagates the field with a null value";
 
-    public ExcludeFieldsMatchingPatternsConfig(Map<?, ?> originals) {
+    public ExcludeFieldsMatchingPatternConfig(Map<?, ?> originals) {
         super(configDef(), originals);
     }
 

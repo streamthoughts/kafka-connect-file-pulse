@@ -18,7 +18,7 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.config.ExcludeFieldsMatchingPatternsConfig;
+import io.streamthoughts.kafka.connect.filepulse.config.ExcludeFieldsMatchingPatternConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
@@ -27,19 +27,19 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import org.apache.kafka.common.config.ConfigDef;
 
-public class ExcludeFieldsMatchingPatternsFilter extends AbstractRecordFilter<ExcludeFieldsMatchingPatternsFilter> {
+public class ExcludeFieldsMatchingPatternFilter extends AbstractRecordFilter<ExcludeFieldsMatchingPatternFilter> {
 
-    private ExcludeFieldsMatchingPatternsConfig config;
+    private ExcludeFieldsMatchingPatternConfig config;
 
     @Override
     public ConfigDef configDef() {
-        return ExcludeFieldsMatchingPatternsConfig.configDef();
+        return ExcludeFieldsMatchingPatternConfig.configDef();
     }
 
     @Override
     public void configure(Map<String, ?> configs) {
         super.configure(configs);
-        this.config = new ExcludeFieldsMatchingPatternsConfig(configs);
+        this.config = new ExcludeFieldsMatchingPatternConfig(configs);
     }
 
     @Override

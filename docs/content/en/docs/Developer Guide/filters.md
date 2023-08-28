@@ -9,28 +9,31 @@ description: >
 
 These filters are available for use with Kafka Connect File Pulse:
 
-| Filter                                    | Description                                                                              | Since    |
-|-------------------------------------------|------------------------------------------------------------------------------------------|----------|
-| [AppendFilter](#appendfilter)             | Appends one or more values to an existing or non-existing array field                    |          |
-| [ConvertFilter](#convertfilter)           | Converts a message field's value to a specific type                                      |          |
-| [CSVFilter](#csvfilter)                   | Parses a message field's value containing columns delimited by a character into a struct | `v2.7.0` |
-| [DateFilter](#datefilter)                 | Converts a field's value containing a date to a unix epoch time                          |          |
-| [DelimitedRowFilter](#delimitedrowfilter) | Parses a message field's value containing columns delimited by a regex into a struct     |          |
-| [DropFilter](#dropfilter)                 | Drops messages satisfying a specific condition without throwing exception.               |          |
-| [ExcludeFilter](#excludefilter)           | Excludes one or more fields from the input record.                                       | `v1.4.0` |
-| [ExplodeFilter](#explodefilter)           | Explodes an array or list field into separate records.                                   | `v1.4.0` |
-| [FailFilter](#failfilter)                 | Throws an exception when a message satisfy a specific condition                          |          |
-| [GrokFilter](#grokfilter)                 | Parses an unstructured message field's value to a struct by combining Grok patterns      |          |
-| [GroupRowFilter](#grouprowfilter)         | Regroups multiple following messages into a single message by composing a grouping key   |          |
-| [JoinFilter](#joinfilter)                 | Joins values of an array field with a specified separator                                |          |
-| [JSONFilter](#jsonfilter)                 | Unmarshalling a JSON message field's value to a complex struct                           |          |
-| [MoveFilter](#movefilter)                 | Moves an existing record field's value to a specific target path                         | `v1.5.0` |
-| [MultiRowFilter](#multirowfilter)         | Combines following message lines into single one by combining patterns                   |          |
-| [NullValueFilter](#nullvaluefilter)       | Combines following message lines into single one by combining patterns                   | `v2.3.0` |
-| [RenameFilter](#renamefilter)             | Renames a message field                                                                  |          |
-| [SplitFilter](#splitfilter)               | Splits a message field's value to array                                                  |          |
-| [XmlToJsonFilter](#xmltojsonfilter)       | Parses an XML record-field and convert it to a JSON string                               | `v2.4.0` |
-| [XmlToStructFilter](#xmltostructfilter)   | Parses an XML record-field into STRUCT                                                   | `v2.4.0` |
+| Filter                                                                    | Description                                                                              | Since     |
+|---------------------------------------------------------------------------|------------------------------------------------------------------------------------------|-----------|
+| [AppendFilter](#appendfilter)                                             | Appends one or more values to an existing or non-existing array field                    |           |
+| [ConvertFilter](#convertfilter)                                           | Converts a message field's value to a specific type                                      |           |
+| [CSVFilter](#csvfilter)                                                   | Parses a message field's value containing columns delimited by a character into a struct | `v2.7.0`  |
+| [DateFilter](#datefilter)                                                 | Converts a field's value containing a date to a unix epoch time                          |           |
+| [DelimitedRowFilter](#delimitedrowfilter)                                 | Parses a message field's value containing columns delimited by a regex into a struct     |           |
+| [DropFilter](#dropfilter)                                                 | Drops messages satisfying a specific condition without throwing exception.               |           |
+| [ExcludeFilter](#excludefilter)                                           | Excludes one or more fields from the input record.                                       | `v1.4.0`  |
+| [ExcludeFieldsMatchingPatternFilter](#excludefieldsmatchingpatternfilter) | Excludes one or more fields from the input record that match the regex pattern.          | `v2.13.0` |
+| [ExplodeFilter](#explodefilter)                                           | Explodes an array or list field into separate records.                                   | `v1.4.0`  |
+| [ExtractValueFilter](#extractevaluefilter)                                | Extracts value from a field and optionally move's it to a target path                    | `v1.4.0`  |
+| [FailFilter](#failfilter)                                                 | Throws an exception when a message satisfy a specific condition                          |           |
+| [GrokFilter](#grokfilter)                                                 | Parses an unstructured message field's value to a struct by combining Grok patterns      |           |
+| [GroupRowFilter](#grouprowfilter)                                         | Regroups multiple following messages into a single message by composing a grouping key   |           |
+| [JoinFilter](#joinfilter)                                                 | Joins values of an array field with a specified separator                                |           |
+| [JSONFilter](#jsonfilter)                                                 | Unmarshalling a JSON message field's value to a complex struct                           |           |
+| [MoveFilter](#movefilter)                                                 | Moves an existing record field's value to a specific target path                         | `v1.5.0`  |
+| [MoveAllFieldsFilter](#moveallfieldsfilter)                               | Moves all field's values to a specific target path                                       | `v1.5.0`  |
+| [MultiRowFilter](#multirowfilter)                                         | Combines following message lines into single one by combining patterns                   |           |
+| [NullValueFilter](#nullvaluefilter)                                       | Combines following message lines into single one by combining patterns                   | `v2.3.0`  |
+| [RenameFilter](#renamefilter)                                             | Renames a message field                                                                  |           |
+| [SplitFilter](#splitfilter)                                               | Splits a message field's value to array                                                  |           |
+| [XmlToJsonFilter](#xmltojsonfilter)                                       | Parses an XML record-field and convert it to a JSON string                               | `v2.4.0`  |
+| [XmlToStructFilter](#xmltostructfilter)                                   | Parses an XML record-field into STRUCT                                                   | `v2.4.0`  |
 
 ## AppendFilter
 
@@ -395,7 +398,7 @@ The `ExcludeFilter` can be used to exclude one or more fields from the input rec
 
 ### Examples
 
-The following example shows the usage of **ExplodeFilter**.
+The following example shows the usage of **ExcludeFilter**.
 
 ```properties
 filters=Exclude
@@ -420,6 +423,53 @@ filters.Exclude.fields=message
 {
   "record": {
     "name": "pulse"
+  }
+}
+```
+
+## ExcludeFieldsMatchingPatternFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFieldsMatchingPatternFilter`.
+
+The `ExcludeFieldsMatchingPatternFilter` can be used to exclude all fields from the input record that are matching a regex pattern.
+
+### Configuration
+
+| Configuration  | Description                                                                                        | Type    | Default | Importance |
+|----------------|----------------------------------------------------------------------------------------------------|---------|---------|------------|
+| `regex`        | The pattern to match field names to exclude                                                        | string  | *-*     | high       |
+| `block.field`  | If true, omits propagating the field downstream. Otherwise, propagates the field with a null value | boolean | *false* | high       |
+
+### Examples
+
+The following example shows the usage of **ExcludeFieldsMatchingPatternFilter**.
+
+```properties
+filters=Exclude
+filters.Exclude.type=io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFieldsMatchingPatternFilter
+filters.Exclude.regex=name.*
+```
+
+**Input**
+
+```json
+{
+  "record": {
+    "message": "{\"name\":\"pulse\"}",
+    "name1": "pulse",
+    "name2": "pulse2"
+  }
+}
+```
+
+**Output**
+
+```json
+{
+  "record": {
+    "message": "{\"name\":\"pulse\"}",
+    "name1": null,
+    "name2": null
   }
 }
 ```
@@ -492,6 +542,54 @@ filters.Explode.source=measurements
     "id": "captor-0001",
     "date": "2020-08-06T17:00:00",
     "measurements": 37
+  }
+}
+```
+
+## ExtractValueFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.ExtractValueFilter`.
+
+The `ExtractValueFilter` can be used to extract the desired value out of a specific field.
+
+### Configuration
+
+| Configuration   | Description                                                                               | Type   | Default | Importance |
+|-----------------|-------------------------------------------------------------------------------------------|--------|---------|------------|
+| `field`         | The field to extract the data from                                                        | string | *-*     | high       |
+| `target`        | (Optional) The target field. If not defined, the source field will be overwritten         | string | *null*  | high       |
+| `regex`         | The pattern applied to a field value to extract the desired value out of a specific field | string | *-*     | high       |
+| `default.value` | Default value applied when regex returns nothing                                          | string | *null*  | high       |
+
+### Examples
+
+The following example shows the usage of **ExtractValueFilter**.
+
+```properties
+filters=Extract
+filters.Extract.type=io.streamthoughts.kafka.connect.filepulse.filter.ExtractValueFilter
+filters.Extract.field=name
+filters.Extract.target=eventTime
+filters.Extract.regex=(\d{4}-\d{2}-\d{2})
+```
+
+**Input**
+
+```json
+{
+  "record": {
+    "name": "name_2023-08-28"
+  }
+}
+```
+
+**Output**
+
+```json
+{
+  "record": {
+    "name": "name_2023-08-28",
+    "eventTime": "2023-08-28"
   }
 }
 ```
@@ -627,6 +725,58 @@ The `MultiRowFilter` joins multiple lines into a single Struct using a regex pat
 | `patternDefinitions` | Custom pattern definitions.                    | list    | *-*     | low        |
 | `patternsDir`        | List of user-defined pattern directories       | string  | *-*     | low        |
 | `separator`          | The character to be used to concat multi lines | string  | "\\n"   | high       |
+
+## MoveAllFieldsFilter
+
+The following provides usage information for : `io.streamthoughts.kafka.connect.filepulse.filter.MoveAllFieldsFilter`.
+
+The `MoveAllFieldsFilter` moves all existing record field's value to a specific target path.
+
+### Configuration
+
+| Configuration | Description                               | Type   | Default   | Importance |
+|---------------|-------------------------------------------|--------|-----------|------------|
+| `target`      | The path to move the field                | string | *payload* | high       |
+| `excludes`    | Comma separated list of fields to exclude | string | *null*    | high       |
+
+### Examples
+
+The following example shows the usage of the `MoveAllFieldsFilter`.
+
+```properties
+filters=MyMoveFilter
+filters.MyMoveFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MoveAllFieldsFilter
+filters.MyMoveFilter.target=payload
+filters.MyMoveFilter.excludes=fieldC,fieldD
+```
+
+**Input**
+
+```json
+{
+  "record": {
+    "fieldA": "foo",
+    "fieldB": "bar",
+    "fieldC": "foo",
+    "fieldD": "bar"
+  }
+}
+```
+
+**Output**
+
+```json
+{
+  "record": {
+    "fieldC": "foo",
+    "fieldD": "bar",
+    "payload": {
+      "fieldA": "foo",
+      "fieldB": "bar"
+    }
+  }
+}
+```
 
 ## MoveFilter
 

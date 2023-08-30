@@ -31,8 +31,10 @@ import static io.streamthoughts.kafka.connect.filepulse.fs.filter.DateInFilename
 import static io.streamthoughts.kafka.connect.filepulse.fs.filter.DateInFilenameFileListFilterTest.Fixture.invalidCutoffDate;
 import static io.streamthoughts.kafka.connect.filepulse.fs.filter.DateInFilenameFileListFilterTest.Fixture.maxCutoffDate;
 import static io.streamthoughts.kafka.connect.filepulse.fs.filter.DateInFilenameFileListFilterTest.Fixture.minCutoffDate;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
@@ -52,10 +54,9 @@ class DateInFilenameFileListFilterTest {
     @Test
     void when_pattern_empty_configure_should_throw_exception() {
         DateInFilenameFileListFilter filter = new DateInFilenameFileListFilter();
-        assertThatThrownBy(() -> filter.configure(Map.of()))
-                .isInstanceOf(ConfigException.class)
-                .hasMessageContaining(FILE_FILTER_DATE_REGEX_EXTRACTOR_PATTERN_CONFIG)
-                .hasNoCause();
+        ConfigException configException = assertThrows(ConfigException.class, () -> filter.configure(Map.of()));
+        assertNull(configException.getCause());
+        assertTrue(configException.getMessage().contains(FILE_FILTER_DATE_REGEX_EXTRACTOR_PATTERN_CONFIG));
     }
 
     @Test
@@ -65,10 +66,9 @@ class DateInFilenameFileListFilterTest {
                         FILE_FILTER_DATE_MIN_DATE_CONFIG, invalidCutoffDate);
 
         DateInFilenameFileListFilter filter = new DateInFilenameFileListFilter();
-        assertThatThrownBy(() -> filter.configure(configs))
-                .isInstanceOf(ConfigException.class)
-                .hasMessageContaining(FILE_FILTER_DATE_MIN_DATE_CONFIG)
-                .hasNoCause();
+        ConfigException configException = assertThrows(ConfigException.class, () -> filter.configure(configs));
+        assertNull(configException.getCause());
+        assertTrue(configException.getMessage().contains(FILE_FILTER_DATE_MIN_DATE_CONFIG));
     }
 
     @Test
@@ -78,10 +78,9 @@ class DateInFilenameFileListFilterTest {
                         FILE_FILTER_DATE_MAX_DATE_CONFIG, invalidCutoffDate);
 
         DateInFilenameFileListFilter filter = new DateInFilenameFileListFilter();
-        assertThatThrownBy(() -> filter.configure(configs))
-                .isInstanceOf(ConfigException.class)
-                .hasMessageContaining(FILE_FILTER_DATE_MAX_DATE_CONFIG)
-                .hasNoCause();
+        ConfigException configException = assertThrows(ConfigException.class, () -> filter.configure(configs));
+        assertNull(configException.getCause());
+        assertTrue(configException.getMessage().contains(FILE_FILTER_DATE_MAX_DATE_CONFIG));
     }
 
     @Test
@@ -90,10 +89,9 @@ class DateInFilenameFileListFilterTest {
                 Map.of(FILE_FILTER_DATE_REGEX_EXTRACTOR_PATTERN_CONFIG, dateExtractorRegex);
 
         DateInFilenameFileListFilter filter = new DateInFilenameFileListFilter();
-        assertThatThrownBy(() -> filter.configure(configs))
-                .isInstanceOf(ConfigException.class)
-                .hasMessageContaining("At least one of")
-                .hasNoCause();
+        ConfigException configException = assertThrows(ConfigException.class, () -> filter.configure(configs));
+        assertNull(configException.getCause());
+        assertTrue(configException.getMessage().contains("At least one of"));
     }
 
     private DateInFilenameFileListFilter prepareFilter(String minCutoffDate, String maxCutoffDate) {
@@ -122,7 +120,7 @@ class DateInFilenameFileListFilterTest {
                                                        String maxCutoffDate) {
 
         DateInFilenameFileListFilter filter = prepareFilter(minCutoffDate, maxCutoffDate);
-        assertThat(filter.test(meta)).isEqualTo(expected);
+        assertEquals(expected, filter.test(meta));
     }
 
     public static Stream<Arguments> when_called_test_should_return_expected_value() {

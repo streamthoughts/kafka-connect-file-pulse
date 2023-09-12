@@ -84,6 +84,7 @@ jobs:
 
       - name: 'Release with JReleaser'
         env:
+          JRELEASER_BRANCH: master
           JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

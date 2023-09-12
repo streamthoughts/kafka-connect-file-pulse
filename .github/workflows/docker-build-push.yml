@@ -49,7 +49,7 @@ jobs:
       - name: 'Build with Maven'
         run: |
           chmod +x mvnw
-          ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
+          ./mvnw -ntp -B --file pom.xml -Pall,dist package -DskipTests
 
       - name: 'Copy distribution'
         run: cp ./connect-file-pulse-plugin/target/components/packages/streamthoughts-kafka-connect-file-pulse-${{ env.VERSION }}.zip ./docker/ \

@@ -231,24 +231,6 @@ limitations under the License.
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <propertyExpansion>basedir=${checkstyle.config.location}</propertyExpansion>
-                            <configLocation>checkstyle/checkstyle.xml</configLocation>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <executions>
@@ -330,12 +312,29 @@ limitations under the License.
                         <!-- make sure every file has the following copyright header.
                           optionally, Spotless can set copyright years by digging
                           through git history (see "license" section below) -->
-
                         <licenseHeader>
                             <file>${license.header.file}</file>
                         </licenseHeader>
                     </java>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <propertyExpansion>basedir=${checkstyle.config.location}</propertyExpansion>
+                            <configLocation>checkstyle/checkstyle.xml</configLocation>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -479,8 +478,15 @@ limitations under the License.
                                 </project>
                                 <release>
                                     <github>
+                                        <overwrite>true</overwrite>
+                                        <issues>
+                                            <enabled>true</enabled>
+                                        </issues>
                                         <changelog>
                                             <formatted>ALWAYS</formatted>
+                                            <contributors>
+                                                <format>'- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'</format>
+                                            </contributors>
                                             <includeLabels>
                                                 <includeLabel>features</includeLabel>
                                                 <includeLabel>changes</includeLabel>

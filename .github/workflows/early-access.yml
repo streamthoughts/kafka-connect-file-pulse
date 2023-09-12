@@ -52,7 +52,7 @@ jobs:
             connect-file-pulse-plugin/target/components/packages/*.zip
 
   release:
-    needs: [ build-distribution ]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub repository'

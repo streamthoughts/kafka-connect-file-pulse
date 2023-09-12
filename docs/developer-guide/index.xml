@@ -2469,9 +2469,19 @@ filters.AppendError.value={{ $error.exceptionMessage }}
 &lt;td>&lt;code>v1.4.0&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
+&lt;td>&lt;a href="#excludefieldsmatchingpatternfilter">ExcludeFieldsMatchingPatternFilter&lt;/a>&lt;/td>
+&lt;td>Excludes one or more fields from the input record that match the regex pattern.&lt;/td>
+&lt;td>&lt;code>v2.13.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
 &lt;td>&lt;a href="#explodefilter">ExplodeFilter&lt;/a>&lt;/td>
 &lt;td>Explodes an array or list field into separate records.&lt;/td>
 &lt;td>&lt;code>v1.4.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#extractevaluefilter">ExtractValueFilter&lt;/a>&lt;/td>
+&lt;td>Extracts value from a field and optionally moves it to a target path&lt;/td>
+&lt;td>&lt;code>v2.13.0&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;a href="#failfilter">FailFilter&lt;/a>&lt;/td>
@@ -2504,9 +2514,19 @@ filters.AppendError.value={{ $error.exceptionMessage }}
 &lt;td>&lt;code>v1.5.0&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
+&lt;td>&lt;a href="#moveallfieldsfilter">MoveAllFieldsFilter&lt;/a>&lt;/td>
+&lt;td>Moves all field&amp;rsquo;s values to a specific target path&lt;/td>
+&lt;td>&lt;code>v2.13.0&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
 &lt;td>&lt;a href="#multirowfilter">MultiRowFilter&lt;/a>&lt;/td>
 &lt;td>Combines following message lines into single one by combining patterns&lt;/td>
 &lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;a href="#namingConventionRenamefilter">NamingConventionRenameFilter&lt;/a>&lt;/td>
+&lt;td>Renames all fields in the struct to conform with a specific naming convention&lt;/td>
+&lt;td>&lt;code>v2.13.0&lt;/code>&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;a href="#nullvaluefilter">NullValueFilter&lt;/a>&lt;/td>
@@ -3037,7 +3057,7 @@ filters.Drop.invert=true
 &lt;/tbody>
 &lt;/table>
 &lt;h3 id="examples-6">Examples&lt;/h3>
-&lt;p>The following example shows the usage of &lt;strong>ExplodeFilter&lt;/strong>.&lt;/p>
+&lt;p>The following example shows the usage of &lt;strong>ExcludeFilter&lt;/strong>.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Exclude
 filters.Exclude.type=io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFilter
 filters.Exclude.fields=message
@@ -3054,10 +3074,62 @@ filters.Exclude.fields=message
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="excludefieldsmatchingpatternfilter">ExcludeFieldsMatchingPatternFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFieldsMatchingPatternFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>ExcludeFieldsMatchingPatternFilter&lt;/code> can be used to exclude all fields from the input record that are matching a regex pattern.&lt;/p>
+&lt;h3 id="configuration-7">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>regex&lt;/code>&lt;/td>
+&lt;td>The pattern to match field names to exclude&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>block.field&lt;/code>&lt;/td>
+&lt;td>If true, omits propagating the field downstream. Otherwise, propagates the field with a null value&lt;/td>
+&lt;td>boolean&lt;/td>
+&lt;td>&lt;em>false&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-7">Examples&lt;/h3>
+&lt;p>The following example shows the usage of &lt;strong>ExcludeFieldsMatchingPatternFilter&lt;/strong>.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Exclude
+filters.Exclude.type=io.streamthoughts.kafka.connect.filepulse.filter.ExcludeFieldsMatchingPatternFilter
+filters.Exclude.regex=name.*
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;message&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;{\&amp;#34;name\&amp;#34;:\&amp;#34;pulse\&amp;#34;}&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name1&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name2&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;pulse2&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;message&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;{\&amp;#34;name\&amp;#34;:\&amp;#34;pulse\&amp;#34;}&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name1&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name2&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#204a87;font-weight:bold">null&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="explodefilter">ExplodeFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>ExplodeFilter&lt;/code> can be used to explode an array or list field into separate records.&lt;/p>
-&lt;h3 id="configuration-7">Configuration&lt;/h3>
+&lt;h3 id="configuration-8">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3078,7 +3150,7 @@ filters.Exclude.fields=message
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-7">Examples&lt;/h3>
+&lt;h3 id="examples-8">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>ExplodeFilter&lt;/strong>.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Explode
 filters.Explode.type=io.streamthoughts.kafka.connect.filepulse.filter.ExplodeFilter
@@ -3125,11 +3197,76 @@ filters.Explode.source=measurements
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;measurements&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#0000cf;font-weight:bold">37&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="extractvaluefilter">ExtractValueFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.ExtractValueFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>ExtractValueFilter&lt;/code> can be used to extract the desired value out of a specific field.&lt;/p>
+&lt;h3 id="configuration-9">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>field&lt;/code>&lt;/td>
+&lt;td>The field to extract the data from&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>(Optional) The target field. If not defined, the source field will be overwritten&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>null&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>regex&lt;/code>&lt;/td>
+&lt;td>The pattern applied to a field value to extract the desired value out of a specific field&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>default.value&lt;/code>&lt;/td>
+&lt;td>Default value applied when regex returns nothing&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>null&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-9">Examples&lt;/h3>
+&lt;p>The following example shows the usage of &lt;strong>ExtractValueFilter&lt;/strong>.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Extract
+filters.Extract.type=io.streamthoughts.kafka.connect.filepulse.filter.ExtractValueFilter
+filters.Extract.field=name
+filters.Extract.target=eventTime
+filters.Extract.regex=(\d{4}-\d{2}-\d{2})
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;name_2023-08-28&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;name_2023-08-28&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;eventTime&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;2023-08-28&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="failfilter">FailFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.FailFilter&lt;/code>.&lt;/p>
 &lt;p>The fail filter can be used to throw an exception with a provided error message.
 For example, this can be useful to stop processing a file when a non-conform record is read.&lt;/p>
-&lt;h3 id="configuration-8">Configuration&lt;/h3>
+&lt;h3 id="configuration-10">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3164,7 +3301,7 @@ For example, this can be useful to stop processing a file when a non-conform rec
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-8">Examples&lt;/h3>
+&lt;h3 id="examples-10">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>FailFilter&lt;/strong> to stop processing a file when a field is equals to &lt;code>null&lt;/code>.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=Fail
 filters.Fail.type=io.streamthoughts.kafka.connect.filepulse.filter.FailFilter
@@ -3175,7 +3312,7 @@ filters.Fail.message=Invalid row, user_id is missing : {{ $value }}
 &lt;p>The &lt;code>GrokFilter&lt;/code> allows you to parse unstructured data like applications logs to extract structured and meaningful data
 fields.&lt;/p>
 &lt;p>The &lt;code>GrokFilter&lt;/code>is based on: &lt;a href="https://github.com/streamthoughts/kafka-connect-transform-grok">https://github.com/streamthoughts/kafka-connect-transform-grok&lt;/a>&lt;/p>
-&lt;h3 id="configuration-9">Configuration&lt;/h3>
+&lt;h3 id="configuration-11">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3231,7 +3368,7 @@ fields.&lt;/p>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-9">Examples&lt;/h3>
+&lt;h3 id="examples-11">Examples&lt;/h3>
 &lt;p>The following example shows the usage of &lt;strong>GrokFilter&lt;/strong> to parse and extract fields from application log message.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=ParseLog4jLog
 filters.ParseLog4jLog.pattern=&amp;#34;%{TIMESTAMP_ISO8601:logdate} %{LOGLEVEL:loglevel} %{GREEDYDATA:message}&amp;#34;
@@ -3241,7 +3378,7 @@ filters.ParseLog4jLog.type=&amp;#34;io.streamthoughts.kafka.connect.filepulse.fi
 filters.ParseLog4jLog.ignoreFailure=&amp;#34;true&amp;#34;
 &lt;/code>&lt;/pre>&lt;h2 id="grouprowfilter">GroupRowFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.GroupRowFilter&lt;/code>.&lt;/p>
-&lt;h3 id="configuration-10">Configuration&lt;/h3>
+&lt;h3 id="configuration-12">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3276,10 +3413,10 @@ filters.ParseLog4jLog.ignoreFailure=&amp;#34;true&amp;#34;
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-10">Examples&lt;/h3>
+&lt;h3 id="examples-12">Examples&lt;/h3>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">&lt;/code>&lt;/pre>&lt;h2 id="joinfilter">JoinFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.JoinFilter&lt;/code>.&lt;/p>
-&lt;h3 id="configuration-11">Configuration&lt;/h3>
+&lt;h3 id="configuration-13">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3314,11 +3451,11 @@ filters.ParseLog4jLog.ignoreFailure=&amp;#34;true&amp;#34;
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-11">Examples&lt;/h3>
+&lt;h3 id="examples-13">Examples&lt;/h3>
 &lt;h2 id="jsonfilter">JSONFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>JSONFilter&lt;/code> parses an input json field.&lt;/p>
-&lt;h3 id="configuration-12">Configuration&lt;/h3>
+&lt;h3 id="configuration-14">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3374,7 +3511,7 @@ filters.ParseLog4jLog.ignoreFailure=&amp;#34;true&amp;#34;
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-12">Examples&lt;/h3>
+&lt;h3 id="examples-14">Examples&lt;/h3>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=MyJsonFilter
 filters.MyJsonFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.JSONFilter
 filters.MyJsonFilter.source=message
@@ -3382,7 +3519,7 @@ filters.MyJsonFilter.target=payload
 &lt;/code>&lt;/pre>&lt;h2 id="multirowfilter">MultiRowFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.MultiRowFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>MultiRowFilter&lt;/code> joins multiple lines into a single Struct using a regex pattern.&lt;/p>
-&lt;h3 id="configuration-13">Configuration&lt;/h3>
+&lt;h3 id="configuration-15">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3431,10 +3568,67 @@ filters.MyJsonFilter.target=payload
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h2 id="movefilter">MoveFilter&lt;/h2>
+&lt;h2 id="moveallfieldsfilter">MoveAllFieldsFilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.MoveAllFieldsFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>MoveAllFieldsFilter&lt;/code> moves all existing record field&amp;rsquo;s value to a specific target path.&lt;/p>
+&lt;h3 id="configuration-16">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>The path to move the field&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>payload&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>excludes&lt;/code>&lt;/td>
+&lt;td>Comma separated list of fields to exclude&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>null&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-15">Examples&lt;/h3>
+&lt;p>The following example shows the usage of the &lt;code>MoveAllFieldsFilter&lt;/code>.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=MyMoveFilter
+filters.MyMoveFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MoveAllFieldsFilter
+filters.MyMoveFilter.target=payload
+filters.MyMoveFilter.excludes=fieldC,fieldD
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldA&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldB&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;bar&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldC&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldD&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;bar&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldC&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldD&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;bar&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;payload&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldA&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldB&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;bar&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="movefilter">MoveFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>MoveFilter&lt;/code> moves an existing record field&amp;rsquo;s value to a specific target path.&lt;/p>
-&lt;h3 id="configuration-14">Configuration&lt;/h3>
+&lt;h3 id="configuration-17">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3462,7 +3656,7 @@ filters.MyJsonFilter.target=payload
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-13">Examples&lt;/h3>
+&lt;h3 id="examples-16">Examples&lt;/h3>
 &lt;p>The following example shows the usage of the &lt;code>MoveFilter&lt;/code>.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=MyMoveFilter
 filters.MyMoveFilter.type=io.streamthoughts.kafka.connect.filepulse.filter.MoveFilter
@@ -3482,6 +3676,56 @@ filters.MyMoveFilter.target=moved
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;moved&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="namingconventionrenamefilter">NamingConventionRenamefilter&lt;/h2>
+&lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.NamingConventionRenameFilter&lt;/code>.&lt;/p>
+&lt;p>The &lt;code>NamingConventionRenameFilter&lt;/code> renames all fields in the struct to conform with a specific naming convention.&lt;/p>
+&lt;h3 id="configuration-18">Configuration&lt;/h3>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>naming.convention&lt;/code>&lt;/td>
+&lt;td>The naming convetion to follow possible values are: camelCase, snakeCase, pascalCase&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>camelCase&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>delimiter&lt;/code>&lt;/td>
+&lt;td>Set of characters to determine casing of the field&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>_ ,-()[]{}&lt;/em>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h3 id="examples-17">Examples&lt;/h3>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=NormaliseFields
+filters.NormaliseFields.type=io.streamthoughts.kafka.connect.filepulse.filter.NamingConventionRenameFilter
+filters.NormaliseFields.naming.convention=camelCase
+filters.NormaliseFields.delimiter=_
+&lt;/code>&lt;/pre>&lt;p>&lt;strong>Input&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;RECORD_ID&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;NAME&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;bar&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Output&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;recordId&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;foo&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;bar&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="nullvaluefilter">NullValueFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.NullValueFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>NullValueFilter&lt;/code> is used to empty a record-value to null.&lt;/p>
@@ -3492,7 +3736,7 @@ filters.NullValueIfDeleteOp.if={{ equals($value.op, &amp;#39;DELETE&amp;#39;) }}
 &lt;/code>&lt;/pre>&lt;h2 id="renamefilter">RenameFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>RenameFilter&lt;/code> is used to rename a specified field.&lt;/p>
-&lt;h3 id="configuration-15">Configuration&lt;/h3>
+&lt;h3 id="configuration-19">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3527,7 +3771,7 @@ filters.NullValueIfDeleteOp.if={{ equals($value.op, &amp;#39;DELETE&amp;#39;) }}
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h3 id="examples-14">Examples&lt;/h3>
+&lt;h3 id="examples-18">Examples&lt;/h3>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=RenameInputField
 filters.RenameInputField.type=io.streamthoughts.kafka.connect.filepulse.filter.RenameFilter
 filters.RenameInputField.field=input
@@ -3547,7 +3791,7 @@ filters.RenameInputField.target=renamed
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="splitfilter">SplitFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.SplitFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>SplitFilter&lt;/code> splits a field&amp;rsquo;s value of type string into an array by using a specific separator.&lt;/p>
-&lt;h3 id="configuration-16">Configuration&lt;/h3>
+&lt;h3 id="configuration-20">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3609,7 +3853,7 @@ filters.SplitInputField.separator=,
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.XmlToJsonFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>XmlToJsonFilter&lt;/code> parses and converts an XML record-field it to a JSON string.
 This is filter is based on the &lt;code>org.json.XML&lt;/code> library.&lt;/p>
-&lt;h3 id="configuration-17">Configuration&lt;/h3>
+&lt;h3 id="configuration-21">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -3660,7 +3904,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;/code>&lt;/pre>&lt;h2 id="xmltostructfilter">XmlToStructFilter&lt;/h2>
 &lt;p>The following provides usage information for : &lt;code>io.streamthoughts.kafka.connect.filepulse.filter.XmlToStructFilter&lt;/code>.&lt;/p>
 &lt;p>The &lt;code>XmlToStructFilter&lt;/code> parses an XML record-field into STRUCT&lt;/p>
-&lt;h3 id="configuration-18">Configuration&lt;/h3>
+&lt;h3 id="configuration-22">Configuration&lt;/h3>
 &lt;table>
 &lt;thead>
 &lt;tr>

@@ -1,5 +1,5 @@
 ---
-date: 2020-05-20
+date: 2023-09-12
 title: "What is Connect FilePulse ?"
 linkTitle: "Connect FilePulse"
 weight: 10
@@ -9,10 +9,10 @@ description: >
 
 ## What is it?
 
-**Connect FilePulse** is a polyvalent, scalable and reliable, Apache Kafka Connect plugin that makes it easy to parse, transform and stream any file, in any format, into Apache Kafka™.
+**Connect FilePulse** is a multipurpose, scalable and reliable, Apache Kafka Connect plugin that makes it easy to parse, transform and stream any file, in any format, into Apache Kafka™.
 
 {{% alert title="About Connect" color="info" %}}
-**[Kafka Connect](https://kafka.apache.org/documentation/#connect)** is a tool for scalably and reliably streaming data between Apache Kafka and other systems. (source: [Apache documentation](https://kafka.apache.org/documentation/#connect)).
+**[Kafka Connect](https://kafka.apache.org/documentation/#connect)** is a tool for scalable and reliably streaming data between Apache Kafka and other systems. (source: [Apache documentation](https://kafka.apache.org/documentation/#connect)).
 {{% /alert %}}
 
 ### Key Features

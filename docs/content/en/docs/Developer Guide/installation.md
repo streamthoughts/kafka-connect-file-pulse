@@ -1,5 +1,5 @@
 ---
-date: 2022-06-07
+date: 2023-09-12
 title: "Installation"
 linkTitle: "Installation"
 weight: 10
@@ -29,7 +29,7 @@ Download the distribution ZIP file for the latest available version.
 **Example :**
 
 ```bash
-export VERSION=2.6.0
+export VERSION=2.13.0
 wget https://github.com/streamthoughts/kafka-connect-file-pulse/releases/download/v$VERSION/streamthoughts-kafka-connect-file-pulse-$VERSION.zip
 ```
 

@@ -759,6 +759,13 @@ file.filter.regex.pattern=&amp;#34;\\.log$&amp;#34;
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
 file.filter.minimum.size.bytes=0
 file.filter.maximum.size.bytes=9223372036854775807
+&lt;/code>&lt;/pre>&lt;h3 id="dateinfilenamefilelistfilter">DateInFilenameFileListFilter&lt;/h3>
+&lt;p>The &lt;code>DateInFilenameFileListFilter&lt;/code> can be used to filter all files that contain a date in filename earlier or later than a specific date.&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.DateInFilenameFileListFilter
+file.filter.date.regex.extractor.pattern=&amp;#34;^.*(\\d{4}-\\d{2}-\\d{2})_.*$&amp;#34;
+file.filter.date.formatter.pattern=&amp;#34;yyyy MM dd&amp;#34;
+file.filter.date.min.date=&amp;#34;2023-08-23&amp;#34;
+file.filter.date.max.date=&amp;#34;2023-08-24&amp;#34;
 &lt;/code>&lt;/pre></description></item><item><title>Docs: File Readers</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-readers/</guid><description>
 &lt;p>The &lt;code>FilePulseSourceTask&lt;/code> uses the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/reader/FileInputReader.java">FileInputReader&lt;/a>.
 configured in the connector&amp;rsquo;s configuration for reading object files (i.e., &lt;code>tasks.reader.class&lt;/code>).&lt;/p>
@@ -2415,7 +2422,7 @@ filters.Log4jGrokFilter.withOnFailure=AppendError
 filters.AppendError.type=io.streamthoughts.kafka.connect.filepulse.filter.AppendFilter
 filters.AppendError.field=$.exceptionMessage
 filters.AppendError.value={{ $error.exceptionMessage }}
-&lt;/code>&lt;/pre></description></item><item><title>Docs: Processing Filters</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link><pubDate>Fri, 03 Jun 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</guid><description>
+&lt;/code>&lt;/pre></description></item><item><title>Docs: Processing Filters</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</link><pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filters/</guid><description>
 &lt;p>These filters are available for use with Kafka Connect File Pulse:&lt;/p>
 &lt;table>
 &lt;thead>

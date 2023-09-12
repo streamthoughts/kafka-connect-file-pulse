@@ -59,8 +59,8 @@ jobs:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
+          clean: true
 
       - name: 'Download all artifacts'
         uses: actions/download-artifact@v3

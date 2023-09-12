@@ -1,7 +1,7 @@
-version: "3.3"
+version: '3'
 services:
   cp-zookeeper:
-    image: confluentinc/cp-zookeeper:6.0.1
+    image: confluentinc/cp-zookeeper:7.5.0
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -13,7 +13,7 @@ services:
       - kafka-connect
 
   cp-broker:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.5.0
     hostname: broker
     container_name: broker
     depends_on:
@@ -36,7 +36,7 @@ services:
       - kafka-connect
 
   cp-schema-registry:
-    image: confluentinc/cp-schema-registry:6.0.1
+    image: confluentinc/cp-schema-registry:7.5.0
     hostname: schema-registry
     container_name: schema-registry
     depends_on:

@@ -1,7 +1,7 @@
 version: '3'
 services:
   cp-zookeeper:
-    image: confluentinc/cp-zookeeper:6.0.1
+    image: confluentinc/cp-zookeeper:7.5.0
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -11,7 +11,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   cp-broker:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.5.0
     hostname: broker
     container_name: broker
     depends_on:
@@ -32,7 +32,7 @@ services:
       CONFLUENT_METRICS_ENABLE: 'false'
 
   cp-schema-registry:
-    image: confluentinc/cp-schema-registry:6.0.1
+    image: confluentinc/cp-schema-registry:7.5.0
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -45,7 +45,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 
   connect-file-pulse:
-    image: streamthoughts/kafka-connect-file-pulse:2.5.0
+    image: streamthoughts/kafka-connect-file-pulse:2.12.0
     container_name: connect
     depends_on:
     - cp-broker

@@ -34,7 +34,7 @@ limitations under the License.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
         <license.header.file>${project.parent.basedir}/license-header</license.header.file>
-        <antlr4.version>4.12.0</antlr4.version>
+        <antlr4.version>4.13.1</antlr4.version>
     </properties>
 
     <build>

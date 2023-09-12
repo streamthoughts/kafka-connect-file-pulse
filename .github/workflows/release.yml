@@ -32,6 +32,7 @@ env:
 jobs:
   set-release-version:
     runs-on: ubuntu-latest
+    name: 'Set Release Version'
     outputs:
       HEAD: ${{ steps.version.outputs.HEAD }}
       RELEASE_VERSION: ${{ steps.version.outputs.RELEASE_VERSION }}
@@ -55,7 +56,7 @@ jobs:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
-      - name: Grant execute permission to MVN Wrapper
+      - name: 'Grant execute permission to MVN Wrapper'
         run: chmod +x ./mvnw
 
       - name: Update release version
@@ -125,7 +126,7 @@ jobs:
           git add "./docs/*"
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: release version ${{ env.RELEASE_VERSION }} 🎉"
-          git push --atomic origin HEAD:main
+          git push --atomic origin HEAD:master
           HEAD=$(git rev-parse HEAD)
           echo "HEAD=$HEAD" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
@@ -161,6 +162,7 @@ jobs:
             connect-file-pulse-plugin/target/components/packages/*.zip
 
   release-artifacts:
+    name: 'Release Artifacts'
     needs: [ set-release-version, build-distribution ]
     runs-on: ubuntu-latest
     steps:
@@ -222,4 +224,4 @@ jobs:
         run: |
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: bump version for next iteration to ${{ env.NEXT_VERSION }} 🤖"
-          git push origin HEAD:main 
+          git push origin HEAD:master 

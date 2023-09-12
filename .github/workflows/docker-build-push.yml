@@ -55,7 +55,7 @@ jobs:
         run: cp ./connect-file-pulse-plugin/target/components/packages/streamthoughts-kafka-connect-file-pulse-${{ env.VERSION }}.zip ./docker/ \
 
       - name: 'Login to DockerHub'
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
         run: echo "DOCKER_TAG=${{ env.VERSION }}" >> $GITHUB_ENV
 
       - name: 'Login to DockerHub'
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}

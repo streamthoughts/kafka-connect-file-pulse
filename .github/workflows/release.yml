@@ -106,8 +106,8 @@ jobs:
             This section is where the user documentation for Connect File Pulse lives - all the information that users need to understand and successfully use Connect File Pulse.
             EOF
               
-            echo "Updating $BASEDIR/docs/config.toml"
-            cat >> "$BASEDIR/docs/config.toml" <<EOF
+            echo "Updating ./docs/config.toml"
+            cat >> "./docs/config.toml" <<EOF
             [[params.versions]]
               version = "v$RELEASE_DOC_VERSION"
               url = "/kafka-connect-file-pulse/v$RELEASE_DOC_LINK/docs"
@@ -132,12 +132,8 @@ jobs:
 
   build-distribution:
     needs: [ set-release-version ]
-    name: 'Build with GraalVM on ${{ matrix.os }}'
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ ubuntu-latest, macOS-latest ]
-    runs-on: ${{ matrix.os }}
+    name: 'Build Artifacts'
+    runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v4

@@ -23,14 +23,13 @@ env:
   JAVA_DISTRO: 'zulu'
 
 jobs:
-  build-distribution:
+  build:
     if: github.repository == 'streamthoughts/kafka-connect-file-pulse'
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout GitHub repository'
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.set-release-version.outputs.HEAD }}
           fetch-depth: 0
           clean: true
 
@@ -52,7 +51,7 @@ jobs:
           path: |
             connect-file-pulse-plugin/target/components/packages/*.zip
 
-  release-artifacts:
+  release:
     needs: [ build-distribution ]
     runs-on: ubuntu-latest
     steps:

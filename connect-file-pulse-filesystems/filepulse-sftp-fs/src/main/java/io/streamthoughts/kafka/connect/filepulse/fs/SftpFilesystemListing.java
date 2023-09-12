@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class SftpFilesystemListing implements FileSystemListing<SftpFileStorage> {
 
-    private static final Logger log = LoggerFactory.getLogger(SftpFilesystemListing.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SftpFilesystemListing.class);
     private FileListFilter filter;
 
     private SftpFilesystemListingConfig config;
@@ -47,29 +47,33 @@ public class SftpFilesystemListing implements FileSystemListing<SftpFileStorage>
     public SftpFilesystemListing() {
         this(Collections.emptyList());
     }
-
+    /** {@inheritDoc} **/
     @Override
     public void configure(final Map<String, ?> configs) {
-        log.debug("Configuring SftpFilesystemListing");
+        LOG.debug("Configuring SftpFilesystemListing");
         config = new SftpFilesystemListingConfig(configs);
         sftpClient = new SftpClient(config);
     }
 
+    /** {@inheritDoc} **/
     @Override
     public Collection<FileObjectMeta> listObjects() {
         String listingDirectoryPath = getConfig().getSftpListingDirectoryPath();
 
-        List<FileObjectMeta> filesMetadata = getSftpClient().listFiles(listingDirectoryPath)
+        List<FileObjectMeta> filesMetadata = getSftpClient()
+                .listFiles(listingDirectoryPath)
                 .collect(Collectors.toList());
 
         return filter.filterFiles(filesMetadata);
     }
 
+    /** {@inheritDoc} **/
     @Override
     public void setFilter(FileListFilter filter) {
         this.filter = filter;
     }
 
+    /** {@inheritDoc} **/
     @Override
     public SftpFileStorage storage() {
         return new SftpFileStorage(config);

@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2019-2020 StreamThoughts.
-  ~
-  ~ Licensed to the Apache Software Foundation (ASF) under one or more
-  ~ contributor license agreements. See the NOTICE file distributed with
-  ~ this work for additional information regarding copyright ownership.
-  ~ The ASF licenses this file to You under the Apache License, Version 2.0
-  ~ (the "License"); you may not use this file except in compliance with
-  ~ the License. You may obtain a copy of the License at
-  ~
-  ~    http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+Copyright 2023 StreamThoughts
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -42,13 +38,20 @@
         <module>connect-file-pulse-dataformat</module>
     </modules>
 
+    <inceptionYear>2023</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
     <developers>
         <developer>
-            <organization>streamthoughts</organization>
-            <organizationUrl>http://streamthoughts.io</organizationUrl>
+            <id>fhussonnois</id>
+            <name>Florian Hussonnois</name>
         </developer>
     </developers>
-
     <organization>
         <name>streamthoughts</name>
         <url>https://www.streamthoughts.io</url>
@@ -74,22 +77,29 @@
         </repository>
     </distributionManagement>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- JAVA -->
+        <jdk.version>11</jdk.version>
+        <release.version>${jdk.version}</release.version>
+        <maven.compiler.parameters>true</maven.compiler.parameters>
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
+        <maven.compiler.release>${jdk.version}</maven.compiler.release>
+        <!-- Maven plugin versions -->
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
         <maven.failsafe.plugin.version>3.0.0-M7</maven.failsafe.plugin.version>
         <maven.source.plugin>3.3.0</maven.source.plugin>
         <maven.javadoc.plugin>3.5.0</maven.javadoc.plugin>
+        <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
+        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <apache.avro.version>1.8.2</apache.avro.version>
+        <jreleaser-maven-plugin.version>1.8.0</jreleaser-maven-plugin.version>
         <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
+        <!-- DEPENDENCIES -->
         <io.confluent.version>7.3.2</io.confluent.version>
         <org.apache.kafka.version>3.5.1</org.apache.kafka.version>
         <junit.version>5.9.3</junit.version>
@@ -101,6 +111,7 @@
         <com.fasterxml.jackson.annotations.version>2.15.2</com.fasterxml.jackson.annotations.version>
         <slf4j.version>2.0.7</slf4j.version>
         <spotbugs.maven.plugin.version>4.7.3.5</spotbugs.maven.plugin.version>
+        <!-- SONAR -->
         <jacoco.version>0.8.10</jacoco.version>
         <sonar.organization>streamthoughts</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -112,6 +123,7 @@
         <sonar.language>java</sonar.language>
         <license.header.file>${project.basedir}/license-header</license.header.file>
         <spotless.version>2.37.0</spotless.version>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
     </properties>
 
     <repositories>
@@ -145,7 +157,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>${maven-assembly-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -169,29 +181,16 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            </manifest>
-                        </archive>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>${maven-compiler-plugin.version}</version>
                     <configuration>
-                        <release>11</release>
+                        <parameters>${maven.compiler.parameters}</parameters>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>${maven-jar-plugin.version}</version>
                     <configuration>
                         <archive>
                             <manifest>
@@ -404,7 +403,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>${maven-gpg-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -441,7 +440,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.5.0</version>
+                        <version>${maven-javadoc-plugin.version}</version>
                         <configuration>
                             <doclint>none</doclint><!-- Turnoff all checks -->
                             <source>11</source>
@@ -454,6 +453,92 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jreleaser</groupId>
+                        <artifactId>jreleaser-maven-plugin</artifactId>
+                        <version>${jreleaser-maven-plugin.version}</version>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <jreleaser>
+                                <signing>
+                                    <active>ALWAYS</active>
+                                    <armored>true</armored>
+                                </signing>
+                                <project>
+                                    <snapshot>
+                                        <label>{{ projectVersionNumber }}-early-access</label>
+                                    </snapshot>
+                                </project>
+                                <release>
+                                    <github>
+                                        <changelog>
+                                            <formatted>ALWAYS</formatted>
+                                            <includeLabels>
+                                                <includeLabel>features</includeLabel>
+                                                <includeLabel>changes</includeLabel>
+                                                <includeLabel>dependencies</includeLabel>
+                                            </includeLabels>
+                                            <labelers>
+                                                <labeler>
+                                                    <label>features</label>
+                                                    <title>regex:^feat.+$</title>
+                                                </labeler>
+                                                <labeler>
+                                                    <label>changes</label>
+                                                    <title>regex:^(?!feat|build|ci).+$</title>
+                                                </labeler>
+                                                <labeler>
+                                                    <label>dependencies</label>
+                                                    <title>regex:^build\(deps\)\:.+$</title>
+                                                </labeler>
+                                            </labelers>
+                                            <categories>
+                                                <category>
+                                                    <title>🚀 New Features</title>
+                                                    <key>features</key>
+                                                    <labels>features</labels>
+                                                    <order>1</order>
+                                                </category>
+                                                <category>
+                                                    <title>🪛 Improvement and 🐞 Bug fixes</title>
+                                                    <key>changes</key>
+                                                    <labels>changes</labels>
+                                                    <order>2</order>
+                                                </category>
+                                                <category>
+                                                    <title>⬆️ Dependencies</title>
+                                                    <key>dependencies</key>
+                                                    <labels>dependencies</labels>
+                                                    <order>3</order>
+                                                </category>
+                                            </categories>
+                                        </changelog>
+                                    </github>
+                                </release>
+                                <distributions>
+                                    <filepulse>
+                                        <artifacts>
+                                            <artifact>
+                                                <path>
+                                                    {{artifactsDir}}/streamthoughts-kafka-connect-file-pulse-{{projectVersion}}.zip
+                                                </path>
+                                                <transform>
+                                                    artifacts/streamthoughts-kafka-connect-file-pulse-{{projectEffectiveVersion}}.zip
+                                                </transform>
+                                            </artifact>
+                                        </artifacts>
+                                    </filepulse>
+                                </distributions>
+                            </jreleaser>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

@@ -35,6 +35,8 @@ public class RegexFileListFilter extends PredicateFileListFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(RegexFileListFilter.class);
 
+    private final static String GROUP = "RegexFileListFilter";
+
     private static final String FILE_FILTER_REGEX_PATTERN_CONFIG = "file.filter.regex.pattern";
     private static final String FILE_FILTER_REGEX_PATTERN_DOC    = "The regex pattern used to matches input files";
 
@@ -74,7 +76,17 @@ public class RegexFileListFilter extends PredicateFileListFilter {
 
     private static ConfigDef getConfigDef() {
         return new ConfigDef()
-                .define(FILE_FILTER_REGEX_PATTERN_CONFIG, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH,
-                        FILE_FILTER_REGEX_PATTERN_DOC);
+                .define(
+                        FILE_FILTER_REGEX_PATTERN_CONFIG,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.NO_DEFAULT_VALUE,
+                        new ConfigDef.NonEmptyString(),
+                        ConfigDef.Importance.HIGH,
+                        FILE_FILTER_REGEX_PATTERN_DOC,
+                        GROUP,
+                        0,
+                        ConfigDef.Width.NONE,
+                        FILE_FILTER_REGEX_PATTERN_CONFIG
+                );
     }
 }

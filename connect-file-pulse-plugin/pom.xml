@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2019-2020 StreamThoughts.
-  ~
-  ~ Licensed to the Apache Software Foundation (ASF) under one or more
-  ~ contributor license agreements. See the NOTICE file distributed with
-  ~ this work for additional information regarding copyright ownership.
-  ~ The ASF licenses this file to You under the Apache License, Version 2.0
-  ~ (the "License"); you may not use this file except in compliance with
-  ~ the License. You may obtain a copy of the License at
-  ~
-  ~    http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+Copyright 2023 StreamThoughts
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -32,19 +28,6 @@
     <artifactId>kafka-connect-filepulse-plugin</artifactId>
 
     <name>Kafka Connect Source File Pulse Plugin</name>
-    <description>Connect File Pulse is a multipurpose source connector for streaming files from filesystems to Kafka.</description>
-
-    <organization>
-        <name>streamthoughts</name>
-        <url>http://streamthoughts.io</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
 
     <properties>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
@@ -61,91 +44,8 @@
 
         <plugins>
             <plugin>
-                <groupId>io.confluent</groupId>
-                <version>${kafka.connect.maven.plugin.version}</version>
-                <artifactId>kafka-connect-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>kafka-connect</goal>
-                        </goals>
-                        <configuration>
-                            <name>kafka-connect-file-pulse</name>
-                            <title>Kafka Connect File Pulse</title>
-                            <documentationUrl>https://github.com/streamthoughts/kafka-connect-file-pulse</documentationUrl>
-                            <sourceUrl>https://github.com/streamthoughts/kafka-connect-file-pulse</sourceUrl>
-                            <description>
-                                The Kafka Connect FilePulse Connector is a powerful source connector that makes it easy to parse, transform, and load data from the local filesystem, Amazon S3, Azure Blob Storage and Google Cloud Storage. This connector supports a variety of formats equally for all storage systems, e.g., text files, CSV, XML, JSON, Avro, Log4j, etc.
-                            </description>
-                            <supportProviderName>StreamThoughts</supportProviderName>
-                            <supportSummary>This connector is supported by the open source community and StreamThoughts as part of its open source offering.</supportSummary>
-                            <supportUrl>https://streamthoughts.io/open-source</supportUrl>
-
-                            <logo>${project.basedir}/../assets/logo.png</logo>
-
-                            <ownerUsername>streamthoughts</ownerUsername>
-                            <ownerType>organization</ownerType>
-                            <ownerName>StreamThoughts</ownerName>
-                            <ownerUrl>https://streamthoughts.io/</ownerUrl>
-
-                            <componentTypes>
-                                <componentType>source</componentType>
-                            </componentTypes>
-
-                            <tags>
-                                <tag>filesystem</tag>
-                                <tag>files</tag>
-                                <tag>grok</tag>
-                                <tag>parsing</tag>
-                                <tag>log</tag>
-                                <tag>csv</tag>
-                                <tag>xml</tag>
-                                <tag>cloud</tag>
-                                <tag>aws</tag>
-                                <tag>azure</tag>
-                                <tag>gcs</tag>
-                            </tags>
-
-                            <requirements/>
-
-                            <deliveryGuarantee>
-                                <deliveryGuarantee>atLeastOnce</deliveryGuarantee>
-                            </deliveryGuarantee>
-
-                            <confluentControlCenterIntegration>true</confluentControlCenterIntegration>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/assembly/development.xml</descriptor>
-                        <descriptor>src/assembly/package.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-make-assembly</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -205,21 +105,32 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/development.xml</descriptor>
+                        <descriptor>src/assembly/package.xml</descriptor>
+                    </descriptors>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>accept</id>
-                        <phase>accept</phase>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>check</goal>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-make-assembly</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
     </build>
 
@@ -234,6 +145,71 @@
     </dependencyManagement>
 
     <profiles>
+        <profile>
+            <id>dist</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.confluent</groupId>
+                        <version>${kafka.connect.maven.plugin.version}</version>
+                        <artifactId>kafka-connect-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>kafka-connect</goal>
+                                </goals>
+                                <configuration>
+                                    <name>kafka-connect-file-pulse</name>
+                                    <title>Kafka Connect File Pulse</title>
+                                    <documentationUrl>https://github.com/streamthoughts/kafka-connect-file-pulse</documentationUrl>
+                                    <sourceUrl>https://github.com/streamthoughts/kafka-connect-file-pulse</sourceUrl>
+                                    <description>
+                                        The Kafka Connect FilePulse Connector is a powerful source connector that makes it easy to parse, transform, and load data from the local filesystem, Amazon S3, Azure Blob Storage and Google Cloud Storage. This connector supports a variety of formats equally for all storage systems, e.g., text files, CSV, XML, JSON, Avro, Log4j, etc.
+                                    </description>
+                                    <supportProviderName>StreamThoughts</supportProviderName>
+                                    <supportSummary>This connector is supported by the open source community.</supportSummary>
+                                    <supportUrl>https://streamthoughts.io/open-source</supportUrl>
+
+                                    <logo>${project.basedir}/../assets/logo.png</logo>
+
+                                    <ownerUsername>streamthoughts</ownerUsername>
+                                    <ownerType>organization</ownerType>
+                                    <ownerName>StreamThoughts</ownerName>
+                                    <ownerUrl>https://streamthoughts.io/</ownerUrl>
+
+                                    <componentTypes>
+                                        <componentType>source</componentType>
+                                    </componentTypes>
+
+                                    <tags>
+                                        <tag>filesystem</tag>
+                                        <tag>files</tag>
+                                        <tag>grok</tag>
+                                        <tag>parsing</tag>
+                                        <tag>log</tag>
+                                        <tag>csv</tag>
+                                        <tag>xml</tag>
+                                        <tag>cloud</tag>
+                                        <tag>aws</tag>
+                                        <tag>azure</tag>
+                                        <tag>gcs</tag>
+                                        <tag>sftp</tag>
+                                    </tags>
+
+                                    <requirements/>
+
+                                    <deliveryGuarantee>
+                                        <deliveryGuarantee>atLeastOnce</deliveryGuarantee>
+                                    </deliveryGuarantee>
+
+                                    <confluentControlCenterIntegration>true</confluentControlCenterIntegration>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>standalone</id>
             <build>
@@ -250,7 +226,7 @@
             </build>
         </profile>
         <profile>
-            <id>one-for-all</id>
+            <id>all</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -273,6 +249,16 @@
                 <dependency>
                     <groupId>io.streamthoughts</groupId>
                     <artifactId>kafka-connect-filepulse-local-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-sftp-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-aliyunoss-fs</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

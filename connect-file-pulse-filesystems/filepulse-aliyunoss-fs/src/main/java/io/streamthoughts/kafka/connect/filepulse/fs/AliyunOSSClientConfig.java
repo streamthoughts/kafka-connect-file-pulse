@@ -19,13 +19,12 @@
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
+import java.util.Map;
+import java.util.Objects;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.common.config.types.Password;
-
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * The aliyun OSS client's configuration.

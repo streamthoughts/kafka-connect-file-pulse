@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.SftpATTRS;
 import io.streamthoughts.kafka.connect.filepulse.fs.client.SftpClient;
-import io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import java.net.URI;
@@ -38,7 +37,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Order;
@@ -66,9 +65,13 @@ public class SftpFilesystemListingTest {
     @Order(2)
     public void when_filter_regex_specified_and_entries_for_files_and_directories_listObjects_should_build_metadata_only_for_files_matching_pattern() {
         Stream<LsEntry> entries = Stream.of(Fixture.visitorEntry, Fixture.fullReferrerEntry, Fixture.parentDirEntry);
-        RegexFileListFilter regexFileListFilter = buildRegexFilter(Fixture.visitorRegexPattern);
 
-        SftpFilesystemListing listing = buildSftpFilesystemListingMock(entries, Collections.singletonList(regexFileListFilter));
+        SftpFilesystemListing listing = buildSftpFilesystemListingMock(entries, Collections.singletonList(new FileListFilter() {
+            @Override
+            public Collection<FileObjectMeta> filterFiles(Collection<FileObjectMeta> files) {
+                return files.stream().filter(f -> f.name().matches(Fixture.visitorRegexPattern)).collect(Collectors.toList());
+            }
+        }));
 
         Collection<FileObjectMeta> result = listing.listObjects();
 
@@ -90,14 +93,6 @@ public class SftpFilesystemListingTest {
         doReturn(config).when(listing).getConfig();
 
         return listing;
-    }
-
-    private RegexFileListFilter buildRegexFilter(String pattern) {
-        RegexFileListFilter filter = new RegexFileListFilter();
-        Map<String, String> config = Map.of(Fixture.regexPatternConfig, pattern);
-        filter.configure(config);
-
-        return filter;
     }
 
     private static LsEntry buildEntryMock(String entryName, int entryMTime, long entrySize, boolean isRegularFile) {
@@ -124,7 +119,6 @@ public class SftpFilesystemListingTest {
 
     interface Fixture {
         String path = "/userdata";
-        String regexPatternConfig = "file.filter.regex.pattern";
         String visitorRegexPattern = "^getFullVisitors[a-zA-Z0-9_-]+.csv";
 
         String visitorFileName = "getFullVisitors_2023-01-19_08.csv";

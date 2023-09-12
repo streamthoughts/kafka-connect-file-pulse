@@ -16,14 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
+import java.util.Map;
 import org.apache.kafka.common.config.ConfigException;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Map;
 
 public class AliyunOSSClientConfigTest {
 

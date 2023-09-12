@@ -44,9 +44,9 @@ print-info:
 
 build-dist: print-info
 	if [[ ! -z "$$MVN_PROFILE" ]]; then \
-		./mvnw clean package -B -q -Dmaven.test.skip=true -P $$MVN_PROFILE; \
+		./mvnw clean package -B -q -DskipTests -P dist,$$MVN_PROFILE; \
 	else \
-		./mvnw clean package -B -q -Dmaven.test.skip=true; \
+		./mvnw clean package -B -q -DskipTests -P dist,all; \
 	fi
 
 docker-build: build-dist
@@ -81,3 +81,6 @@ push-images: print-info
 	for PROFILE in $(PROFILES); do\
 		docker push ${REPOSITORY}/${IMAGE}:${VERSION}-$$PROFILE || exit 1 ;\
 	done
+
+changelog:
+	./mvnw jreleaser:changelog -Prelease --file pom.xml

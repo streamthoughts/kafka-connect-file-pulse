@@ -1,70 +1,62 @@
-name: Docker Builds
+name: Docker Builds & Push
 on:
   push:
     branches:
-      - master
-      - main
+      - 'master'
+    tags:
+      - 'v*'
+env:
+  JAVA_VERSION: '11'
+  JAVA_DISTRO: 'zulu'
+
 jobs:
-  build_docker_image:
+  build:
     if: github.repository == 'streamthoughts/kafka-connect-file-pulse'
-    name: Build docker image
+    name: 'Build Docker Image'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v1
 
-      - name: Set up JDK 11
+      - name: 'Set Docker Image Build-Args'
+        run: |
+          echo "VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
+          echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+
+      - name: 'Set up Java'
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: 'maven'
 
-      - name: Grant execute permission for mvnw
-        run: chmod +x mvnw
+      - name: 'Build with Maven'
+        run: |
+          chmod +x mvnw
+          ./mvnw -ntp -B --file pom.xml -Pdist package -DskipTests
 
-      - name: Build with Maven
-        run: ./mvnw clean package -B -Dmaven.test.skip=true;
+      - name: 'Copy distribution'
+        run: cp ./connect-file-pulse-plugin/target/components/packages/streamthoughts-kafka-connect-file-pulse-${{ env.VERSION }}.zip ./docker/ \
 
-      - name: Set env PROJECT_VERSION
-        run: echo "PROJECT_VERSION=$(./mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-
-      - name: Copy distribution
-        run: cp ./connect-file-pulse-plugin/target/components/packages/streamthoughts-kafka-connect-file-pulse-${{ env.PROJECT_VERSION }}.zip ./docker/ \
-
-      - name: Check PROJECT_VERSION
-        run: echo "${{ env.PROJECT_VERSION }}"
-
-      - name: Set env GIT_BRANCH
-        run: echo "GIT_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-
-      - name: Check GIT_BRANCH
-        run: echo "${{ env.GIT_BRANCH }}"
-
-      - name: Set GIT_COMMIT
-        run: echo "GIT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_ENV
-
-      - name: Check GIT_COMMIT
-        run: echo "${{ env.GIT_COMMIT }}"
-
-      - name: Set CREATED
-        run: echo "CREATED=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
-
-      - name: Login to DockerHub
+      - name: 'Login to DockerHub'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v3
+      - name: 'Build & Push to Docker Hub'
+        uses: docker/build-push-action@v4
         with:
           context: ./docker
+          platforms: linux/amd64,linux/arm64
           file: ./docker/Dockerfile
           no-cache: true
           push: true
           tags: streamthoughts/kafka-connect-file-pulse:master
           build-args: |
-            VERSION=${{ env.PROJECT_VERSION }}
+            VERSION=${{ env.VERSION }}
             COMMIT=${{ env.GIT_COMMIT }}
             BRANCH=${{ env.GIT_BRANCH }}
             CREATED=${{ env.CREATED }}

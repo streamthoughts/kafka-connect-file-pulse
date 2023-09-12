@@ -41,6 +41,7 @@ public class FilePulseConnectorPluginsIT extends AbstractKafkaConnectTest {
         final Response response = doGetRequest("http://" + getConnectWorker() + "/connector-plugins");
         plugins = response.jsonPath().getList("$");
 
+        System.out.println(plugins);
         for (final Map<String, String> plugin : plugins) {
             String connectorClass = plugin.get("class");
             if (connectorClass.equals(FilePulseSourceConnector.class.getCanonicalName())) {

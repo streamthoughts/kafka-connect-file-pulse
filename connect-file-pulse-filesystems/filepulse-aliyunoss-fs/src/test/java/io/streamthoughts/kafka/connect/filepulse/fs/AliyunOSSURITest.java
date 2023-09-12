@@ -16,14 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
 import io.streamthoughts.kafka.connect.filepulse.fs.utils.AliyunOSSURI;
+import java.net.URI;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.net.URI;
 
 public class AliyunOSSURITest {
 

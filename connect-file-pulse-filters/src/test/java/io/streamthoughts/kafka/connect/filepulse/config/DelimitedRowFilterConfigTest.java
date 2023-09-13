@@ -67,7 +67,7 @@ public class DelimitedRowFilterConfigTest {
     public void shouldCreateConfigGivenSchema() {
 
         Map<String, String> props = new HashMap<>() {{
-            put(READER_FIELD_COLUMNS_CONFIG, "field1:BOOLEAN;field2:INT32;field3:STRING");
+            put(READER_FIELD_COLUMNS_CONFIG, "x1:BOOLEAN;c2:INT32;y3:STRING");
         }};
 
         DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(filter.configDef(), props);
@@ -75,12 +75,21 @@ public class DelimitedRowFilterConfigTest {
         StructSchema schema = config.schema();
         Assert.assertNotNull(schema);
 
+        // Fields ordered by name (default)
         List<TypedField> fields = schema.fields();
         Assert.assertEquals(3, fields.size());
 
-        Assert.assertEquals("field1", fields.get(0).name());
-        Assert.assertEquals("field2", fields.get(1).name());
-        Assert.assertEquals("field3", fields.get(2).name());
+        Assert.assertEquals("c2", fields.get(0).name());
+        Assert.assertEquals("x1", fields.get(1).name());
+        Assert.assertEquals("y3", fields.get(2).name());
+
+        // Fields ordered by index
+        List<TypedField> fieldsByIndex = schema.fieldsByIndex();
+        Assert.assertEquals(3, fieldsByIndex.size());
+
+        Assert.assertEquals("x1", fieldsByIndex.get(0).name());
+        Assert.assertEquals("c2", fieldsByIndex.get(1).name());
+        Assert.assertEquals("y3", fieldsByIndex.get(2).name());
     }
 
 }

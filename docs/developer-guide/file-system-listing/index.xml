@@ -1,0 +1,417 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kafka Connect File Pulse – FileSystem Listing</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/</link><description>Recent content in FileSystem Listing on Kafka Connect File Pulse</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Wed, 13 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Local</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/local-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/local-filesystem/</guid><description>
+&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> class can be used for listing files that exist in a local filesystem directory.&lt;/p>
+&lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
+&lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing&lt;/code>&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The following table describes the properties that can be used to configure the &lt;code>LocalFSDirectoryListing&lt;/code>:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.directory.path&lt;/code>&lt;/td>
+&lt;td>The input directory to scan&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.listing.recursive.enabled&lt;/code>&lt;/td>
+&lt;td>Flag indicating whether local directory should be recursively scanned&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>true&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="supported-file-types">Supported File types&lt;/h2>
+&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)
+Supported content-types are:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
+&lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
+&lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
+&lt;/ul></description></item><item><title>Docs: SFTP</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/sftp-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/sftp-filesystem/</guid><description>
+&lt;p>The &lt;code>SftpFilesystemListing&lt;/code> class can be used for listing files on SFTP.&lt;/p>
+&lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
+&lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.SftpFilesystemListing&lt;/code>&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The following table describes the properties that can be used to configure the &lt;code>SftpFilesystemListing&lt;/code>:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>sftp.listing.host&lt;/code>&lt;/td>
+&lt;td>Hostname to connect to&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sftp.listing.port&lt;/code>&lt;/td>
+&lt;td>Port to connect to&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>21&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sftp.listing.user&lt;/code>&lt;/td>
+&lt;td>SFTP username&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sftp.listing.password&lt;/code>&lt;/td>
+&lt;td>SFTP user credentials&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sftp.listing.directory.path&lt;/code>&lt;/td>
+&lt;td>The input directory to scan&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sftp.listing.strict.host.key.check&lt;/code>&lt;/td>
+&lt;td>String host key checking&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>no&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sftp.connection.timeout&lt;/code>&lt;/td>
+&lt;td>SFTP connection timeout in millis&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sftp.connection.retries&lt;/code>&lt;/td>
+&lt;td>SFTP connection retries&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>5&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>sftp.connection.retries.delay&lt;/code>&lt;/td>
+&lt;td>SFTP connection delay between retries in millis&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>5000&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Docs: AWS S3</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/aws-s3-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/aws-s3-filesystem/</guid><description>
+&lt;p>The &lt;code>AmazonS3FileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p>
+&lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
+&lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing&lt;/code>&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The following table describes the properties that can be used to configure the &lt;code>AmazonS3FileSystemListing&lt;/code>:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>aws.access.key.id&lt;/code>&lt;/td>
+&lt;td>AWS Access Key ID AWS&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.secret.access.key&lt;/code>&lt;/td>
+&lt;td>AWS Secret Access Key&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.secret.session.token&lt;/code>&lt;/td>
+&lt;td>AWS Secret Session Token&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
+&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
+&lt;td>&lt;code>class&lt;/code>&lt;/td>
+&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.region&lt;/code>&lt;/td>
+&lt;td>The AWS S3 Region, e.g. us-east-1&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>Regions.DEFAULT_REGION.getName()&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.service.endpoint&lt;/code>&lt;/td>
+&lt;td>AWS S3 custom service endpoint.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.path.style.access.enabled&lt;/code>&lt;/td>
+&lt;td>Configures the client to use path-style access for all requests.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.bucket.name&lt;/code>&lt;/td>
+&lt;td>The name of the Amazon S3 bucket.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.bucket.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for restricting the listing of the objects in the bucket&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.default.object.storage.class&lt;/code>&lt;/td>
+&lt;td>The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation). Accepted values are: &lt;code>STANDARD&lt;/code>, &lt;code>GLACIER&lt;/code>, &lt;code>REDUCED_REDUNDANCY&lt;/code>, &lt;code>STANDARD_IA&lt;/code>,&lt;code>ONEZONE_IA&lt;/code>,&lt;code>INTELLIGENT_TIERING&lt;/code>,&lt;code>DEEP_ARCHIVE&lt;/code>&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;/td>
+&lt;td>LOW&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.delay.ms&lt;/code>&lt;/td>
+&lt;td>The base back-off time (milliseconds) before retrying a request.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>100&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.max.delay.ms&lt;/code>&lt;/td>
+&lt;td>The maximum back-off time (in milliseconds) before retrying a request.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>20_000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws.s3.backoff.max.retries&lt;/code>&lt;/td>
+&lt;td>The maximum number of retry attempts for failed retryable requests.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>`3&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Docs: GCP Cloud Storage</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/gcp-cloud-storage-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/gcp-cloud-storage-filesystem/</guid><description>
+&lt;p>The &lt;code>GcsFileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Google Cloud Storage bucket.&lt;/p>
+&lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
+&lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.GcsFileSystemListing&lt;/code>&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The following table describes the properties that can be used to configure the &lt;code>GcsFileSystemListing&lt;/code>:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>gcs.credentials.path&lt;/code>&lt;/td>
+&lt;td>The path to GCP credentials file. Cannot be set when &lt;code>GCS_CREDENTIALS_JSON_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.credentials.json&lt;/code>&lt;/td>
+&lt;td>The GCP credentials as JSON string. Cannot be set when &lt;code>GCS_CREDENTIALS_PATH_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.bucket.name&lt;/code>&lt;/td>
+&lt;td>The GCS bucket name to download the object files from.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>gcs.blobs.filter.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for filtering blobs whose names begin with it.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Docs: Azure Blob Storage</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/azure-blob-storage-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/azure-blob-storage-filesystem/</guid><description>
+&lt;p>The &lt;code>AzureBlobStorageConfig&lt;/code> class can be used for listing objects that exist in a specific Azure Storage Container.&lt;/p>
+&lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
+&lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageFileSystemListing&lt;/code>&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The following table describes the properties that can be used to configure the &lt;code>AzureBlobStorageFileSystemListing&lt;/code>:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.connection.string&lt;/code>&lt;/td>
+&lt;td>Azure storage account connection string.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.account.name&lt;/code>&lt;/td>
+&lt;td>The Azure storage account name.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.account.key&lt;/code>&lt;/td>
+&lt;td>The Azure storage account key.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.container.name&lt;/code>&lt;/td>
+&lt;td>The Azure storage container name.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>azure.storage.blob.prefix&lt;/code>&lt;/td>
+&lt;td>The prefix to be used for restricting the listing of the blobs in the container.&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item><item><title>Docs: Alibaba OSS</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/aliyun-oss-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/aliyun-oss-filesystem/</guid><description>
+&lt;p>The &lt;code>AliyunOSSFileSystemListing&lt;/code> class can be used for listing files on Alibaba Cloud Object Storage Service.&lt;/p>
+&lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
+&lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AliyunOSSFileSystemListing&lt;/code>&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The following table describes the properties that can be used to configure the &lt;code>AliyunOSSFileSystemListing&lt;/code>:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>oss.access.key.id&lt;/code>&lt;/td>
+&lt;td>OSS access key id&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>oss.secret.key&lt;/code>&lt;/td>
+&lt;td>OSS secret key&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>oss.endpoint&lt;/code>&lt;/td>
+&lt;td>OSS access endpoint&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>oss.bucket.name&lt;/code>&lt;/td>
+&lt;td>OSS bucket name&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>oss.bucket.prefix&lt;/code>&lt;/td>
+&lt;td>OSS bucket prefix&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>oss.max.connections&lt;/code>&lt;/td>
+&lt;td>OSS max connections.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>1024&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>oss.socket.timeout&lt;/code>&lt;/td>
+&lt;td>OSS connection timeout (in milliseconds).&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>10000&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>oss.connection.timeout&lt;/code>&lt;/td>
+&lt;td>OSS connection timeout (in milliseconds).&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>50000&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>oss.max.error.retries&lt;/code>&lt;/td>
+&lt;td>The maximum number of retry attempts for failed retryable requests.&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>5&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item></channel></rss>

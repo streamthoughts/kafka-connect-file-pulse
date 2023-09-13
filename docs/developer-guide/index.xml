@@ -72,7 +72,7 @@ These configurations are described in detail in subsequent chapters.&lt;/p>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>fs.listing.filters&lt;/code>&lt;/td>
-&lt;td>Filters use to list eligible input files&lt;/td>
+&lt;td>A comma-separated list of FileListFilter classes used to list eligible input files.&lt;/td>
 &lt;td>list&lt;/td>
 &lt;td>&lt;em>-&lt;/em>&lt;/td>
 &lt;td>MEDIUM&lt;/td>
@@ -475,18 +475,11 @@ If there is no schema pass through the connector configuration, a schema will be
 &lt;p>The &lt;code>FilePulseSourceConnector&lt;/code> periodically lists object files that may be streamed into Kafka using the &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/fs/FileSystemListing.java">FileSystemListing&lt;/a>&lt;br>
 configured in the connector&amp;rsquo;s configuration.&lt;/p>
 &lt;h2 id="supported-filesystems">Supported Filesystems&lt;/h2>
-&lt;p>Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>AmazonS3FileSystemListing&lt;/code>&lt;/li>
-&lt;li>&lt;code>AzureBlobStorageFileSystemListing&lt;/code>&lt;/li>
-&lt;li>&lt;code>GcsFileSystemListing&lt;/code>&lt;/li>
-&lt;li>&lt;code>LocalFSDirectoryListing&lt;/code> (default)&lt;/li>
-&lt;/ul>
-&lt;h3 id="local-filesystem-default">Local Filesystem (default)&lt;/h3>
-&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> class can be used for listing files that exist in a local filesystem directory.&lt;/p>
-&lt;h4 id="how-to-use-it-">How to use it ?&lt;/h4>
-&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.LocalFSDirectoryListing&lt;/code>&lt;/p>
-&lt;h4 id="configuration">Configuration&lt;/h4>
+&lt;p>Currently, Kafka Connect FilePulse supports the following implementations:&lt;/p></description></item><item><title>Docs: FileListFilter</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filter-filter/</link><pubDate>Wed, 13 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/filter-filter/</guid><description>
+&lt;p>A &lt;code>FileListFilter&lt;/code> allows to filter files that can be processed by the connector. Files that are filtered out are simply
+ignored and remain untouched on the file system until the next file listing operation. During the next execution, the
+previously filtered files will be evaluated again to determine whether they should be processed.&lt;/p>
+&lt;p>You can configure multiple &lt;code>FileListFilter&lt;/code>s using the following connector&amp;rsquo;s configuration property:&lt;/p>
 &lt;table>
 &lt;thead>
 &lt;tr>
@@ -494,273 +487,45 @@ configured in the connector&amp;rsquo;s configuration.&lt;/p>
 &lt;th>Description&lt;/th>
 &lt;th>Type&lt;/th>
 &lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;code>fs.listing.directory.path&lt;/code>&lt;/td>
-&lt;td>The input directory to scan&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.listing.recursive.enabled&lt;/code>&lt;/td>
-&lt;td>Flag indicating whether local directory should be recursively scanned&lt;/td>
-&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
-&lt;td>&lt;code>true&lt;/code>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
+&lt;td>&lt;code>fs.listing.filters&lt;/code>&lt;/td>
+&lt;td>A comma-separated list of FileListFilter classes used to list eligible input files.&lt;/td>
+&lt;td>list&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;h4 id="supported-file-types">Supported File types&lt;/h4>
-&lt;p>The &lt;code>LocalFSDirectoryListing&lt;/code> will try to detect if a file needs to be decompressed by probing its content type or its extension (javadoc : &lt;a href="https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#probeContentType-java.nio.file.Path">Files#probeContentType&lt;/a>)
-Supported content-types are:&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>GZIP&lt;/strong> : &lt;code>application/x-gzip&lt;/code>&lt;/li>
-&lt;li>&lt;strong>TAR&lt;/strong> : &lt;code>application/x-tar&lt;/code>&lt;/li>
-&lt;li>&lt;strong>ZIP&lt;/strong> : &lt;code>application/x-zip-compressed&lt;/code> or &lt;code>application/zip&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;h3 id="amazon-s3">Amazon S3&lt;/h3>
-&lt;p>The &lt;code>AmazonS3FileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p>
-&lt;h4 id="how-to-use-it--1">How to use it ?&lt;/h4>
-&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3FileSystemListing&lt;/code>&lt;/p>
-&lt;h4 id="configuration-1">Configuration&lt;/h4>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>aws.access.key.id&lt;/code>&lt;/td>
-&lt;td>AWS Access Key ID AWS&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.secret.access.key&lt;/code>&lt;/td>
-&lt;td>AWS Secret Access Key&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.secret.session.token&lt;/code>&lt;/td>
-&lt;td>AWS Secret Session Token&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.credentials.provider.class&lt;/code>&lt;/td>
-&lt;td>The AWSCredentialsProvider to use if no access key id and secret access key is configured.&lt;/td>
-&lt;td>&lt;code>class&lt;/code>&lt;/td>
-&lt;td>&lt;code>com.amazonaws.auth.EnvironmentVariableCredentialsProvider&lt;/code>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.region&lt;/code>&lt;/td>
-&lt;td>The AWS S3 Region, e.g. us-east-1&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;code>Regions.DEFAULT_REGION.getName()&lt;/code>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.service.endpoint&lt;/code>&lt;/td>
-&lt;td>AWS S3 custom service endpoint.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.path.style.access.enabled&lt;/code>&lt;/td>
-&lt;td>Configures the client to use path-style access for all requests.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.bucket.name&lt;/code>&lt;/td>
-&lt;td>The name of the Amazon S3 bucket.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.bucket.prefix&lt;/code>&lt;/td>
-&lt;td>The prefix to be used for restricting the listing of the objects in the bucket&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.default.object.storage.class&lt;/code>&lt;/td>
-&lt;td>The AWS storage class to associate with an S3 object when it is copied by the connector (e.g., during a move operation). Accepted values are: &lt;code>STANDARD&lt;/code>, &lt;code>GLACIER&lt;/code>, &lt;code>REDUCED_REDUNDANCY&lt;/code>, &lt;code>STANDARD_IA&lt;/code>,&lt;code>ONEZONE_IA&lt;/code>,&lt;code>INTELLIGENT_TIERING&lt;/code>,&lt;code>DEEP_ARCHIVE&lt;/code>&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.backoff.delay.ms&lt;/code>&lt;/td>
-&lt;td>The base back-off time (milliseconds) before retrying a request.&lt;/td>
-&lt;td>&lt;code>int&lt;/code>&lt;/td>
-&lt;td>&lt;code>100&lt;/code>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.backoff.max.delay.ms&lt;/code>&lt;/td>
-&lt;td>The maximum back-off time (in milliseconds) before retrying a request.&lt;/td>
-&lt;td>&lt;code>int&lt;/code>&lt;/td>
-&lt;td>&lt;code>20_000&lt;/code>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>aws.s3.backoff.max.retries&lt;/code>&lt;/td>
-&lt;td>The maximum number of retry attempts for failed retryable requests.&lt;/td>
-&lt;td>&lt;code>int&lt;/code>&lt;/td>
-&lt;td>&lt;code>3&lt;/code>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h3 id="google-cloud-storage">Google Cloud Storage&lt;/h3>
-&lt;p>The &lt;code>GcsFileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Google Cloud Storage bucket.&lt;/p>
-&lt;h4 id="how-to-use-it--2">How to use it ?&lt;/h4>
-&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.GcsFileSystemListing&lt;/code>&lt;/p>
-&lt;h4 id="configuration-2">Configuration&lt;/h4>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>gcs.credentials.path&lt;/code>&lt;/td>
-&lt;td>The path to GCP credentials file. Cannot be set when &lt;code>GCS_CREDENTIALS_JSON_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>gcs.credentials.json&lt;/code>&lt;/td>
-&lt;td>The GCP credentials as JSON string. Cannot be set when &lt;code>GCS_CREDENTIALS_PATH_CONFIG&lt;/code> is provided. If no credentials is specified the client library will look for credentials via the environment variable &lt;code>GOOGLE_APPLICATION_CREDENTIALS&lt;/code>.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>gcs.bucket.name&lt;/code>&lt;/td>
-&lt;td>The GCS bucket name to download the object files from.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>gcs.blobs.filter.prefix&lt;/code>&lt;/td>
-&lt;td>The prefix to be used for filtering blobs whose names begin with it.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h3 id="azure-blob-storage">Azure Blob Storage&lt;/h3>
-&lt;p>The &lt;code>AzureBlobStorageConfig&lt;/code> class can be used for listing objects that exist in a specific Azure Storage Container.&lt;/p>
-&lt;h4 id="how-to-use-it--3">How to use it ?&lt;/h4>
-&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.AzureBlobStorageFileSystemListing&lt;/code>&lt;/p>
-&lt;h4 id="configuration-3">Configuration&lt;/h4>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.connection.string&lt;/code>&lt;/td>
-&lt;td>Azure storage account connection string.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.account.name&lt;/code>&lt;/td>
-&lt;td>The Azure storage account name.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.account.key&lt;/code>&lt;/td>
-&lt;td>The Azure storage account key.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.container.name&lt;/code>&lt;/td>
-&lt;td>The Azure storage container name.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>azure.storage.blob.prefix&lt;/code>&lt;/td>
-&lt;td>The prefix to be used for restricting the listing of the blobs in the container.&lt;/td>
-&lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>-&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;h2 id="filtering-input-files">Filtering input files&lt;/h2>
-&lt;p>You can configure one or more &lt;code>FileFilter&lt;/code> that will be used to determine if a file should be scheduled for processing or ignored.
-All files that are filtered out are simply ignored and remain untouched on the file system until the next scan.
-At the next scan, previously filtered files will be evaluated again to determine if they are now eligible for processing.&lt;/p>
-&lt;p>FilePulse packs with the following built-in filters :&lt;/p>
-&lt;h3 id="ignorehiddenfilefilter">IgnoreHiddenFileFilter&lt;/h3>
-&lt;p>The &lt;code>IgnoreHiddenFileFilter&lt;/code> can be used to filter hidden files from being read.&lt;/p>
+&lt;p>FilePulse provides several built-in &lt;code>FileListFilter&lt;/code>:&lt;/p>
+&lt;h2 id="ignorehiddenfilefilter">&lt;code>IgnoreHiddenFileFilter&lt;/code>&lt;/h2>
+&lt;p>You can use the &lt;code>IgnoreHiddenFileFilter&lt;/code> to ignore hidden files.&lt;/p>
 &lt;p>&lt;strong>Configuration example&lt;/strong>&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.IgnoreHiddenFileListFilter
 &lt;/code>&lt;/pre>
 &lt;div class="alert alert-warning" role="alert">
 &lt;h4 class="alert-heading">Limitation&lt;/h4>
-This filter is only supported by the &lt;code>LocalFSDirectoryListing&lt;/code>.
+This &lt;code>IgnoreHiddenFileFilter&lt;/code> can only be used when the &lt;code>LocalFSDirectoryListing&lt;/code> is configured.
 &lt;/div>
-&lt;h3 id="lastmodifiedfilefilter">LastModifiedFileFilter&lt;/h3>
-&lt;p>The &lt;code>LastModifiedFileFilter&lt;/code> can be used to filter all files that have been modified to recently based on their last modified date property.&lt;/p>
+&lt;h2 id="lastmodifiedfilefilter">&lt;code>LastModifiedFileFilter&lt;/code>&lt;/h2>
+&lt;p>You can use the &lt;code>LastModifiedFileFilter&lt;/code> to filter only the files that have not been modified since a given duration.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.LastModifiedFileFilter
 # The last modified time for a file can be accepted (default: 5000)
 file.filter.minimum.age.ms=10000
-&lt;/code>&lt;/pre>&lt;h3 id="regexfilefilter">RegexFileFilter&lt;/h3>
-&lt;p>The &lt;code>RegexFileFilter&lt;/code> can be used to filter all files that do not match the specified regex.&lt;/p>
+&lt;/code>&lt;/pre>&lt;h2 id="regexfilefilter">&lt;code>RegexFileFilter&lt;/code>&lt;/h2>
+&lt;p>You can use the &lt;code>RegexFileFilter&lt;/code> to filter files that match a given regular expression.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
 # The regex pattern used to match input files
 file.filter.regex.pattern=&amp;#34;\\.log$&amp;#34;
-&lt;/code>&lt;/pre>&lt;h3 id="sizefilelistfilter">SizeFileListFilter&lt;/h3>
-&lt;p>The &lt;code>SizeFileListFilter&lt;/code> can be used to filter all files that are smaller or larger than a specific byte size.&lt;/p>
+&lt;/code>&lt;/pre>&lt;h2 id="sizefilelistfilter">&lt;code>SizeFileListFilter&lt;/code>&lt;/h2>
+&lt;p>You can use the &lt;code>SizeFileListFilter&lt;/code> to filter files that are smaller or larger than a specific byte size.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.RegexFileListFilter
 file.filter.minimum.size.bytes=0
 file.filter.maximum.size.bytes=9223372036854775807
-&lt;/code>&lt;/pre>&lt;h3 id="dateinfilenamefilelistfilter">DateInFilenameFileListFilter&lt;/h3>
-&lt;p>The &lt;code>DateInFilenameFileListFilter&lt;/code> can be used to filter all files that contain a date in filename earlier or later than a specific date.&lt;/p>
+&lt;/code>&lt;/pre>&lt;h2 id="dateinfilenamefilelistfilter">&lt;code>DateInFilenameFileListFilter&lt;/code>&lt;/h2>
+&lt;p>You can use the &lt;code>DateInFilenameFileListFilter&lt;/code>to filter files that contain a date in filename earlier or later than
+a specific date.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">fs.listing.filters=io.streamthoughts.kafka.connect.filepulse.fs.filter.DateInFilenameFileListFilter
 file.filter.date.regex.extractor.pattern=&amp;#34;^.*(\\d{4}-\\d{2}-\\d{2})_.*$&amp;#34;
 file.filter.date.formatter.pattern=&amp;#34;yyyy MM dd&amp;#34;

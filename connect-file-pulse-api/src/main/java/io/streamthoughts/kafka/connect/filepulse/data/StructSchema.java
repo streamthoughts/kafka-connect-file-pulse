@@ -109,10 +109,7 @@ public class StructSchema implements Schema, Iterable<TypedField> {
 
     public List<TypedField> fieldsByIndex() {
         ArrayList<TypedField> ordered = new ArrayList<>(fields.values());
-        // order elements in array to match field column index
-        for (TypedField field: fields.values()) {
-            ordered.add(field.index(),field);
-        }
+        ordered.sort(Comparator.comparing(TypedField::index));
         return ordered;
     }
 

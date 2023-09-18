@@ -621,7 +621,7 @@ limitations under the License.
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
-                <version>1.11.1</version>
+                <version>1.11.2</version>
             </dependency>
             <dependency>
                 <groupId>com.jsoniter</groupId>

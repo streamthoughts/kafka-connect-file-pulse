@@ -31,7 +31,7 @@ limitations under the License.
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
         <license.header.file>${project.parent.basedir}/../license-header</license.header.file>
         <jsch.version>0.1.55</jsch.version>
-        <mockito-junit-jupiter.version>5.4.0</mockito-junit-jupiter.version>
+        <mockito-junit-jupiter.version>5.5.0</mockito-junit-jupiter.version>
         <assertj-core.version>3.11.1</assertj-core.version>
         <lombok.version>1.18.28</lombok.version>
     </properties>

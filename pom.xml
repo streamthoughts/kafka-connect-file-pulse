@@ -122,7 +122,7 @@ limitations under the License.
         <sonar.java.source>${java.version}</sonar.java.source>
         <sonar.language>java</sonar.language>
         <license.header.file>${project.basedir}/license-header</license.header.file>
-        <spotless.version>2.37.0</spotless.version>
+        <spotless.version>2.39.0</spotless.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
     </properties>
 

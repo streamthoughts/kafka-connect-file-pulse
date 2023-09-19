@@ -34,7 +34,7 @@ limitations under the License.
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
         <license.header.file>${project.parent.basedir}/../license-header</license.header.file>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aliyun.oss.version>3.16.3</aliyun.oss.version>
+        <aliyun.oss.version>3.17.1</aliyun.oss.version>
     </properties>
 
     <dependencies>

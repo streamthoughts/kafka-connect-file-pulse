@@ -699,7 +699,7 @@ limitations under the License.
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>json-path</artifactId>
-                <version>5.3.0</version>
+                <version>5.3.2</version>
                 <scope>test</scope>
             </dependency>
             <!-- END test dependencies-->

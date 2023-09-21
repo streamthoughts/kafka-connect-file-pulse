@@ -31,7 +31,7 @@ limitations under the License.
     <properties>
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
         <license.header.file>${project.parent.basedir}/../license-header</license.header.file>
-        <aws.version>1.12.553</aws.version>
+        <aws.version>1.12.555</aws.version>
         <aws.msk.version>1.1.9</aws.msk.version>
     </properties>
 

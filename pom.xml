@@ -103,7 +103,7 @@ limitations under the License.
         <io.confluent.version>7.3.2</io.confluent.version>
         <org.apache.kafka.version>3.5.1</org.apache.kafka.version>
         <junit.version>5.10.0</junit.version>
-        <testcontainer.version>1.19.0</testcontainer.version>
+        <testcontainer.version>1.19.1</testcontainer.version>
         <kafka.connect.maven.plugin.version>0.12.0</kafka.connect.maven.plugin.version>
         <checkstyle.config.location>${basedir}</checkstyle.config.location>
         <com.fasterxml.jackson.databind.version>2.15.2</com.fasterxml.jackson.databind.version>

@@ -69,7 +69,7 @@ limitations under the License.
         <dependency>
             <groupId>com.madgag.spongycastle</groupId>
             <artifactId>core</artifactId>
-            <version>1.54.0.0</version>
+            <version>1.58.0.0</version>
             <scope>test</scope>
         </dependency>
 

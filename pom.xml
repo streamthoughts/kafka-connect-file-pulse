@@ -108,7 +108,7 @@ limitations under the License.
         <checkstyle.config.location>${basedir}</checkstyle.config.location>
         <com.fasterxml.jackson.databind.version>2.15.2</com.fasterxml.jackson.databind.version>
         <com.fasterxml.jackson.core.version>2.15.2</com.fasterxml.jackson.core.version>
-        <com.fasterxml.jackson.annotations.version>2.15.2</com.fasterxml.jackson.annotations.version>
+        <com.fasterxml.jackson.annotations.version>2.15.3</com.fasterxml.jackson.annotations.version>
         <slf4j.version>2.0.9</slf4j.version>
         <spotbugs.maven.plugin.version>4.7.3.6</spotbugs.maven.plugin.version>
         <!-- SONAR -->

@@ -112,7 +112,7 @@ limitations under the License.
         <slf4j.version>2.0.9</slf4j.version>
         <spotbugs.maven.plugin.version>4.7.3.6</spotbugs.maven.plugin.version>
         <!-- SONAR -->
-        <jacoco.version>0.8.10</jacoco.version>
+        <jacoco.version>0.8.11</jacoco.version>
         <sonar.organization>streamthoughts</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>

@@ -15,30 +15,13 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
-import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
-import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
-import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
+import io.streamthoughts.kafka.connect.filepulse.source.*;
 import io.streamthoughts.kafka.connect.filepulse.state.InMemoryFileObjectStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.KafkaStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
 import io.streamthoughts.kafka.connect.filepulse.utils.MockFileCleaner;
 import io.streamthoughts.kafka.connect.filepulse.utils.TemporaryFileInput;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.kafka.connect.connector.ConnectorContext;
 import org.apache.kafka.connect.source.SourceTaskContext;
 import org.junit.Assert;
@@ -48,6 +31,13 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.mockito.Mockito;
+
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class DefaultFileSystemMonitorTest {
 
@@ -240,6 +230,35 @@ public class DefaultFileSystemMonitorTest {
 
         Assert.assertEquals(1, cleaner.getFailed().size());
         Assert.assertEquals(INPUT_FILES.metadataFor(1).uri(), cleaner.getFailed().get(0).uri());
+    }
+
+    @Test
+    public void should_scanned_new_files_with_order_by_name() {
+
+        final InMemoryFileObjectStateBackingStore store = new InMemoryFileObjectStateBackingStore(Collections.emptyMap());
+        final MockFileCleaner cleaner = new MockFileCleaner(true);
+        final MockTimesFileSystemListing ds = new MockTimesFileSystemListing();
+        final DefaultFileSystemMonitor monitor = newFileSystemMonitor(cleaner, ds, store);
+
+        ds.put(INPUT_FILES.getInputPathsFor(1, 2, 3));
+
+        monitor.listFilesToSchedule(0); // make a first call to mark the monitor as running.
+        monitor.invoke(new MockConnectorContext());
+        var compl1 = INPUT_FILES.stateFor(1, FileObjectStatus.COMPLETED);
+        var compl2 = INPUT_FILES.stateFor(2, FileObjectStatus.COMPLETED);
+        var compl3 = INPUT_FILES.stateFor(3, FileObjectStatus.COMPLETED);
+        store.getListener().onStateUpdate(OFFSET_MANAGER.toPartitionJson(compl1.metadata()), compl1);
+        store.getListener().onStateUpdate(OFFSET_MANAGER.toPartitionJson(compl2.metadata()), compl2);
+        store.getListener().onStateUpdate(OFFSET_MANAGER.toPartitionJson(compl3.metadata()), compl3);
+
+        Assert.assertEquals(0, monitor.listFilesToSchedule().size());
+
+        ds.put(INPUT_FILES.getInputPathsFor(0));
+
+        monitor.invoke(new MockConnectorContext());
+
+
+        Assert.assertEquals(1, monitor.listFilesToSchedule().size());
     }
 
     private DefaultFileSystemMonitor newFileSystemMonitor(final MockFileCleaner cleaner,

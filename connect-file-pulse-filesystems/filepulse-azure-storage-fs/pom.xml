@@ -34,7 +34,7 @@ limitations under the License.
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
         <license.header.file>${project.parent.basedir}/../license-header</license.header.file>
         <azure.storage.blob.version>12.24.0</azure.storage.blob.version>
-        <azure.identity.version>1.10.1</azure.identity.version>
+        <azure.identity.version>1.11.2</azure.identity.version>
         <azure.storage.file.datalake>12.4.1</azure.storage.file.datalake>
     </properties>
 

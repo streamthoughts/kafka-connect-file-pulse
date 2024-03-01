@@ -107,7 +107,7 @@ limitations under the License.
         <kafka.connect.maven.plugin.version>0.12.0</kafka.connect.maven.plugin.version>
         <checkstyle.config.location>${basedir}</checkstyle.config.location>
         <com.fasterxml.jackson.databind.version>2.15.2</com.fasterxml.jackson.databind.version>
-        <com.fasterxml.jackson.core.version>2.15.2</com.fasterxml.jackson.core.version>
+        <com.fasterxml.jackson.core.version>2.16.1</com.fasterxml.jackson.core.version>
         <com.fasterxml.jackson.annotations.version>2.15.2</com.fasterxml.jackson.annotations.version>
         <slf4j.version>2.0.9</slf4j.version>
         <spotbugs.maven.plugin.version>4.7.3.6</spotbugs.maven.plugin.version>

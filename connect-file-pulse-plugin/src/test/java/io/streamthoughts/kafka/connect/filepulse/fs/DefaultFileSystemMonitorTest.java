@@ -15,13 +15,30 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs;
 
-import io.streamthoughts.kafka.connect.filepulse.source.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
+import io.streamthoughts.kafka.connect.filepulse.source.LocalFileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.state.InMemoryFileObjectStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.KafkaStateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
 import io.streamthoughts.kafka.connect.filepulse.utils.MockFileCleaner;
 import io.streamthoughts.kafka.connect.filepulse.utils.TemporaryFileInput;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.kafka.connect.connector.ConnectorContext;
 import org.apache.kafka.connect.source.SourceTaskContext;
 import org.junit.Assert;
@@ -31,13 +48,6 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 import org.mockito.Mockito;
-
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class DefaultFileSystemMonitorTest {
 
@@ -61,7 +71,7 @@ public class DefaultFileSystemMonitorTest {
     private static final TemporaryFolder INPUT_DIRECTORY = new TemporaryFolder();
 
     private static final TemporaryFileInput INPUT_FILES = new TemporaryFileInput(INPUT_DIRECTORY)
-                    .withInputFiles("file1.text", "file2.txt", "file3.txt", "file4.txt");
+            .withInputFiles("file1.text", "file2.txt", "file3.txt", "file4.txt");
 
     @Rule
     public TestRule chain = RuleChain.outerRule(INPUT_DIRECTORY).around(INPUT_FILES);
@@ -105,8 +115,8 @@ public class DefaultFileSystemMonitorTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(
-            sources.stream().map(File::toURI).sorted().collect(Collectors.toList()),
-            result.stream().map(FileObjectMeta::uri).sorted().collect(Collectors.toList()));
+                sources.stream().map(File::toURI).sorted().collect(Collectors.toList()),
+                result.stream().map(FileObjectMeta::uri).sorted().collect(Collectors.toList()));
     }
 
     @Test
@@ -313,8 +323,8 @@ public class DefaultFileSystemMonitorTest {
         public Collection<FileObjectMeta> listObjects() throws IllegalArgumentException {
             times++;
             return (files.isEmpty()) ?
-                Collections.emptyList() :
-                files.remove(0).stream().map(LocalFileObjectMeta::new).collect(Collectors.toList());
+                    Collections.emptyList() :
+                    files.remove(0).stream().map(LocalFileObjectMeta::new).collect(Collectors.toList());
         }
 
         void put(Collection<File> files) {

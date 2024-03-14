@@ -24,7 +24,8 @@ import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import java.net.URI;
 
 /**
- * The {@code AliyunOSSParquetFileInputReader} can be used to created records from a parquet file loaded from Aliyun OSS.
+ * The {@code AliyunOSSParquetFileInputReader}
+ * can be used to created records from a parquet file loaded from Aliyun OSS.
  */
 public class AliyunOSSParquetFileInputReader extends BaseAliyunOSSInputReader {
 

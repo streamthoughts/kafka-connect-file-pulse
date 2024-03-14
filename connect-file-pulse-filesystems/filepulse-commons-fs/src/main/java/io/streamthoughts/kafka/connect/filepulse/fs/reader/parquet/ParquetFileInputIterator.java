@@ -34,7 +34,9 @@ import org.apache.parquet.example.data.Group;
 import org.apache.parquet.example.data.simple.SimpleGroup;
 import org.apache.parquet.example.data.simple.convert.GroupRecordConverter;
 import org.apache.parquet.hadoop.ParquetFileReader;
-import org.apache.parquet.io.*;
+import org.apache.parquet.io.ColumnIOFactory;
+import org.apache.parquet.io.MessageColumnIO;
+import org.apache.parquet.io.RecordReader;
 import org.apache.parquet.schema.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +55,9 @@ public class ParquetFileInputIterator extends ManagedFileInputIterator<TypedStru
     /**
      * Creates a new {@link ParquetFileInputIterator} instance.
      *
-     * @param objectMeta        The file's metadata.
-     * @param iteratorManager   The iterator manager.
-     * @param stream         the file's input streams.
+     * @param objectMeta      The file's metadata.
+     * @param iteratorManager The iterator manager.
+     * @param stream          the file's input streams.
      */
     public ParquetFileInputIterator(final FileObjectMeta objectMeta,
                                     final IteratorManager iteratorManager,

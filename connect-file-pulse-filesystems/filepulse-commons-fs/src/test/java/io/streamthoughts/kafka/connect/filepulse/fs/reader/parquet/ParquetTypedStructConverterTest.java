@@ -17,7 +17,6 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.parquet;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.parquet.example.data.simple.SimpleGroup;
 import org.apache.parquet.schema.*;
 import org.junit.Assert;

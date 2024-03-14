@@ -15,6 +15,11 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.BaseAmazonS3Test;
@@ -31,11 +36,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class AmazonS3ParquetInputReaderTest extends BaseAmazonS3Test {
 

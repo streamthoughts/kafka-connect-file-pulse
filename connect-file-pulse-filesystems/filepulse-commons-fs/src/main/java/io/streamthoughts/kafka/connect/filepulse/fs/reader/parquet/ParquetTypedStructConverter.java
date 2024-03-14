@@ -15,14 +15,21 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.parquet;
 
-import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.*;
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.bool;
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.float32;
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.float64;
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.int32;
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.int64;
+import static io.streamthoughts.kafka.connect.filepulse.data.TypedValue.string;
 
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
-
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.parquet.example.data.Group;
 import org.apache.parquet.example.data.simple.SimpleGroup;
@@ -66,7 +73,9 @@ public class ParquetTypedStructConverter {
         GroupType group = simpleGroup.getType();
         for (int i = 0; i < group.getFieldCount(); i++) {
             org.apache.parquet.schema.Type field = group.getType(i);
-            String filedType = field instanceof PrimitiveType ? field.asPrimitiveType().getPrimitiveTypeName().name() : field.getLogicalTypeAnnotation().toString();
+            String filedType = field instanceof PrimitiveType ?
+                    field.asPrimitiveType().getPrimitiveTypeName().name()
+                    : field.getLogicalTypeAnnotation().toString();
             struct.put(field.getName(), getTypedValueFromSimpleGroup(filedType, simpleGroup, i));
         }
         return struct;

@@ -105,7 +105,7 @@
         <apache.parquet.verstion>1.13.1</apache.parquet.verstion>
         <apache.hadoop.version>3.3.6</apache.hadoop.version>
         <!-- SONAR -->
-        <jacoco.version>0.8.10</jacoco.version>
+        <jacoco.version>0.8.9</jacoco.version>
         <sonar.organization>streamthoughts</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>

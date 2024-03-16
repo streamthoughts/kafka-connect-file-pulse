@@ -15,8 +15,9 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.fs.reader.parquet;
 
-import java.io.*;
-
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.PositionedReadable;
 import org.apache.hadoop.fs.Seekable;

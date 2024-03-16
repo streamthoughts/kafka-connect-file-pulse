@@ -41,7 +41,7 @@ limitations under the License.
 
     <properties>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
-        <license.header.file>${project.parent.basedir}/license-header</license.header.file>
+        <license.header.file>${project.parent.basedir}/header</license.header.file>
     </properties>
 
     <dependencies>

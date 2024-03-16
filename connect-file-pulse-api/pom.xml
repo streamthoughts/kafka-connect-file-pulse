@@ -33,7 +33,7 @@ limitations under the License.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
-        <license.header.file>${project.parent.basedir}/license-header</license.header.file>
+        <license.header.file>${project.parent.basedir}/header</license.header.file>
     </properties>
 
     <build>

@@ -117,6 +117,11 @@
         <license.header.file>${project.basedir}/header</license.header.file>
         <spotless.version>2.39.0</spotless.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+        <net.sf.saxon.version>12.3</net.sf.saxon.version>
+        <jsoniter.version>0.9.23</jsoniter.version>
+        <avro.version>1.11.3</avro.version>
+        <commons-compress.version>1.26.1</commons-compress.version>
+        <commons-io.version>2.15.1</commons-io.version>
     </properties>
 
     <repositories>
@@ -604,27 +609,27 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.15.0</version>
+                <version>${commons-io.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.26.1</version>
+                <version>${commons-compress.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
-                <version>1.11.3</version>
+                <version>${avro.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.jsoniter</groupId>
                 <artifactId>jsoniter</artifactId>
-                <version>0.9.23</version>
+                <version>${jsoniter.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
-                <version>12.3</version>
+                <version>${net.sf.saxon.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

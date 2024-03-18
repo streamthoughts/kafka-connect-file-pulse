@@ -116,7 +116,7 @@
         <sonar.language>java</sonar.language>
         <license.header.file>${project.basedir}/header</license.header.file>
         <spotless.version>2.39.0</spotless.version>
-        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.7.0</maven-assembly-plugin.version>
         <net.sf.saxon.version>12.3</net.sf.saxon.version>
         <jsoniter.version>0.9.23</jsoniter.version>
         <avro.version>1.11.3</avro.version>

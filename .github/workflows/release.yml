@@ -193,7 +193,7 @@ jobs:
 
       - name: 'Release with JReleaser'
         env:
-          JRELEASER_BRANCH: ${GITHUB_REF#refs/heads/}
+          JRELEASER_BRANCH: ${{ needs.set-release-version.outputs.HEAD }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.PAT }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -223,4 +223,4 @@ jobs:
         run: |
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: bump version for next iteration to ${{ env.NEXT_VERSION }} 🤖"
-          git push origin HEAD:${GITHUB_REF#refs/heads/} 
+          git push origin HEAD:${{ needs.set-release-version.outputs.HEAD }}

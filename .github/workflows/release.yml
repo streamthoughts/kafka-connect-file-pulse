@@ -18,6 +18,11 @@ on:
         required: true
         description: "Create a Tag"
         default: true
+      generateDoc:
+        type: boolean
+        required: true
+        description: "Generate doc for release"
+        default: true
 env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
@@ -68,6 +73,7 @@ jobs:
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
       - name: 'Update Documentation'
+        if: "${{ github.event.inputs.generateDoc == 'true' }}"
         run: |
             DOC_BASEDIR="./docs/content/en/docs"
             RELEASE_DOC_VERSION=$(echo ${{ env.RELEASE_VERSION }} | sed 's/\([0-9]\)\s*$/\x/')
@@ -118,7 +124,7 @@ jobs:
           git add "./docs/*"
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: release version ${{ env.RELEASE_VERSION }} 🎉"
-          git push --atomic origin HEAD:master
+          git push --atomic origin HEAD:${GITHUB_REF#refs/heads/}
           HEAD=$(git rev-parse HEAD)
           echo "HEAD=$HEAD" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
@@ -217,4 +223,4 @@ jobs:
         run: |
           find . -name 'pom.xml' | xargs git add
           git commit -m "ci: bump version for next iteration to ${{ env.NEXT_VERSION }} 🤖"
-          git push origin HEAD:master 
+          git push origin HEAD:${GITHUB_REF#refs/heads/} 

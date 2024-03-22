@@ -74,7 +74,7 @@ jobs:
           file: docker/Dockerfile
           no-cache: true
           push: true
-          tags: streamthoughts/jikkou:${{ env.DOCKER_TAG }}
+          tags: streamthoughts/kafka-connect-file-pulse:${{ env.DOCKER_TAG }}
           build-args: |
             VERSION=${{ env.VERSION }}
             COMMIT=${{ env.GIT_COMMIT }}
@@ -90,7 +90,7 @@ jobs:
           file: docker/Dockerfile
           no-cache: true
           push: true
-          tags: streamthoughts/jikkou:latest
+          tags: streamthoughts/kafka-connect-file-pulse:latest
           build-args: |
             VERSION=${{ env.VERSION }}
             COMMIT=${{ env.GIT_COMMIT }}

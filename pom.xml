@@ -94,7 +94,7 @@
         <io.confluent.version>7.6.0</io.confluent.version>
         <org.apache.kafka.version>3.6.1</org.apache.kafka.version>
         <junit.version>5.10.2</junit.version>
-        <testcontainer.version>1.19.1</testcontainer.version>
+        <testcontainer.version>1.19.7</testcontainer.version>
         <kafka.connect.maven.plugin.version>0.12.0</kafka.connect.maven.plugin.version>
         <checkstyle.config.location>${basedir}</checkstyle.config.location>
         <com.fasterxml.jackson.databind.version>2.17.0</com.fasterxml.jackson.databind.version>

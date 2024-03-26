@@ -5,7 +5,7 @@ services:
     hostname: zookeeper
     container_name: zookeeper
     ports:
-    - "2181:2181"
+      - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -17,10 +17,10 @@ services:
     hostname: kafka
     container_name: kafka
     depends_on:
-    - cp-zookeeper
+      - cp-zookeeper
     ports:
-    - "29092:29092"
-    - "9092:9092"
+      - "29092:29092"
+      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -40,9 +40,9 @@ services:
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
-    - cp-kafka
+      - cp-kafka
     ports:
-    - "8081:8081"
+      - "8081:8081"
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
@@ -50,13 +50,13 @@ services:
       - kafka-connect
 
   connect-file-pulse:
-    image: streamthoughts/kafka-connect-file-pulse:2.13.0
+    image: streamthoughts/kafka-connect-file-pulse:2.14.1
     container_name: connect
     depends_on:
-    - cp-kafka
+      - cp-kafka
     ports:
-    - "8083:8083"
-    - "8000:8000"
+      - "8083:8083"
+      - "8000:8000"
     environment:
       CONNECT_BOOTSTRAP_SERVERS: 'kafka:29092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect

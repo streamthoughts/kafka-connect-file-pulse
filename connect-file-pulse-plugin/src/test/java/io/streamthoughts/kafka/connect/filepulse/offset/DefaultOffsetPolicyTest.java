@@ -13,10 +13,20 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class DefaultOffsetPolicyTest {
+
+    private String getValidPath() {
+        String validPath = SystemUtils.OS_NAME;
+        if (validPath.contains("Windows")) {
+            return "C:\\tmp\\path";
+        } else {
+            return "/tmp/path";
+        }
+    }
 
     private static final GenericFileObjectMeta metadata = new GenericFileObjectMeta(
             URI.create("file:///tmp/path/test"),
@@ -24,8 +34,7 @@ public class DefaultOffsetPolicyTest {
             0L,
             123L,
             new FileObjectMeta.ContentDigest("789", "dummy"),
-            Collections.singletonMap(LocalFileObjectMeta.SYSTEM_FILE_INODE_META_KEY, "456L")
-    );
+            Collections.singletonMap(LocalFileObjectMeta.SYSTEM_FILE_INODE_META_KEY, "456L"));
 
     @Test(expected = IllegalArgumentException.class)
     public void should_throw_illegal_argument_given_empty_strategy() {
@@ -46,7 +55,7 @@ public class DefaultOffsetPolicyTest {
     public void should_get_offset_based_on_path() {
         Map<String, Object> result = new DefaultSourceOffsetPolicy("PATH").toPartitionMap(metadata);
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals("/tmp/path", result.get("path"));
+        Assert.assertEquals(getValidPath(), result.get("path"));
     }
 
     @Test
@@ -76,7 +85,7 @@ public class DefaultOffsetPolicyTest {
     public void should_get_composed_offset_based_on_path_and_hash() {
         Map<String, Object> result = new DefaultSourceOffsetPolicy("PATH+HASH").toPartitionMap(metadata);
         Assert.assertEquals(2, result.size());
-        Assert.assertEquals("/tmp/path", result.get("path"));
+        Assert.assertEquals(getValidPath(), result.get("path"));
         Assert.assertEquals("789", result.get("hash"));
     }
 

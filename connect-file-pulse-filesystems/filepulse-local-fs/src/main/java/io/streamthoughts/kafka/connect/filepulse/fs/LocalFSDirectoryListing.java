@@ -49,7 +49,6 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
         this(Collections.emptyList());
     }
 
-
     /**
      * Creates a new {@link LocalFSDirectoryListing} instance.
      *
@@ -86,8 +85,7 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
                     } catch (ConnectFilePulseException e) {
                         LOG.warn(
                                 "Failed to read metadata. Object file is ignored: {}",
-                                e.getMessage()
-                        );
+                                e.getMessage());
                         return Optional.<LocalFileObjectMeta>empty();
                     }
                 })
@@ -139,8 +137,16 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
                             final Path decompressed = codec.decompress(file).toPath();
                             listingLocalFiles.addAll(listEligibleFiles(decompressed));
                             decompressedDirs.add(decompressed);
-                        } catch (IOException e) {
-                            LOG.warn("Error while decompressing input file '{}'. Skip and continue.", path, e);
+                            if (config.isDeleteCompressFileEnable() && decompressed.toFile().exists()) {
+                                file.delete();
+                            }
+                            LOG.debug("Compressed file deleted successfully : {}", path);
+                        } catch (IOException | SecurityException e) {
+                            if (e instanceof IOException) {
+                                LOG.warn("Error while decompressing input file '{}'. Skip and continue.", path, e);
+                            } else if (e instanceof SecurityException) {
+                                LOG.warn("Error while deleting input file '{}'. Skip and continue.", path, e);
+                            }
                         }
                     } else {
                         // If no codec was found for the input file,
@@ -155,8 +161,7 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
             LOG.error(
                     "Error while getting directory listing for {}: {}",
                     input,
-                    e.getLocalizedMessage()
-            );
+                    e.getLocalizedMessage());
             throw new ConnectException(e);
         }
 
@@ -164,8 +169,7 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
             listingLocalFiles.addAll(directories.stream()
                     .filter(f -> !decompressedDirs.contains(f))
                     .flatMap(f -> listEligibleFiles(f).stream())
-                    .collect(Collectors.toList())
-            );
+                    .collect(Collectors.toList()));
         }
         return listingLocalFiles;
     }
@@ -175,10 +179,9 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
             return Files.isHidden(input);
         } catch (IOException e) {
             LOG.warn(
-                "Error while checking if input file is hidden '{}': {}",
-                input,
-                e.getLocalizedMessage()
-            );
+                    "Error while checking if input file is hidden '{}': {}",
+                    input,
+                    e.getLocalizedMessage());
             return false;
         }
     }

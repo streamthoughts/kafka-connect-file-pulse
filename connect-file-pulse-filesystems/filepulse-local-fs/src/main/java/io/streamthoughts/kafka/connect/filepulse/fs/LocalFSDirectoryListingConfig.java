@@ -12,30 +12,37 @@ import org.apache.kafka.common.config.ConfigDef;
 
 public class LocalFSDirectoryListingConfig extends AbstractConfig {
 
-
     public static final String FS_LISTING_DIRECTORY_PATH = "fs.listing.directory.path";
     public static final String FS_LISTING_DIRECTORY_DOC = "The input directory to scan";
 
-    public static final String FS_RECURSIVE_SCAN_ENABLE_CONFIG  = "fs.listing.recursive.enabled";
-    private static final String FS_RECURSIVE_SCAN_ENABLE_DOC    = "Boolean indicating whether local directory " +
-                                                                  "should be recursively scanned (default true).";
+    public static final String FS_RECURSIVE_SCAN_ENABLE_CONFIG = "fs.listing.recursive.enabled";
+    private static final String FS_RECURSIVE_SCAN_ENABLE_DOC = "Boolean indicating whether local directory " +
+            "should be recursively scanned (default true).";
+
+    public static final String FS_DELETE_COMPRESS_FILES_ENABLED_CONFIG = "fs.delete.compress.files.enabled";
+    private static final String FS_DELETE_COMPRESS_FILES_ENABLE_DOC = "Flag indicating whether compressed file  " +
+            "should be deleted after extraction (default false)";
 
     public static ConfigDef getConf() {
         return new ConfigDef()
-            .define(
-                    FS_LISTING_DIRECTORY_PATH,
-                    ConfigDef.Type.STRING,
-                    ConfigDef.Importance.HIGH,
-                    FS_LISTING_DIRECTORY_DOC
-            )
-                
-            .define(
-                    FS_RECURSIVE_SCAN_ENABLE_CONFIG,
-                    ConfigDef.Type.BOOLEAN,
-                    true,
-                    ConfigDef.Importance.MEDIUM,
-                    FS_RECURSIVE_SCAN_ENABLE_DOC
-            );
+                .define(
+                        FS_LISTING_DIRECTORY_PATH,
+                        ConfigDef.Type.STRING,
+                        ConfigDef.Importance.HIGH,
+                        FS_LISTING_DIRECTORY_DOC)
+
+                .define(
+                        FS_RECURSIVE_SCAN_ENABLE_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        true,
+                        ConfigDef.Importance.MEDIUM,
+                        FS_RECURSIVE_SCAN_ENABLE_DOC)
+                .define(
+                        FS_DELETE_COMPRESS_FILES_ENABLED_CONFIG,
+                        ConfigDef.Type.BOOLEAN,
+                        false,
+                        ConfigDef.Importance.MEDIUM,
+                        FS_DELETE_COMPRESS_FILES_ENABLE_DOC);
     }
 
     /**
@@ -52,5 +59,9 @@ public class LocalFSDirectoryListingConfig extends AbstractConfig {
 
     public String listingDirectoryPath() {
         return this.getString(FS_LISTING_DIRECTORY_PATH);
+    }
+
+    public boolean isDeleteCompressFileEnable() {
+        return getBoolean(FS_DELETE_COMPRESS_FILES_ENABLED_CONFIG);
     }
 }

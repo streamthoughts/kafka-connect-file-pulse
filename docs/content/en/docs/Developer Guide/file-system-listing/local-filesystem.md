@@ -19,10 +19,11 @@ Use the following property in your Connector's configuration:
 
 The following table describes the properties that can be used to configure the `LocalFSDirectoryListing`:
 
-| Configuration                  | Description                                                           | Type      | Default | Importance |
-|--------------------------------|-----------------------------------------------------------------------|-----------|---------|------------|
-| `fs.listing.directory.path`    | The input directory to scan                                           | `string`  | -       | HIGH       |
-| `fs.listing.recursive.enabled` | Flag indicating whether local directory should be recursively scanned | `boolean` | `true`  | MEDIUM     |
+| Configuration                      | Description                                                                | Type      | Default | Importance |
+| ---------------------------------- | -------------------------------------------------------------------------- | --------- | ------- | ---------- |
+| `fs.listing.directory.path`        | The input directory to scan                                                | `string`  | -       | HIGH       |
+| `fs.listing.recursive.enabled`     | Flag indicating whether local directory should be recursively scanned      | `boolean` | `true`  | MEDIUM     |
+| `fs.delete.compress.files.enabled` | Flag indicating whether compressed file should be deleted after extraction | `boolean` | `false` | MEDIUM     |
 
 ## Supported File types
 

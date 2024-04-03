@@ -103,22 +103,54 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
 
     private List<File> listEligibleFiles(final Path input) {
         final List<File> listingLocalFiles = new LinkedList<>();
-        if (!Files.isReadable(input)) {
-            LOG.warn("Cannot get directory listing for '{}'. Input path is not readable.", input);
+        if (!isPathReadable(input)) {
             return listingLocalFiles;
         }
 
-        if (!Files.isDirectory(input)) {
-            LOG.warn("Cannot get directory listing for '{}'. Input path is not a directory.", input);
-            return listingLocalFiles;
-        }
-
-        if (isHidden(input)) {
+        if (!isPathDirectory(input) || isHidden(input)) {
             return listingLocalFiles;
         }
 
         final List<Path> decompressedDirs = new LinkedList<>();
         final List<Path> directories = new LinkedList<>();
+        processFiles(input, listingLocalFiles, directories, decompressedDirs);
+
+        if (config.isRecursiveScanEnable() && !directories.isEmpty()) {
+            listingLocalFiles.addAll(scanRecursiveDirectories(directories, decompressedDirs));
+        }
+        return listingLocalFiles;
+    }
+
+    private boolean isPathReadable(Path path) {
+        if (!Files.isReadable(path)) {
+            LOG.warn("Cannot get directory listing for '{}'. Input path is not readable.", path);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isPathDirectory(Path path) {
+        if (!Files.isDirectory(path)) {
+            LOG.warn("Cannot get directory listing for '{}'. Input path is not a directory.", path);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isHidden(final Path input) {
+        try {
+            return Files.isHidden(input);
+        } catch (IOException e) {
+            LOG.warn(
+                    "Error while checking if input file is hidden '{}': {}",
+                    input,
+                    e.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    private void processFiles(Path input, List<File> listingLocalFiles, List<Path> directories,
+            List<Path> decompressedDirs) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(input)) {
             for (Path path : stream) {
                 if (Files.isDirectory(path)) {
@@ -137,10 +169,8 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
                             final Path decompressed = codec.decompress(file).toPath();
                             listingLocalFiles.addAll(listEligibleFiles(decompressed));
                             decompressedDirs.add(decompressed);
-                            if (config.isDeleteCompressFileEnable() && decompressed.toFile().exists()) {
-                                file.delete();
-                            }
-                            LOG.debug("Compressed file deleted successfully : {}", path);
+                            LOG.debug("Compressed file extracted successfully : {}", path);
+                            handleFileDeletion(file, path);
                         } catch (IOException | SecurityException e) {
                             if (e instanceof IOException) {
                                 LOG.warn("Error while decompressing input file '{}'. Skip and continue.", path, e);
@@ -158,32 +188,27 @@ public class LocalFSDirectoryListing implements FileSystemListing<LocalFileStora
                 }
             }
         } catch (IOException e) {
-            LOG.error(
-                    "Error while getting directory listing for {}: {}",
-                    input,
-                    e.getLocalizedMessage());
+            LOG.error("Error while getting directory listing for {}: {}", input, e.getLocalizedMessage());
             throw new ConnectException(e);
         }
 
-        if (config.isRecursiveScanEnable() && !directories.isEmpty()) {
-            listingLocalFiles.addAll(directories.stream()
-                    .filter(f -> !decompressedDirs.contains(f))
-                    .flatMap(f -> listEligibleFiles(f).stream())
-                    .collect(Collectors.toList()));
-        }
-        return listingLocalFiles;
     }
 
-    private boolean isHidden(final Path input) {
-        try {
-            return Files.isHidden(input);
-        } catch (IOException e) {
-            LOG.warn(
-                    "Error while checking if input file is hidden '{}': {}",
-                    input,
-                    e.getLocalizedMessage());
-            return false;
+    private void handleFileDeletion(File file, Path path) {
+        if (config.isDeleteCompressFileEnable() && file.exists()) {
+            if (file.delete()) {
+                LOG.debug("Compressed file deleted successfully : {}", path);
+            } else {
+                LOG.warn("Error while deleting input file '{}'. Skip and continue.", path);
+            }
         }
+    }
+
+    private List<File> scanRecursiveDirectories(List<Path> directories, List<Path> decompressedDirs) {
+        return directories.stream()
+                .filter(f -> !decompressedDirs.contains(f))
+                .flatMap(f -> listEligibleFiles(f).stream())
+                .collect(Collectors.toList());
     }
 
     /**

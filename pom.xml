@@ -121,7 +121,7 @@
         <jsoniter.version>0.9.23</jsoniter.version>
         <avro.version>1.11.3</avro.version>
         <commons-compress.version>1.26.1</commons-compress.version>
-        <commons-io.version>2.15.1</commons-io.version>
+        <commons-io.version>2.16.1</commons-io.version>
     </properties>
 
     <repositories>

@@ -30,6 +30,13 @@
 &lt;td>&lt;code>true&lt;/code>&lt;/td>
 &lt;td>MEDIUM&lt;/td>
 &lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>fs.delete.compress.files.enabled&lt;/code>&lt;/td>
+&lt;td>Flag indicating whether compressed file should be deleted after extraction&lt;/td>
+&lt;td>&lt;code>boolean&lt;/code>&lt;/td>
+&lt;td>&lt;code>false&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
 &lt;/tbody>
 &lt;/table>
 &lt;h2 id="supported-file-types">Supported File types&lt;/h2>

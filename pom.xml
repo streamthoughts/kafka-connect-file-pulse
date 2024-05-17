@@ -81,7 +81,7 @@
         <!-- Maven plugin versions -->
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
         <maven.failsafe.plugin.version>3.0.0-M7</maven.failsafe.plugin.version>
-        <maven.source.plugin>3.3.0</maven.source.plugin>
+        <maven.source.plugin>3.3.1</maven.source.plugin>
         <maven.javadoc.plugin>3.6.0</maven.javadoc.plugin>
         <maven-gpg-plugin.version>3.2.2</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>

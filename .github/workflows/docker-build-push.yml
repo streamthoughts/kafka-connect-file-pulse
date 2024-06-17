@@ -67,7 +67,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: 'Build & Push to Docker Hub'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: docker
           platforms: linux/amd64,linux/arm64
@@ -83,7 +83,7 @@ jobs:
 
       - name: 'Build & Push to Docker Hub (Latest)'
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: docker
           platforms: linux/amd64,linux/arm64

@@ -23,7 +23,7 @@
         <license.header.file>${project.parent.basedir}/../header</license.header.file>
         <jsch.version>0.1.55</jsch.version>
         <mockito-junit-jupiter.version>5.5.0</mockito-junit-jupiter.version>
-        <assertj-core.version>3.25.3</assertj-core.version>
+        <assertj-core.version>3.26.3</assertj-core.version>
         <lombok.version>1.18.30</lombok.version>
     </properties>
 

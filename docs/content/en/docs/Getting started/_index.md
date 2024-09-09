@@ -1,5 +1,5 @@
 ---
-date: 2022-06-06
+date: 2024-09-09
 title: "Getting Started"
 linkTitle: "Getting Started"
 weight: 10
@@ -69,7 +69,7 @@ curl -X GET http://localhost:8083/connectors/connect-file-pulse-quickstart-log4j
 $ docker exec -it -e KAFKA_OPTS="" connect kafka-avro-console-consumer \
 --topic connect-file-pulse-quickstart-log4j \
 --from-beginning \
---bootstrap-server broker:29092 \
+--bootstrap-server kafka:29092 \
 --property schema.registry.url=http://schema-registry:8081
 ```
 
@@ -91,7 +91,7 @@ Connect File Pulse use an internal topic to track the current state of files bei
 $ docker exec -it -e KAFKA_OPTS="" connect kafka-console-consumer \
 --topic connect-file-pulse-status \
 --from-beginning \
---bootstrap-server broker:29092
+--bootstrap-server kafka:29092
 ```
 
 (output)
@@ -146,7 +146,7 @@ docker logs --tail="all" -f connect | grep "source task is transitioning to IDLE
 $ docker exec -it connect kafka-avro-console-consumer \
 --topic connect-file-pulse-quickstart-csv \
 --from-beginning \
---bootstrap-server broker:29092 \
+--bootstrap-server kafka:29092 \
 --property schema.registry.url=http://schema-registry:8081
 ```
 

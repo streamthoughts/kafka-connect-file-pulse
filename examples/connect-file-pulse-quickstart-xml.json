@@ -12,7 +12,7 @@
   "reader.xml.parser.namespace.aware.enabled": true,
   "reader.xml.exclude.empty.elements": true,
   "tasks.file.status.storage.class": "io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore",
-  "tasks.file.status.storage.bootstrap.servers": "broker:29092",
+  "tasks.file.status.storage.bootstrap.servers": "kafka:29092",
   "tasks.file.status.storage.topic": "connct-file-pulse-status",
   "tasks.file.status.storage.topic.partitions": 10,
   "tasks.file.status.storage.topic.replication.factor": 1,

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -257,8 +258,11 @@ public class AmazonS3Storage implements Storage {
         objectMetadata.getUserMetadata().forEach((k, v) -> userDefinedMetadata.put("s3.object.user.metadata." + k, v));
         userDefinedMetadata.put("s3.object.summary.bucketName", s3Object.bucketName());
         userDefinedMetadata.put("s3.object.summary.key", s3Object.key());
-        userDefinedMetadata.put("s3.object.summary.etag", objectMetadata.getETag());
-        userDefinedMetadata.put("s3.object.summary.storageClass", objectMetadata.getStorageClass());
+
+        Optional.ofNullable(objectMetadata.getETag())
+                .ifPresent(it -> userDefinedMetadata.put("s3.object.summary.etag", it));
+        Optional.ofNullable(objectMetadata.getStorageClass())
+                .ifPresent(it -> userDefinedMetadata.put("s3.object.summary.storageClass", it));
 
         final String contentMD5 = objectMetadata.getETag();
 

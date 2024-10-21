@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.kafka.common.config.ConfigDef;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 
 public class DefaultRecordFilterPipelineTest {
@@ -188,6 +189,101 @@ public class DefaultRecordFilterPipelineTest {
         assertNotNull(records);
         assertEquals(1, records.size());
         assertEquals(record2, records.collect().get(0));
+    }
+
+    @Test
+    public void shouldFlushBufferedRecordsGivenAcceptFilterEmptyRecordsIterableAndNoRemainingRecords() {
+
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value2");
+
+        List<FileRecord<TypedStruct>> bufferedRecords = List.of(record1, record2);
+        TestFilter filter1 = new TestFilter()
+                .setBuffer(bufferedRecords);
+
+        DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(Collections.singletonList(filter1));
+        pipeline.init(context);
+
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(), false);
+
+        assertNotNull(records);
+        List<FileRecord<TypedStruct>> filteredRecords = records.collect();
+        Assertions.assertIterableEquals(bufferedRecords, filteredRecords);
+    }
+
+    @Test
+    public void shouldFlushBufferedRecordsFromFirstFilterGivenAcceptFiltersEmptyRecordsIterableAndNoRemainingRecods() {
+
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value2");
+
+        List<FileRecord<TypedStruct>> bufferedRecords = List.of(record1, record2);
+        TestFilter filter1 = new TestFilter()
+                .setBuffer(bufferedRecords);
+        TestFilter filter2 = new TestFilter()
+                .setFunction(((context1, record, hasNext) -> RecordsIterable.of(record)));
+
+        DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(List.of(filter1, filter2));
+        pipeline.init(context);
+
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(), false);
+
+        assertNotNull(records);
+        List<FileRecord<TypedStruct>> filteredRecords = records.collect();
+        Assertions.assertIterableEquals(bufferedRecords, filteredRecords);
+    }
+
+    @Test
+    public void shouldFlushBufferedRecordsFromLastFilterGivenAcceptFiltersEmptyRecordsIterableAndNoRemainingRecods() {
+
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value2");
+
+        List<FileRecord<TypedStruct>> bufferedRecords = List.of(record1, record2);
+        TestFilter filter1 = new TestFilter();
+        TestFilter filter2 = new TestFilter()
+                .setBuffer(bufferedRecords);
+        DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(List.of(filter1, filter2));
+        pipeline.init(context);
+
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(), false);
+
+        assertNotNull(records);
+        List<FileRecord<TypedStruct>> filteredRecords = records.collect();
+        Assertions.assertIterableEquals(bufferedRecords, filteredRecords);
+    }
+
+    @Test
+    public void shouldFlushBufferedRecordsFromAllFiltersGivenAcceptFiltersEmptyRecordsIterableAndNoRemainingRecods() {
+
+        final FileRecord<TypedStruct> record1 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value1");
+        final FileRecord<TypedStruct> record2 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value2");
+        final FileRecord<TypedStruct> record3 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value3");
+        final FileRecord<TypedStruct> record4 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value4");
+        final FileRecord<TypedStruct> record5 = createWithOffsetAndValue(FileRecordOffset.invalid(), "value5");
+
+        List<FileRecord<TypedStruct>> allBuffered = List.of(record1, record2, record3, record4, record5);
+
+        List<FileRecord<TypedStruct>> bufferedRecords1 = List.of(record1);
+        List<FileRecord<TypedStruct>> bufferedRecords2 = List.of(record2, record3);
+        List<FileRecord<TypedStruct>> bufferedRecords3 = List.of(record4, record5);
+        TestFilter filter1 = new TestFilter()
+                .setFunction(((context1, record, hasNext) -> RecordsIterable.of(record)))
+                .setBuffer(bufferedRecords1);
+        TestFilter filter2 = new TestFilter()
+                .setFunction(((context1, record, hasNext) -> RecordsIterable.of(record)))
+                .setBuffer(bufferedRecords2);
+        TestFilter filter3 = new TestFilter()
+                .setFunction(((context1, record, hasNext) -> RecordsIterable.of(record)))
+                .setBuffer(bufferedRecords3);
+        DefaultRecordFilterPipeline pipeline = new DefaultRecordFilterPipeline(List.of(filter1, filter2, filter3));
+        pipeline.init(context);
+
+        RecordsIterable<FileRecord<TypedStruct>> records = pipeline.apply(new RecordsIterable<>(), false);
+
+        assertNotNull(records);
+        List<FileRecord<TypedStruct>> filteredRecords = records.collect();
+        Assertions.assertIterableEquals(allBuffered, filteredRecords);
     }
 
     @Test

@@ -25,7 +25,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${project.parent.basedir}</checkstyle.config.location>
         <license.header.file>${project.parent.basedir}/header</license.header.file>
-        <antlr4.version>4.13.1</antlr4.version>
+        <antlr4.version>4.13.2</antlr4.version>
     </properties>
 
     <build>

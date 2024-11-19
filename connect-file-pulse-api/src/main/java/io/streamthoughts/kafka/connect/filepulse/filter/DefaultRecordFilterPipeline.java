@@ -11,6 +11,7 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedValue;
 import io.streamthoughts.kafka.connect.filepulse.reader.RecordsIterable;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectContext;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
+import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecordOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.TypedFileRecord;
@@ -89,6 +90,18 @@ public class DefaultRecordFilterPipeline implements RecordFilterPipeline<FileRec
             // Apply the filter-chain on current record.
             results.addAll(apply(context, record.value(), doHasNext));
         }
+
+        // Flush all records buffered in the filter chain applying subsequent filters to each buffered record
+        if (!hasNext && records.isEmpty()) {
+            FilterNode node = rootNode;
+            while (node != null) {
+                List<FileRecord<TypedStruct>> flushed = node
+                        .flush(newContextFor(FileObjectOffset::empty, fileObjectObject.metadata()));
+                results.addAll(flushed);
+                node = node.onSuccess;
+            }
+        }
+
         return new RecordsIterable<>(results);
     }
 

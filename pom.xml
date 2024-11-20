@@ -92,7 +92,7 @@
         <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
         <!-- DEPENDENCIES -->
         <io.confluent.version>7.6.0</io.confluent.version>
-        <org.apache.kafka.version>3.7.0</org.apache.kafka.version>
+        <org.apache.kafka.version>3.9.0</org.apache.kafka.version>
         <junit.version>5.11.0</junit.version>
         <testcontainer.version>1.19.7</testcontainer.version>
         <kafka.connect.maven.plugin.version>0.12.0</kafka.connect.maven.plugin.version>

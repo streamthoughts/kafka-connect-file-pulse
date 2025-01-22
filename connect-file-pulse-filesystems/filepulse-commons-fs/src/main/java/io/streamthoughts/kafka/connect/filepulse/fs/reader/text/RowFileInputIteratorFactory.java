@@ -15,6 +15,10 @@ import io.streamthoughts.kafka.connect.filepulse.reader.ReaderException;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileRecord;
 import java.net.URI;
+import java.util.Objects;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 public class RowFileInputIteratorFactory implements FileInputIteratorFactory {
 
@@ -56,13 +60,46 @@ public class RowFileInputIteratorFactory implements FileInputIteratorFactory {
                 .withIteratorManager(iteratorManager)
                 .withReaderSupplier(() -> {
                     try {
-                        var br = new NonBlockingBufferReader(
-                                storage.getInputStream(objectURI),
-                                configs.bufferInitialBytesSize(),
-                                configs.charset()
-                        );
-                        br.disableAutoFlush();
-                        return br;
+                        if (Objects.equals(configs.compressionMethod(), "gzip")){
+                            var br = new NonBlockingBufferReader(
+                                    new GZIPInputStream(storage.getInputStream(objectURI)),
+                                    configs.bufferInitialBytesSize(),
+                                    configs.charset()
+                            );
+                            br.disableAutoFlush();
+                            return br;
+                        }
+                        else if (Objects.equals(configs.compressionMethod(), "bzip")){
+                            var br = new NonBlockingBufferReader(
+                                    new BZip2CompressorInputStream(storage.getInputStream(objectURI)),
+                                    configs.bufferInitialBytesSize(),
+                                    configs.charset()
+                            );
+
+                            br.disableAutoFlush();
+                            return br;
+                        }
+                        else if (Objects.equals(configs.compressionMethod(), "zip")){
+                            ZipInputStream zis =new ZipInputStream(storage.getInputStream(objectURI));
+                            zis.getNextEntry();
+                            var br = new NonBlockingBufferReader(
+                                    zis,
+                                    configs.bufferInitialBytesSize(),
+                                    configs.charset()
+                            );
+                            br.disableAutoFlush();
+                            return br;
+                        }
+                        else {
+                            var br = new NonBlockingBufferReader(
+                                    storage.getInputStream(objectURI),
+                                    configs.bufferInitialBytesSize(),
+                                    configs.charset()
+                            );
+
+                            br.disableAutoFlush();
+                            return br;
+                        }
                     } catch (Exception e) {
                         throw new ReaderException("Failed to get InputStream for object: " + objectMetadata, e);
                     }

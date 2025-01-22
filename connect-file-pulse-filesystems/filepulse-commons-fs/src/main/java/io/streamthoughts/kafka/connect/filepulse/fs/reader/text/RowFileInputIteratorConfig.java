@@ -21,6 +21,10 @@ public class RowFileInputIteratorConfig extends AbstractConfig {
     public static final String FILE_ENCODING_DOC               = "The text file encoding to use (default = UTF_8)";
     public static final String FILE_ENCODING_DEFAULT           = StandardCharsets.UTF_8.displayName();
 
+    public static final String COMPRESSION_METHOD_CONFIG            = "compression.method";
+    public static final String COMPRESSION_METHOD_DOC               = "The compression method - gzip zip bzip";
+    public static final String COMPRESSION_METHOD_DEFAULT           =  "";
+
     public static final String BUFFER_INIT_BYTES_SIZE_CONFIG   = "buffer.initial.bytes.size";
     public static final String BUFFER_INIT_BYTES_SIZE_DOC      = "The initial buffer size used to read input files";
     public static final int BUFFER_INIT_BYTES_SIZE_DEFAULT     = 4096;
@@ -47,6 +51,8 @@ public class RowFileInputIteratorConfig extends AbstractConfig {
     public RowFileInputIteratorConfig(final Map<String, ?> originals) {
         super(configDef(), originals);
     }
+
+    public String compressionMethod() {return getString(COMPRESSION_METHOD_CONFIG);}
 
     public int bufferInitialBytesSize() {
         return getInt(BUFFER_INIT_BYTES_SIZE_CONFIG);
@@ -86,6 +92,10 @@ public class RowFileInputIteratorConfig extends AbstractConfig {
                         ConfigDef.Importance.LOW, READER_WAIT_MAX_MS_DOC)
 
                 .define(READER_FIELD_FOOTER_CONFIG, ConfigDef.Type.INT, READER_FIELD_FOOTER_DEFAULT,
-                        ConfigDef.Importance.HIGH, READER_FIELD_FOOTER_DOC);
+                        ConfigDef.Importance.HIGH, READER_FIELD_FOOTER_DOC)
+
+                .define(COMPRESSION_METHOD_CONFIG, ConfigDef.Type.STRING, COMPRESSION_METHOD_DEFAULT,
+                        ConfigDef.Importance.HIGH, COMPRESSION_METHOD_DOC);
+
     }
 }

@@ -88,7 +88,7 @@
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <apache.avro.version>1.8.2</apache.avro.version>
-        <jreleaser-maven-plugin.version>1.11.0</jreleaser-maven-plugin.version>
+        <jreleaser-maven-plugin.version>1.16.0</jreleaser-maven-plugin.version>
         <confluent.maven.repo>https://packages.confluent.io/maven/</confluent.maven.repo>
         <!-- DEPENDENCIES -->
         <io.confluent.version>7.6.0</io.confluent.version>

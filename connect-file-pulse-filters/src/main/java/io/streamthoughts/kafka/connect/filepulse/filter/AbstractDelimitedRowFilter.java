@@ -41,6 +41,7 @@ public abstract class AbstractDelimitedRowFilter<T extends AbstractRecordFilter<
     private DelimitedRowFilterConfig configs;
 
     private StructSchema schema;
+    private String cachedHeaders;
 
     private final Map<Integer, TypedField> columnsTypesByIndex = new HashMap<>();
 
@@ -103,6 +104,10 @@ public abstract class AbstractDelimitedRowFilter<T extends AbstractRecordFilter<
         if (schema == null || isSchemaDynamic()) {
             inferSchemaFromRecord(record, columnValues.length);
         }
+        if (schema != null && configs.extractColumnName() != null && shouldInferSchema(record)) {
+            inferSchemaFromRecord(record, columnValues.length);
+        }
+
         final TypedStruct struct = buildStructForFields(columnValues);
         return RecordsIterable.of(struct);
     }
@@ -115,12 +120,23 @@ public abstract class AbstractDelimitedRowFilter<T extends AbstractRecordFilter<
                configs.isAutoGenerateColumnNames();
     }
 
+    private boolean shouldInferSchema(TypedStruct record) {
+        if (cachedHeaders == null) {
+            return false;
+        }
+        final String fieldName = configs.extractColumnName();
+        String field = record.first(fieldName).getString();
+        return cachedHeaders.length() == field.length() && !cachedHeaders.equals(field);
+    }
+
     private void inferSchemaFromRecord(final TypedStruct record, int numColumns) {
         schema = Schema.struct();
 
         if (configs.extractColumnName() != null) {
             final String fieldName = configs.extractColumnName();
             String field = record.first(fieldName).getString();
+            cachedHeaders = field;
+
             if (field == null) {
                 throw new FilterException(
                     "Cannot find field for name '" + fieldName + "' to determine columns names"

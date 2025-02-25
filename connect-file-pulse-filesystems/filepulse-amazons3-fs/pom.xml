@@ -23,7 +23,7 @@
         <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
         <license.header.file>${project.parent.basedir}/../header</license.header.file>
         <aws.version>1.12.772</aws.version>
-        <aws.msk.version>1.1.9</aws.msk.version>
+        <aws.msk.version>2.3.0</aws.msk.version>
     </properties>
 
     <dependencyManagement>

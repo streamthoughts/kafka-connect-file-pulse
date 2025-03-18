@@ -55,7 +55,7 @@ public class AbstractKafkaConnectTest {
     }
 
     private GenericContainer<?> createConnectWorkerContainer() {
-        return new GenericContainer<>(DockerImageName.parse("confluentinc/cp-kafka-connect-base:6.2.1"))
+        return new GenericContainer<>(DockerImageName.parse("confluentinc/cp-kafka-connect-base:7.9.0"))
                 .withLogConsumer(new Slf4jLogConsumer(LOG))
                 .withNetwork(kafka.getKafkaNetwork())
                 .withExposedPorts(CONNECT_PORT)

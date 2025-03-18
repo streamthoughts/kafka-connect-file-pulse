@@ -9,7 +9,6 @@ package io.streamthoughts.kafka.connect.filepulse.source;
 import com.jsoniter.annotation.JsonCreator;
 import com.jsoniter.annotation.JsonProperty;
 import java.util.Objects;
-import org.apache.kafka.common.utils.SystemTime;
 
 /**
  * An object representing the position of next bytes to read in the input source.
@@ -23,7 +22,7 @@ public class FileObjectOffset {
     private final long timestamp;
 
     public static FileObjectOffset empty() {
-        return new FileObjectOffset(-1, 0, SystemTime.SYSTEM.milliseconds());
+        return new FileObjectOffset(-1, 0, System.currentTimeMillis());
     }
 
     /**

@@ -8,7 +8,6 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import java.util.Objects;
-import org.apache.kafka.common.utils.SystemTime;
 
 /**
  * Represents the position of a record into a text XML file.
@@ -24,8 +23,9 @@ public class RowFileRecordOffset extends BytesRecordOffset {
                 -1,
                 -1,
                 0,
-                SystemTime.SYSTEM.milliseconds(),
-                0);
+                System.currentTimeMillis(),
+                0
+        );
     }
 
     public static RowFileRecordOffset with(long startPosition, long endPosition) {
@@ -33,8 +33,9 @@ public class RowFileRecordOffset extends BytesRecordOffset {
                 startPosition,
                 endPosition,
                 0,
-                SystemTime.SYSTEM.milliseconds(),
-                endPosition - startPosition);
+                System.currentTimeMillis(),
+                endPosition - startPosition
+        );
     }
 
     /**

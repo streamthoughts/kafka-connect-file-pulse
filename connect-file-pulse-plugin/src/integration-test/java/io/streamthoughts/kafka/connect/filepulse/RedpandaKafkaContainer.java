@@ -28,7 +28,7 @@ import org.testcontainers.utility.DockerImageName;
  */
 public final class RedpandaKafkaContainer extends GenericContainer<RedpandaKafkaContainer> {
 
-    public static final String VECTORIZED_REDPANDA_LATEST = "vectorized/redpanda:latest";
+    public static final String VECTORIZED_REDPANDA_LATEST = "redpandadata/redpanda:latest";
 
     private static final Logger LOG = LoggerFactory.getLogger(RedpandaKafkaContainer.class);
 

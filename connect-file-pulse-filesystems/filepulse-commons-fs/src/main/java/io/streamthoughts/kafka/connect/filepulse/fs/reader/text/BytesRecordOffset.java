@@ -9,7 +9,6 @@ package io.streamthoughts.kafka.connect.filepulse.fs.reader.text;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectOffset;
 import io.streamthoughts.kafka.connect.filepulse.source.TimestampedRecordOffset;
 import java.util.Objects;
-import org.apache.kafka.common.utils.SystemTime;
 
 public class BytesRecordOffset extends TimestampedRecordOffset {
 
@@ -21,7 +20,8 @@ public class BytesRecordOffset extends TimestampedRecordOffset {
         return new BytesRecordOffset(
                 -1,
                 -1,
-                SystemTime.SYSTEM.milliseconds());
+                System.currentTimeMillis()
+        );
     }
 
     /**
@@ -32,7 +32,7 @@ public class BytesRecordOffset extends TimestampedRecordOffset {
      */
     public BytesRecordOffset(long startPosition,
                              long endPosition) {
-        this(startPosition, endPosition, SystemTime.SYSTEM.milliseconds());
+        this(startPosition, endPosition, System.currentTimeMillis());
     }
 
     /**

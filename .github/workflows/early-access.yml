@@ -55,9 +55,6 @@ jobs:
 
       - name: 'Download all artifacts'
         uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          merge-multiple: true
 
       - name: 'Set up Java'
         uses: actions/setup-java@v3
@@ -84,7 +81,7 @@ jobs:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_SECRET_KEY:  ${{ secrets.GPG_PRIVATE_KEY }}
-        run: ./mvnw -ntp -B --file ./pom.xml -Prelease -DartifactsDir=artifacts jreleaser:full-release
+        run: ./mvnw -ntp -B --file ./connect-file-pulse-plugin/pom.xml -Prelease -DartifactsDir=artifacts jreleaser:full-release
 
       - name: 'JReleaser output'
         if: always()

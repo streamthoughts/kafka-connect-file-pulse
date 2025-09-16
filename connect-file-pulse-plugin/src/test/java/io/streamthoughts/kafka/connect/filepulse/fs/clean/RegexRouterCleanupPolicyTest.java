@@ -76,8 +76,8 @@ class RegexRouterCleanupPolicyTest {
         try (RegexRouterCleanupPolicy policy = new RegexRouterCleanupPolicy()) {
             policy.setStorage(new LocalFileStorage());
             policy.configure(Map.of(
-                    RegexRouterCleanupPolicy.SUCCESS_ROUTE_TOPIC_REGEX_CONFIG,"(.*).txt",
-                    RegexRouterCleanupPolicy.SUCCESS_ROUTE_TOPIC_REPLACEMENT_CONFIG, "$1-DONE-FAILURE.txt"
+                    RegexRouterCleanupPolicy.FAILURE_ROUTE_TOPIC_REGEX_CONFIG,"(.*).txt",
+                    RegexRouterCleanupPolicy.FAILURE_ROUTE_TOPIC_REPLACEMENT_CONFIG, "$1-DONE-FAILURE.txt"
             ));
 
             URI targetURI = policy.routeOnFailure(source.metadata().uri());

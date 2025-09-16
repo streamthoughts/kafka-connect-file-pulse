@@ -28,13 +28,13 @@ public final class RegexRouterCleanupPolicy implements FileCleanupPolicy {
 
     public static final String SUCCESS_ROUTE_TOPIC_REGEX_CONFIG = CONFIG_PREFIX + "success.uri.regex";
     private static final String SUCCESS_ROUTE_TOPIC_REGEX_DOC =
-            "Regular expression to use for matching objects in success.";
+        "Regular expression to use for matching objects in success.";
     public static final String SUCCESS_ROUTE_TOPIC_REPLACEMENT_CONFIG = CONFIG_PREFIX + "success.uri.replacement";
     private static final String SUCCESS_ROUTE_TOPIC_REPLACEMENT_DOC = "Replacement string.";
 
     public static final String FAILURE_ROUTE_TOPIC_REGEX_CONFIG = CONFIG_PREFIX + "failure.uri.regex";
     private static final String FAILURE_ROUTE_TOPIC_REGEX_DOC =
-            "Regular expression to use for matching objects in failure.";
+        "Regular expression to use for matching objects in failure.";
     public static final String FAILURE_ROUTE_TOPIC_REPLACEMENT_CONFIG = CONFIG_PREFIX + "failure.uri.replacement";
     private static final String FAILURE_ROUTE_TOPIC_REPLACEMENT_DOC = "Replacement string.";
 
@@ -57,8 +57,8 @@ public final class RegexRouterCleanupPolicy implements FileCleanupPolicy {
         successReplacement = simpleConfig.getString(SUCCESS_ROUTE_TOPIC_REPLACEMENT_CONFIG);
         successRegex = Pattern.compile(simpleConfig.getString(SUCCESS_ROUTE_TOPIC_REGEX_CONFIG));
 
-        failureReplacement = simpleConfig.getString(SUCCESS_ROUTE_TOPIC_REPLACEMENT_CONFIG);
-        failureRegex = Pattern.compile(simpleConfig.getString(SUCCESS_ROUTE_TOPIC_REGEX_CONFIG));
+        failureReplacement = simpleConfig.getString(FAILURE_ROUTE_TOPIC_REPLACEMENT_CONFIG);
+        failureRegex = Pattern.compile(simpleConfig.getString(FAILURE_ROUTE_TOPIC_REGEX_CONFIG));
     }
 
     /**

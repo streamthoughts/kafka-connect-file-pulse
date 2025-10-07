@@ -34,7 +34,7 @@ jobs:
           extended: true
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v5
         with:
           node-version: "14.x"
       - run: (cd ./docs; npm install)

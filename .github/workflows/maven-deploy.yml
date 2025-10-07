@@ -40,7 +40,7 @@ jobs:
 
       - name: 'Set up Maven settings'
         run: |
-          echo "<settings><interactiveMode>false</interactiveMode><servers><server><id>ossrh</id><username>${{ secrets.OSSRH_USERNAME }}</username><password>${{ secrets.OSSRH_PASSWORD }}</password></server></servers></settings>" > ./settings.xml
+          echo "<settings><interactiveMode>false</interactiveMode><servers><server><id>sonatype-central</id><username>${{ secrets.OSSRH_USERNAME }}</username><password>${{ secrets.OSSRH_PASSWORD }}</password></server></servers></settings>" > ./settings.xml
 
       - name: 'Deploy Maven Central'
         run: |

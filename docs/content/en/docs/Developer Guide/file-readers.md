@@ -42,6 +42,13 @@ package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
 * `GcsXMLFileInputReader`
 * `GcsMetadataFileInputReader`
 
+**SMB**
+
+package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`
+
+* `SmbBytesArrayInputReader`
+* `SmbRowFileInputReader`
+
 **Local Filesystem**
 
 package: `io.streamthoughts.kafka.connect.filepulse.fs.reader`

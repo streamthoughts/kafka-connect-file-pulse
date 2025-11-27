@@ -185,6 +185,7 @@
                                         <tag>azure</tag>
                                         <tag>gcs</tag>
                                         <tag>sftp</tag>
+                                        <tag>smb</tag>
                                     </tags>
 
                                     <requirements/>
@@ -250,6 +251,11 @@
                 <dependency>
                     <groupId>io.streamthoughts</groupId>
                     <artifactId>kafka-connect-filepulse-aliyunoss-fs</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>io.streamthoughts</groupId>
+                    <artifactId>kafka-connect-filepulse-smb-fs</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

@@ -36,6 +36,7 @@ limitations under the License.
         <module>filepulse-azure-storage-fs</module>
         <module>filepulse-google-cloud-storage-fs</module>
         <module>filepulse-sftp-fs</module>
+        <module>filepulse-smb-fs</module>
         <module>filepulse-aliyunoss-fs</module>
     </modules>
 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-License-Identifier: Apache-2.0
+  Copyright (c) StreamThoughts
+
+  Licensed under the Apache Software License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>io.streamthoughts</groupId>
+        <artifactId>kafka-connect-filepulse-filesystems</artifactId>
+        <version>2.17.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Kafka Connect Source File Pulse SMB FS</name>
+    <artifactId>kafka-connect-filepulse-smb-fs</artifactId>
+
+    <properties>
+        <checkstyle.config.location>${project.parent.basedir}/..</checkstyle.config.location>
+        <license.header.file>${project.parent.basedir}/../header</license.header.file>
+        <jcifs.version>2.1.40</jcifs.version>
+        <mockito-junit-jupiter.version>5.5.0</mockito-junit-jupiter.version>
+        <assertj-core.version>3.26.3</assertj-core.version>
+        <lombok.version>1.18.34</lombok.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.codelibs</groupId>
+            <artifactId>jcifs</artifactId>
+            <version>${jcifs.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.streamthoughts</groupId>
+            <artifactId>kafka-connect-filepulse-commons-fs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+        </dependency>
+        <!-- Test Dependencies-->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

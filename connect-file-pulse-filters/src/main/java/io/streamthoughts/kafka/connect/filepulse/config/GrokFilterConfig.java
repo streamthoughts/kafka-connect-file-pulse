@@ -14,6 +14,9 @@ public class GrokFilterConfig extends CommonFilterConfig {
 
     private final GrokConfig grok;
     public static final String GROK_FILTER = "GROK_FILTER";
+    
+    public static final String GROK_TARGET_CONFIG = "target";
+    public static final String GROK_TARGET_DOC = "The target field to put the extracted Grok data (optional)";
 
     /**
      * Creates a new {@link GrokFilterConfig} instance.
@@ -29,11 +32,26 @@ public class GrokFilterConfig extends CommonFilterConfig {
         return grok;
     }
 
+    public String target() {
+        return getString(GROK_TARGET_CONFIG);
+    }
+
     public static ConfigDef configDef() {
         int filterGroupCounter = 0;
         final ConfigDef def = new ConfigDef(CommonFilterConfig.configDef())
                 .define(getSourceConfigKey(GROK_FILTER, filterGroupCounter++))
-                .define(getOverwriteConfigKey(GROK_FILTER, filterGroupCounter++));
+                .define(getOverwriteConfigKey(GROK_FILTER, filterGroupCounter++))
+                .define(
+                        GROK_TARGET_CONFIG,
+                        ConfigDef.Type.STRING,
+                    null,
+                        ConfigDef.Importance.HIGH,
+                        GROK_TARGET_DOC,
+                        GROK_FILTER,
+                        filterGroupCounter++,
+                        ConfigDef.Width.NONE,
+                        GROK_TARGET_CONFIG
+                );
         for (ConfigDef.ConfigKey configKey : GrokConfig.configDef().configKeys().values()) {
             def.define(new ConfigDef.ConfigKey(
                     configKey.name,

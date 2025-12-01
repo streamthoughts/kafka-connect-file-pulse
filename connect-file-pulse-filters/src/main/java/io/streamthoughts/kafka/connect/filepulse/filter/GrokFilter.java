@@ -6,7 +6,6 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
-import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.config.GrokFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
@@ -17,6 +16,7 @@ import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternCompiler;
 import io.streamthoughts.kafka.connect.transform.pattern.GrokPatternResolver;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,7 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
      */
     @Override
     public ConfigDef configDef() {
-        return CommonFilterConfig.configDef();
+        return GrokFilterConfig.configDef();
     }
 
     /**
@@ -68,10 +68,56 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
     protected RecordsIterable<TypedStruct> apply(final FilterContext context,
                                                  final TypedStruct record) throws FilterException {
 
-        final String value = record.getString(config.source());
+        final TypedValue value = record.find(config.source());
+        
+        if (value == null) {
+            throw new FilterException("Invalid field '" + config.source() + "', field does not exist");
+        }
 
-        if (value == null) return null;
+        final List<String> valuesToProcess = resolveValues(value);
+        final List<TypedStruct> extractedResults = new ArrayList<>();
 
+        for (String valueToProcess : valuesToProcess) {
+            extractedResults.add(applyFilterOnValue(valueToProcess));
+        }
+
+        return buildResult(extractedResults);
+    }
+
+    /**
+     * Normalizes the configured source field into the list of strings to run through the Grok patterns.
+     *
+     * @param value the typed value obtained from the record for the configured source path.
+     * @return list of string entries to parse.
+     */
+    private List<String> resolveValues(final TypedValue value) {
+        if (value.type() == Type.STRING) {
+            return List.of(value.getString());
+        }
+
+        if (value.type() == Type.ARRAY) {
+            final Collection<Object> array = value.getArray();
+            final List<String> values = new ArrayList<>(array.size());
+            for (Object item : array) {
+                if (!(item instanceof String)) {
+                    throw new FilterException(
+                            "Array contains non-string element of type: " + item.getClass().getName());
+                }
+                values.add((String) item);
+            }
+            return values;
+        }
+
+        throw new FilterException("Source field must be either STRING or ARRAY type, got: " + value.type());
+    }
+
+    /**
+     * Applies all configured Grok patterns on the given value and returns the resulting struct.
+     *
+     * @param value the string payload to match.
+     * @return the struct built from captured groups.
+     */
+    private TypedStruct applyFilterOnValue(final String value) {
         final byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
 
         List<SchemaAndNamedCaptured> allNamedCaptured = new ArrayList<>(matchPatterns.size());
@@ -89,7 +135,30 @@ public class GrokFilter extends AbstractMergeRecordFilter<GrokFilter> {
         }
 
         final Schema schema = mergeToSchema(allNamedCaptured);
-        return RecordsIterable.of(mergeToStruct(allNamedCaptured, schema));
+        return mergeToStruct(allNamedCaptured, schema);
+    }
+
+    /**
+     * Builds the output payload by honoring the target field and the number of extracted results.
+     *
+     * @param results list of extracted structs for each processed value.
+     * @return iterable wrapping the final record to merge.
+     */
+    private RecordsIterable<TypedStruct> buildResult(final List<TypedStruct> results) {
+        final boolean hasTarget = config.target() != null;
+        final String targetField = hasTarget ? config.target() : config.source();
+
+        if (results.size() == 1 && !hasTarget) {
+            return RecordsIterable.of(results.get(0));
+        }
+
+        final TypedStruct result = TypedStruct.create();
+        if (results.size() == 1) {
+            result.insert(targetField, results.get(0));
+        } else {
+            result.insert(targetField, TypedValue.array(results, Type.STRUCT));
+        }
+        return RecordsIterable.of(result);
     }
 
     /**

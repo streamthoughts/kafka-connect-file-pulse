@@ -632,14 +632,15 @@ The `GrokFilter`is based on: https://github.com/streamthoughts/kafka-connect-tra
 
 ### Configuration
 
-| Configuration        | Description                                   | Type    | Default   | Importance |
-|----------------------|-----------------------------------------------|---------|-----------|------------|
-| `namedCapturesOnly`  | If true, only store named captures from grok. | boolean | *true*    | high       |
-| `pattern`            | The Grok pattern to match.                    | string  | *-*       | high       |
-| `overwrite`          | The fields to overwrite.                      | list    | medium    |
-| `patternDefinitions` | Custom pattern definitions.                   | list    | *-*       | low        |
-| `patternsDir`        | List of user-defined pattern directories      | string  | *-*       | low        |
-| `source`             | The input field on which to apply the filter  | string  | *message* | medium     |
+| Configuration        | Description                                              | Type                   | Default   | Importance |
+|----------------------|----------------------------------------------------------|----------------------- |-----------|------------|
+| `namedCapturesOnly`  | If true, only store named captures from grok.            | boolean                | *true*    | high       |
+| `pattern`            | The Grok pattern to match.                               | string                 | *-*       | high       |
+| `overwrite`          | The fields to overwrite.                                 | list                   |           | medium     |
+| `patternDefinitions` | Custom pattern definitions.                              | list                   | *-*       | low        |
+| `patternsDir`        | List of user-defined pattern directories.                | string                 | *-*       | low        |
+| `source`             | The input field on which to apply the filter             | string / array<string> | *message* | medium     |
+| `target`             | (Optional) Destination field receiving extracted values. | string                 | *-*       | medium     |
 
 ### Examples
 

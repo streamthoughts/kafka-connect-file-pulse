@@ -14,6 +14,8 @@ import io.streamthoughts.kafka.connect.filepulse.fs.TaskFileOrder;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
 import io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner;
+import io.streamthoughts.kafka.connect.filepulse.source.EofCompletionStrategy;
+import io.streamthoughts.kafka.connect.filepulse.source.FileCompletionStrategy;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.source.TaskPartitioner;
 import io.streamthoughts.kafka.connect.filepulse.state.FileObjectStateBackingStore;
@@ -41,6 +43,12 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public static final String FS_LISTING_FILTERS_CONFIG = "fs.listing.filters";
     private static final String FS_SCAN_FILTERS_DOC = "Filters classes which are used to apply list input files.";
+
+    public static final String FS_COMPLETION_STRATEGY_CLASS_CONFIG = "fs.completion.strategy.class";
+    private static final String FS_COMPLETION_STRATEGY_CLASS_DOC =
+        "The FileCompletionStrategy class to determine when files should be marked as COMPLETED. " +
+            "Default is EofCompletionStrategy (completes when fully read). " +
+            "Use DailyCompletionStrategy for time-based completion (e.g., daily files).";
 
     public static final String TASKS_FILE_READER_CLASS_CONFIG = "tasks.reader.class";
     private static final String TASKS_FILE_READER_CLASS_DOC = "Class which is used by tasks to read an input file.";
@@ -261,6 +269,13 @@ public class CommonSourceConfig extends AbstractConfig {
                         groupCounter++,
                         ConfigDef.Width.NONE,
                         CONNECT_SCHEMA_KEEP_LEADING_UNDERSCORES_ON_FIELD_NAME_CONFIG
+                )
+                .define(
+                    FS_COMPLETION_STRATEGY_CLASS_CONFIG,
+                    ConfigDef.Type.CLASS,
+                    EofCompletionStrategy.class,
+                    ConfigDef.Importance.MEDIUM,
+                    FS_COMPLETION_STRATEGY_CLASS_DOC
                 );
     }
 
@@ -301,6 +316,10 @@ public class CommonSourceConfig extends AbstractConfig {
 
     public String getValueSchemaConditionTopicPattern() {
         return getString(RECORD_VALUE_SCHEMA_CONDITION_TOPIC_PATTERN_CONFIG);
+    }
+
+    public FileCompletionStrategy getFileCompletionStrategy() {
+        return getConfiguredInstance(FS_COMPLETION_STRATEGY_CLASS_CONFIG, FileCompletionStrategy.class);
     }
 
     public Schema getValueConnectSchema() {

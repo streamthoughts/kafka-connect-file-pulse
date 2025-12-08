@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,7 +179,7 @@ public class NonBlockingBufferReader implements AutoCloseable {
         TextBlock line;
         do {
             line = tryToExtractLine();
-            if (line != null) {
+            if (line != null && !StringUtils.isEmpty(line.data())) {
                 records.add(line);
             }
             maxNumRecordsNotReached = records.size() < minRecords;

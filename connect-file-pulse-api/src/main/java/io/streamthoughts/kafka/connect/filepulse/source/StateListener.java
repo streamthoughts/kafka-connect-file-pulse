@@ -41,6 +41,14 @@ public interface StateListener {
     void onCompleted(final FileObjectContext context);
 
     /**
+     * This method is invoked when a source file processing is partially completed.
+     * @see FileRecordsPollingConsumer
+     *
+     * @param context   the file context.
+     */
+    void onPartiallyCompleted(final FileObjectContext context);
+
+    /**
      * This method is invoked when an error occurred while processing a source file.
      * @see FileRecordsPollingConsumer
      *

@@ -151,12 +151,18 @@ public class FilePulseSourceTask extends SourceTask {
         final RecordFilterPipeline<FileRecord<TypedStruct>> filter = new DefaultRecordFilterPipeline(
                 taskConfig.filters()
         );
+
+        // Get and configure the completion strategy
+        final FileCompletionStrategy completionStrategy = taskConfig.getFileCompletionStrategy();
+        completionStrategy.configure(taskConfig.originalsStrings());
+
         return new DefaultFileRecordsPollingConsumer(
                 context,
                 taskConfig.reader(),
                 filter,
                 offsetPolicy,
-                taskConfig.isReadCommittedFile());
+                taskConfig.isReadCommittedFile(),
+                completionStrategy);
     }
 
     /**

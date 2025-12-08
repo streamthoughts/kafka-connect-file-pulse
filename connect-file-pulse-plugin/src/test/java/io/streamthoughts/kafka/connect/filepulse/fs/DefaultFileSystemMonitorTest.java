@@ -272,8 +272,8 @@ public class DefaultFileSystemMonitorTest {
                 status -> List.of(FileObjectStatus.FAILED, FileObjectStatus.COMPLETED).contains(status),
                 OFFSET_MANAGER,
                 store,
-                TaskFileOrder.BuiltIn.LAST_MODIFIED.get()
-        );
+                TaskFileOrder.BuiltIn.LAST_MODIFIED.get(),
+                null);
     }
 
     private static class NoOpFileSystemListing implements FileSystemListing<Storage> {

@@ -37,6 +37,7 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
     private StateListener listener;
     private final SourceTaskContext taskContext;
     private final AtomicBoolean closed = new AtomicBoolean(false);
+    private final FileCompletionStrategy completionStrategy;
 
     private FileRecord<TypedStruct> latestPolledRecord;
 
@@ -50,18 +51,21 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
      * @param pipeline               the filter pipeline to apply on each record.
      * @param offsetPolicy           the source offset/partition policy.
      * @param ignoreCommittedOffsets flag to indicate if committed offsets should be ignored.
+     * @param completionStrategy     the strategy to determine when files should be marked as COMPLETED.
      */
     DefaultFileRecordsPollingConsumer(final SourceTaskContext taskContext,
                                       final FileInputReader reader,
                                       final RecordFilterPipeline<FileRecord<TypedStruct>> pipeline,
                                       final SourceOffsetPolicy offsetPolicy,
-                                      final boolean ignoreCommittedOffsets) {
+                                      final boolean ignoreCommittedOffsets,
+                                      final FileCompletionStrategy completionStrategy) {
         this.queue = new LinkedBlockingQueue<>();
         this.ignoreCommittedOffsets = ignoreCommittedOffsets;
         this.reader = reader;
         this.pipeline = pipeline;
         this.offsetPolicy = offsetPolicy;
         this.taskContext = taskContext;
+        this.completionStrategy = completionStrategy;
     }
 
     void addAll(final List<URI> files) {
@@ -372,7 +376,12 @@ public class DefaultFileRecordsPollingConsumer implements FileRecordsPollingCons
             if (exception != null) {
                 listener.onFailure(fileContext, exception);
             } else {
-                listener.onCompleted(fileContext);
+                // Delegate to the completion strategy to decide if the file should be completed
+                if (completionStrategy.shouldComplete(fileContext)) {
+                    listener.onCompleted(fileContext);
+                } else {
+                    listener.onPartiallyCompleted(fileContext);
+                }
             }
         }
     }

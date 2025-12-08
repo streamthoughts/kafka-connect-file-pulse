@@ -12,10 +12,12 @@ import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicy;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResult;
 import io.streamthoughts.kafka.connect.filepulse.clean.FileCleanupPolicyResultSet;
 import io.streamthoughts.kafka.connect.filepulse.clean.GenericFileCleanupPolicy;
+import io.streamthoughts.kafka.connect.filepulse.source.FileCompletionStrategy;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObject;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectKey;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectStatus;
+import io.streamthoughts.kafka.connect.filepulse.source.LongLivedFileReadStrategy;
 import io.streamthoughts.kafka.connect.filepulse.source.SourceOffsetPolicy;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateBackingStore;
 import io.streamthoughts.kafka.connect.filepulse.storage.StateSnapshot;
@@ -34,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.apache.kafka.common.utils.Time;
 import org.apache.kafka.connect.connector.ConnectorContext;
 import org.slf4j.Logger;
@@ -69,6 +72,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
 
     private final BatchFileCleanupPolicy cleaner;
 
+    private final FileCompletionStrategy completionStrategy;
+
     private final Long allowTasksReconfigurationAfterTimeoutMs;
 
     private Long nextAllowedTasksReconfiguration = -1L;
@@ -95,8 +100,9 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
      * @param allowTasksReconfigurationAfterTimeoutMs {@code true} to allow tasks reconfiguration after a timeout.
      * @param fsListening                             the {@link FileSystemListing} to be used for listing object files.
      * @param cleanPolicy                             the {@link GenericFileCleanupPolicy} to be used for cleaning object files.
-     * @param offsetPolicy                            the {@link SourceOffsetPolicy} to be used computing offset for object fileS.
+     * @param offsetPolicy                            the {@link SourceOffsetPolicy} to be used computing offset for object files.
      * @param store                                   the {@link StateBackingStore} used for storing object file cursor.
+     * @param completionStrategy                      the {@link FileCompletionStrategy} to be used for determining file completion.
      */
     public DefaultFileSystemMonitor(final Long allowTasksReconfigurationAfterTimeoutMs,
                                     final FileSystemListing<?> fsListening,
@@ -104,7 +110,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                                     final Predicate<FileObjectStatus> cleanablePredicate,
                                     final SourceOffsetPolicy offsetPolicy,
                                     final StateBackingStore<FileObject> store,
-                                    final TaskFileOrder taskFileOrder) {
+                                    final TaskFileOrder taskFileOrder,
+                                    final FileCompletionStrategy completionStrategy) {
         Objects.requireNonNull(fsListening, "'fsListening' should not be null");
         Objects.requireNonNull(cleanPolicy, "'cleanPolicy' should not be null");
         Objects.requireNonNull(offsetPolicy, "'offsetPolicy' should not be null");
@@ -116,6 +123,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         this.allowTasksReconfigurationAfterTimeoutMs = allowTasksReconfigurationAfterTimeoutMs;
         this.cleanablePredicate = cleanablePredicate;
         this.taskFileOrder = taskFileOrder;
+        this.completionStrategy = completionStrategy;
 
         if (cleanPolicy instanceof FileCleanupPolicy) {
             this.cleaner = new DelegateBatchFileCleanupPolicy((FileCleanupPolicy) cleanPolicy);
@@ -148,7 +156,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                     if (scanned.remove(objectId) != null) {
                         changed.set(true);
                     }
-                } else if (status.isOneOf(FileObjectStatus.CLEANED, FileObjectStatus.INVALID)) {
+                } else if (status.isOneOf(FileObjectStatus.CLEANED, FileObjectStatus.INVALID,
+                    FileObjectStatus.PARTIALLY_COMPLETED)) {
                     final FileObjectMeta removed = scheduled.remove(objectId);
                     if (removed == null && status.isOneOf(FileObjectStatus.CLEANED)) {
                         LOG.debug(
@@ -272,8 +281,8 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         final boolean noScheduledFiles = scheduled.isEmpty();
         if (!noScheduledFiles && allowTasksReconfigurationAfterTimeoutMs == Long.MAX_VALUE) {
             LOG.info(
-                    "Scheduled files still being processed: {}. Skip filesystem listing while waiting for tasks completion",
-                    scheduled.size()
+                "Scheduled files still being processed: {}. Skip filesystem listing while waiting for tasks completion",
+                scheduled.size()
             );
             return false;
         }
@@ -291,17 +300,28 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
         LOG.info("Completed object files listing. '{}' object files found in {}ms", objects.size(), took);
 
         final StateSnapshot<FileObject> snapshot = store.snapshot();
-        final Map<FileObjectKey, FileObjectMeta> toScheduled = FileObjectCandidatesFilter.filter(
-                offsetPolicy,
-                fileObjectKey -> {
-                    final FileObject fileObject = snapshot.getForKey(fileObjectKey.original());
-                    if (fileObject == null) return true;
+        Map<FileObjectKey, FileObjectMeta> toScheduled = FileObjectCandidatesFilter.filter(
+            offsetPolicy,
+            fileObjectKey -> {
+                final FileObject fileObject = snapshot.getForKey(fileObjectKey.original());
+                if (fileObject == null) return true;
 
-                    final FileObjectStatus status = fileObject.status();
-                    return !(cleanablePredicate.test(status) || status.isDone());
-                },
-                objects
+                final FileObjectStatus status = fileObject.status();
+                return !(cleanablePredicate.test(status) || status.isDone());
+            },
+            objects
         );
+
+        // If long-lived file read strategy is used, filter out files that should not be attempted to read.
+        if (completionStrategy instanceof LongLivedFileReadStrategy) {
+            toScheduled = toScheduled.entrySet().stream().filter(entry -> {
+                final FileObject fileObject = snapshot.getForKey(entry.getKey().original());
+                if (fileObject == null) return true;
+
+                return ((LongLivedFileReadStrategy) completionStrategy).
+                    shouldAttemptRead(entry.getValue(), fileObject.offset());
+            }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
 
         // Some scheduled files are still being processed, but new files are detected
         if (!noScheduledFiles) {

@@ -33,6 +33,11 @@ public enum FileObjectStatus {
     READING,
 
     /**
+     * The file processing is partially completed (e.g. for long-lived processing).
+     */
+    PARTIALLY_COMPLETED,
+
+    /**
      * The file processing is completed.
      */
     COMPLETED,

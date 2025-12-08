@@ -119,6 +119,10 @@ public class FilePulseSourceConnector extends SourceConnector {
         final FileSystemListing<?> fileSystemListing = connectorConfig.getFileSystemListing();
         fileSystemListing.setFilter(new CompositeFileListFilter(connectorConfig.getFileSystemListingFilter()));
 
+        // Get and configure the completion strategy
+        final FileCompletionStrategy completionStrategy = connectorConfig.getFileCompletionStrategy();
+        completionStrategy.configure(connectorConfig.originalsStrings());
+
         DefaultFileSystemMonitor monitor = new DefaultFileSystemMonitor(
                 connectorConfig.allowTasksReconfigurationAfterTimeoutMs(),
                 fileSystemListing,
@@ -126,7 +130,8 @@ public class FilePulseSourceConnector extends SourceConnector {
                 connectorConfig.getFsCleanupPolicyPredicate(),
                 connectorConfig.getSourceOffsetPolicy(),
                 store,
-                connectorConfig.getTaskFilerOrder()
+                connectorConfig.getTaskFilerOrder(),
+                completionStrategy
         );
 
         monitor.setStateDefaultReadTimeout(connectorConfig.getStateDefaultReadTimeoutMs());

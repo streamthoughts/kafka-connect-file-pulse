@@ -104,6 +104,16 @@ public class FileObjectStateReporter implements StateListener {
      * {@inheritDoc}
      */
     @Override
+    public void onPartiallyCompleted(final FileObjectContext context) {
+        Objects.requireNonNull(context, "context can't be null");
+        LOG.debug("Partially completed object-file: '{}'", context.metadata());
+        notify(context, FileObjectStatus.PARTIALLY_COMPLETED);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onFailure(final FileObjectContext context, final Throwable t) {
         Objects.requireNonNull(context, "context can't be null");
         LOG.error("Error while processing object-file: '{}'", context.metadata(), t);

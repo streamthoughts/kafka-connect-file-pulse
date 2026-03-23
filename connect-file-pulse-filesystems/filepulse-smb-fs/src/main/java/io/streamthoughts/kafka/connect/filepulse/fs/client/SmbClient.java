@@ -94,7 +94,7 @@ public class SmbClient {
      * List files in the specified directory.
      */
     public Stream<FileObjectMeta> listFiles(String directoryPath) {
-        String smbUrl = baseUrl + (directoryPath.startsWith("/") ? directoryPath.substring(1) : directoryPath);
+        String smbUrl = buildDirectoryUrl(directoryPath);
 
         return executeWithRetry(() -> {
             LOG.debug("Listing files in SMB directory: {}", smbUrl);
@@ -118,6 +118,21 @@ public class SmbClient {
                         .map(this::buildFileMetadata);
             }
         });
+    }
+
+    /**
+     * Builds the full SMB directory URL from the configured base URL and the given directory path.
+     * <p>
+     * The leading slash is stripped from {@code directoryPath} (since {@code baseUrl} already ends
+     * with {@code /}), and a trailing slash is appended when missing so that jcifs treats the path
+     * as a directory and constructs correct child file URIs
+     */
+    String buildDirectoryUrl(String directoryPath) {
+        String normalizedPath = directoryPath.startsWith("/") ? directoryPath.substring(1) : directoryPath;
+        if (!normalizedPath.isEmpty() && !normalizedPath.endsWith("/")) {
+            normalizedPath = normalizedPath + "/";
+        }
+        return baseUrl + normalizedPath;
     }
 
     /**

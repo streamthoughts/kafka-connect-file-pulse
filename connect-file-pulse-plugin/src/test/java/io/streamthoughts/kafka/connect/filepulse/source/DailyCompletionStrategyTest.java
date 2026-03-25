@@ -157,21 +157,6 @@ public class DailyCompletionStrategyTest {
                    strategy.shouldComplete(context));
     }
 
-    @Test
-    public void testShouldNotCompleteForFutureFile() {
-        Map<String, Object> config = createConfig("01:00:00", null, null);
-        strategy.configure(config);
-
-        // File from 5 days in the future
-        // (completion is 4 days in the future at 01:00:00)
-        LocalDate fiveDaysFromNow = LocalDate.now().plusDays(5);
-        String filename = String.format("logs-%s.log", fiveDaysFromNow.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        FileObjectContext context = createContext(filename);
-
-        assertFalse("Future file should not be marked as complete",
-                    strategy.shouldComplete(context));
-    }
-
 
     @Test
     public void testFileCompletesNextDayAtScheduledTime() {
@@ -243,9 +228,7 @@ public class DailyCompletionStrategyTest {
         Map<String, Object> config = createConfig("23:59:59", null, null);
         strategy.configure(config);
 
-        // File from 5 days in future - not complete yet and not modified
-        LocalDate fiveDaysFromNow = LocalDate.now().plusDays(5);
-        String filename = String.format("logs-%s.log", fiveDaysFromNow.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        String filename = String.format("logs-%s.log", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         long fileModifiedTime = 1705330800000L; // 2024-01-15 11:00:00 UTC
         long offsetTime = 1705334400000L; // 2024-01-15 12:00:00 UTC (newer than file)

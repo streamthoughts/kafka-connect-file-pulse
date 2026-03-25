@@ -6,202 +6,124 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import io.streamthoughts.kafka.connect.filepulse.source.CompletionPeriod;
 import io.streamthoughts.kafka.connect.filepulse.source.DailyCompletionStrategy;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigException;
 
 /**
  * Configuration for {@link DailyCompletionStrategy}.
+ *
+ * <p><strong>Deprecated.</strong> Use {@link ScheduledCompletionStrategyConfig} instead,
+ * which supports {@code DAILY}, {@code WEEKLY} and {@code MONTHLY} periods.
+ *
+ * <p>This class accepts the legacy {@code daily.completion.schedule.*} config keys and
+ * translates them to the canonical {@code completion.schedule.*} keys understood by
+ * {@link ScheduledCompletionStrategyConfig}.
+ *
+ * <h3>Key mapping</h3>
+ * <ul>
+ *   <li>{@code daily.completion.schedule.time}         → {@code completion.schedule.time}</li>
+ *   <li>{@code daily.completion.schedule.date.pattern} → {@code completion.schedule.date.pattern}</li>
+ *   <li>{@code daily.completion.schedule.date.format}  → {@code completion.schedule.date.format}</li>
+ * </ul>
+ *
+ * @deprecated Use {@link ScheduledCompletionStrategyConfig} with {@code completion.schedule.period=DAILY}.
  */
-public class DailyCompletionStrategyConfig extends AbstractConfig {
+@Deprecated
+public class DailyCompletionStrategyConfig extends ScheduledCompletionStrategyConfig {
 
+    /** @deprecated Use {@link ScheduledCompletionStrategyConfig#COMPLETION_SCHEDULE_TIME_CONFIG}. */
+    @Deprecated
     public static final String COMPLETION_SCHEDULE_TIME_CONFIG = "daily.completion.schedule.time";
-    private static final String COMPLETION_SCHEDULE_TIME_DOC =
-        "Time to complete files in HH:mm:ss format (e.g., '00:01:00'). " +
-        "Files will be marked as COMPLETED when the current time passes this scheduled time " +
-        "for the date extracted from the filename. Uses the system default timezone.";
-    private static final String COMPLETION_SCHEDULE_TIME_DEFAULT = "00:01:00";
 
+    /** @deprecated Use {@link ScheduledCompletionStrategyConfig#COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG}. */
+    @Deprecated
     public static final String COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG = "daily.completion.schedule.date.pattern";
-    private static final String COMPLETION_SCHEDULE_DATE_PATTERN_DOC =
-        "Regex pattern to extract date from filename. The pattern should contain capturing groups " +
-        "that match the date components. For example: '.*?(\\d{4}-\\d{2}-\\d{2}).*' to match dates " +
-        "like '2025-12-08' in filenames like 'logs-2025-12-08.log'.";
-    private static final String COMPLETION_SCHEDULE_DATE_PATTERN_DEFAULT = ".*?(\\d{4}-\\d{2}-\\d{2}).*";
 
+    /** @deprecated Use {@link ScheduledCompletionStrategyConfig#COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG}. */
+    @Deprecated
     public static final String COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG = "daily.completion.schedule.date.format";
-    private static final String COMPLETION_SCHEDULE_DATE_FORMAT_DOC =
-        "Date format pattern used to parse the date extracted from the filename. " +
-        "Must match the date format in the filename (e.g., 'yyyy-MM-dd' for '2025-12-08', " +
-        "'yyyyMMdd' for '20251208'). See Java DateTimeFormatter for supported patterns.";
-    private static final String COMPLETION_SCHEDULE_DATE_FORMAT_DEFAULT = "yyyy-MM-dd";
 
     /**
      * Creates a new {@link DailyCompletionStrategyConfig} instance.
      *
-     * @param originals the configuration properties
+     * <p>Accepts legacy {@code daily.completion.schedule.*} keys and translates them to the
+     * canonical {@code completion.schedule.*} keys before delegating to
+     * {@link ScheduledCompletionStrategyConfig}.
+     *
+     * @param originals the configuration properties.
      */
     public DailyCompletionStrategyConfig(final Map<?, ?> originals) {
-        super(configDef(), originals);
+        super(translate(originals));
     }
 
-    /**
-     * Get the scheduled completion time.
-     *
-     * @return the time at which files should be completed
-     */
+    /** {@inheritDoc} */
+    @Override
     public LocalTime scheduledCompletionTime() {
-        String timeStr = getString(COMPLETION_SCHEDULE_TIME_CONFIG);
-        try {
-            return LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm:ss"));
-        } catch (DateTimeParseException e) {
-            throw new ConfigException(
-                COMPLETION_SCHEDULE_TIME_CONFIG,
-                timeStr,
-                "Invalid time format. Expected format: HH:mm:ss (e.g., '23:59:59')"
-            );
-        }
+        return super.scheduledCompletionTime();
     }
 
-    /**
-     * Get the compiled regex pattern for extracting dates from filenames.
-     *
-     * @return the compiled pattern
-     */
+    /** {@inheritDoc} */
+    @Override
     public Pattern datePattern() {
-        String patternStr = getString(COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG);
-        try {
-            return Pattern.compile(patternStr);
-        } catch (PatternSyntaxException e) {
-            throw new ConfigException(
-                COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG,
-                patternStr,
-                "Invalid regex pattern: " + e.getMessage()
-            );
-        }
+        return super.datePattern();
     }
 
-    /**
-     * Get the date formatter for parsing dates from filenames.
-     *
-     * @return the date formatter
-     */
+    /** {@inheritDoc} */
+    @Override
     public DateTimeFormatter dateFormatter() {
-        String formatStr = getString(COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG);
-        try {
-            return DateTimeFormatter.ofPattern(formatStr);
-        } catch (IllegalArgumentException e) {
-            throw new ConfigException(
-                COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG,
-                formatStr,
-                "Invalid date format pattern: " + e.getMessage()
-            );
-        }
+        return super.dateFormatter();
     }
 
     /**
-     * Define the configuration.
+     * Returns the {@link ConfigDef} that accepts both the legacy {@code daily.*} keys
+     * and the new {@code completion.schedule.*} keys.
      *
-     * @return the configuration definition
+     * @return the config definition.
+     * @deprecated Use {@link ScheduledCompletionStrategyConfig#configDef()}.
      */
+    @Deprecated
     public static ConfigDef configDef() {
-        return new ConfigDef()
-            .define(
-                COMPLETION_SCHEDULE_TIME_CONFIG,
-                ConfigDef.Type.STRING,
-                COMPLETION_SCHEDULE_TIME_DEFAULT,
-                new TimeValidator(),
-                ConfigDef.Importance.HIGH,
-                COMPLETION_SCHEDULE_TIME_DOC
-            )
-            .define(
-                COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG,
-                ConfigDef.Type.STRING,
-                COMPLETION_SCHEDULE_DATE_PATTERN_DEFAULT,
-                new RegexValidator(),
-                ConfigDef.Importance.HIGH,
-                COMPLETION_SCHEDULE_DATE_PATTERN_DOC
-            )
-            .define(
-                COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG,
-                ConfigDef.Type.STRING,
-                COMPLETION_SCHEDULE_DATE_FORMAT_DEFAULT,
-                new DateFormatValidator(),
-                ConfigDef.Importance.HIGH,
-                COMPLETION_SCHEDULE_DATE_FORMAT_DOC
-            );
+        return ScheduledCompletionStrategyConfig.configDef();
     }
 
     /**
-     * Validator for time format (HH:mm:ss).
+     * Translates a map that may contain legacy {@code daily.completion.schedule.*} keys
+     * into a map with the canonical {@code completion.schedule.*} keys.
+     *
+     * @param originals the original configuration map (may be typed with any key type).
+     * @return a new map with translated keys.
      */
-    private static class TimeValidator implements ConfigDef.Validator {
-        @Override
-        public void ensureValid(String name, Object value) {
-            if (value == null) {
-                throw new ConfigException(name, value, "Time configuration is required");
-            }
-            String timeStr = value.toString();
-            try {
-                LocalTime.parse(timeStr, DateTimeFormatter.ofPattern("HH:mm:ss"));
-            } catch (DateTimeParseException e) {
-                throw new ConfigException(
-                    name,
-                    value,
-                    "Invalid time format. Expected format: HH:mm:ss (e.g., '23:59:59')"
-                );
-            }
-        }
-    }
+    private static Map<String, Object> translate(final Map<?, ?> originals) {
+        Map<String, Object> translated = new HashMap<>(originals.size() + 1);
 
-    /**
-     * Validator for regex pattern.
-     */
-    private static class RegexValidator implements ConfigDef.Validator {
-        @Override
-        public void ensureValid(String name, Object value) {
-            if (value == null) {
-                return; // Has default value
+        originals.forEach((rawKey, value) -> {
+            String key = rawKey.toString();
+            final String mappedKey;
+            switch (key) {
+                case COMPLETION_SCHEDULE_TIME_CONFIG:
+                    mappedKey = ScheduledCompletionStrategyConfig.COMPLETION_SCHEDULE_TIME_CONFIG;
+                    break;
+                case COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG:
+                    mappedKey = ScheduledCompletionStrategyConfig.COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG;
+                    break;
+                case COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG:
+                    mappedKey = ScheduledCompletionStrategyConfig.COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG;
+                    break;
+                default:
+                    mappedKey = key;
             }
-            String patternStr = value.toString();
-            try {
-                Pattern.compile(patternStr);
-            } catch (PatternSyntaxException e) {
-                throw new ConfigException(
-                    name,
-                    value,
-                    "Invalid regex pattern: " + e.getMessage()
-                );
-            }
-        }
-    }
+            translated.putIfAbsent(mappedKey, value);
+        });
 
-    /**
-     * Validator for date format pattern.
-     */
-    private static class DateFormatValidator implements ConfigDef.Validator {
-        @Override
-        public void ensureValid(String name, Object value) {
-            if (value == null) {
-                return; // Has default value
-            }
-            String formatStr = value.toString();
-            try {
-                DateTimeFormatter.ofPattern(formatStr);
-            } catch (IllegalArgumentException e) {
-                throw new ConfigException(
-                    name,
-                    value,
-                    "Invalid date format pattern. Use a valid DateTimeFormatter pattern (e.g., 'yyyy-MM-dd')"
-                );
-            }
-        }
+        translated.put(ScheduledCompletionStrategyConfig.COMPLETION_SCHEDULE_PERIOD_CONFIG,
+            CompletionPeriod.DAILY.name());
+
+        return translated;
     }
 }

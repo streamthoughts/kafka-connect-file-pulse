@@ -7,180 +7,86 @@
 package io.streamthoughts.kafka.connect.filepulse.source;
 
 import io.streamthoughts.kafka.connect.filepulse.config.DailyCompletionStrategyConfig;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import io.streamthoughts.kafka.connect.filepulse.config.ScheduledCompletionStrategyConfig;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link FileCompletionStrategy} that marks files as COMPLETED
- * at a scheduled time by extracting the date from the filename.
+ * A {@link FileCompletionStrategy} that marks files as COMPLETED the <strong>day after</strong>
+ * the date extracted from the filename, at a configurable time of day.
  *
- * <p>This is useful for "daily" files that are continuously appended throughout the day
- * and should only be marked as complete the <strong>next day</strong> at a specific time.
+ * <p><strong>Deprecated.</strong> Use {@link ScheduledCompletionStrategy} with
+ * {@code completion.schedule.period=DAILY} instead. This class is kept for backward compatibility
+ * and simply delegates to {@link ScheduledCompletionStrategy} after translating the legacy
+ * {@code daily.completion.schedule.*} config keys to the new {@code completion.schedule.*} keys.
  *
- * <p>The strategy extracts the date from the filename using a regex pattern. The file is completed
- * on the <strong>day after</strong> the date in the filename at the configured completion time.
- * Uses the system default timezone.
- *
- * <h3>Example</h3>
+ * <h3>Legacy configuration keys (still supported)</h3>
  * <ul>
- *   <li>File: <code>logs-2025-12-08.log</code></li>
- *   <li>Completion time: <code>01:00:00</code></li>
- *   <li>File created: December 8, 2025 at 6:00 AM</li>
- *   <li><strong>File will be completed: December 9, 2025 at 01:00:00</strong></li>
+ *   <li>{@code daily.completion.schedule.time}         → {@code completion.schedule.time}</li>
+ *   <li>{@code daily.completion.schedule.date.pattern} → {@code completion.schedule.date.pattern}</li>
+ *   <li>{@code daily.completion.schedule.date.format}  → {@code completion.schedule.date.format}</li>
  * </ul>
  *
- * <p>This ensures that all data written during the day (December 8) is collected,
- * with a 1-hour buffer into the next day before the file is marked complete.
- *
- * <h3>Configuration</h3>
- * <ul>
- *   <li><code>completion.schedule.time</code>: Time to complete files (HH:mm:ss format, e.g., "01:00:00")</li>
- *   <li><code>completion.schedule.date.pattern</code>:
- *      Regex pattern to extract date from filename (default: ".*?(\\d{4}-\\d{2}-\\d{2}).*")</li>
- *   <li><code>completion.schedule.date.format</code>: Date format in the filename (default: "yyyy-MM-dd")</li>
- * </ul>
- *
- * <h3>Example filename patterns</h3>
- * <ul>
- *   <li><code>logs-2025-12-08.log</code> → pattern: ".*?(\\d{4}-\\d{2}-\\d{2}).*", format: "yyyy-MM-dd"</li>
- *   <li><code>app-20251208.log</code> → pattern: ".*?(\\d{8}).*", format: "yyyyMMdd"</li>
- * </ul>
+ * @deprecated Use {@link ScheduledCompletionStrategy} with {@code completion.schedule.period=DAILY}.
  */
-public class DailyCompletionStrategy implements FileCompletionStrategy, LongLivedFileReadStrategy {
+@Deprecated
+public class DailyCompletionStrategy extends ScheduledCompletionStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DailyCompletionStrategy.class);
 
-    private LocalTime scheduledCompletionTime;
-    private Pattern datePattern;
-    private DateTimeFormatter dateFormatter;
-
     /**
      * {@inheritDoc}
+     *
+     * <p>Translates the legacy {@code daily.completion.schedule.*} config keys to the new
+     * {@code completion.schedule.*} keys
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        DailyCompletionStrategyConfig config = new DailyCompletionStrategyConfig(configs);
-        this.scheduledCompletionTime = config.scheduledCompletionTime();
-        this.datePattern = config.datePattern();
-        this.dateFormatter = config.dateFormatter();
-
-        LOG.info(
-            "Configured DailyCompletionStrategy: completionTime={}, datePattern={}, dateFormat={}, timezone={}",
-            scheduledCompletionTime, datePattern.pattern(), dateFormatter, ZoneId.systemDefault()
+        LOG.warn(
+            "DailyCompletionStrategy is deprecated. " +
+                "Please migrate to ScheduledCompletionStrategy with completion.schedule.period=DAILY."
         );
+
+        Map<String, Object> translated = new HashMap<>(configs.size() + 1);
+
+        // Copy all existing keys first (allows completion.schedule.* keys to be passed directly
+        // if someone is already partially migrated)
+        configs.forEach((k, v) -> translated.put(k.toString(), v));
+
+        // Remap legacy daily.* keys → completion.schedule.* keys (only if the new key is not already set)
+        remapIfAbsent(configs, translated,
+            DailyCompletionStrategyConfig.COMPLETION_SCHEDULE_TIME_CONFIG,
+            ScheduledCompletionStrategyConfig.COMPLETION_SCHEDULE_TIME_CONFIG);
+
+        remapIfAbsent(configs, translated,
+            DailyCompletionStrategyConfig.COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG,
+            ScheduledCompletionStrategyConfig.COMPLETION_SCHEDULE_DATE_PATTERN_CONFIG);
+
+        remapIfAbsent(configs, translated,
+            DailyCompletionStrategyConfig.COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG,
+            ScheduledCompletionStrategyConfig.COMPLETION_SCHEDULE_DATE_FORMAT_CONFIG);
+
+        // Always force DAILY period regardless of what caller may have set
+        translated.put(ScheduledCompletionStrategyConfig.COMPLETION_SCHEDULE_PERIOD_CONFIG,
+            CompletionPeriod.DAILY.name());
+
+        super.configure(translated);
     }
 
     /**
-     * {@inheritDoc}
+     * Copies the value from {@code legacyKey} in {@code source} into {@code target} under
+     * {@code newKey}, but only when {@code newKey} is not already present in {@code target}.
      */
-    @Override
-    public boolean shouldComplete(final FileObjectContext context) {
-        // Extract date from filename
-        LocalDate fileDate;
-        try {
-            fileDate = extractDateFromFilename(context.metadata().stringURI());
-        } catch (Exception e) {
-            LOG.warn(
-                "Could not extract date from filename '{}': {}. " +
-                    "File will not be completed until date can be determined.",
-                context.metadata().stringURI(),
-                e.getMessage()
-            );
-            // If we can't extract the date, don't complete the file
-            return false;
+    private static void remapIfAbsent(
+        final Map<String, ?> source,
+        final Map<String, Object> target,
+        final String legacyKey,
+        final String newKey
+    ) {
+        if (!target.containsKey(newKey) && source.containsKey(legacyKey)) {
+            target.put(newKey, source.get(legacyKey));
         }
-
-        // Calculate when this file should be completed
-        Instant fileCompletionTime = calculateCompletionTimeForDate(fileDate);
-        Instant now = Instant.now();
-
-        boolean timeReached = now.isAfter(fileCompletionTime) || now.equals(fileCompletionTime);
-
-        if (timeReached) {
-            LOG.info(
-                "Scheduled completion time reached for file '{}' (date: {}, completion time: {}, now: {})",
-                context.metadata().stringURI(),
-                fileDate,
-                fileCompletionTime,
-                now
-            );
-        }
-
-        return timeReached;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean shouldAttemptRead(final FileObjectMeta objectMeta, final FileObjectOffset offset) {
-        // Always attempt to read if the file should be completed
-        boolean shouldRead = shouldComplete(new FileObjectContext(objectMeta))
-            || LongLivedFileReadStrategy.super.shouldAttemptRead(objectMeta, offset);
-
-        if (!shouldRead) {
-            LOG.debug("Deferring read for file '{}' until file is updated or scheduled completion time is reached.",
-                objectMeta.stringURI());
-        }
-
-        return shouldRead;
-    }
-
-    /**
-     * Extract the date from the filename using the configured pattern and format.
-     *
-     * @param filename the filename or URI
-     * @return the parsed date
-     * @throws IllegalArgumentException if the date cannot be extracted or parsed
-     */
-    private LocalDate extractDateFromFilename(String filename) {
-        Matcher matcher = datePattern.matcher(filename);
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException(
-                "Filename does not match date pattern: " + filename
-            );
-        }
-
-        // Extract the date string from the first capturing group
-        String dateStr = matcher.group(1);
-
-        try {
-            return LocalDate.parse(dateStr, dateFormatter);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException(
-                "Could not parse date '" + dateStr + "' from filename '" +
-                    filename + "' using format: " + dateFormatter,
-                e
-            );
-        }
-    }
-
-    /**
-     * Calculate the completion time for a given file date using the system default timezone.
-     * The completion time is the configured time on the <strong>day after</strong> the file's date.
-     *
-     * <p>For example, if the file is for 2025-12-08 and completion time is 01:00:00,
-     * the file should be completed at <strong>2025-12-09 01:00:00</strong> (in the system timezone).
-     *
-     * <p>This ensures that all data written during the file's day (Dec 8) is collected,
-     * with a buffer period into the next day before marking the file as complete.
-     *
-     * @param fileDate the date extracted from the filename
-     * @return the instant when the file should be completed
-     */
-    private Instant calculateCompletionTimeForDate(LocalDate fileDate) {
-        LocalDate completionDate = fileDate.plusDays(1);
-        LocalDateTime completionDateTime = LocalDateTime.of(completionDate, scheduledCompletionTime);
-        return completionDateTime.atZone(ZoneId.systemDefault()).toInstant();
     }
 }

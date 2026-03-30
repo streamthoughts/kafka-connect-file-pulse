@@ -11,8 +11,12 @@ import io.streamthoughts.kafka.connect.filepulse.data.TypedStruct;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.apache.kafka.connect.data.Date;
 import org.apache.kafka.connect.data.SchemaAndValue;
+import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
+import org.apache.kafka.connect.data.Time;
+import org.apache.kafka.connect.data.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -252,5 +256,65 @@ class ConnectSchemaMapperTest {
         org.apache.kafka.connect.data.Schema mapSchema = schemaAndValue.schema().field("array").schema();
         Assertions.assertEquals(org.apache.kafka.connect.data.Schema.Type.ARRAY, mapSchema.schema().type());
         Assertions.assertEquals(org.apache.kafka.connect.data.Schema.Type.STRING, mapSchema.schema().valueSchema().type());
+    }
+
+    @Test
+    void should_convert_long_to_date_when_connect_schema_is_timestamp() {
+        // GIVEN
+        final long millis = 1711756800000L; // 2024-03-30T00:00:00Z
+        final org.apache.kafka.connect.data.Schema connectSchema = SchemaBuilder.struct()
+                .field("ts", Timestamp.builder().optional().build())
+                .build();
+        final TypedStruct struct = TypedStruct.create().put("ts", millis);
+
+        // WHEN
+        final SchemaAndValue result = mapper.map(connectSchema, struct);
+
+        // THEN
+        final Struct connectStruct = (Struct) result.value();
+        final Object value = connectStruct.get("ts");
+        Assertions.assertInstanceOf(java.util.Date.class, value,
+                "Expected java.util.Date for Timestamp logical type, got: " + value.getClass());
+        Assertions.assertEquals(new java.util.Date(millis), value);
+    }
+
+    @Test
+    void should_convert_integer_to_date_when_connect_schema_is_time() {
+        // GIVEN
+        final int millis = 36000000; // 10:00:00 AM in millis
+        final org.apache.kafka.connect.data.Schema connectSchema = SchemaBuilder.struct()
+                .field("t", Time.builder().optional().build())
+                .build();
+        final TypedStruct struct = TypedStruct.create().put("t", millis);
+
+        // WHEN
+        final SchemaAndValue result = mapper.map(connectSchema, struct);
+
+        // THEN
+        final Struct connectStruct = (Struct) result.value();
+        final Object value = connectStruct.get("t");
+        Assertions.assertInstanceOf(java.util.Date.class, value,
+                "Expected java.util.Date for Time logical type, got: " + value.getClass());
+        Assertions.assertEquals(new java.util.Date(millis), value);
+    }
+
+    @Test
+    void should_convert_integer_to_date_when_connect_schema_is_date() {
+        // GIVEN
+        final int days = 19812;
+        final org.apache.kafka.connect.data.Schema connectSchema = SchemaBuilder.struct()
+                .field("d", Date.builder().optional().build())
+                .build();
+        final TypedStruct struct = TypedStruct.create().put("d", days);
+
+        // WHEN
+        final SchemaAndValue result = mapper.map(connectSchema, struct);
+
+        // THEN
+        final Struct connectStruct = (Struct) result.value();
+        final Object value = connectStruct.get("d");
+        Assertions.assertInstanceOf(java.util.Date.class, value,
+                "Expected java.util.Date for Date logical type, got: " + value.getClass());
+        Assertions.assertEquals(Date.toLogical(Date.SCHEMA, days), value);
     }
 }

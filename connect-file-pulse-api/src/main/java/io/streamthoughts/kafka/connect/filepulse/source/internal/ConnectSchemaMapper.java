@@ -26,11 +26,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.kafka.connect.data.Date;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
+import org.apache.kafka.connect.data.Time;
+import org.apache.kafka.connect.data.Timestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -259,6 +262,7 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                 }
             }
             connectStruct.put(connectField, toConnectObject(connectFieldSchema, typed));
+
         }
         return connectStruct;
     }
@@ -312,6 +316,27 @@ public class ConnectSchemaMapper implements SchemaMapper<Schema>, SchemaMapperWi
                     })
                     .collect(Collectors.toList());
         }
+
+        // Handle Connect logical types that require a java.util.Date even though their wire type is numeric.
+        //
+        // ConnectSchema.validateValue() enforces java.util.Date for all three logical types,
+        // regardless of the raw numeric type stored in the FilePulse TypedValue.
+        // We delegate to Kafka's own toLogical() helpers to guarantee identical conversion semantics:
+        //   - Timestamp (INT64): millis since epoch    → Timestamp.toLogical(schema, millis)
+        //   - Time      (INT64): millis since midnight → Time.toLogical(schema, millis)
+        //   - Date      (INT32): days since epoch      → Date.toLogical(schema, days)
+        final String schemaName = schema.name();
+        if (schemaName != null && typed.value() instanceof Number) {
+            switch (schemaName) {
+                case Timestamp.LOGICAL_NAME:
+                    return Timestamp.toLogical(schema, ((Number) typed.value()).longValue());
+                case Time.LOGICAL_NAME:
+                    return Time.toLogical(schema, ((Number) typed.value()).intValue());
+                case Date.LOGICAL_NAME:
+                    return Date.toLogical(schema, ((Number) typed.value()).intValue());
+            }
+        }
+
         return typed.value();
     }
 }

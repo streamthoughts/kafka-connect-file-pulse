@@ -31,9 +31,8 @@ public class AmazonS3FileSystemListingTest extends BaseAmazonS3Test {
         client.createBucket(S3_TEST_BUCKET);
         OBJECT_KEYS.forEach(key -> client.putObject(S3_TEST_BUCKET, key, "contents"));
 
-        var clientConfig = new AmazonS3ClientConfig(unmodifiableCommonsProperties);
         var listing = new AmazonS3FileSystemListing();
-        listing.configure(clientConfig, endpointConfiguration);
+        listing.configure(unmodifiableCommonsProperties, endpointConfiguration);
 
         // WHEN
         final Collection<FileObjectMeta> objects = listing.listObjects();
@@ -56,9 +55,8 @@ public class AmazonS3FileSystemListingTest extends BaseAmazonS3Test {
         var properties = new HashMap<>(unmodifiableCommonsProperties);
         properties.put(AWS_S3_BUCKET_PREFIX_CONFIG, "file/name/foo");
 
-        var clientConfig = new AmazonS3ClientConfig(properties);
         var listing = new AmazonS3FileSystemListing();
-        listing.configure(clientConfig, endpointConfiguration);
+        listing.configure(properties, endpointConfiguration);
 
         // WHEN
         final Collection<FileObjectMeta> objects = listing.listObjects();
@@ -76,11 +74,10 @@ public class AmazonS3FileSystemListingTest extends BaseAmazonS3Test {
         // GIVEN
         var properties = new HashMap<>(unmodifiableCommonsProperties);
         properties.put(AWS_S3_BUCKET_NAME_CONFIG, "dummy");
-        var clientConfig = new AmazonS3ClientConfig(properties);
 
         var listing = new AmazonS3FileSystemListing();
 
         // WHEN/THEN
-        listing.configure(clientConfig, endpointConfiguration);
+        listing.configure(properties, endpointConfiguration);
     }
 }

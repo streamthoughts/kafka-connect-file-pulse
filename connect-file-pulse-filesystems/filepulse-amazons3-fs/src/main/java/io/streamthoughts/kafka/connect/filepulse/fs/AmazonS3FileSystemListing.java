@@ -42,14 +42,15 @@ public class AmazonS3FileSystemListing implements FileSystemListing<AmazonS3Stor
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        configure(new AmazonS3ClientConfig(configs), null);
+        configure(configs, null);
     }
 
     @VisibleForTesting
-    void configure(final AmazonS3ClientConfig config, final String url) {
-        this.config = config;
+    void configure(final Map<String, ?> configs, final String url) {
+        this.config = new AmazonS3ClientConfig(configs);
         this.client = AmazonS3ClientUtils.createS3Client(config, url);
         this.s3Storage = new AmazonS3Storage(client);
+        this.s3Storage.configure(configs);
         this.s3Storage.setDefaultStorageClass(config.getAwsS3DefaultStorageClass());
         if (!s3Storage.doesS3BucketExist(config.getAwsS3BucketName())) {
             throw new ConfigException(

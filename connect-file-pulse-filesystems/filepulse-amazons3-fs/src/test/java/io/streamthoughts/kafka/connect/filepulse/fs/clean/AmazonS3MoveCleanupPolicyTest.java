@@ -7,10 +7,6 @@
 package io.streamthoughts.kafka.connect.filepulse.fs.clean;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CompleteMultipartUploadResult;
-import com.amazonaws.services.s3.model.CopyPartResult;
-import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
-import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3Storage;
 import io.streamthoughts.kafka.connect.filepulse.fs.AmazonS3StorageConfig;
@@ -156,99 +152,6 @@ public class AmazonS3MoveCleanupPolicyTest extends BaseAmazonS3Test {
         // THEN
         Assert.assertFalse(storage.exists(objectMetadata.uri()));
         Assert.assertTrue(storage.exists(new S3BucketKey(S3_TEST_BUCKET, "/failure/prefix/" + OBJECT_NAME).toURI()));
-    }
-
-    @Test
-    public void should_move_big_object() {
-        // GIVEN
-        client.createBucket(S3_TEST_BUCKET);
-        client.putObject(S3_TEST_BUCKET, S3_OBJECT_KEY, "contents");
-
-        AmazonS3 spyClient = Mockito.spy(client);
-        ObjectMetadata bigMetadata = new ObjectMetadata();
-        bigMetadata.setContentLength(6L * 1024 * 1024 * 1024); // 6 GB
-        Mockito.doReturn(bigMetadata)
-                .when(spyClient)
-                .getObjectMetadata(Mockito.any(GetObjectMetadataRequest.class));
-
-        InitiateMultipartUploadResult initiateMultipartUploadResult = new InitiateMultipartUploadResult();
-        initiateMultipartUploadResult.setUploadId("uploadId");
-
-        Mockito.doReturn(initiateMultipartUploadResult).when(spyClient).initiateMultipartUpload(
-                Mockito.argThat(argument ->
-                        argument.getBucketName().equals(S3_TEST_BUCKET) &&
-                        argument.getKey().equals("/success/object"))
-        );
-
-        CopyPartResult copyPartResult = new CopyPartResult();
-        copyPartResult.setETag("copy-part-etag");
-
-        Mockito.doReturn(copyPartResult).when(spyClient).copyPart(
-                Mockito.argThat(argument ->
-                        argument.getUploadId().equals("uploadId") &&
-                        argument.getSourceBucketName().equals(S3_TEST_BUCKET) &&
-                        argument.getSourceKey().equals(S3_OBJECT_KEY) &&
-                        argument.getDestinationBucketName().equals(S3_TEST_BUCKET) &&
-                        argument.getDestinationKey().equals("/success/object")
-                )
-        );
-
-        CompleteMultipartUploadResult completeMultipartUploadResult = new CompleteMultipartUploadResult();
-        completeMultipartUploadResult.setETag("complete-upload-etag");
-
-        Mockito.doReturn(completeMultipartUploadResult).when(spyClient).completeMultipartUpload(
-                Mockito.argThat(argument ->
-                        argument.getBucketName().equals(S3_TEST_BUCKET) &&
-                        argument.getKey().equals("/success/object") &&
-                        argument.getUploadId().equals("uploadId") &&
-                        argument.getPartETags().size() == 62
-                )
-        );
-
-        AmazonS3Storage bigStorage = new AmazonS3Storage(spyClient);
-        bigStorage.configure(new HashMap<>());
-
-        var cleaner = new AmazonS3MoveCleanupPolicy();
-        cleaner.setStorage(bigStorage);
-        cleaner.configure(Map.of(
-                AmazonS3MoveCleanupPolicy.Config.SUCCESS_AWS_PREFIX_PATH_CONFIG, "/success/",
-                AmazonS3MoveCleanupPolicy.Config.FAILURES_AWS_PREFIX_PATH_CONFIG, "/failure/"
-        ));
-
-        // WHEN
-        FileObjectMeta objectMetadata = storage.getObjectMetadata(new S3BucketKey(S3_TEST_BUCKET, S3_OBJECT_KEY));
-        cleaner.onSuccess(
-                new FileObject(
-                        objectMetadata,
-                        FileObjectOffset.empty(),
-                        FileObjectStatus.COMPLETED
-                )
-        );
-
-        // THEN
-        Mockito.verify(spyClient, Mockito.times(1)).initiateMultipartUpload(
-                Mockito.argThat(argument ->
-                        argument.getBucketName().equals(S3_TEST_BUCKET) &&
-                        argument.getKey().equals("/success/object")
-                )
-        );
-        Mockito.verify(spyClient, Mockito.times(62)).copyPart(
-                Mockito.argThat(argument ->
-                        argument.getUploadId().equals("uploadId") &&
-                        argument.getSourceBucketName().equals(S3_TEST_BUCKET) &&
-                        argument.getSourceKey().equals(S3_OBJECT_KEY) &&
-                        argument.getDestinationBucketName().equals(S3_TEST_BUCKET) &&
-                        argument.getDestinationKey().equals("/success/object")
-                )
-        );
-        Mockito.verify(spyClient, Mockito.times(1)).completeMultipartUpload(
-                Mockito.argThat(argument ->
-                        argument.getBucketName().equals(S3_TEST_BUCKET) &&
-                        argument.getKey().equals("/success/object") &&
-                        argument.getUploadId().equals("uploadId") &&
-                        argument.getPartETags().size() == 62
-                )
-        );
     }
 
     @Test

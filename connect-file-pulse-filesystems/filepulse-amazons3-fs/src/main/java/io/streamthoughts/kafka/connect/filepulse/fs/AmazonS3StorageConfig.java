@@ -21,17 +21,14 @@ public class AmazonS3StorageConfig extends AbstractConfig {
             "File size threshold in bytes above which a multipart copy will be used instead of a single-part copy";
     private static final long MULTIPART_COPY_THRESHOLD_CONFIG_DEFAULT = 1024*1024*1024*5L; //5 GB
     private static final ConfigDef.Validator MULTIPART_COPY_THRESHOLD_CONFIG_VALIDATOR
-            = ConfigDef.Range.between(5 * 1024 * 1024L, 5L * 1024 * 1024 * 1024); // between 5 MB and 5 GB
+            = ConfigDef.Range.between(5L * 1024 * 1024L, 5L * 1024 * 1024 * 1024); // between 5 MB and 5 GB
 
     public static final String PART_SIZE_CONFIG = CONFIG_PREFIX + "parts.size";
-    private static final String PART_SIZE_CONFIG_DOC = "Size in bytes of each part when performing a multipart copy";
+    private static final String PART_SIZE_CONFIG_DOC = "Minimum size in bytes of each part in a multipart copy. May be " +
+            "adjusted upward to stay within S3's 10000 parts limit.";
     private static final long PART_SIZE_CONFIG_DEFAULT = 100*1024*1024; //100 MB
-    private static final ConfigDef.Validator PART_SIZE_CONFIG_VALIDATOR = ConfigDef.Range.atLeast(5 * 1024 * 1024L);
-
-    public static final String MAX_PARTS_CONFIG = CONFIG_PREFIX + "parts.max";
-    private static final String MAX_PARTS_CONFIG_DOC = "Maximum number of parts allowed in a multipart copy operation";
-    private static final int MAX_PARTS_CONFIG_DEFAULT = 10_000;
-    private static final ConfigDef.Validator MAX_PARTS_CONFIG_VALIDATOR = ConfigDef.Range.between(1, 10_000);
+    private static final ConfigDef.Validator PART_SIZE_CONFIG_VALIDATOR
+            = ConfigDef.Range.between(5 * 1024 * 1024L, 5L * 1024 * 1024 * 1024); // between 5 MB and 5 GB
 
     public long getMultipartCopyThresholdConfig() {
         return getLong(MULTIPART_COPY_THRESHOLD_CONFIG);
@@ -39,10 +36,6 @@ public class AmazonS3StorageConfig extends AbstractConfig {
 
     public long getPartSizeConfig() {
         return getLong(PART_SIZE_CONFIG);
-    }
-
-    public int getMaxPartsConfig() {
-        return getInt(MAX_PARTS_CONFIG);
     }
 
     /**
@@ -78,18 +71,6 @@ public class AmazonS3StorageConfig extends AbstractConfig {
                         groupCounter++,
                         ConfigDef.Width.NONE,
                         PART_SIZE_CONFIG
-                )
-                .define(
-                        MAX_PARTS_CONFIG,
-                        ConfigDef.Type.INT,
-                        MAX_PARTS_CONFIG_DEFAULT,
-                        MAX_PARTS_CONFIG_VALIDATOR,
-                        ConfigDef.Importance.HIGH,
-                        MAX_PARTS_CONFIG_DOC,
-                        CONFIG_GROUP,
-                        groupCounter++,
-                        ConfigDef.Width.NONE,
-                        MAX_PARTS_CONFIG
                 );
     }
 }

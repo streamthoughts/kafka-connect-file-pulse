@@ -10,27 +10,23 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3URI;
-import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.CopyPartRequest;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
-import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.StorageClass;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +42,6 @@ public class AmazonS3Storage implements Storage {
 
     private long multipartCopyThreshold;
     private long partSize;
-    private int maxParts;
-
-    private AmazonS3StorageConfig config;
-    
 
     /**
      * Creates a new {@link AmazonS3Storage} instance.
@@ -65,10 +57,9 @@ public class AmazonS3Storage implements Storage {
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        this.config = new AmazonS3StorageConfig(configs);
-        this.multipartCopyThreshold = this.config.getMultipartCopyThresholdConfig();
-        this.partSize = this.config.getPartSizeConfig();
-        this.maxParts = this.config.getMaxPartsConfig();
+        AmazonS3StorageConfig storageConfig = new AmazonS3StorageConfig(configs);
+        this.multipartCopyThreshold = storageConfig.getMultipartCopyThresholdConfig();
+        this.partSize = storageConfig.getPartSizeConfig();
     }
 
     public void setDefaultStorageClass(final StorageClass defaultStorageClass) {
@@ -115,6 +106,15 @@ public class AmazonS3Storage implements Storage {
     public boolean move(final URI source, final URI dest) {
         final S3BucketKey s3SourceObject = S3BucketKey.fromURI(source);
         final S3BucketKey s3DestinationObject = S3BucketKey.fromURI(dest);
+
+        TransferManager transferManager = TransferManagerBuilder.standard()
+                .withS3Client(s3Client)
+                .withExecutorFactory(() -> Executors.newFixedThreadPool(1))
+                // Only use multipart copy when fileSize > multipartCopyThreshold
+                .withMultipartCopyThreshold(this.multipartCopyThreshold)
+                .withMultipartCopyPartSize(this.partSize)
+                .build();
+
         try {
             // AWS S3 does not support built-in move operation.
             // Move should be implemented as copy+delete
@@ -144,15 +144,10 @@ public class AmazonS3Storage implements Storage {
                     s3DestinationObject.toURI()
             );
 
-            long fileSizeInBytes = objectMetadata.getContentLength();
-
-            String copyResultETag;
-
-            if (fileSizeInBytes < this.multipartCopyThreshold) {
-                copyResultETag = this.s3Client.copyObject(copyObjectRequest).getETag();
-            } else {
-                copyResultETag = performMultipartCopy(s3SourceObject, s3DestinationObject, objectMetadata);
-            }
+            String copyResultETag = transferManager
+                    .copy(copyObjectRequest)
+                    .waitForCopyResult()
+                    .getETag();
 
             if (copyResultETag != null) {
                 LOG.debug("Deleting S3 object: {}", s3SourceObject.toURI());
@@ -175,69 +170,17 @@ public class AmazonS3Storage implements Storage {
                     s3SourceObject.toURI(),
                     e
             );
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.error(
+                    "Interrupted while waiting for S3 copy from {} to {}",
+                    s3SourceObject.toURI(),
+                    s3DestinationObject.toURI()
+            );
+        } finally {
+            transferManager.shutdownNow(false);
         }
         return false;
-    }
-
-    private String performMultipartCopy(
-            S3BucketKey s3SourceObject,
-            S3BucketKey s3DestinationObject,
-            ObjectMetadata objectMetadata
-    ) {
-        long fileSizeInBytes = objectMetadata.getContentLength();
-        long partsCount = (fileSizeInBytes + this.partSize - 1) / this.partSize;
-
-        long finalPartSize = this.partSize;
-
-        if (partsCount > this.maxParts) {
-            finalPartSize = (fileSizeInBytes + this.maxParts - 1) / this.maxParts;
-            LOG.warn(
-                    "Configured parts.size of {} bytes would result in {} parts, exceeding parts.max {}. " +
-                            "Ignoring configured parts.size and recalculating to {} bytes per part.",
-                    this.partSize, partsCount, this.maxParts, finalPartSize
-            );
-            partsCount = this.maxParts;
-        }
-
-        LOG.debug("Performing multipart copy in {} parts of {} bytes each", partsCount, finalPartSize);
-
-        InitiateMultipartUploadResult initiateMultipartUploadResult = this.s3Client.initiateMultipartUpload(
-                new InitiateMultipartUploadRequest(
-                        s3DestinationObject.bucketName(),
-                        s3DestinationObject.key(),
-                        objectMetadata
-                )
-        );
-
-        List<PartETag> copiedParts = new ArrayList<>();
-
-        for (int i = 0; i < partsCount; i++) {
-            long offsetBegin = i * finalPartSize;
-            // For last part we cant go further than fileSize
-            long offsetEnd = Math.min(offsetBegin + finalPartSize, fileSizeInBytes) - 1;
-
-            copiedParts.add(this.s3Client.copyPart(
-                    new CopyPartRequest()
-                            .withSourceBucketName(s3SourceObject.bucketName())
-                            .withSourceKey(s3SourceObject.key())
-                            .withDestinationBucketName(s3DestinationObject.bucketName())
-                            .withDestinationKey(s3DestinationObject.key())
-                            .withUploadId(initiateMultipartUploadResult.getUploadId())
-                            // Part numbers start at 1
-                            .withPartNumber(i + 1)
-                            .withFirstByte(offsetBegin)
-                            .withLastByte(offsetEnd)
-            ).getPartETag());
-        }
-
-        return this.s3Client.completeMultipartUpload(
-                new CompleteMultipartUploadRequest(
-                        s3DestinationObject.bucketName(),
-                        s3DestinationObject.key(),
-                        initiateMultipartUploadResult.getUploadId(),
-                        copiedParts
-                )
-        ).getETag();
     }
 
     /**

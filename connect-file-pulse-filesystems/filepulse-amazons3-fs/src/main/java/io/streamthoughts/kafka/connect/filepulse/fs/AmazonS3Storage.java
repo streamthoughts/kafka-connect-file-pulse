@@ -11,19 +11,22 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3URI;
 import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.CopyObjectResult;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.StorageClass;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import io.streamthoughts.kafka.connect.filepulse.source.FileObjectMeta;
 import io.streamthoughts.kafka.connect.filepulse.source.GenericFileObjectMeta;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,9 @@ public class AmazonS3Storage implements Storage {
     private StorageClass defaultStorageClass;
     private final AmazonS3 s3Client;
 
+    private long multipartCopyThreshold;
+    private long partSize;
+
     /**
      * Creates a new {@link AmazonS3Storage} instance.
      *
@@ -44,6 +50,16 @@ public class AmazonS3Storage implements Storage {
      */
     public AmazonS3Storage(final AmazonS3 s3Client) {
         this.s3Client = Objects.requireNonNull(s3Client, "s3Client should not be null");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void configure(final Map<String, ?> configs) {
+        AmazonS3StorageConfig storageConfig = new AmazonS3StorageConfig(configs);
+        this.multipartCopyThreshold = storageConfig.getMultipartCopyThresholdConfig();
+        this.partSize = storageConfig.getPartSizeConfig();
     }
 
     public void setDefaultStorageClass(final StorageClass defaultStorageClass) {
@@ -90,6 +106,15 @@ public class AmazonS3Storage implements Storage {
     public boolean move(final URI source, final URI dest) {
         final S3BucketKey s3SourceObject = S3BucketKey.fromURI(source);
         final S3BucketKey s3DestinationObject = S3BucketKey.fromURI(dest);
+
+        TransferManager transferManager = TransferManagerBuilder.standard()
+                .withS3Client(s3Client)
+                .withExecutorFactory(() -> Executors.newFixedThreadPool(1))
+                // Only use multipart copy when fileSize > multipartCopyThreshold
+                .withMultipartCopyThreshold(this.multipartCopyThreshold)
+                .withMultipartCopyPartSize(this.partSize)
+                .build();
+
         try {
             // AWS S3 does not support built-in move operation.
             // Move should be implemented as copy+delete
@@ -117,9 +142,14 @@ public class AmazonS3Storage implements Storage {
                     "Copying S3 object from {} to {}",
                     s3SourceObject.toURI(),
                     s3DestinationObject.toURI()
-                    );
-            CopyObjectResult objectResult = this.s3Client.copyObject(copyObjectRequest);
-            if (objectResult.getETag() != null) {
+            );
+
+            String copyResultETag = transferManager
+                    .copy(copyObjectRequest)
+                    .waitForCopyResult()
+                    .getETag();
+
+            if (copyResultETag != null) {
                 LOG.debug("Deleting S3 object: {}", s3SourceObject.toURI());
                 return delete(s3SourceObject.toURI());
             }
@@ -140,6 +170,15 @@ public class AmazonS3Storage implements Storage {
                     s3SourceObject.toURI(),
                     e
             );
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.error(
+                    "Interrupted while waiting for S3 copy from {} to {}",
+                    s3SourceObject.toURI(),
+                    s3DestinationObject.toURI()
+            );
+        } finally {
+            transferManager.shutdownNow(false);
         }
         return false;
     }

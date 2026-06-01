@@ -33,15 +33,14 @@ import org.slf4j.LoggerFactory;
 /**
  * The {@code AmazonS3Storage} can be used to interact with Amazon S3.
  */
-public class AmazonS3Storage implements Storage {
+public class AmazonS3Storage implements Storage, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AmazonS3Storage.class);
 
     private StorageClass defaultStorageClass;
     private final AmazonS3 s3Client;
 
-    private long multipartCopyThreshold;
-    private long partSize;
+    private TransferManager transferManager;
 
     /**
      * Creates a new {@link AmazonS3Storage} instance.
@@ -58,8 +57,13 @@ public class AmazonS3Storage implements Storage {
     @Override
     public void configure(final Map<String, ?> configs) {
         AmazonS3StorageConfig storageConfig = new AmazonS3StorageConfig(configs);
-        this.multipartCopyThreshold = storageConfig.getMultipartCopyThresholdConfig();
-        this.partSize = storageConfig.getPartSizeConfig();
+        this.transferManager = TransferManagerBuilder.standard()
+                .withS3Client(s3Client)
+                .withExecutorFactory(Executors::newCachedThreadPool)
+                // Only use multipart copy when fileSize > multipartCopyThreshold
+                .withMultipartCopyThreshold(storageConfig.getMultipartCopyThresholdConfig())
+                .withMultipartCopyPartSize(storageConfig.getPartSizeConfig())
+                .build();
     }
 
     public void setDefaultStorageClass(final StorageClass defaultStorageClass) {
@@ -107,14 +111,6 @@ public class AmazonS3Storage implements Storage {
         final S3BucketKey s3SourceObject = S3BucketKey.fromURI(source);
         final S3BucketKey s3DestinationObject = S3BucketKey.fromURI(dest);
 
-        TransferManager transferManager = TransferManagerBuilder.standard()
-                .withS3Client(s3Client)
-                .withExecutorFactory(() -> Executors.newFixedThreadPool(1))
-                // Only use multipart copy when fileSize > multipartCopyThreshold
-                .withMultipartCopyThreshold(this.multipartCopyThreshold)
-                .withMultipartCopyPartSize(this.partSize)
-                .build();
-
         try {
             // AWS S3 does not support built-in move operation.
             // Move should be implemented as copy+delete
@@ -144,7 +140,7 @@ public class AmazonS3Storage implements Storage {
                     s3DestinationObject.toURI()
             );
 
-            String copyResultETag = transferManager
+            String copyResultETag = this.transferManager
                     .copy(copyObjectRequest)
                     .waitForCopyResult()
                     .getETag();
@@ -177,8 +173,6 @@ public class AmazonS3Storage implements Storage {
                     s3SourceObject.toURI(),
                     s3DestinationObject.toURI()
             );
-        } finally {
-            transferManager.shutdownNow(false);
         }
         return false;
     }
@@ -336,5 +330,12 @@ public class AmazonS3Storage implements Storage {
                 .withLastModified(s3ObjectSummary.getLastModified())
                 .withContentDigest(digest)
                 .build();
+    }
+
+    @Override
+    public void close() {
+        if (this.transferManager != null) {
+            transferManager.shutdownNow(false);
+        }
     }
 }

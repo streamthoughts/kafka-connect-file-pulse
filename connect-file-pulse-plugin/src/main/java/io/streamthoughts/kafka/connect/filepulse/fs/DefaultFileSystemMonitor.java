@@ -461,6 +461,7 @@ public class DefaultFileSystemMonitor implements FileSystemMonitor {
                 LOG.info("Closing FileSystemMonitor resources");
                 readStatesToEnd(stateDefaultReadTimeout);
                 cleanUpCompletedFiles();
+                this.fsListing.close();
                 LOG.info("Closed FileSystemMonitor resources");
             } catch (final Exception e) {
                 LOG.warn("Unexpected error while closing FileSystemMonitor.", e);

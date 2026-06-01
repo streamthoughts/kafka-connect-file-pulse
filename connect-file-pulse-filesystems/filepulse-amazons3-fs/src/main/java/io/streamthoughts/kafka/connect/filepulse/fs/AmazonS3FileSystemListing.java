@@ -128,4 +128,14 @@ public class AmazonS3FileSystemListing implements FileSystemListing<AmazonS3Stor
     public AmazonS3Storage storage() {
         return s3Storage;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        if (this.s3Storage != null) {
+            this.s3Storage.close();
+        }
+    }
 }

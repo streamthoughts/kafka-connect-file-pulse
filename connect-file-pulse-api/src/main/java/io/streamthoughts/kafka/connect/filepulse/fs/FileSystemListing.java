@@ -14,7 +14,7 @@ import org.apache.kafka.common.Configurable;
 /**
  * The {@code FileSystemListing} is used to list the object files that exists under a specific file-system.
  */
-public interface FileSystemListing<T extends Storage> extends StorageProvider<T>, Configurable {
+public interface FileSystemListing<T extends Storage> extends StorageProvider<T>, Configurable, AutoCloseable {
 
     /**
      * Configure this class with the given key-value pairs
@@ -36,5 +36,8 @@ public interface FileSystemListing<T extends Storage> extends StorageProvider<T>
     void setFilter(final FileListFilter filter);
 
 
-
+    /**
+     * Releases any resources held by this {@code FileSystemListing}.
+     */
+    default void close() {}
 }

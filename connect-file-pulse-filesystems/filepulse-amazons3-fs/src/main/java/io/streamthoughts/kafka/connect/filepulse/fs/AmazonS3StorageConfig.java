@@ -14,7 +14,7 @@ public class AmazonS3StorageConfig extends AbstractConfig {
 
     private static final String CONFIG_GROUP = "AmazonS3Storage";
 
-    private static final String CONFIG_PREFIX = "fs.cleanup.policy.move.aws.";
+    private static final String CONFIG_PREFIX = "fs.s3.transfer.";
 
     public static final String MULTIPART_COPY_THRESHOLD_CONFIG = CONFIG_PREFIX + "multipart.threshold";
     private static final String MULTIPART_COPY_THRESHOLD_CONFIG_DOC =

@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
 
@@ -66,6 +67,44 @@ public class CommonFilterConfig extends AbstractConfig {
      */
     public CommonFilterConfig(final ConfigDef def, final Map<?, ?> originals, final boolean doLog) {
         super(def, originals, doLog);
+    }
+
+    /**
+     * Translates deprecated aliases to their new config keys.
+     *
+     * @param originals   the original configs.
+     * @param aliasGroups map where key is canonical config and value is deprecated aliases.
+     * @return a translated copy of the original configs.
+     */
+    public static Map<String, Object> translateDeprecatedConfigs(final Map<String, ?> originals,
+                                                                 final Map<String, List<String>> aliasGroups) {
+        final Set<String> aliasSet = new HashSet<>();
+        aliasSet.addAll(aliasGroups.keySet());
+        aliasSet.addAll(aliasGroups.values().stream().flatMap(List::stream).collect(Collectors.toSet()));
+
+        // Keep only non-alias keys from the original map.
+        final Map<String, Object> translatedConfigs = originals.entrySet().stream()
+                .filter(entry -> !aliasSet.contains(entry.getKey()))
+                .filter(entry -> entry.getValue() != null)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        for (Map.Entry<String, List<String>> aliasGroup : aliasGroups.entrySet()) {
+            final String config = aliasGroup.getKey();
+            final List<String> aliases = aliasGroup.getValue().stream()
+                    .filter(originals::containsKey)
+                    .collect(Collectors.toList());
+
+            if (aliases.isEmpty()) {
+                if (originals.containsKey(config) && originals.get(config) != null) {
+                    translatedConfigs.put(config, originals.get(config));
+                }
+                continue;
+            }
+
+            // Alias takes precedence to handle maps where defaults pre-fill target keys.
+            translatedConfigs.put(config, originals.get(aliases.get(0)));
+        }
+        return translatedConfigs;
     }
 
     public FilterCondition condition() {

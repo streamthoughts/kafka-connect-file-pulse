@@ -80,7 +80,7 @@ filters.SubstituteFilter.value="{{ extract_array($.values,0) }}-{{ extract_array
       "World"
     ]
   }
-} 
+}
 ```
 
 **Output**
@@ -124,7 +124,7 @@ filters.SubstituteFilter.value="my-topic-{{ lowercase(extract_array($.values,0))
       "World"
     ]
   }
-} 
+}
 ```
 
 **Output**
@@ -140,7 +140,7 @@ filters.SubstituteFilter.value="my-topic-{{ lowercase(extract_array($.values,0))
       "World"
     ]
   }
-} 
+}
 ```
 
 Finally, the `AppendFilter` can also accept a substitution expression for the property field.
@@ -333,22 +333,22 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 
 | Configuration       | Description                                                                                                         | Type    | Default | Importance |
 |---------------------|---------------------------------------------------------------------------------------------------------------------|---------|---------|------------|
-| `separator`         | The character used as a delimiter/separator between each value                                                      | string  | *;*     | high       |
-| `trimColumn`        | Remove the leading and trailing whitespaces from all columns.                                                       | boolean | *false* | low        |
-| `extractColumnName` | Define the field from which the schema should be detected (all columns will be of type 'string')                    | string  |         | high       |
+| `regex`             | The delimiter regex used to split each value (deprecated alias: `separator`)                                        | string  | *;*     | high       |
+| `trim.column`       | Remove the leading and trailing whitespaces from all columns (deprecated alias: `trimColumn`).                     | boolean | *false* | low        |
+| `extract.column.name` | Define the field from which the schema should be detected (all columns will be of type 'string') (deprecated alias: `extractColumnName`). | string  |         | high       |
 | `columns`           | The list of comma-separated column names in order they appear in each row. columns must be in the form of NAME:TYPE | string  |         | high       |
 
 ### Examples
 
-The following example shows the use of the `DelimitedRowFilter` to split the `message` field using `|` as a separator
+The following example shows the use of the `DelimitedRowFilter` to split the `message` field using `|` as a delimiter
 character.
 The name of each column is extracted from the fields `headers`.
 
 ```properties
 filters=ParseDelimitedRow
-filters.ParseDelimitedRow.extractColumnNam="headers"
-filters.ParseDelimitedRow.separator="\\|"
-filters.ParseDelimitedRow.trimColumn="true"
+filters.ParseDelimitedRow.extract.column.name="headers"
+filters.ParseDelimitedRow.regex="\\|"
+filters.ParseDelimitedRow.trim.column="true"
 filters.ParseDelimitedRow.type="io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter"
 ```
 
@@ -1015,7 +1015,7 @@ The `XmlToStructFilter` parses an XML record-field into STRUCT
 | Configuration                                 | Since | Description                                                                                                                           | Type      | Default     | Importance |
 |-----------------------------------------------|-------|---------------------------------------------------------------------------------------------------------------------------------------|-----------|-------------|------------|
 | `source`                                      |       | The input field on which to apply the filter.                                                                                         | string    | `"message"` | High       |
-| `xml.force.array.on.fields`                   |       | The comma-separated list of fields for which an array-type must be forced                                                             | `List`    |             | High       |                                                
+| `xml.force.array.on.fields`                   |       | The comma-separated list of fields for which an array-type must be forced                                                             | `List`    |             | High       |
 | `xml.parser.validating.enabled`               |       | Specifies that the parser will validate documents as they are parsed.                                                                 | `boolean` | `false`     | Low        |
 | `xml.parser.namespace.aware.enabled`          |       | Specifies that the XML parser will provide support for XML namespaces.                                                                | `boolean` | `false`     | Low        |
 | `xml.exclude.empty.elements`                  |       | Specifies that the reader should exclude element having no field.                                                                     | `boolean` | `false`     | Low        |

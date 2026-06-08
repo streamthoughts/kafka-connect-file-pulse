@@ -6,10 +6,15 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.config;
 
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_CONFIG_ALIAS;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_DEFAULT;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_EXTRACT_COLUMN_NAME_CONFIG_ALIAS;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_COLUMNS_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG_ALIAS;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_TRIM_COLUMN_CONFIG;
+import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_TRIM_COLUMN_CONFIG_ALIAS;
 import static io.streamthoughts.kafka.connect.filepulse.config.DelimitedRowFilterConfig.READER_FIELD_TRIM_COLUMN_DEFAULT;
 import static io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter.READER_FIELD_SEPARATOR_CONFIG;
 import static io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter.READER_FIELD_SEPARATOR_DEFAULT;
@@ -55,6 +60,51 @@ public class DelimitedRowFilterConfigTest {
     }
 
     @Test
+    public void shouldHonourDeprecatedAliasEvenWhenNewKeyHasDefault() {
+        // Reproduces the bug: when a framework pre-fills new key with its ConfigDef default (false),
+        // the deprecated alias (trimColumn=true) must still take effect.
+        Map<String, Object> props = new HashMap<>() {{
+            put(READER_FIELD_TRIM_COLUMN_CONFIG, false);           // default pre-filled by framework
+            put(READER_FIELD_TRIM_COLUMN_CONFIG_ALIAS, true);      // user explicitly set deprecated alias
+            put(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG_ALIAS, true);
+        }};
+
+        Map<String, Object> translated = CommonFilterConfig.translateDeprecatedConfigs(props, deprecatedAliasGroups());
+        Assert.assertFalse("Deprecated alias key must not remain in translated config map",
+                translated.containsKey(READER_FIELD_TRIM_COLUMN_CONFIG_ALIAS));
+        Assert.assertEquals(true, translated.get(READER_FIELD_TRIM_COLUMN_CONFIG));
+
+        DelimitedRowFilterConfig config = new DelimitedRowFilterConfig(filter.configDef(), props);
+
+        Assert.assertTrue("Deprecated alias trimColumn=true must override the pre-filled default trim.column=false",
+                config.isTrimColumn());
+    }
+
+    @Test
+    public void shouldRemoveDeprecatedAliasesFromTranslatedConfigMap() {
+        Map<String, Object> props = new HashMap<>() {{
+            put(READER_FIELD_TRIM_COLUMN_CONFIG_ALIAS, true);
+            put(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG_ALIAS, true);
+            put(READER_EXTRACT_COLUMN_NAME_CONFIG_ALIAS, "header");
+            put(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG_ALIAS, false);
+            put("custom.config", "custom-value");
+        }};
+
+        Map<String, Object> translated = CommonFilterConfig.translateDeprecatedConfigs(props, deprecatedAliasGroups());
+
+        Assert.assertFalse(translated.containsKey(READER_FIELD_TRIM_COLUMN_CONFIG_ALIAS));
+        Assert.assertFalse(translated.containsKey(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG_ALIAS));
+        Assert.assertFalse(translated.containsKey(READER_EXTRACT_COLUMN_NAME_CONFIG_ALIAS));
+        Assert.assertFalse(translated.containsKey(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG_ALIAS));
+
+        Assert.assertEquals(true, translated.get(READER_FIELD_TRIM_COLUMN_CONFIG));
+        Assert.assertEquals(true, translated.get(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG));
+        Assert.assertEquals("header", translated.get(READER_EXTRACT_COLUMN_NAME_CONFIG));
+        Assert.assertEquals(false, translated.get(DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_CONFIG));
+        Assert.assertEquals("custom-value", translated.get("custom.config"));
+    }
+
+    @Test
     public void shouldCreateConfigGivenSchema() {
 
         Map<String, String> props = new HashMap<>() {{
@@ -81,6 +131,15 @@ public class DelimitedRowFilterConfigTest {
         Assert.assertEquals("x1", fieldsByIndex.get(0).name());
         Assert.assertEquals("c2", fieldsByIndex.get(1).name());
         Assert.assertEquals("y3", fieldsByIndex.get(2).name());
+    }
+
+    private static Map<String, List<String>> deprecatedAliasGroups() {
+        return Map.of(
+                READER_FIELD_TRIM_COLUMN_CONFIG, List.of(READER_FIELD_TRIM_COLUMN_CONFIG_ALIAS),
+                READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG, List.of(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG_ALIAS),
+                READER_EXTRACT_COLUMN_NAME_CONFIG, List.of(READER_EXTRACT_COLUMN_NAME_CONFIG_ALIAS),
+                DelimitedRowFilterConfig.READER_AUTO_GENERATE_COLUMN_NAME_CONFIG, List.of(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG_ALIAS)
+        );
     }
 
 }

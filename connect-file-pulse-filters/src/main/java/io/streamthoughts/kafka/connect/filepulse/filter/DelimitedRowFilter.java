@@ -6,11 +6,12 @@
  */
 package io.streamthoughts.kafka.connect.filepulse.filter;
 
+import io.streamthoughts.kafka.connect.filepulse.config.CommonFilterConfig;
 import io.streamthoughts.kafka.connect.filepulse.internal.StringUtils;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.utils.ConfigUtils;
 
 public class DelimitedRowFilter extends AbstractDelimitedRowFilter<DelimitedRowFilter> {
 
@@ -30,9 +31,9 @@ public class DelimitedRowFilter extends AbstractDelimitedRowFilter<DelimitedRowF
      */
     @Override
     public void configure(final Map<String, ?> configs) {
-        super.configure(ConfigUtils.translateDeprecatedConfigs(configs, new String[][]{
-                {READER_FIELD_SEPARATOR_CONFIG, READER_FIELD_SEPARATOR_CONFIG_ALIAS}
-        }));
+        final Map<String, Object> translatedConfigs = CommonFilterConfig.translateDeprecatedConfigs(configs,
+                Map.of(READER_FIELD_SEPARATOR_CONFIG, List.of(READER_FIELD_SEPARATOR_CONFIG_ALIAS)));
+        super.configure(translatedConfigs);
 
         delimiter = filterConfig().getString(READER_FIELD_SEPARATOR_CONFIG);
 

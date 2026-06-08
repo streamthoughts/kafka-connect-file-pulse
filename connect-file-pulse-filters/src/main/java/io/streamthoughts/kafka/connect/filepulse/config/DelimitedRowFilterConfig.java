@@ -10,11 +10,11 @@ import io.streamthoughts.kafka.connect.filepulse.data.Schema;
 import io.streamthoughts.kafka.connect.filepulse.data.StructSchema;
 import io.streamthoughts.kafka.connect.filepulse.data.Type;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.common.utils.ConfigUtils;
 
 public class DelimitedRowFilterConfig extends CommonFilterConfig {
 
@@ -59,12 +59,12 @@ public class DelimitedRowFilterConfig extends CommonFilterConfig {
                                     final Map<String, ?> originals) {
         super(
             configDef,
-            ConfigUtils.translateDeprecatedConfigs(originals, new String[][]{
-                    {READER_FIELD_TRIM_COLUMN_CONFIG, READER_FIELD_TRIM_COLUMN_CONFIG_ALIAS},
-                    {READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG, READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG_ALIAS},
-                    {READER_EXTRACT_COLUMN_NAME_CONFIG, READER_EXTRACT_COLUMN_NAME_CONFIG_ALIAS},
-                    {READER_AUTO_GENERATE_COLUMN_NAME_CONFIG, READER_AUTO_GENERATE_COLUMN_NAME_CONFIG_ALIAS},
-            })
+            CommonFilterConfig.translateDeprecatedConfigs(originals, Map.of(
+                    READER_FIELD_TRIM_COLUMN_CONFIG, List.of(READER_FIELD_TRIM_COLUMN_CONFIG_ALIAS),
+                    READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG, List.of(READER_FIELD_DUPLICATE_COLUMNS_AS_ARRAY_CONFIG_ALIAS),
+                    READER_EXTRACT_COLUMN_NAME_CONFIG, List.of(READER_EXTRACT_COLUMN_NAME_CONFIG_ALIAS),
+                    READER_AUTO_GENERATE_COLUMN_NAME_CONFIG, List.of(READER_AUTO_GENERATE_COLUMN_NAME_CONFIG_ALIAS)
+            ))
         );
     }
 

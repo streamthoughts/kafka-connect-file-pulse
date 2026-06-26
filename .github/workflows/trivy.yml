@@ -25,8 +25,9 @@ jobs:
       - name: Run Trivy vulnerability scanner (SARIF)
         if: github.event_name == 'push'
         continue-on-error: true
-        uses: aquasecurity/trivy-action@0.71.2
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
+          version: 'v0.71.2'
           scan-type: 'fs'
           scan-ref: '.'
           ignore-unfixed: true
@@ -44,8 +45,9 @@ jobs:
       - name: Run Trivy vulnerability scanner (Table)
         if: github.event_name == 'pull_request'
         continue-on-error: true
-        uses: aquasecurity/trivy-action@0.71.2
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
+          version: 'v0.71.2'
           scan-type: 'fs'
           scan-ref: '.'
           ignore-unfixed: true

@@ -128,7 +128,228 @@ Supported content-types are:&lt;/p>
 &lt;td>HIGH&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: AWS S3</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/aws-s3-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/aws-s3-filesystem/</guid><description>
+&lt;/table></description></item><item><title>Docs: SMB/CIFS</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/smb-filesystem/</link><pubDate>Mon, 17 Nov 2025 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/smb-filesystem/</guid><description>
+&lt;p>The &lt;code>SmbFilesystemListing&lt;/code> class can be used for listing files on SMB 3.x network shares (Windows file shares or Samba 4.x).&lt;/p>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Security Notice&lt;/h4>
+This implementation supports &lt;strong>SMB 3.0, 3.0.2, and 3.1.1 only&lt;/strong>. SMB 1.0 and 2.x are intentionally disabled for security reasons. Ensure your file servers support SMB 3.0 or later.
+&lt;/div>
+&lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
+&lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.SmbFileSystemListing&lt;/code>&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The following table describes the properties that can be used to configure the &lt;code>SmbFilesystemListing&lt;/code>:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.host&lt;/code>&lt;/td>
+&lt;td>SMB server hostname or IP address&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.port&lt;/code>&lt;/td>
+&lt;td>SMB server port&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>445&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.share&lt;/code>&lt;/td>
+&lt;td>SMB share name&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.domain&lt;/code>&lt;/td>
+&lt;td>SMB domain/workgroup&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>WORKGROUP&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.user&lt;/code>&lt;/td>
+&lt;td>SMB username&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.password&lt;/code>&lt;/td>
+&lt;td>SMB password&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.directory.path&lt;/code>&lt;/td>
+&lt;td>The directory path on the SMB share to scan&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>/&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.connection.timeout&lt;/code>&lt;/td>
+&lt;td>SMB connection timeout in milliseconds (jcifs.smb.client.connTimeout)&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>30000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.response.timeout&lt;/code>&lt;/td>
+&lt;td>SMB response timeout in milliseconds (jcifs.smb.client.responseTimeout)&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>30000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.so.timeout&lt;/code>&lt;/td>
+&lt;td>SMB socket timeout in milliseconds (jcifs.smb.client.soTimeout)&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>30000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.connection.retries&lt;/code>&lt;/td>
+&lt;td>Number of retries for SMB connection failures&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>5&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.connection.retries.delay&lt;/code>&lt;/td>
+&lt;td>Delay between connection retries in milliseconds&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>5000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.protocol.max.version&lt;/code>&lt;/td>
+&lt;td>Maximum SMB protocol version (SMB300, SMB302, SMB311)&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>SMB311&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+&lt;p>&lt;strong>SMB Protocol Version&lt;/strong>: The minimum version is hardcoded to SMB 3.0 for security. The maximum version is configurable and defaults to SMB 3.1.1 (SMB311). You can set it to SMB300 or SMB302 if needed for compatibility with older servers.&lt;/p>
+&lt;p>&lt;strong>Timeout Configuration&lt;/strong>: Three separate timeout values can be configured:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>smb.connection.timeout&lt;/code> - Timeout for establishing the initial connection&lt;/li>
+&lt;li>&lt;code>smb.response.timeout&lt;/code> - Timeout for receiving responses from the server&lt;/li>
+&lt;li>&lt;code>smb.so.timeout&lt;/code> - Socket timeout for read operations&lt;/li>
+&lt;/ul>
+&lt;/div>
+&lt;h2 id="example-configuration">Example Configuration&lt;/h2>
+&lt;p>Here&amp;rsquo;s a complete example configuration for reading CSV files from a Windows SMB share:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties"># Connector configuration
+name=smb-file-pulse-connector
+connector.class=io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector
+fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.SmbFileSystemListing
+# SMB server configuration
+smb.listing.host=192.168.1.100
+smb.listing.port=445
+smb.listing.share=shared_files
+smb.listing.domain=MYDOMAIN
+smb.listing.user=kafkauser
+smb.listing.password=secretpassword
+smb.listing.directory.path=/data/csv
+# Connection and protocol configuration
+smb.connection.timeout=30000
+smb.response.timeout=30000
+smb.so.timeout=30000
+smb.connection.retries=5
+smb.connection.retries.delay=5000
+smb.protocol.max.version=SMB311
+# File reader configuration
+file.filter.regex.pattern=.*\\.csv$
+tasks.reader.class=io.streamthoughts.kafka.connect.filepulse.fs.reader.SmbRowFileInputReader
+# Kafka topic
+kafka.topic=smb-data-topic
+&lt;/code>&lt;/pre>&lt;h2 id="supported-features">Supported Features&lt;/h2>
+&lt;ul>
+&lt;li>✅ &lt;strong>SMB 3.0/3.0.2/3.1.1&lt;/strong> protocol support only (SMB 1.0 and 2.x disabled)&lt;/li>
+&lt;li>✅ &lt;strong>Windows Server 2012+&lt;/strong> and &lt;strong>Samba 4.x&lt;/strong> compatibility&lt;/li>
+&lt;li>✅ &lt;strong>Domain authentication&lt;/strong> (Active Directory)&lt;/li>
+&lt;li>✅ &lt;strong>NTLMv2 authentication&lt;/strong> (automatically negotiated by jCIFS library)&lt;/li>
+&lt;li>✅ &lt;strong>SMB 3.x encryption&lt;/strong> support for secure file transfers (automatically negotiated)&lt;/li>
+&lt;li>✅ &lt;strong>Automatic retry&lt;/strong> on connection failures&lt;/li>
+&lt;li>✅ &lt;strong>File operations&lt;/strong>: list, read, move, delete&lt;/li>
+&lt;li>✅ &lt;strong>Large file support&lt;/strong> with streaming&lt;/li>
+&lt;li>✅ &lt;strong>Proper resource management&lt;/strong> to prevent file lock issues&lt;/li>
+&lt;/ul>
+&lt;h2 id="security-considerations">Security Considerations&lt;/h2>
+&lt;h3 id="protocol-security">Protocol Security&lt;/h3>
+&lt;p>The connector enforces the following security measures:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>SMB 3.0&lt;/strong> minimum version (hardcoded for security)&lt;/li>
+&lt;li>&lt;strong>SMB 3.1.1&lt;/strong> maximum version (configurable, default)&lt;/li>
+&lt;li>&lt;strong>SMB signing&lt;/strong> is enabled by default for message integrity&lt;/li>
+&lt;li>&lt;strong>SMB encryption&lt;/strong> is automatically negotiated when supported by the server&lt;/li>
+&lt;/ul>
+&lt;h3 id="network">Network&lt;/h3>
+&lt;ul>
+&lt;li>Ensure SMB port (445) is accessible from Kafka Connect workers&lt;/li>
+&lt;/ul>
+&lt;h3 id="permissions">Permissions&lt;/h3>
+&lt;p>Grant the SMB user only the necessary permissions:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Read&lt;/strong> permission for file listing and ingestion&lt;/li>
+&lt;li>&lt;strong>Write&lt;/strong> and &lt;strong>Delete&lt;/strong> permissions only if using file move/cleanup strategies&lt;/li>
+&lt;/ul>
+&lt;h2 id="troubleshooting">Troubleshooting&lt;/h2>
+&lt;h3 id="connection-issues">Connection Issues&lt;/h3>
+&lt;p>If you encounter connection problems:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Verify network connectivity&lt;/strong>: &lt;code>ping &amp;lt;smb-host&amp;gt;&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Check SMB port&lt;/strong>: &lt;code>telnet &amp;lt;smb-host&amp;gt; 445&lt;/code> or &lt;code>nc -zv &amp;lt;smb-host&amp;gt; 445&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Test credentials&lt;/strong>: Try connecting manually with &lt;code>smbclient&lt;/code> (Linux) or Windows Explorer&lt;/li>
+&lt;li>&lt;strong>Check firewall rules&lt;/strong>: Ensure port 445 is not blocked&lt;/li>
+&lt;li>&lt;strong>Verify SMB 3.x support&lt;/strong>: Check server configuration supports SMB 3.0 or later&lt;/li>
+&lt;/ol>
+&lt;p>Example smbclient test:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>smbclient //&amp;lt;smb-host&amp;gt;/&amp;lt;share-name&amp;gt; -U &amp;lt;domain&amp;gt;/&amp;lt;username&amp;gt; -m SMB3
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="compatibility">Compatibility&lt;/h2>
+&lt;h3 id="supported-platforms">Supported Platforms&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>Windows Server&lt;/strong>: 2012 and later (SMB 3.0 introduced)&lt;/li>
+&lt;li>&lt;strong>Windows Client&lt;/strong>: Windows 8/10/11&lt;/li>
+&lt;li>&lt;strong>Samba&lt;/strong>: 4.0 and later (SMB 3.0 support)&lt;/li>
+&lt;li>&lt;strong>NAS devices&lt;/strong>: Modern NAS with SMB 3.0+ support&lt;/li>
+&lt;/ul>
+&lt;h3 id="unsupported-security-reasons">Unsupported (Security Reasons)&lt;/h3>
+&lt;ul>
+&lt;li>❌ &lt;strong>Windows Server 2008 R2&lt;/strong> and earlier (SMB 2.1 and older)&lt;/li>
+&lt;li>❌ &lt;strong>Samba 3.x&lt;/strong> (no SMB 3.0 support)&lt;/li>
+&lt;li>❌ &lt;strong>Legacy NAS&lt;/strong> devices without SMB 3.0&lt;/li>
+&lt;li>❌ &lt;strong>SMB 1.0 clients/servers&lt;/strong> (deprecated, security risk)&lt;/li>
+&lt;/ul>
+&lt;h2 id="known-limitations">Known Limitations&lt;/h2>
+&lt;ul>
+&lt;li>Kerberos authentication is not supported (only NTLMv2)&lt;/li>
+&lt;/ul>
+&lt;h2 id="internal-implementation-details">Internal Implementation Details&lt;/h2>
+&lt;p>The connector uses the &lt;a href="https://github.com/codelibs/jcifs">jCIFS library (version 2.1.40)&lt;/a> for SMB protocol implementation.&lt;/p>
+&lt;p>&lt;strong>Configurable jCIFS properties:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Connection timeout&lt;/strong>: Configurable via &lt;code>smb.connection.timeout&lt;/code> (maps to &lt;code>jcifs.smb.client.connTimeout&lt;/code>)&lt;/li>
+&lt;li>&lt;strong>Response timeout&lt;/strong>: Configurable via &lt;code>smb.response.timeout&lt;/code> (maps to &lt;code>jcifs.smb.client.responseTimeout&lt;/code>)&lt;/li>
+&lt;li>&lt;strong>Socket timeout&lt;/strong>: Configurable via &lt;code>smb.so.timeout&lt;/code> (maps to &lt;code>jcifs.smb.client.soTimeout&lt;/code>)&lt;/li>
+&lt;li>&lt;strong>SMB protocol versions&lt;/strong>: Min=SMB300 (hardcoded), Max=configurable (default SMB311)&lt;/li>
+&lt;/ul></description></item><item><title>Docs: AWS S3</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/aws-s3-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/aws-s3-filesystem/</guid><description>
 &lt;p>The &lt;code>AmazonS3FileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p>
 &lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
 &lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>

@@ -1039,7 +1039,228 @@ file compatible with &lt;a href="https://docs.confluent.io/current/connect/manag
 &lt;td>HIGH&lt;/td>
 &lt;/tr>
 &lt;/tbody>
-&lt;/table></description></item><item><title>Docs: AWS S3</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.14.0/developer-guide/file-system-listing/aws-s3-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.14.0/developer-guide/file-system-listing/aws-s3-filesystem/</guid><description>
+&lt;/table></description></item><item><title>Docs: SMB/CIFS</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/smb-filesystem/</link><pubDate>Mon, 17 Nov 2025 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/smb-filesystem/</guid><description>
+&lt;p>The &lt;code>SmbFilesystemListing&lt;/code> class can be used for listing files on SMB 3.x network shares (Windows file shares or Samba 4.x).&lt;/p>
+&lt;div class="alert alert-warning" role="alert">
+&lt;h4 class="alert-heading">Security Notice&lt;/h4>
+This implementation supports &lt;strong>SMB 3.0, 3.0.2, and 3.1.1 only&lt;/strong>. SMB 1.0 and 2.x are intentionally disabled for security reasons. Ensure your file servers support SMB 3.0 or later.
+&lt;/div>
+&lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
+&lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
+&lt;p>&lt;code>fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.SmbFileSystemListing&lt;/code>&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The following table describes the properties that can be used to configure the &lt;code>SmbFilesystemListing&lt;/code>:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.host&lt;/code>&lt;/td>
+&lt;td>SMB server hostname or IP address&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.port&lt;/code>&lt;/td>
+&lt;td>SMB server port&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>445&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.share&lt;/code>&lt;/td>
+&lt;td>SMB share name&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.domain&lt;/code>&lt;/td>
+&lt;td>SMB domain/workgroup&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>WORKGROUP&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.user&lt;/code>&lt;/td>
+&lt;td>SMB username&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.password&lt;/code>&lt;/td>
+&lt;td>SMB password&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>-&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.listing.directory.path&lt;/code>&lt;/td>
+&lt;td>The directory path on the SMB share to scan&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>/&lt;/code>&lt;/td>
+&lt;td>HIGH&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.connection.timeout&lt;/code>&lt;/td>
+&lt;td>SMB connection timeout in milliseconds (jcifs.smb.client.connTimeout)&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>30000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.response.timeout&lt;/code>&lt;/td>
+&lt;td>SMB response timeout in milliseconds (jcifs.smb.client.responseTimeout)&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>30000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.so.timeout&lt;/code>&lt;/td>
+&lt;td>SMB socket timeout in milliseconds (jcifs.smb.client.soTimeout)&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>30000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.connection.retries&lt;/code>&lt;/td>
+&lt;td>Number of retries for SMB connection failures&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>5&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.connection.retries.delay&lt;/code>&lt;/td>
+&lt;td>Delay between connection retries in milliseconds&lt;/td>
+&lt;td>&lt;code>int&lt;/code>&lt;/td>
+&lt;td>&lt;code>5000&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>smb.protocol.max.version&lt;/code>&lt;/td>
+&lt;td>Maximum SMB protocol version (SMB300, SMB302, SMB311)&lt;/td>
+&lt;td>&lt;code>string&lt;/code>&lt;/td>
+&lt;td>&lt;code>SMB311&lt;/code>&lt;/td>
+&lt;td>MEDIUM&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;div class="alert alert-info" role="alert">
+&lt;h4 class="alert-heading">Note&lt;/h4>
+&lt;p>&lt;strong>SMB Protocol Version&lt;/strong>: The minimum version is hardcoded to SMB 3.0 for security. The maximum version is configurable and defaults to SMB 3.1.1 (SMB311). You can set it to SMB300 or SMB302 if needed for compatibility with older servers.&lt;/p>
+&lt;p>&lt;strong>Timeout Configuration&lt;/strong>: Three separate timeout values can be configured:&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>smb.connection.timeout&lt;/code> - Timeout for establishing the initial connection&lt;/li>
+&lt;li>&lt;code>smb.response.timeout&lt;/code> - Timeout for receiving responses from the server&lt;/li>
+&lt;li>&lt;code>smb.so.timeout&lt;/code> - Socket timeout for read operations&lt;/li>
+&lt;/ul>
+&lt;/div>
+&lt;h2 id="example-configuration">Example Configuration&lt;/h2>
+&lt;p>Here&amp;rsquo;s a complete example configuration for reading CSV files from a Windows SMB share:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties"># Connector configuration
+name=smb-file-pulse-connector
+connector.class=io.streamthoughts.kafka.connect.filepulse.source.FilePulseSourceConnector
+fs.listing.class=io.streamthoughts.kafka.connect.filepulse.fs.SmbFileSystemListing
+# SMB server configuration
+smb.listing.host=192.168.1.100
+smb.listing.port=445
+smb.listing.share=shared_files
+smb.listing.domain=MYDOMAIN
+smb.listing.user=kafkauser
+smb.listing.password=secretpassword
+smb.listing.directory.path=/data/csv
+# Connection and protocol configuration
+smb.connection.timeout=30000
+smb.response.timeout=30000
+smb.so.timeout=30000
+smb.connection.retries=5
+smb.connection.retries.delay=5000
+smb.protocol.max.version=SMB311
+# File reader configuration
+file.filter.regex.pattern=.*\\.csv$
+tasks.reader.class=io.streamthoughts.kafka.connect.filepulse.fs.reader.SmbRowFileInputReader
+# Kafka topic
+kafka.topic=smb-data-topic
+&lt;/code>&lt;/pre>&lt;h2 id="supported-features">Supported Features&lt;/h2>
+&lt;ul>
+&lt;li>✅ &lt;strong>SMB 3.0/3.0.2/3.1.1&lt;/strong> protocol support only (SMB 1.0 and 2.x disabled)&lt;/li>
+&lt;li>✅ &lt;strong>Windows Server 2012+&lt;/strong> and &lt;strong>Samba 4.x&lt;/strong> compatibility&lt;/li>
+&lt;li>✅ &lt;strong>Domain authentication&lt;/strong> (Active Directory)&lt;/li>
+&lt;li>✅ &lt;strong>NTLMv2 authentication&lt;/strong> (automatically negotiated by jCIFS library)&lt;/li>
+&lt;li>✅ &lt;strong>SMB 3.x encryption&lt;/strong> support for secure file transfers (automatically negotiated)&lt;/li>
+&lt;li>✅ &lt;strong>Automatic retry&lt;/strong> on connection failures&lt;/li>
+&lt;li>✅ &lt;strong>File operations&lt;/strong>: list, read, move, delete&lt;/li>
+&lt;li>✅ &lt;strong>Large file support&lt;/strong> with streaming&lt;/li>
+&lt;li>✅ &lt;strong>Proper resource management&lt;/strong> to prevent file lock issues&lt;/li>
+&lt;/ul>
+&lt;h2 id="security-considerations">Security Considerations&lt;/h2>
+&lt;h3 id="protocol-security">Protocol Security&lt;/h3>
+&lt;p>The connector enforces the following security measures:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>SMB 3.0&lt;/strong> minimum version (hardcoded for security)&lt;/li>
+&lt;li>&lt;strong>SMB 3.1.1&lt;/strong> maximum version (configurable, default)&lt;/li>
+&lt;li>&lt;strong>SMB signing&lt;/strong> is enabled by default for message integrity&lt;/li>
+&lt;li>&lt;strong>SMB encryption&lt;/strong> is automatically negotiated when supported by the server&lt;/li>
+&lt;/ul>
+&lt;h3 id="network">Network&lt;/h3>
+&lt;ul>
+&lt;li>Ensure SMB port (445) is accessible from Kafka Connect workers&lt;/li>
+&lt;/ul>
+&lt;h3 id="permissions">Permissions&lt;/h3>
+&lt;p>Grant the SMB user only the necessary permissions:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Read&lt;/strong> permission for file listing and ingestion&lt;/li>
+&lt;li>&lt;strong>Write&lt;/strong> and &lt;strong>Delete&lt;/strong> permissions only if using file move/cleanup strategies&lt;/li>
+&lt;/ul>
+&lt;h2 id="troubleshooting">Troubleshooting&lt;/h2>
+&lt;h3 id="connection-issues">Connection Issues&lt;/h3>
+&lt;p>If you encounter connection problems:&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>Verify network connectivity&lt;/strong>: &lt;code>ping &amp;lt;smb-host&amp;gt;&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Check SMB port&lt;/strong>: &lt;code>telnet &amp;lt;smb-host&amp;gt; 445&lt;/code> or &lt;code>nc -zv &amp;lt;smb-host&amp;gt; 445&lt;/code>&lt;/li>
+&lt;li>&lt;strong>Test credentials&lt;/strong>: Try connecting manually with &lt;code>smbclient&lt;/code> (Linux) or Windows Explorer&lt;/li>
+&lt;li>&lt;strong>Check firewall rules&lt;/strong>: Ensure port 445 is not blocked&lt;/li>
+&lt;li>&lt;strong>Verify SMB 3.x support&lt;/strong>: Check server configuration supports SMB 3.0 or later&lt;/li>
+&lt;/ol>
+&lt;p>Example smbclient test:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>smbclient //&amp;lt;smb-host&amp;gt;/&amp;lt;share-name&amp;gt; -U &amp;lt;domain&amp;gt;/&amp;lt;username&amp;gt; -m SMB3
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="compatibility">Compatibility&lt;/h2>
+&lt;h3 id="supported-platforms">Supported Platforms&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>Windows Server&lt;/strong>: 2012 and later (SMB 3.0 introduced)&lt;/li>
+&lt;li>&lt;strong>Windows Client&lt;/strong>: Windows 8/10/11&lt;/li>
+&lt;li>&lt;strong>Samba&lt;/strong>: 4.0 and later (SMB 3.0 support)&lt;/li>
+&lt;li>&lt;strong>NAS devices&lt;/strong>: Modern NAS with SMB 3.0+ support&lt;/li>
+&lt;/ul>
+&lt;h3 id="unsupported-security-reasons">Unsupported (Security Reasons)&lt;/h3>
+&lt;ul>
+&lt;li>❌ &lt;strong>Windows Server 2008 R2&lt;/strong> and earlier (SMB 2.1 and older)&lt;/li>
+&lt;li>❌ &lt;strong>Samba 3.x&lt;/strong> (no SMB 3.0 support)&lt;/li>
+&lt;li>❌ &lt;strong>Legacy NAS&lt;/strong> devices without SMB 3.0&lt;/li>
+&lt;li>❌ &lt;strong>SMB 1.0 clients/servers&lt;/strong> (deprecated, security risk)&lt;/li>
+&lt;/ul>
+&lt;h2 id="known-limitations">Known Limitations&lt;/h2>
+&lt;ul>
+&lt;li>Kerberos authentication is not supported (only NTLMv2)&lt;/li>
+&lt;/ul>
+&lt;h2 id="internal-implementation-details">Internal Implementation Details&lt;/h2>
+&lt;p>The connector uses the &lt;a href="https://github.com/codelibs/jcifs">jCIFS library (version 2.1.40)&lt;/a> for SMB protocol implementation.&lt;/p>
+&lt;p>&lt;strong>Configurable jCIFS properties:&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Connection timeout&lt;/strong>: Configurable via &lt;code>smb.connection.timeout&lt;/code> (maps to &lt;code>jcifs.smb.client.connTimeout&lt;/code>)&lt;/li>
+&lt;li>&lt;strong>Response timeout&lt;/strong>: Configurable via &lt;code>smb.response.timeout&lt;/code> (maps to &lt;code>jcifs.smb.client.responseTimeout&lt;/code>)&lt;/li>
+&lt;li>&lt;strong>Socket timeout&lt;/strong>: Configurable via &lt;code>smb.so.timeout&lt;/code> (maps to &lt;code>jcifs.smb.client.soTimeout&lt;/code>)&lt;/li>
+&lt;li>&lt;strong>SMB protocol versions&lt;/strong>: Min=SMB300 (hardcoded), Max=configurable (default SMB311)&lt;/li>
+&lt;/ul></description></item><item><title>Docs: AWS S3</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.14.0/developer-guide/file-system-listing/aws-s3-filesystem/</link><pubDate>Tue, 12 Sep 2023 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.14.0/developer-guide/file-system-listing/aws-s3-filesystem/</guid><description>
 &lt;p>The &lt;code>AmazonS3FileSystemListing&lt;/code> class can be used for listing objects that exist in a specific Amazon S3 bucket.&lt;/p>
 &lt;h2 id="how-to-use-it-">How to use it ?&lt;/h2>
 &lt;p>Use the following property in your Connector&amp;rsquo;s configuration:&lt;/p>
@@ -2164,458 +2385,6 @@ If there is no schema pass through the connector configuration, a schema will be
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.12.x/developer-guide/configuration/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.12.x/developer-guide/configuration/</guid><description>
-&lt;h2 id="commons-configuration">Commons configuration&lt;/h2>
-&lt;p>Whatever the kind of files you are processing a connector should always be configured with the below properties.
-These configurations are described in detail in subsequent chapters.&lt;/p>
-&lt;p>&lt;strong>Common Kafka Connect properties&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>topic&lt;/code>&lt;/td>
-&lt;td>The default output topic to write&lt;/td>
-&lt;td>string&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>high&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>tasks.max&lt;/code>&lt;/td>
-&lt;td>The maximum number of tasks that should be created for this connector.&lt;/td>
-&lt;td>string&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>high&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Properties for listing and cleaning object files (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-system-listing/">FileSystemListing&lt;/a>)&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>fs.listing.class&lt;/code>&lt;/td>
-&lt;td>Class which is used to list eligible files from the scanned file system.&lt;/td>
-&lt;td>class&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.listing.filters&lt;/code>&lt;/td>
-&lt;td>Filters use to list eligible input files&lt;/td>
-&lt;td>list&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.listing.interval.ms&lt;/code>&lt;/td>
-&lt;td>Time interval (in milliseconds) at wish to scan input directory&lt;/td>
-&lt;td>long&lt;/td>
-&lt;td>&lt;em>10000&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.listing.task.delegation.enabled&lt;/code>&lt;/td>
-&lt;td>Boolean indicating whether the file listing process should be delegated to tasks.&lt;/td>
-&lt;td>boolean&lt;/td>
-&lt;td>&lt;em>false&lt;/em>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.cleanup.policy.class&lt;/code>&lt;/td>
-&lt;td>The fully qualified name of the class which is used to cleanup files&lt;/td>
-&lt;td>class&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>fs.cleanup.policy.triggered.on&lt;/code>&lt;/td>
-&lt;td>Specify the status when a file get cleanup. Valid values are: &lt;code>COMPLETED&lt;/code>, &lt;code>COMMITTED&lt;/code>&lt;/td>
-&lt;td>string&lt;/td>
-&lt;td>&lt;em>COMPLETED&lt;/em>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>max.scheduled.files&lt;/code>&lt;/td>
-&lt;td>Maximum number of files that can be schedules to tasks.&lt;/td>
-&lt;td>long&lt;/td>
-&lt;td>&lt;em>1000&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>allow.tasks.reconfiguration.after.timeout.ms&lt;/code>&lt;/td>
-&lt;td>Specify the timeout (in milliseconds) for the connector to allow tasks to be reconfigured when new files are detected, even if some tasks are still being processed.&lt;/td>
-&lt;td>long&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>task.partitioner.class&lt;/code>&lt;/td>
-&lt;td>The TaskPartitioner to be used for partitioning files to tasks.&lt;/td>
-&lt;td>class&lt;/td>
-&lt;td>&lt;code>io.streamthoughts.kafka.connect.filepulse.source.DefaultTaskPartitioner&lt;/code>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>tasks.halt.on.error&lt;/code>&lt;/td>
-&lt;td>Should a task halt when it encounters an error or continue to the next file.&lt;/td>
-&lt;td>boolean&lt;/td>
-&lt;td>&lt;em>false&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>tasks.file.processing.order.by&lt;/code>&lt;/td>
-&lt;td>The strategy to be used for sorting files for processing. Valid values are: &lt;code>LAST_MODIFIED&lt;/code>, &lt;code>URI&lt;/code>, &lt;code>CONTENT_LENGTH&lt;/code>, &lt;code>CONTENT_LENGTH_DESC&lt;/code>.&lt;/td>
-&lt;td>string&lt;/td>
-&lt;td>&lt;code>LAST_MODIFIED&lt;/code>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>tasks.empty.poll.wait.ms&lt;/code>&lt;/td>
-&lt;td>The amount of time in millisecond a tasks should wait if a poll returns an empty list of records.&lt;/td>
-&lt;td>long&lt;/td>
-&lt;td>&lt;em>500&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>ignore.committed.offsets&lt;/code>&lt;/td>
-&lt;td>Should a task ignore committed offsets while scheduling a file.&lt;/td>
-&lt;td>boolean&lt;/td>
-&lt;td>&lt;em>false&lt;/em>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>value.connect.schema&lt;/code>&lt;/td>
-&lt;td>The schema for the record-value.&lt;/td>
-&lt;td>string&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Properties for transforming object file record(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/filters-chain-definition/">Filters Chain Definition&lt;/a>)&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>filters&lt;/code>&lt;/td>
-&lt;td>List of filters aliases to apply on each data (order is important)&lt;/td>
-&lt;td>list&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>MEDIUM&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Properties for reading object file record(&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/">FileReaders&lt;/a>)&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>tasks.reader.class&lt;/code>&lt;/td>
-&lt;td>The fully qualified name of the class which is used by tasks to read input files&lt;/td>
-&lt;td>class&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Properties for uniquely identifying object files and records (&lt;a href="https://streamthoughts.github.io/kafka-connect-file-pulse/kafka-connect-file-pulse/docs/developer-guide/file-readers/">FileReaders&lt;/a>)&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>offset.policy.class&lt;/code>&lt;/td>
-&lt;td>Class which is used to determine the source partition and offset that uniquely identify a input record&lt;/td>
-&lt;td>&lt;code>class&lt;/code>&lt;/td>
-&lt;td>&lt;em>io.streamthoughts.kafka.connect.filepulse.offset.DefaultSourceOffsetPolicy&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Properties for synchronizing Connector and Tasks&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>tasks.file.status.storage.class&lt;/code>&lt;/td>
-&lt;td>The FileObjectStateBackingStore class to be used for storing status state of file objects.&lt;/td>
-&lt;td>&lt;code>Class&lt;/code>&lt;/td>
-&lt;td>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore&lt;/code>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Available implementations are :&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.InMemoryFileObjectStateBackingStore&lt;/code>&lt;/li>
-&lt;li>&lt;code>io.streamthoughts.kafka.connect.filepulse.state.KafkaFileObjectStateBackingStore&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;div class="alert alert-warning" role="alert">
-&lt;h4 class="alert-heading">Limitation&lt;/h4>
-The &lt;code>InMemoryFileObjectStateBackingStore&lt;/code> implement is not fault-tolerant and should be only when using Kafka Connect in standalone mode or a single worker.
-&lt;/div>
-&lt;p>&lt;strong>Properties for configuring the &lt;code>KafkaFileObjectStateBackingStore&lt;/code> class&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>tasks.file.status.storage.topic&lt;/code>&lt;/td>
-&lt;td>Name of the internal topic used by tasks and connector to report and monitor file progression.&lt;/td>
-&lt;td>class&lt;/td>
-&lt;td>&lt;em>connect-file-pulse-status&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>tasks.file.status.storage.bootstrap.servers&lt;/code>&lt;/td>
-&lt;td>A list of host/port pairs uses by the reporter for establishing the initial connection to the Kafka cluster.&lt;/td>
-&lt;td>string&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>HIGH&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>tasks.file.status.storage.topic.partitions&lt;/code>&lt;/td>
-&lt;td>The number of partitions to be used for the status storage topic.&lt;/td>
-&lt;td>int&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;/tr>
-&lt;tr>
-&lt;td>&lt;code>tasks.file.status.storage.topic.replication.factor&lt;/code>&lt;/td>
-&lt;td>The replication factor to be used for the status storage topic.&lt;/td>
-&lt;td>float&lt;/td>
-&lt;td>&lt;em>-&lt;/em>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>&lt;strong>Properties for configuring the &lt;code>InMemoryFileObjectStateBackingStore&lt;/code> class&lt;/strong>&lt;/p>
-&lt;table>
-&lt;thead>
-&lt;tr>
-&lt;th>Configuration&lt;/th>
-&lt;th>Description&lt;/th>
-&lt;th>Type&lt;/th>
-&lt;th>Default&lt;/th>
-&lt;th>Importance&lt;/th>
-&lt;th>Since&lt;/th>
-&lt;/tr>
-&lt;/thead>
-&lt;tbody>
-&lt;tr>
-&lt;td>&lt;code>tasks.file.status.storage.cache.max.size.capacity&lt;/code>&lt;/td>
-&lt;td>Specifies the max size capacity of the LRU in-memory cache.&lt;/td>
-&lt;td>&lt;code>int&lt;/code>&lt;/td>
-&lt;td>&lt;em>10000&lt;/em>&lt;/td>
-&lt;td>LOW&lt;/td>
-&lt;td>v2.5.0&lt;/td>
-&lt;/tr>
-&lt;/tbody>
-&lt;/table>
-&lt;p>In addition, to override the default configuration for the internal consumer and producer clients,
-you can use one of the following override prefixes :&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>tasks.file.status.storage.consumer.&amp;lt;consumer_property&amp;gt;&lt;/code>&lt;/li>
-&lt;li>&lt;code>tasks.file.status.storage.producer.&amp;lt;producer_property&amp;gt;&lt;/code>&lt;/li>
-&lt;/ul>
-&lt;h2 id="examples">Examples&lt;/h2>
-&lt;p>Some configuration examples are available &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/tree/master/examples">here&lt;/a>.&lt;/p>
-&lt;h2 id="defining-connect-record-schema">Defining Connect Record Schema&lt;/h2>
-&lt;p>The optional &lt;code>value.connect.schema&lt;/code> config property can be used to set the connect-record schema that should be used.
-If there is no schema pass through the connector configuration, a schema will be resolved for each record produced.&lt;/p>
-&lt;p>The &lt;code>value.connect.schema&lt;/code> must be passed as a JSON string that respects the following schema (using Avro representation):&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;record&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fields&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The name of this schema&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;enum&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;symbols&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;STRUCT&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;BOOLEAN&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;INT8&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;INT16&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;INT32&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;INT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;FLOAT32&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;FLOAT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;BYTES&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;MAP&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;ARRAY&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The type of this schema&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The documentation for this schema&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;fieldSchemas&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The fields for this Schema. Throws a DataException if this schema is not a struct.&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;valueSchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The value schema for this map or array schema. Throws a DataException if this schema is not a map or array.&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;keySchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;map&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;values&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;Schema&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The key schema for this map schema. Throws a DataException if this schema is not a map.&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;defaultValue&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;string&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;boolean&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;true if this field is optional, false otherwise&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;version&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:[&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;null&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#4e9a06">&amp;#34;integer&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">],&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;default&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">null&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;doc&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;The optional version of the schema. If a version is included, newer versions *must* be larger than older ones.&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Example:&lt;/strong>&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;com.example.User&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRUCT&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fieldSchemas&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;INT64&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">false&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;first_name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;last_name&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;email&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;gender&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;country&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">},&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;favorite_colors&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#4e9a06">&amp;#34;ARRAY&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;isOptional&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span>&lt;span style="color:#204a87;font-weight:bold">true&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;valueSchema&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#000;font-weight:bold">{&lt;/span>&lt;span style="color:#204a87;font-weight:bold">&amp;#34;type&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;STRING&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>Docs: Configuration</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.13.0/developer-guide/configuration/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/archives/v2.13.0/developer-guide/configuration/</guid><description>
 &lt;h2 id="commons-configuration">Commons configuration&lt;/h2>
 &lt;p>Whatever the kind of files you are processing a connector should always be configured with the below properties.
 These configurations are described in detail in subsequent chapters.&lt;/p>

@@ -562,6 +562,12 @@ configured in the connector&amp;rsquo;s configuration for reading object files (
 &lt;li>&lt;code>GcsXMLFileInputReader&lt;/code>&lt;/li>
 &lt;li>&lt;code>GcsMetadataFileInputReader&lt;/code>&lt;/li>
 &lt;/ul>
+&lt;p>&lt;strong>SMB&lt;/strong>&lt;/p>
+&lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>SmbBytesArrayInputReader&lt;/code>&lt;/li>
+&lt;li>&lt;code>SmbRowFileInputReader&lt;/code>&lt;/li>
+&lt;/ul>
 &lt;p>&lt;strong>Local Filesystem&lt;/strong>&lt;/p>
 &lt;p>package: &lt;code>io.streamthoughts.kafka.connect.filepulse.fs.reader&lt;/code>&lt;/p>
 &lt;ul>
@@ -2713,22 +2719,22 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td>&lt;code>separator&lt;/code>&lt;/td>
-&lt;td>The character used as a delimiter/separator between each value&lt;/td>
+&lt;td>&lt;code>regex&lt;/code>&lt;/td>
+&lt;td>The delimiter regex used to split each value (deprecated alias: &lt;code>separator&lt;/code>)&lt;/td>
 &lt;td>string&lt;/td>
 &lt;td>&lt;em>;&lt;/em>&lt;/td>
 &lt;td>high&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>trimColumn&lt;/code>&lt;/td>
-&lt;td>Remove the leading and trailing whitespaces from all columns.&lt;/td>
+&lt;td>&lt;code>trim.column&lt;/code>&lt;/td>
+&lt;td>Remove the leading and trailing whitespaces from all columns (deprecated alias: &lt;code>trimColumn&lt;/code>).&lt;/td>
 &lt;td>boolean&lt;/td>
 &lt;td>&lt;em>false&lt;/em>&lt;/td>
 &lt;td>low&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td>&lt;code>extractColumnName&lt;/code>&lt;/td>
-&lt;td>Define the field from which the schema should be detected (all columns will be of type &amp;lsquo;string&amp;rsquo;)&lt;/td>
+&lt;td>&lt;code>extract.column.name&lt;/code>&lt;/td>
+&lt;td>Define the field from which the schema should be detected (all columns will be of type &amp;lsquo;string&amp;rsquo;) (deprecated alias: &lt;code>extractColumnName&lt;/code>).&lt;/td>
 &lt;td>string&lt;/td>
 &lt;td>&lt;/td>
 &lt;td>high&lt;/td>
@@ -2743,13 +2749,13 @@ Each row is parsed and published into a configured topic as a single Kafka data.
 &lt;/tbody>
 &lt;/table>
 &lt;h3 id="examples-4">Examples&lt;/h3>
-&lt;p>The following example shows the use of the &lt;code>DelimitedRowFilter&lt;/code> to split the &lt;code>message&lt;/code> field using &lt;code>|&lt;/code> as a separator
+&lt;p>The following example shows the use of the &lt;code>DelimitedRowFilter&lt;/code> to split the &lt;code>message&lt;/code> field using &lt;code>|&lt;/code> as a delimiter
 character.
 The name of each column is extracted from the fields &lt;code>headers&lt;/code>.&lt;/p>
 &lt;pre tabindex="0">&lt;code class="language-properties" data-lang="properties">filters=ParseDelimitedRow
-filters.ParseDelimitedRow.extractColumnNam=&amp;#34;headers&amp;#34;
-filters.ParseDelimitedRow.separator=&amp;#34;\\|&amp;#34;
-filters.ParseDelimitedRow.trimColumn=&amp;#34;true&amp;#34;
+filters.ParseDelimitedRow.extract.column.name=&amp;#34;headers&amp;#34;
+filters.ParseDelimitedRow.regex=&amp;#34;\\|&amp;#34;
+filters.ParseDelimitedRow.trim.column=&amp;#34;true&amp;#34;
 filters.ParseDelimitedRow.type=&amp;#34;io.streamthoughts.kafka.connect.filepulse.filter.DelimitedRowFilter&amp;#34;
 &lt;/code>&lt;/pre>
 &lt;div class="alert alert-info" role="alert">
@@ -3107,8 +3113,8 @@ fields.&lt;/p>
 &lt;td>&lt;code>overwrite&lt;/code>&lt;/td>
 &lt;td>The fields to overwrite.&lt;/td>
 &lt;td>list&lt;/td>
-&lt;td>medium&lt;/td>
 &lt;td>&lt;/td>
+&lt;td>medium&lt;/td>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>patternDefinitions&lt;/code>&lt;/td>
@@ -3119,7 +3125,7 @@ fields.&lt;/p>
 &lt;/tr>
 &lt;tr>
 &lt;td>&lt;code>patternsDir&lt;/code>&lt;/td>
-&lt;td>List of user-defined pattern directories&lt;/td>
+&lt;td>List of user-defined pattern directories.&lt;/td>
 &lt;td>string&lt;/td>
 &lt;td>&lt;em>-&lt;/em>&lt;/td>
 &lt;td>low&lt;/td>
@@ -3127,8 +3133,15 @@ fields.&lt;/p>
 &lt;tr>
 &lt;td>&lt;code>source&lt;/code>&lt;/td>
 &lt;td>The input field on which to apply the filter&lt;/td>
-&lt;td>string&lt;/td>
+&lt;td>string / array&lt;string>&lt;/td>
 &lt;td>&lt;em>message&lt;/em>&lt;/td>
+&lt;td>medium&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>target&lt;/code>&lt;/td>
+&lt;td>(Optional) Destination field receiving extracted values.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;em>-&lt;/em>&lt;/td>
 &lt;td>medium&lt;/td>
 &lt;/tr>
 &lt;/tbody>
@@ -3767,7 +3780,7 @@ filters.XmlToJson.xml.parser.cDataTagName=data
 &lt;td>2.5.0&lt;/td>
 &lt;td>Specifies the regex pattern to use for matching the characters in XML element name to replace when converting a document to a struct.&lt;/td>
 &lt;td>&lt;code>string&lt;/code>&lt;/td>
-&lt;td>`[.-]'&lt;/td>
+&lt;td>`[.-]&amp;rsquo;&lt;/td>
 &lt;td>Low&lt;/td>
 &lt;/tr>
 &lt;tr>
@@ -3863,7 +3876,231 @@ This topic is used internally by Tasks to communicate to the SourceConnector ins
 &lt;li>[4] &lt;strong>COMPLETED&lt;/strong> : The task completes the processing of the file.&lt;/li>
 &lt;li>[4] &lt;strong>COMMITTED&lt;/strong> : The task committed the offsets of the completed file.&lt;/li>
 &lt;li>[5] &lt;strong>CLEANED&lt;/strong> : The file has been successfully clean up by the connector (depends on the configured policy).&lt;/li>
-&lt;/ul></description></item><item><title>Docs: File Cleanup Policies</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</guid><description>
+&lt;/ul></description></item><item><title>Docs: File Completion Strategies</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-completion-strategies/</link><pubDate>Mon, 23 Mar 2026 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/file-completion-strategies/</guid><description>
+&lt;p>Connect File Pulse provides pluggable &lt;strong>File Completion Strategies&lt;/strong> that control when files should be marked as COMPLETED. This feature is particularly useful for handling continuously appended files, such as daily log files, weekly reports, or monthly data exports.&lt;/p>
+&lt;h2 id="overview">Overview&lt;/h2>
+&lt;p>By default, files are marked as COMPLETED immediately when they are fully read (EOF reached). While this works well for static files, it creates challenges for files that are continuously appended, such as:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Daily log files&lt;/strong> that are active throughout the day&lt;/li>
+&lt;li>&lt;strong>Weekly report files&lt;/strong> that accumulate data over a full week&lt;/li>
+&lt;li>&lt;strong>Monthly data exports&lt;/strong> that are written incrementally over a month&lt;/li>
+&lt;li>&lt;strong>Rolling files&lt;/strong> that continue to grow until a specific time&lt;/li>
+&lt;/ul>
+&lt;p>The File Completion Strategy feature provides a pluggable architecture that allows you to customize when files should be marked as COMPLETED.&lt;/p>
+&lt;h2 id="configuration">Configuration&lt;/h2>
+&lt;p>The completion strategy is configured with the following connector property:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>fs.completion.strategy.class&lt;/code>&lt;/td>
+&lt;td>Fully qualified class name of the strategy that determines when files are marked as COMPLETED.&lt;/td>
+&lt;td>class&lt;/td>
+&lt;td>&lt;code>io.streamthoughts.kafka.connect.filepulse.source.EofCompletionStrategy&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="available-strategies">Available Strategies&lt;/h2>
+&lt;h3 id="1-eofcompletionstrategy-default">1. EofCompletionStrategy (Default)&lt;/h3>
+&lt;p>&lt;strong>Behavior&lt;/strong>: Marks files as COMPLETED immediately when they are fully read (End-of-File reached).&lt;/p>
+&lt;p>&lt;strong>Use Case&lt;/strong>: Static files that don&amp;rsquo;t change once created, or when you want the traditional immediate-completion behavior.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fs.completion.strategy.class&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;io.streamthoughts.kafka.connect.filepulse.source.EofCompletionStrategy&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Characteristics&lt;/strong>:&lt;/p>
+&lt;ul>
+&lt;li>✅ Simple and predictable behavior&lt;/li>
+&lt;li>✅ Immediate file completion upon reading all content&lt;/li>
+&lt;li>✅ Suitable for batch processing of static files&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3 id="2-scheduledcompletionstrategy">2. ScheduledCompletionStrategy&lt;/h3>
+&lt;p>&lt;strong>Behavior&lt;/strong>: Marks files as COMPLETED at a scheduled time relative to the date extracted from the filename.
+The strategy supports three period granularities controlled by the &lt;code>completion.schedule.period&lt;/code> option:&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Period&lt;/th>
+&lt;th>Completes at&lt;/th>
+&lt;th>Example (file date &lt;code>2026-03-10&lt;/code>, time &lt;code>01:00:00&lt;/code>)&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>DAILY&lt;/code>&lt;/td>
+&lt;td>Day after the file date @ scheduled time&lt;/td>
+&lt;td>&lt;code>2026-03-11 01:00:00&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>WEEKLY&lt;/code>&lt;/td>
+&lt;td>First day of the next week (configurable start day) after the file date @ scheduled time&lt;/td>
+&lt;td>&lt;code>2026-03-16 01:00:00&lt;/code> (Monday start)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>MONTHLY&lt;/code>&lt;/td>
+&lt;td>First day of the next month after the file date @ scheduled time&lt;/td>
+&lt;td>&lt;code>2026-04-01 01:00:00&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Use Case&lt;/strong>: Long-lived files that are continuously appended over a day, a week, or a month and should only be marked as complete once that period has ended.&lt;/p>
+&lt;p>This strategy also implements a &lt;strong>read back-off&lt;/strong> mechanism: when the scheduled completion time has not yet been reached and the file has not been modified since the last read, the connector defers the next read attempt. This avoids unnecessary polling of files that are not expected to have new data yet.&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>Note&lt;/strong>: All times are resolved using the &lt;strong>system default timezone&lt;/strong> of the JVM running the connector.&lt;/p>
+&lt;/blockquote>
+&lt;h4 id="configuration-1">Configuration&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Configuration&lt;/th>
+&lt;th>Description&lt;/th>
+&lt;th>Type&lt;/th>
+&lt;th>Default&lt;/th>
+&lt;th>Importance&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>completion.schedule.period&lt;/code>&lt;/td>
+&lt;td>Period granularity: &lt;code>DAILY&lt;/code>, &lt;code>WEEKLY&lt;/code>, or &lt;code>MONTHLY&lt;/code>.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>DAILY&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>completion.schedule.time&lt;/code>&lt;/td>
+&lt;td>Time of day at which to mark the file as COMPLETED (format: &lt;code>HH:mm:ss&lt;/code>).&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>00:01:00&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>completion.schedule.date.pattern&lt;/code>&lt;/td>
+&lt;td>Regex pattern to extract the date from the filename. Must contain exactly one capturing group.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>.*?(\d{4}-\d{2}-\d{2}).*&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>completion.schedule.date.format&lt;/code>&lt;/td>
+&lt;td>&lt;code>DateTimeFormatter&lt;/code> pattern used to parse the date captured by the regex group.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>yyyy-MM-dd&lt;/code>&lt;/td>
+&lt;td>high&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>completion.schedule.week.start.day&lt;/code>&lt;/td>
+&lt;td>First day of the week used by the &lt;code>WEEKLY&lt;/code> period when no day field is present in the date format. Accepted values: &lt;code>MONDAY&lt;/code>, &lt;code>TUESDAY&lt;/code>, &lt;code>WEDNESDAY&lt;/code>, &lt;code>THURSDAY&lt;/code>, &lt;code>FRIDAY&lt;/code>, &lt;code>SATURDAY&lt;/code>, &lt;code>SUNDAY&lt;/code>.&lt;/td>
+&lt;td>string&lt;/td>
+&lt;td>&lt;code>MONDAY&lt;/code>&lt;/td>
+&lt;td>low&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="examples">Examples&lt;/h4>
+&lt;p>&lt;strong>Daily&lt;/strong> — complete daily log files (e.g. log-2026-03-25.log) the next day at 01:00:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fs.completion.strategy.class&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;io.streamthoughts.kafka.connect.filepulse.source.ScheduledCompletionStrategy&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.period&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;DAILY&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.time&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;01:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.pattern&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;.*?(\\d{4}-\\d{2}-\\d{2}).*&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.format&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;yyyy-MM-dd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Weekly&lt;/strong> — complete weekly report files (e.g. &lt;code>report-2026-W11.log&lt;/code>) the following Monday at 06:00:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fs.completion.strategy.class&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;io.streamthoughts.kafka.connect.filepulse.source.ScheduledCompletionStrategy&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.period&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;WEEKLY&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.time&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;06:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.pattern&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;.*?(\\d{4}-W\\d{2}).*&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.format&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;YYYY-&amp;#39;W&amp;#39;ww&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Weekly (Sunday start)&lt;/strong> — same as above but completing on the following Sunday at 06:00:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fs.completion.strategy.class&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;io.streamthoughts.kafka.connect.filepulse.source.ScheduledCompletionStrategy&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.period&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;WEEKLY&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.time&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;06:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.pattern&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;.*?(\\d{4}-W\\d{2}).*&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.format&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;YYYY-&amp;#39;W&amp;#39;ww&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.week.start.day&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;SUNDAY&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Monthly&lt;/strong> — complete monthly exports (e.g. &lt;code>export-2026-03.log&lt;/code>) on the 1st of the next month at 02:00:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fs.completion.strategy.class&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;io.streamthoughts.kafka.connect.filepulse.source.ScheduledCompletionStrategy&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.period&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;MONTHLY&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.time&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;02:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.pattern&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;.*?(\\d{4}-\\d{2}).*&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.format&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;yyyy-MM&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;p>&lt;strong>Note on partial date formats&lt;/strong>: formats that do not include a full date (e.g. &lt;code>yyyy-MM&lt;/code> or &lt;code>YYYY-'W'ww&lt;/code>) are
+supported. The missing day field defaults to &lt;code>1&lt;/code> (first day of the month for &lt;code>MONTHLY&lt;/code>, or the configured
+&lt;code>completion.schedule.week.start.day&lt;/code> — Monday by default — for &lt;code>WEEKLY&lt;/code>), which is sufficient for the
+period boundary calculation.&lt;/p>
+&lt;/blockquote>
+&lt;hr>
+&lt;h3 id="3-dailycompletionstrategy-deprecated">3. DailyCompletionStrategy &lt;em>(Deprecated)&lt;/em>&lt;/h3>
+&lt;blockquote>
+&lt;p>⚠️ &lt;strong>Deprecated&lt;/strong> — use &lt;a href="#2-scheduledcompletionstrategy">&lt;code>ScheduledCompletionStrategy&lt;/code>&lt;/a> with &lt;code>completion.schedule.period=DAILY&lt;/code> instead.&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;code>DailyCompletionStrategy&lt;/code> is kept for backward compatibility. It behaves identically to &lt;code>ScheduledCompletionStrategy&lt;/code> with &lt;code>DAILY&lt;/code> period and transparently remaps the legacy &lt;code>daily.completion.schedule.*&lt;/code> config keys to the new &lt;code>completion.schedule.*&lt;/code> keys — so &lt;strong>existing connector configurations require no change&lt;/strong>.&lt;/p>
+&lt;h4 id="legacy-configuration-keys-still-accepted">Legacy configuration keys (still accepted)&lt;/h4>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Legacy key&lt;/th>
+&lt;th>Maps to&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>daily.completion.schedule.time&lt;/code>&lt;/td>
+&lt;td>&lt;code>completion.schedule.time&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>daily.completion.schedule.date.pattern&lt;/code>&lt;/td>
+&lt;td>&lt;code>completion.schedule.date.pattern&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>daily.completion.schedule.date.format&lt;/code>&lt;/td>
+&lt;td>&lt;code>completion.schedule.date.format&lt;/code>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h4 id="migration">Migration&lt;/h4>
+&lt;p>Replace the class and rename the config keys:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;fs.completion.strategy.class&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;io.streamthoughts.kafka.connect.filepulse.source.ScheduledCompletionStrategy&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.period&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;DAILY&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.time&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;01:00:00&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.pattern&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;.*?(\\d{4}-\\d{2}-\\d{2}).*&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">&amp;#34;completion.schedule.date.format&amp;#34;&lt;/span>&lt;span style="color:#000;font-weight:bold">:&lt;/span> &lt;span style="color:#4e9a06">&amp;#34;yyyy-MM-dd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;hr>
+&lt;h2 id="implementing-a-custom-strategy">Implementing a Custom Strategy&lt;/h2>
+&lt;p>You can implement your own strategy by implementing the &lt;code>FileCompletionStrategy&lt;/code> interface:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">public&lt;/span> &lt;span style="color:#204a87;font-weight:bold">interface&lt;/span> &lt;span style="color:#000">FileCompletionStrategy&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">default&lt;/span> &lt;span style="color:#204a87;font-weight:bold">void&lt;/span> &lt;span style="color:#000">configure&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>&lt;span style="color:#000">Map&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">&amp;lt;&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">,&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">?&amp;gt;&lt;/span> &lt;span style="color:#000">configs&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">boolean&lt;/span> &lt;span style="color:#000">shouldComplete&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>&lt;span style="color:#000">FileObjectContext&lt;/span> &lt;span style="color:#000">context&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Optionally, also implement &lt;code>LongLivedFileReadStrategy&lt;/code> to control whether the connector should attempt to read from the file at a given moment (useful to avoid unnecessary polling):&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#204a87;font-weight:bold">public&lt;/span> &lt;span style="color:#204a87;font-weight:bold">interface&lt;/span> &lt;span style="color:#000">LongLivedFileReadStrategy&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">default&lt;/span> &lt;span style="color:#204a87;font-weight:bold">boolean&lt;/span> &lt;span style="color:#000">shouldAttemptRead&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">(&lt;/span>&lt;span style="color:#000">FileObjectMeta&lt;/span> &lt;span style="color:#000">objectMeta&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">,&lt;/span> &lt;span style="color:#000">FileObjectOffset&lt;/span> &lt;span style="color:#000">offset&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">)&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#204a87;font-weight:bold">return&lt;/span> &lt;span style="color:#000">objectMeta&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">.&lt;/span>&lt;span style="color:#c4a000">lastModified&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">()&lt;/span> &lt;span style="color:#ce5c00;font-weight:bold">&amp;gt;&lt;/span> &lt;span style="color:#000">offset&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">.&lt;/span>&lt;span style="color:#c4a000">timestamp&lt;/span>&lt;span style="color:#ce5c00;font-weight:bold">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ce5c00;font-weight:bold">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Set your implementation class on the &lt;code>fs.completion.strategy.class&lt;/code> connector property.&lt;/p></description></item><item><title>Docs: File Cleanup Policies</title><link>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</link><pubDate>Wed, 02 Mar 2022 00:00:00 +0000</pubDate><guid>https://streamthoughts.github.io/kafka-connect-file-pulse/docs/developer-guide/cleaning-completed-files/</guid><description>
 &lt;p>The connector can be configured with a specific &lt;a href="https://github.com/streamthoughts/kafka-connect-file-pulse/blob/master/connect-file-pulse-api/src/main/java/io/streamthoughts/kafka/connect/filepulse/clean/FileCleanupPolicy.java">FileCleanupPolicy&lt;/a> implementation.&lt;/p>
 &lt;p>The cleanup policy can be configured with the below connect property :&lt;/p>
 &lt;table>

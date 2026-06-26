@@ -10,6 +10,10 @@ on:
     branches:
       - master
   pull_request:
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
 jobs:
   build:
     name: Build
@@ -18,16 +22,79 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
+      - name: Run Trivy vulnerability scanner (SARIF)
+        if: github.event_name == 'push'
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: 'fs'
+          scan-ref: '.'
           ignore-unfixed: true
           format: 'sarif'
           output: 'trivy-results.sarif'
-          severity: 'CRITICAL'
+          severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        if: github.event_name == 'push'
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results.sarif'
+
+      - name: Run Trivy vulnerability scanner (Table)
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          ignore-unfixed: true
+          format: 'table'
+          output: 'trivy-results.txt'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Add vulnerability report to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const trivyResults = fs.readFileSync('trivy-results.txt', 'utf8');
+
+            let body = '## Security Scan Results\n\n';
+
+            if (trivyResults.trim().length === 0) {
+              body += 'No vulnerabilities found with CRITICAL or HIGH severity.\n';
+            } else {
+              body += 'Vulnerabilities detected:\n\n';
+              body += '```\n' + trivyResults + '\n```\n';
+            }
+
+            body += '\n\n<sub>Scanned by [Trivy](https://github.com/aquasecurity/trivy)</sub>';
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Security Scan Results')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
